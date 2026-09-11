@@ -207,7 +207,17 @@
       "users_add": "Assign",
       "users_remove": "Remove",
       "users_none": "Nobody is assigned to this role yet.",
-      "users_no_match": "No matches."
+      "users_no_match": "No matches.",
+      "col_users": "Users",
+      "flag_system": "System",
+      "flag_system_info": "Predefined role of the permission concept (B1 8.1); its rights ship with the application.",
+      "delete_locked": "System roles, default roles and roles with assigned users cannot be deleted.",
+      "key": "Key",
+      "key_hint": "Technical key of the role (e.g. specialist, range_owner, interested, app_admin). Used in code and for the frontend rights, independent of the name.",
+      "key_locked": "Predefined role: the key is fixed by the application.",
+      "key_error": "Lowercase letters, digits and underscore only, max. 40 characters.",
+      "own_areas": "Assigned shooting ranges only (W/R-O)",
+      "own_areas_hint": "Users with this role see and edit only the shooting ranges assigned to them (B1 8.1.2)."
     },
     "apps": {
       "search": "Search by title, path or roleKey",

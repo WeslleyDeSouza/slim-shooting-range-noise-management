@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { APP_ROUTES } from '@slim/shared';
+import { APP_ROUTES, SLIM_ROLE_KEYS, SlimRoleSettings } from '@slim/shared';
 import {
   FormControl,
   FormGroup,
@@ -129,7 +129,21 @@ export class EloRoleFormComponent extends ComponentBase {
     state: new FormControl(true, { nonNullable: true }),
     hasAdminRights: new FormControl(false, { nonNullable: true }),
     sensitiveDataDisplay: new FormControl(false, { nonNullable: true }),
+    // SLIM role settings (`app_role.settings`, @slim/shared SlimRoleSettings):
+    // the key identifies the role in code (session claim, CASL), independent
+    // of its title; ownAreasOnly is the «W/R-O» right of B1 8.1.2.
+    key: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.maxLength(40), Validators.pattern(/^[a-z0-9_]*$/)],
+    }),
+    ownAreasOnly: new FormControl(false, { nonNullable: true }),
   });
+
+  /** Known keys of the four roles (B1 8.1.1) for the datalist. */
+  readonly roleKeys = SLIM_ROLE_KEYS;
+
+  /** Seeded system role: the key is fixed by the application. */
+  readonly isSystemRole = computed(() => !!(this.current()?.settings as SlimRoleSettings | undefined)?.slim);
 
   /** ComponentBase ruft dies beim Init und bei jedem DATA_RELOAD-Emit auf. */
   getData(): void {
@@ -148,12 +162,16 @@ export class EloRoleFormComponent extends ComponentBase {
       return;
     }
     this.current.set(role);
+    const settings = (role.settings ?? {}) as SlimRoleSettings;
     this.form.patchValue({
       title: role.title ?? '',
       state: !!role.state,
       hasAdminRights: !!role.hasAdminRights,
       sensitiveDataDisplay: !!role.sensitiveDataDisplay,
+      key: settings.key ?? '',
+      ownAreasOnly: !!settings.ownAreasOnly,
     });
+    if (settings.slim) this.form.controls.key.disable();
     this.access.set(
       new Map(
         (role.apps ?? []).map((right) => [
@@ -209,11 +227,18 @@ export class EloRoleFormComponent extends ComponentBase {
     }
     this.saving.set(true);
     const value = this.form.getRawValue();
+    const previous = (this.current()?.settings ?? {}) as SlimRoleSettings;
+    const settings: SlimRoleSettings = {
+      ...previous,
+      key: value.key.trim() || undefined,
+      ownAreasOnly: value.ownAreasOnly,
+    };
     const body = {
       title: value.title.trim(),
       state: value.state,
       hasAdminRights: value.hasAdminRights,
       sensitiveDataDisplay: value.sensitiveDataDisplay,
+      settings,
       type: (this.current()?.type ?? 'business') as 'business',
       apps: [...this.access().entries()]
         .filter(([, access]) => !!access)

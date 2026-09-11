@@ -87,7 +87,8 @@ describe('AreaScope (B1 8.1.2 «W/R-O», galaxy rule)', () => {
       'Interessent Schiessplatznutzung',
       'Applikationsadministrator*in',
     ]);
-    expect(JSON.parse(roles[1].settings).ownAreasOnly).toBe(true);
+    expect(JSON.parse(roles[1].settings)).toMatchObject({ key: 'range_owner', ownAreasOnly: true, slim: true });
+    expect(roles.map((r) => JSON.parse(r.settings).key)).toEqual(['specialist', 'range_owner', 'interested', 'app_admin']);
     const rights: { n: string }[] = await dataSource.query(
       'select count(*) as n from app_role_right where tenantId = ? and roleId = ?',
       [mockTenantId, SLIM_ROLE.INTERESTED],

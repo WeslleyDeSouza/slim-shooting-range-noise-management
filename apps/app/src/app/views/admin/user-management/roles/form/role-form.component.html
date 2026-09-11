@@ -67,6 +67,32 @@
           <input class="slim-input" id="um-r-title" type="text" appAutofocus formControlName="title" />
           <p class="slim-field__error">{{ prefix + '.name_error' | translate }}</p>
         </div>
+        <div class="slim-field" [class.slim-field--invalid]="form.controls.key.invalid && form.controls.key.touched">
+          <label class="slim-field__label" for="um-r-key">{{ prefix + '.key' | translate }}</label>
+          <input
+            class="slim-input"
+            id="um-r-key"
+            type="text"
+            list="um-r-keys"
+            autocomplete="off"
+            formControlName="key"
+            data-testid="role-key"
+          />
+          <datalist id="um-r-keys">
+            @for (k of roleKeys; track k) {
+              <option [value]="k"></option>
+            }
+          </datalist>
+          <span class="slim-field__hint">{{ (isSystemRole() ? prefix + '.key_locked' : prefix + '.key_hint') | translate }}</span>
+          <p class="slim-field__error">{{ prefix + '.key_error' | translate }}</p>
+        </div>
+        <label class="slim-switch um-role-form__switch">
+          <span class="slim-switch__label">
+            <b>{{ prefix + '.own_areas' | translate }}</b>
+            <span class="slim-field__hint">{{ prefix + '.own_areas_hint' | translate }}</span>
+          </span>
+          <input class="slim-switch__input" type="checkbox" formControlName="ownAreasOnly" data-testid="role-own-areas" />
+        </label>
         <label class="slim-switch um-role-form__switch">
           <span class="slim-switch__label"><b>{{ prefix + '.state' | translate }}</b></span>
           <input class="slim-switch__input" type="checkbox" formControlName="state" />

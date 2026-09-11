@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { AreaUserEntity } from '../entities/area-user.entity';
 
-/** Role setting that turns a role into a «W/R-O» role (B1 8.1.2). */
+/** Role setting that turns a role into a «W/R-O» role (B1 8.1.2), see `SlimRoleSettings` (@slim/shared). */
 export const OWN_AREAS_ONLY = 'ownAreasOnly';
 
 /**

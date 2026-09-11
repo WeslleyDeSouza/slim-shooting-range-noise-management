@@ -207,7 +207,17 @@
       "users_add": "Zuweisen",
       "users_remove": "Entfernen",
       "users_none": "Dieser Rolle ist noch niemand zugewiesen.",
-      "users_no_match": "Keine Treffer."
+      "users_no_match": "Keine Treffer.",
+      "col_users": "Benutzer",
+      "flag_system": "System",
+      "flag_system_info": "Vorgegebene Rolle des Berechtigungskonzepts (B1 8.1); Rechte werden mit der Applikation ausgeliefert.",
+      "delete_locked": "Systemrollen, Standardrollen und Rollen mit zugewiesenen Benutzern können nicht gelöscht werden.",
+      "key": "Schlüssel",
+      "key_hint": "Technischer Schlüssel der Rolle (z. B. specialist, range_owner, interested, app_admin). Wird im Code und für die Rechte im Frontend verwendet, unabhängig vom Namen.",
+      "key_locked": "Vorgegebene Rolle: der Schlüssel ist fest durch die Applikation vergeben.",
+      "key_error": "Nur Kleinbuchstaben, Ziffern und Unterstrich, max. 40 Zeichen.",
+      "own_areas": "Nur zugeordnete Schiessplätze (W/R-O)",
+      "own_areas_hint": "Benutzer mit dieser Rolle sehen und bearbeiten nur die ihnen zugeordneten Schiessplätze (B1 8.1.2)."
     },
     "apps": {
       "search": "Suche nach Titel, Pfad oder roleKey",

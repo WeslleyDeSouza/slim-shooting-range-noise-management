@@ -207,7 +207,17 @@
       "users_add": "Assigner",
       "users_remove": "Retirer",
       "users_none": "Personne n’est encore assigné à ce rôle.",
-      "users_no_match": "Aucun résultat."
+      "users_no_match": "Aucun résultat.",
+      "col_users": "Utilisateurs",
+      "flag_system": "Système",
+      "flag_system_info": "Rôle prédéfini du concept d’autorisation (B1 8.1) ; ses droits sont livrés avec l’application.",
+      "delete_locked": "Les rôles système, les rôles par défaut et les rôles avec des utilisateurs attribués ne peuvent pas être supprimés.",
+      "key": "Clé",
+      "key_hint": "Clé technique du rôle (p. ex. specialist, range_owner, interested, app_admin). Utilisée dans le code et pour les droits du frontend, indépendamment du nom.",
+      "key_locked": "Rôle prédéfini : la clé est fixée par l’application.",
+      "key_error": "Uniquement minuscules, chiffres et tiret bas, 40 caractères max.",
+      "own_areas": "Uniquement les places de tir attribuées (W/R-O)",
+      "own_areas_hint": "Les utilisateurs de ce rôle ne voient et ne modifient que les places de tir qui leur sont attribuées (B1 8.1.2)."
     },
     "apps": {
       "search": "Recherche par titre, chemin ou roleKey",

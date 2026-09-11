@@ -58,6 +58,7 @@
             <th>{{ prefix + '.col_title' | translate }}</th>
             <th>{{ prefix + '.col_flags' | translate }}</th>
             <th class="slim-table__cell--num">{{ prefix + '.col_apps' | translate }}</th>
+            <th class="slim-table__cell--num">{{ prefix + '.col_users' | translate }}</th>
             <th>{{ prefix + '.col_state' | translate }}</th>
             <th class="slim-table__cell--actions"></th>
           </tr>
@@ -76,16 +77,22 @@
                   @if (role.isDefault) {
                     <span class="slim-badge slim-badge--outline">{{ prefix + '.flag_default' | translate }}</span>
                   }
+                  @if (isSystemRole(role)) {
+                    <span class="slim-badge slim-badge--info" [attr.title]="prefix + '.flag_system_info' | translate">{{ prefix + '.flag_system' | translate }}</span>
+                  }
                   @if (role.sensitiveDataDisplay) {
                     <span class="slim-badge slim-badge--warning">{{ prefix + '.flag_sensitive' | translate }}</span>
                   }
-                  @if (!role.hasAdminRights && !role.isDefault && !role.sensitiveDataDisplay) {
+                  @if (!role.hasAdminRights && !role.isDefault && !role.sensitiveDataDisplay && !isSystemRole(role)) {
                     —
                   }
                 </div>
               </td>
               <td [attr.data-label]="prefix + '.col_apps' | translate" class="slim-table__cell--num">
                 {{ role.apps?.length || 0 }}
+              </td>
+              <td [attr.data-label]="prefix + '.col_users' | translate" class="slim-table__cell--num">
+                {{ userCount(role) }}
               </td>
               <td [attr.data-label]="prefix + '.col_state' | translate">
                 <label class="slim-switch um-roles__switch">
@@ -114,8 +121,9 @@
                     type="button"
                     class="slim-btn slim-btn--ghost slim-btn--icon um-roles__danger"
                     data-action="roles.delete"
+                    [disabled]="!canDelete(role)"
                     [attr.aria-label]="prefix + '.delete' | translate"
-                    [attr.title]="prefix + '.delete' | translate"
+                    [attr.title]="(canDelete(role) ? prefix + '.delete' : prefix + '.delete_locked') | translate"
                     (click)="remove(role)"
                   >
                     <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">

@@ -65,8 +65,27 @@ export class EloRolesOverviewComponent extends ComponentBase {
     }
   }
 
+  /** Users assigned to the role (the list endpoint loads the relation). */
+  userCount(role: RoleEntity): number {
+    return (role as RoleEntity & { users?: unknown[] }).users?.length ?? 0;
+  }
+
+  /**
+   * The four SLIM roles of B1 8.1.1 are seeded (`settings.slim`) and the
+   * rights matrix lives in code — they are not deletable, like the galaxy
+   * admin and default roles. Everything else a tenant creates is.
+   */
+  isSystemRole(role: RoleEntity): boolean {
+    return !!(role.settings as { slim?: boolean } | undefined)?.slim;
+  }
+
+  canDelete(role: RoleEntity): boolean {
+    return !this.isSystemRole(role) && !role.hasAdminRights && !role.isDefault && this.userCount(role) === 0;
+  }
+
   /** Opens the confirm sheet; `confirmDelete()` does the work. */
   remove(role: RoleEntity): void {
+    if (!this.canDelete(role)) return;
     this.pendingDelete.set(role);
   }
 

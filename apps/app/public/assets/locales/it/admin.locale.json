@@ -207,7 +207,17 @@
       "users_add": "Assegna",
       "users_remove": "Rimuovi",
       "users_none": "Nessuno è ancora assegnato a questo ruolo.",
-      "users_no_match": "Nessun risultato."
+      "users_no_match": "Nessun risultato.",
+      "col_users": "Utenti",
+      "flag_system": "Sistema",
+      "flag_system_info": "Ruolo predefinito del concetto di autorizzazione (B1 8.1); i diritti sono forniti con l’applicazione.",
+      "delete_locked": "I ruoli di sistema, i ruoli predefiniti e i ruoli con utenti assegnati non possono essere eliminati.",
+      "key": "Chiave",
+      "key_hint": "Chiave tecnica del ruolo (p. es. specialist, range_owner, interested, app_admin). Usata nel codice e per i diritti nel frontend, indipendentemente dal nome.",
+      "key_locked": "Ruolo predefinito: la chiave è fissata dall’applicazione.",
+      "key_error": "Solo minuscole, cifre e trattino basso, max. 40 caratteri.",
+      "own_areas": "Solo piazze di tiro assegnate (W/R-O)",
+      "own_areas_hint": "Gli utenti con questo ruolo vedono e modificano solo le piazze di tiro loro assegnate (B1 8.1.2)."
     },
     "apps": {
       "search": "Ricerca per titolo, percorso o roleKey",

@@ -17,7 +17,7 @@ kopierten Facades aufrufen.
 
 | Tabelle (galaxy) | Inhalt | Für 8.1 |
 |---|---|---|
-| `app_role` | Rolle pro Mandant: `title`, `state`, `isDefault`, `permissionMode`, `settings` (JSON) | die vier Rollen |
+| `app_role` | Rolle pro Mandant: `title`, `state`, `isDefault`, `permissionMode`, `settings` (JSON: `key`, `ownAreasOnly`, `slim` — Typ `SlimRoleSettings` in `@slim/shared`) | die vier Rollen; der **Schlüssel** (`specialist`, `range_owner`, `interested`, `app_admin`) identifiziert die Rolle im Code und später in CASL, unabhängig vom Titel |
 | `app_role_right` | Rolle × App: `access` = `read` \| `write` \| `delete` \| `root` | R / W / X pro Bereich |
 | `app_user_right` | Benutzer ↔ Rolle | Zuweisung |
 | `app_app` | App-Katalog = «Bereiche» (`API_APPS_MAPPING`) | Zeilen der Matrix |
@@ -92,7 +92,7 @@ noch nicht im Design System; Umbau ist ein reiner Template-Job.
 
 | Thema | Anforderung | Stand | Nächster Schritt |
 |---|---|---|---|
-| Rechte im Frontend (CASL) | 8.1.2, `slm 50` (Rollen-GUI) | Menü und Schaltflächen sind statisch; die API antwortet 403 | `@casl/ability` + `@casl/angular` wie in ELO (`app.casl.ts`: `AbilityFactory.defineFor(roles)`, `CaslService`; Menü in `admin-menu.service.ts`): Abilities aus den App-Rechten der Session bauen, `@if (can('write', 'usage'))` für Schaltflächen, Menü aus den Rechten, Lese-Modus der Masken (`readonly`-Signal in Schusszahlen ist vorbereitet) |
+| Rechte im Frontend (CASL) | 8.1.2, `slm 50` (Rollen-GUI) | Menü und Schaltflächen sind statisch; die API antwortet 403. Rollen tragen bereits einen Schlüssel (`settings.key`, Formular «Rollen bearbeiten»), System-Rollen sind nicht löschbar | `@casl/ability` + `@casl/angular` wie in ELO (`app.casl.ts`: `AbilityFactory.defineFor(roles)`, `CaslService`; Menü in `admin-menu.service.ts`): Abilities aus den App-Rechten der Session bauen, `@if (can('write', 'usage'))` für Schaltflächen, Menü aus den Rechten, Lese-Modus der Masken (`readonly`-Signal in Schusszahlen ist vorbereitet) |
 | Zuordnung Schiessplätze pflegen | 5.26, 8.1.2 W/R-O | nur per Seed (`area_user`) | Benutzerformular: Mehrfachauswahl Schiessplätze (`AreaScopeService.assign`), Endpunkt `admin/user/:id/areas` |
 | Session-Claim `areaIds` | Komfort | – | in `me/session` liefern, damit der Wechsler nur eigene Plätze zeigt |
 | «Berechnung speichern» (App 47) | 5.10, 5.18–5.21 | Recht vorhanden, kein Endpunkt | mit dem Berechnungs-Import (5.19) |

@@ -1,5 +1,6 @@
 import { API_APPS_MAPPING as GALAXY_APPS } from '@app-galaxy/auth-api';
 import { DataSource } from 'typeorm';
+import { SLIM_ROLE_KEY, SlimRoleSettings } from '@slim/shared';
 import { API_APPS_MAPPING } from './apps.mapping';
 
 /**
@@ -25,16 +26,18 @@ export enum SLIM_ROLE {
 
 /** Keys used by the demo dataset (`tenant.mock.json` users[].role). */
 export const SLIM_ROLE_BY_KEY: Record<string, number> = {
-  specialist: SLIM_ROLE.SPECIALIST,
-  range_owner: SLIM_ROLE.RANGE_OWNER,
-  interested: SLIM_ROLE.INTERESTED,
-  app_admin: SLIM_ROLE.APP_ADMIN,
+  [SLIM_ROLE_KEY.specialist]: SLIM_ROLE.SPECIALIST,
+  [SLIM_ROLE_KEY.rangeOwner]: SLIM_ROLE.RANGE_OWNER,
+  [SLIM_ROLE_KEY.interested]: SLIM_ROLE.INTERESTED,
+  [SLIM_ROLE_KEY.appAdmin]: SLIM_ROLE.APP_ADMIN,
   /** galaxy admin role (everything) — the default demo user. */
   admin: 1,
 };
 
 export interface SlimRoleSeed {
   roleId: SLIM_ROLE;
+  /** `settings.key`, what the frontend and the seed identify the role by. */
+  key: string;
   title: string;
   ownAreasOnly: boolean;
   /** appId → access; apps not listed get no right (X). */
@@ -48,6 +51,7 @@ const G = GALAXY_APPS;
 export const SLIM_ROLES: SlimRoleSeed[] = [
   {
     roleId: SLIM_ROLE.SPECIALIST,
+    key: SLIM_ROLE_KEY.specialist,
     title: 'Fachspezialist KOMZ Lärm',
     ownAreasOnly: false,
     rights: {
@@ -67,6 +71,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   },
   {
     roleId: SLIM_ROLE.RANGE_OWNER,
+    key: SLIM_ROLE_KEY.rangeOwner,
     title: 'Schiessplatz-Verantwortlicher',
     ownAreasOnly: true,
     rights: {
@@ -85,6 +90,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   },
   {
     roleId: SLIM_ROLE.INTERESTED,
+    key: SLIM_ROLE_KEY.interested,
     title: 'Interessent Schiessplatznutzung',
     ownAreasOnly: false,
     rights: {
@@ -103,6 +109,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   },
   {
     roleId: SLIM_ROLE.APP_ADMIN,
+    key: SLIM_ROLE_KEY.appAdmin,
     title: 'Applikationsadministrator*in',
     ownAreasOnly: false,
     rights: {
@@ -140,8 +147,25 @@ export async function fillSlimRoles(connection: DataSource, tenantId: string): P
       await connection.query(
         'insert into app_role (roleId, tenantId, type, domain, title, state, isDefault, hasAdminRights, hasOnBoardingRights, hasPaymentRights, sensitiveDataDisplay, permissionMode, settings) ' +
           "values (?, ?, 'business', 'business', ?, 1, 0, 0, 0, 0, 0, 'simple', ?)",
-        [role.roleId, tenantId, role.title, JSON.stringify({ ownAreasOnly: role.ownAreasOnly, slim: true })],
+        [role.roleId, tenantId, role.title, JSON.stringify(<SlimRoleSettings>{ key: role.key, ownAreasOnly: role.ownAreasOnly, slim: true })],
       );
+    } else {
+      // Keep key and flags in sync with the code; a renamed title stays.
+      const [row]: { settings: string | null }[] = await connection.query(
+        'select settings from app_role where tenantId = ? and roleId = ?',
+        [tenantId, role.roleId],
+      );
+      let settings: SlimRoleSettings = {};
+      try {
+        settings = row?.settings ? JSON.parse(row.settings) : {};
+      } catch {
+        settings = {};
+      }
+      await connection.query('update app_role set settings = ? where tenantId = ? and roleId = ?', [
+        JSON.stringify(<SlimRoleSettings>{ ...settings, key: role.key, ownAreasOnly: role.ownAreasOnly, slim: true }),
+        tenantId,
+        role.roleId,
+      ]);
     }
     await connection.query('delete from app_role_right where tenantId = ? and roleId = ?', [tenantId, role.roleId]);
     for (const [appId, access] of Object.entries(role.rights)) {

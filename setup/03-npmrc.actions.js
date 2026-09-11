@@ -86,8 +86,10 @@ module.exports = {
     const npmrc = readNpmrc(ctx);
     if (!npmrc) return { ok: false, note: '.npmrc is missing' };
     if (!npmrc.includes(`${SCOPE}:registry=`)) return { ok: false, note: `no registry mapped for ${SCOPE}` };
-    if (hasToken(npmrc)) return { ok: false, note: '.npmrc holds a token — it belongs in ~/.npmrc (the project file is committed)' };
-    if (!hasRegistryToken(readUserNpmrc())) return { ok: false, note: `no _authToken for ${REGISTRY_HOST} in ~/.npmrc` };
+    // A token in the project .npmrc (ELO style) or in ~/.npmrc both work for npm.
+    if (!hasToken(npmrc) && !hasRegistryToken(readUserNpmrc())) {
+      return { ok: false, note: `no _authToken for ${REGISTRY_HOST} in .npmrc or ~/.npmrc` };
+    }
 
     return { ok: true, note: `${SCOPE} points at the Nexus registry` };
   },

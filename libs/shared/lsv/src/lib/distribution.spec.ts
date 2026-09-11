@@ -15,9 +15,19 @@ describe('distributeShots (B1 7.5, Verteilung auf Quellen)', () => {
     expect(d.warning).toBeUndefined();
   });
 
-  it('gives a single source everything and nothing to no source', () => {
-    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 0 }]).shares).toEqual([{ sourceId: 'a', shots: 123.456 }]);
-    expect(distributeShots(500, [])).toEqual({ shares: [] });
+  it('gives a single source everything (flagging a zero weight) and reports a missing source', () => {
+    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 40 }])).toEqual({ shares: [{ sourceId: 'a', shots: 123.456 }] });
+    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 0 }])).toEqual({ shares: [{ sourceId: 'a', shots: 123.456 }], warning: 'zero-weights' });
+    // No source in the Zustand: nothing to distribute, but never silently dropped.
+    expect(distributeShots(500, [])).toEqual({ shares: [], warning: 'no-source' });
+    expect(distributeShots(0, [])).toEqual({ shares: [] });
+  });
+
+  it('can refuse instead of guessing when every weight is zero (configurable, O8)', () => {
+    const d = distributeShots(100, [{ sourceId: 'a', weight: 0 }, { sourceId: 'b', weight: 0 }], { onZeroWeights: 'refuse' });
+    expect(d).toEqual({ shares: [{ sourceId: 'a', shots: 0 }, { sourceId: 'b', shots: 0 }], warning: 'zero-weights', refused: true });
+    // Only Σ weights = 0 triggers the rule; partial zeros keep the defined ratio.
+    expect(distributeShots(10, [{ sourceId: 'a', weight: 5 }, { sourceId: 'b', weight: 0 }], { onZeroWeights: 'refuse' }).refused).toBeUndefined();
   });
 
   it('spreads evenly and warns when every weight is zero (T02)', () => {

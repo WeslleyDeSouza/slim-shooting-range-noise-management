@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { rawQuery } from '@api-slim/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import {
@@ -111,12 +112,12 @@ export class AreaService {
     // Users of this tenant (galaxy tables); distinct weapons of the allowed
     // room × weapon combinations (5.17).
     const [[row], [weaponRow]] = await Promise.all([
-      this.dataSource.query(
+      rawQuery<{ n: number }[]>(this.dataSource,
         'select count(distinct userId) as n from tenant_user_role where tenantId = ?',
         [tenantId],
       ),
-      this.dataSource.query(
-        'select count(distinct weapon) as n from area_weapon where tenantId = ? and deletedAt is null',
+      rawQuery<{ n: number }[]>(this.dataSource,
+        'select count(distinct weapon) as n from stellungsraum_waffe where tenantId = ? and deletedAt is null',
         [tenantId],
       ),
     ]);

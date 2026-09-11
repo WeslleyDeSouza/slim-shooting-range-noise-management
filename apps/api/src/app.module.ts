@@ -101,7 +101,7 @@ const isProd: boolean = env.isProd();
 
     CoreConfigModule,
     HealthModule,
-    // Logbook (core_log_user) + AUTH_API_LOGGER bridge, global (slm 56)
+    // Logbook (logbuch) + AUTH_API_LOGGER bridge, global (slm 56)
     CoreLoggerModule,
 
     // Auth & admin section (galaxy)

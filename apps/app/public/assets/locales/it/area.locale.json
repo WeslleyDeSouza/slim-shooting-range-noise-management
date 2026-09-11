@@ -109,14 +109,15 @@
       "err_weapon": "Selezionare un’arma.",
       "minus": "50 in meno",
       "plus": "50 in più",
-      "err_shots": "Indicare un numero maggiore di 0.",
+      "err_shots": "Indicare una quantità maggiore di 0 (max. 3 decimali).",
       "meta": "Registrato da {{by}}. Le modifiche vengono protocollate.",
       "meta_elo": "Registrato da {{by}} (importazione da ELO). Una modifica sovrascrive il valore importato e viene protocollata.",
       "unsaved": "Modifiche non salvate",
       "discard_title": "Annullare le modifiche?",
       "discard_text": "I dati di questo modulo non sono ancora stati salvati.",
       "keep_editing": "Continuare a modificare",
-      "discard": "Annullare"
+      "discard": "Annullare",
+      "quantity_unit": "Unità della quantità"
     },
     "delete": {
       "title_one": "Eliminare l’utilizzo?",
@@ -132,7 +133,8 @@
       "updated": "Utilizzo salvato.",
       "deleted": "{{n}} utilizzo/i eliminato/i.",
       "undo": "Annulla"
-    }
+    },
+    "unit_kg": "kg"
   },
   "details": {
     "title": "Dettagli · Punti di ricezione",

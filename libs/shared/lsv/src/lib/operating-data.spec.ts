@@ -115,6 +115,15 @@ describe('splitAnnex9 — innerhalb / ausserhalb Werktag (B1 7.4.5)', () => {
     });
   });
 
+  it('keeps decimal quantities (kg) at their precision instead of rounding to whole units', () => {
+    // 1.2 kg from 06:00 to 08:00: half inside, half outside → 0.6 / 0.6
+    expect(splitAnnex9(slot(MON, '06:00', '08:00', 1.2))).toEqual({ inside: 0.6, outside: 0.6 });
+    // 0.125 with 3 decimals over 06:00–07:30 (1/3 inside): 41.67 → 41 units inside, remainder to the larger share
+    const s = splitAnnex9(slot(MON, '06:00', '07:30', 0.125));
+    expect(s.inside + s.outside).toBeCloseTo(0.125, 12);
+    expect(s).toEqual({ inside: 0.041, outside: 0.084 });
+  });
+
   it('keeps the total when rounding, remainder to the larger share', () => {
     // 07:30–19:30: 11.5 h inside of 12 h → inside 2.875 of 3 → 3 / 0
     expect(splitAnnex9(slot(MON, '07:30', '19:30', 3))).toEqual({

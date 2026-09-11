@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 /**
  * Tenant of an authentication event. Login, failed login and password
  * events happen *before* a tenant is selected, so their hook context has no
- * `tenantId` — but the logbook is tenant-scoped (`core_log_user.tenantId`),
+ * `tenantId` — but the logbook is tenant-scoped (`logbuch.tenantId`),
  * and rows without a tenant would never show up in the Logbuch (slm 56).
  *
  * Resolution order: the context's tenant; else every tenant the account is

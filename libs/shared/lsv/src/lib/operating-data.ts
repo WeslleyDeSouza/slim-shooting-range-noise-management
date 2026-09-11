@@ -139,14 +139,26 @@ export function splitAnnex9(
   if (insideShare >= 1) return { inside: shots, outside: 0 };
   if (insideShare <= 0) return { inside: 0, outside: shots };
 
-  const insideExact = shots * insideShare;
+  // Quantities may be decimal (kg of explosive, B1 6.2/11.2.3): the split
+  // keeps the precision of the input (up to 3 decimals) instead of rounding
+  // decimal quantities away to whole units.
+  const scale = 10 ** decimalsOf(shots);
+  const units = Math.round(shots * scale);
+  const insideExact = units * insideShare;
   const insideFloor = Math.floor(insideExact);
-  const outsideFloor = Math.floor(shots - insideExact);
-  const remainder = shots - insideFloor - outsideFloor; // 0 or 1
+  const outsideFloor = Math.floor(units - insideExact);
+  const remainder = units - insideFloor - outsideFloor; // 0 or 1 unit
   // The larger share takes the remainder; a tie goes to inside (the workday).
-  const inside =
-    insideExact >= shots - insideExact ? insideFloor + remainder : insideFloor;
-  return { inside, outside: shots - inside };
+  const insideUnits =
+    insideExact >= units - insideExact ? insideFloor + remainder : insideFloor;
+  return { inside: insideUnits / scale, outside: (units - insideUnits) / scale };
+}
+
+/** Number of decimals of a quantity, capped at 3 (the API's precision). */
+function decimalsOf(value: number): number {
+  const text = String(value);
+  const dot = text.indexOf('.');
+  return dot < 0 ? 0 : Math.min(3, text.length - dot - 1);
 }
 
 /** Sum of several splits. */

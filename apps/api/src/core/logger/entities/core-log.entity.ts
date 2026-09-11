@@ -11,7 +11,8 @@ import { DbPlatformColumn, TenantBaseEntity } from '@app-galaxy/core-api';
 import { LogAction } from '../dto/log-action.enum';
 import { UserEntity } from '@app-galaxy/auth-api';
 
-@Entity('core_log_user')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('logbuch')
 @Index(['tenantId'])
 @Index(['tenantId', 'section', 'action'])
 export class CoreLogEntity extends TenantBaseEntity {

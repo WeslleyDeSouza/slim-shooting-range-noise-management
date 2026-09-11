@@ -6,7 +6,8 @@ import { Column, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm';
  * or a new dataset version wipes the demo data and writes it again, so the
  * demo always shows this year's Schiessplätze and never last year's.
  */
-@Entity('slim_demo_seed')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('demo_datensatz')
 export class DemoSeedMarkerEntity {
   @PrimaryColumn({ type: 'varchar' })
   tenantId!: string;

@@ -3,7 +3,7 @@
 **Stand:** 11.09.2026 · Prüfung, ob die aus ELO übernommene Benutzerverwaltung
 (`apps/app/src/app/views/admin/user-management`) und das galaxy-Rollenmodell die Anforderungen
 decken. Kurz: **R / W / X pro Bereich ja (Rollen + App-Rechte), «W/R-O» ja (galaxy Rules +
-`area_user`), MFA ja (2FA – die Anforderung lautet «MFA oder AGOV», AGOV ist damit optional).**
+`schiessplatz_benutzer`), MFA ja (2FA – die Anforderung lautet «MFA oder AGOV», AGOV ist damit optional).**
 Was noch fehlt, steht in Abschnitt 5.
 
 ## 1. Was das Backend schon kann (galaxy `@app-galaxy/auth-api`)
@@ -81,7 +81,7 @@ noch nicht im Design System; Umbau ist ein reiner Template-Job.
 
 | Baustein | Datei | Was er tut |
 |---|---|---|
-| `area_user` | `modules/area/entities/area-user.entity.ts` | Zuordnung Benutzer ↔ Schiessplatz (Seed: `users[].areas` in `tenant.mock.json`) |
+| `schiessplatz_benutzer` | `modules/area/entities/area-user.entity.ts` | Zuordnung Benutzer ↔ Schiessplatz (Seed: `users[].areas` in `tenant.mock.json`) |
 | `AreaScopeService` | `modules/area/scope/area-scope.service.ts` | `allowedAreaIds(tenantId, userId)`: `null` = alles, sobald eine aktive Rolle des Benutzers **nicht** `ownAreasOnly` ist (offenes System); sonst die zugeordneten Ids. `assign()` für Benutzerverwaltung und Seed |
 | `AreaScopeRule` (`area-scope`) | `modules/area/scope/area-scope.rule.ts` | `BaseRuleValidator` der galaxy Rule-Engine: liest `:areaId` / `:id` aus der Route, 403 `AREA_SCOPE` ausserhalb der Zuordnung; Routen ohne Area-Id passieren |
 | `@AreaScoped()` + `RulesGuard` | Controller `admin/area`, `…/usage`, `…/calculation` | Klassen-Variante von `@Rules([...])`; `TenantIdOnRequestGuard` reicht die Mandanten-Id des `TenantGuard` an den `RulesGuard` weiter |
@@ -93,11 +93,11 @@ noch nicht im Design System; Umbau ist ein reiner Template-Job.
 | Thema | Anforderung | Stand | Nächster Schritt |
 |---|---|---|---|
 | Rechte im Frontend (CASL) | 8.1.2, `slm 50` (Rollen-GUI) | Menü und Schaltflächen sind statisch; die API antwortet 403. Rollen tragen bereits einen Schlüssel (`settings.key`, Formular «Rollen bearbeiten»), System-Rollen sind nicht löschbar | `@casl/ability` + `@casl/angular` wie in ELO (`app.casl.ts`: `AbilityFactory.defineFor(roles)`, `CaslService`; Menü in `admin-menu.service.ts`): Abilities aus den App-Rechten der Session bauen, `@if (can('write', 'usage'))` für Schaltflächen, Menü aus den Rechten, Lese-Modus der Masken (`readonly`-Signal in Schusszahlen ist vorbereitet) |
-| Zuordnung Schiessplätze pflegen | 5.26, 8.1.2 W/R-O | nur per Seed (`area_user`) | Benutzerformular: Mehrfachauswahl Schiessplätze (`AreaScopeService.assign`), Endpunkt `admin/user/:id/areas` |
+| Zuordnung Schiessplätze pflegen | 5.26, 8.1.2 W/R-O | nur per Seed (`schiessplatz_benutzer`) | Benutzerformular: Mehrfachauswahl Schiessplätze (`AreaScopeService.assign`), Endpunkt `admin/user/:id/areas` |
 | Session-Claim `areaIds` | Komfort | – | in `me/session` liefern, damit der Wechsler nur eigene Plätze zeigt |
 | «Berechnung speichern» (App 47) | 5.10, 5.18–5.21 | Recht vorhanden, kein Endpunkt | mit dem Berechnungs-Import (5.19) |
 | AGOV | 8.1 «MFA **oder** AGOV» | 2FA erfüllt die Anforderung; AGOV nicht vorhanden | optional: OIDC-Strategie (passport), Provisionierung per E-Mail, Rolle aus SLIM |
-| Login-Logging-Auswertung | `slm 56` | **umgesetzt**: Logbuch `core_log_user` (`core/logger`, Maske «Logbuch»), Audit-Hooks Benutzer/Rollen/Apps (`modules/auth-audit/auth-audit.hooks.ts`) und – mit `@app-galaxy/auth-api` ≥ 0.1.218 – die Auth-Lifecycle-Hooks (`auth-lifecycle.hooks.ts`): `AUTH_LOGIN` (Methode Passwort/PIN/2FA), `AUTH_LOGIN_FAILED` (Grund: invalid-credentials, account-locked, invalid-pin, invalid-code, too-many-attempts, auth-id-mismatch), `AUTH_LOGOUT`, `AUTH_TOKEN_REUSE`, `AUTH_PASSWORD_RESET_REQUESTED`, `AUTH_PASSWORD_CHANGED` (Operation reset/update, Akteur), `AUTH_EMAIL_VERIFIED`; IP und User-Agent aus dem Hook-Kontext, Reset-Token und Hash werden nie geschrieben | Rollen-e2e in `apps/app-e2e/src/criterias/c09-logging-security.spec.ts` (Skelett) |
+| Login-Logging-Auswertung | `slm 56` | **umgesetzt**: Logbuch `logbuch` (`core/logger`, Maske «Logbuch»), Audit-Hooks Benutzer/Rollen/Apps (`modules/auth-audit/auth-audit.hooks.ts`) und – mit `@app-galaxy/auth-api` ≥ 0.1.218 – die Auth-Lifecycle-Hooks (`auth-lifecycle.hooks.ts`): `AUTH_LOGIN` (Methode Passwort/PIN/2FA), `AUTH_LOGIN_FAILED` (Grund: invalid-credentials, account-locked, invalid-pin, invalid-code, too-many-attempts, auth-id-mismatch), `AUTH_LOGOUT`, `AUTH_TOKEN_REUSE`, `AUTH_PASSWORD_RESET_REQUESTED`, `AUTH_PASSWORD_CHANGED` (Operation reset/update, Akteur), `AUTH_EMAIL_VERIFIED`; IP und User-Agent aus dem Hook-Kontext, Reset-Token und Hash werden nie geschrieben | Rollen-e2e in `apps/app-e2e/src/criterias/c09-logging-security.spec.ts` (Skelett) |
 | Break-Glass-Konto | `slm 56` | organisatorisch; in ELO als Prozess dokumentiert (`docs/compliance/prozess-zugriffsrechte-und-anmeldemittel.md`, Si001) | Prozess übernehmen: versiegeltes Notfallkonto mit galaxy-Admin-Rolle, Verwendung im Logbuch nachweisbar |
 | Rollen-e2e | Nachweis | nur API-Tests | Playwright-Fall je Rolle (Interessent → 403 auf Simulation/Erfassen, Verantwortlicher sieht nur Geissalp/Thun) |
 | Masken im Design System | UX | ELO-Style-Strings | Templates auf `slim-*` umstellen |

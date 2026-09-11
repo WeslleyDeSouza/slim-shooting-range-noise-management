@@ -109,14 +109,15 @@
       "err_weapon": "Please choose a weapon.",
       "minus": "50 fewer",
       "plus": "50 more",
-      "err_shots": "Please enter a number greater than 0.",
+      "err_shots": "Enter a quantity greater than 0 (up to 3 decimals).",
       "meta": "Recorded by {{by}}. Changes are logged.",
       "meta_elo": "Recorded by {{by}} (imported from ELO). A change overwrites the imported value and is logged.",
       "unsaved": "Unsaved changes",
       "discard_title": "Discard changes?",
       "discard_text": "The entries in this form have not been saved yet.",
       "keep_editing": "Keep editing",
-      "discard": "Discard"
+      "discard": "Discard",
+      "quantity_unit": "Quantity unit"
     },
     "delete": {
       "title_one": "Delete usage?",
@@ -132,7 +133,8 @@
       "updated": "Usage saved.",
       "deleted": "{{n}} usage(s) deleted.",
       "undo": "Undo"
-    }
+    },
+    "unit_kg": "kg"
   },
   "details": {
     "title": "Details · Receiver points",

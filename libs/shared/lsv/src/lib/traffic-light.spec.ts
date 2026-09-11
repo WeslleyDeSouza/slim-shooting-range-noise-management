@@ -1,20 +1,36 @@
-import { noiseState, quotaState, worstState } from './traffic-light';
+import { assessedLevel, noiseState, quotaState, worstState } from './traffic-light';
 import { LSV_EMPTY_LEVEL } from './types';
 
 describe('noiseState (Ampel Lärmbelastung, B1 5.10)', () => {
   it('is red above the limit, orange within 5 dB, green below', () => {
-    expect(noiseState(60.1, 60)).toBe('over');
+    expect(noiseState(61, 60)).toBe('over');
     expect(noiseState(60.0, 60)).toBe('warn');
-    expect(noiseState(55.1, 60)).toBe('warn');
+    expect(noiseState(56, 60)).toBe('warn');
     expect(noiseState(55.0, 60)).toBe('ok');
     expect(noiseState(41.8, 60)).toBe('ok');
     expect(noiseState(73.8, 60)).toBe('over');
   });
 
-  it('compares the printed (one-decimal) value', () => {
-    expect(noiseState(60.04, 60)).toBe('warn');
-    expect(noiseState(60.05, 60)).toBe('over');
-    expect(noiseState(55.04, 60)).toBe('ok');
+  it('rounds to whole dB before the comparison (Projekthandbuch B1.2 Kap. 10.4)', () => {
+    // 60.4 → 60: Grenzwert eingehalten; 60.5 → 61: überschritten.
+    expect(assessedLevel(60.4)).toBe(60);
+    expect(assessedLevel(60.5)).toBe(61);
+    expect(noiseState(60.4, 60)).toBe('warn');
+    expect(noiseState(60.5, 60)).toBe('over');
+    expect(noiseState(60.49, 60)).toBe('warn');
+    // Same rule at the orange edge (limit − 5): 55.4 → 55 green, 55.5 → 56 orange.
+    expect(noiseState(55.4, 60)).toBe('ok');
+    expect(noiseState(55.5, 60)).toBe('warn');
+    // Values right at the rounding boundary of a printed level.
+    expect(noiseState(60.45, 60)).toBe('warn');
+    expect(noiseState(60.95, 60)).toBe('over');
+  });
+
+  it('supports the display rounding (one decimal) and no rounding as configuration', () => {
+    expect(noiseState(60.04, 60, 5, 'tenth')).toBe('warn');
+    expect(noiseState(60.05, 60, 5, 'tenth')).toBe('over');
+    expect(noiseState(60.01, 60, 5, 'none')).toBe('over');
+    expect(noiseState(60.4, 60, 5, 'none')).toBe('over');
   });
 
   it('honours a custom warn band', () => {

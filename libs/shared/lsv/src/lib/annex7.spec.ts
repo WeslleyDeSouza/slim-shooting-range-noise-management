@@ -62,6 +62,19 @@ describe('annex7Level — Beilage B1.4 demo project (sheets A7X / A7p)', () => {
     expect(result.lr).toBeCloseTo(28.046311575135064, 6);
   });
 
+  it('raises Lr by exactly 3 dB when every shot count is multiplied by 10 (3·log M, half-days unchanged)', () => {
+    // Metamorphic check per annex: Anhang 7 scales with 3·log(M) — unlike
+    // Anhang 9, where tenfold shots add 10 dB (see annex9.spec).
+    const base = annex7Level(sourcesOf('E1'), B14_HALF_DAYS);
+    const tenfold = annex7Level(
+      sourcesOf('E1').map((s) => ({ ...s, shots: s.shots * 10 })),
+      B14_HALF_DAYS,
+    );
+    expect(tenfold.li.a).toBeCloseTo(base.li.a, 9); // GEMW is scale-free
+    expect(tenfold.lri.a - base.lri.a).toBeCloseTo(3, 9);
+    expect(tenfold.lr - base.lr).toBeCloseTo(3, 9);
+  });
+
   it('combines two categories energetically', () => {
     const sources: Annex7Source[] = [
       { sourceId: 'a1', category: 'a', shots: 1000, lafmaxDay: 90 },

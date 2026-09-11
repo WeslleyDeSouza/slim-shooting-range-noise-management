@@ -31,7 +31,9 @@ export type LimitKindCode = (typeof LIMIT_KIND)[number];
 /** A calculation state (Berechnungsgrundlage) as the pages show it. */
 export class CalculationDto {
   @ApiProperty() id: string;
-  @ApiProperty() name: string;
+  @ApiProperty({ description: 'Bezeichnung des Zustands' }) name: string;
+  @ApiProperty({ description: 'Immissionsberechnung (Lieferung), zu der der Zustand gehört' }) calculationId: string;
+  @ApiProperty() calculationName: string;
   @ApiProperty() supplier: string;
   @ApiProperty({ description: 'YYYY-MM-DD' }) deliveredAt: string;
   @ApiProperty() referenceYear: number;

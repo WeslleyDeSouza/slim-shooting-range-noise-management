@@ -12,7 +12,8 @@ import { AreaReceiverEntity } from './area-receiver.entity';
  * `laeEve` feed Annex 9 (column LAE, day and evening time group),
  * `lafmaxDay` feeds Annex 7 (column LAFmax of the day file).
  */
-@Entity('area_wlr')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('wlr_pegel')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'calculationId', 'receiverId', 'weaponId'])
 @Index(['tenantId', 'calculationId'])

@@ -1,24 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty,
-  IsArray,
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
-  MaxLength,
-  Min,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, Matches, Max, MaxLength, Min } from 'class-validator';
 import {
   ANNEX7_CATEGORY,
   Annex7CategoryCode,
   WEAPON_CATEGORY,
   WeaponCategory,
 } from '../../area/entities';
-import { USAGE_SOURCE, USAGE_TYPE, UsageSource, UsageType } from '../entities';
+import { QUANTITY_UNIT, QuantityUnit, USAGE_SOURCE, USAGE_TYPE, UsageSource, UsageType } from '../entities';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -63,7 +51,8 @@ export class UsageResultDto {
   @ApiProperty({ description: 'HH:mm' }) timeFrom: string;
   @ApiProperty({ description: 'HH:mm' }) timeTo: string;
   @ApiProperty({ enum: USAGE_TYPE }) usageType: UsageType;
-  @ApiProperty() shots: number;
+  @ApiProperty({ description: 'Menge (Dezimalzahl, 3 Dezimalen)' }) shots: number;
+  @ApiProperty({ enum: QUANTITY_UNIT }) quantityUnit: QuantityUnit;
   @ApiProperty() recordedBy: string;
   @ApiProperty({ enum: USAGE_SOURCE }) source: UsageSource;
   @ApiProperty({ nullable: true, type: String }) note: string | null;
@@ -121,10 +110,16 @@ export class UsageCreateDto {
   @ApiProperty({ enum: USAGE_TYPE })
   usageType: UsageType;
 
-  @IsInt()
-  @Min(1)
-  @ApiProperty({ minimum: 1 })
+  @IsNumber({ maxDecimalPlaces: 3 })
+  @IsPositive()
+  @Max(999999999.999)
+  @ApiProperty({ minimum: 0.001, description: 'Menge als Dezimalzahl: Anzahl Schuss oder kg Sprengstoff (B1 6.2)' })
   shots: number;
+
+  @IsOptional()
+  @IsIn(QUANTITY_UNIT)
+  @ApiPropertyOptional({ enum: QUANTITY_UNIT, default: 'shots' })
+  quantityUnit?: QuantityUnit;
 
   @IsOptional()
   @IsString()
@@ -141,7 +136,8 @@ export class UsageUpdateDto {
   @IsOptional() @Matches(TIME) @ApiPropertyOptional() timeFrom?: string;
   @IsOptional() @Matches(TIME) @ApiPropertyOptional() timeTo?: string;
   @IsOptional() @IsIn(USAGE_TYPE) @ApiPropertyOptional({ enum: USAGE_TYPE }) usageType?: UsageType;
-  @IsOptional() @IsInt() @Min(1) @ApiPropertyOptional({ minimum: 1 }) shots?: number;
+  @IsOptional() @IsNumber({ maxDecimalPlaces: 3 }) @IsPositive() @Max(999999999.999) @ApiPropertyOptional({ minimum: 0.001 }) shots?: number;
+  @IsOptional() @IsIn(QUANTITY_UNIT) @ApiPropertyOptional({ enum: QUANTITY_UNIT }) quantityUnit?: QuantityUnit;
   @IsOptional() @IsString() @MaxLength(2000) @ApiPropertyOptional({ nullable: true }) note?: string | null;
 }
 

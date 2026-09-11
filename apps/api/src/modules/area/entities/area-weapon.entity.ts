@@ -23,7 +23,8 @@ export type Annex7CategoryCode = (typeof ANNEX7_CATEGORY)[number];
  * Waffen»). One row is also one **source** of the noise model: `sourceId`
  * is the sonARMS QuellenID the WLR levels of a calculation refer to.
  */
-@Entity('area_weapon')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('stellungsraum_waffe')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'areaId', 'sourceId'])
 export class AreaWeaponEntity extends SlimBaseEntity {

@@ -171,8 +171,8 @@ Die Playwright-Nachweise je Kriterium werden in `apps/app-e2e/src/criterias/` ge
 | 12 | Simulation | ☑ Maske 5.13 |
 | 13–15 | Datenverwaltung Schiessplatz Übersicht/Allgemein/Stellungsräume | S1 |
 | 16 | Stammdaten + Kontingente | S1 |
-| 17 | Zuordnung Waffen | ☑ Datenmodell `area_weapon` (Seed) · S1 Maske |
-| 18 | Berechnungen und Zustände, aktueller Stand / MGDM | ☑ Datenmodell `area_calculation` (isCurrent/isMgdm) · S3 Maske |
+| 17 | Zuordnung Waffen | ☑ Datenmodell `stellungsraum_waffe` (Seed) · S1 Maske |
+| 18 | Berechnungen und Zustände, aktueller Stand / MGDM | ☑ Datenmodell `zustand` (isCurrent/isMgdm) · S3 Maske |
 | 19 | Import GDB + WLR + Betriebsdaten | S3 (WLR/Betriebsdaten), GDB = LK |
 | 20 | Export GeoDB + CSV | S3 (CSV), GeoDB = LK |
 | 21 | Berechnungsdetails je Stellungsraum | S3 |

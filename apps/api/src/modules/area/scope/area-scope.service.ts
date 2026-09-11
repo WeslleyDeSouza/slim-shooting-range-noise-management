@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { rawQuery } from '@api-slim/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { parseRoleSettings } from '@slim/shared';
@@ -12,7 +13,7 @@ export const OWN_AREAS_ONLY = 'ownAreasOnly';
  *
  * `null` = unrestricted: none of the user's active roles carries
  * `settings.ownAreasOnly` (Fachspezialist, Interessent, Administrator — the
- * open system of B1 8.1). Otherwise the ids assigned in `area_user`.
+ * open system of B1 8.1). Otherwise the ids assigned in `schiessplatz_benutzer`.
  */
 @Injectable()
 export class AreaScopeService {
@@ -23,7 +24,7 @@ export class AreaScopeService {
   ) {}
 
   async isRestricted(tenantId: string, userId: string): Promise<boolean> {
-    const rows: { settings: string | null }[] = await this.dataSource.query(
+    const rows: { settings: string | null }[] = await rawQuery(this.dataSource,
       `select ar.settings as settings
          from app_user_right aur
          join app_role ar on ar.tenantId = aur.tenantId and ar.roleId = aur.roleId

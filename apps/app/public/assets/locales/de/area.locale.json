@@ -109,14 +109,15 @@
       "err_weapon": "Bitte Waffe wählen.",
       "minus": "50 weniger",
       "plus": "50 mehr",
-      "err_shots": "Bitte eine Anzahl grösser als 0 angeben.",
+      "err_shots": "Bitte eine Menge grösser 0 angeben (bis 3 Dezimalen).",
       "meta": "Erfasst von {{by}}. Änderungen werden protokolliert.",
       "meta_elo": "Erfasst von {{by}} (Import aus ELO). Eine Änderung überschreibt den importierten Wert und wird protokolliert.",
       "unsaved": "Ungespeicherte Änderungen",
       "discard_title": "Änderungen verwerfen?",
       "discard_text": "Die Eingaben in diesem Formular wurden noch nicht gespeichert.",
       "keep_editing": "Weiter bearbeiten",
-      "discard": "Verwerfen"
+      "discard": "Verwerfen",
+      "quantity_unit": "Einheit der Menge"
     },
     "delete": {
       "title_one": "Nutzung löschen?",
@@ -132,7 +133,8 @@
       "updated": "Nutzung gespeichert.",
       "deleted": "{{n}} Nutzung(en) gelöscht.",
       "undo": "Rückgängig"
-    }
+    },
+    "unit_kg": "kg"
   },
   "details": {
     "title": "Details · Empfangspunkte",

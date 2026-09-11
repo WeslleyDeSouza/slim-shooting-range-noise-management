@@ -1,5 +1,7 @@
 # API und App: Datenstruktur
 
+> Physische Tabellennamen sind deutsch (B1 12.2, `slm 51`): `schiessplatz`, `stellungsraum`, `stellungsraum_waffe`, `nutzung`, `immissionsberechnung`, `zustand`, `empfangspunkt`, `wlr_pegel`, `schiessplatz_benutzer`, `logbuch`, `demo_datensatz`. Die Klassen im Code (`AreaEntity`, `AreaUsageEntity`, …) und die Spaltennamen bleiben englisch – Spalten sind der nächste Schritt (Entity-`name`-Mapping). Die galaxy-Tabellen (`auth_user`, `app_role`, `tenant_user_role`, …) kommen aus der Bibliothek.
+
 ## Ordnerstruktur & Architektur
 
 Nx-Workspace, gleicher Aufbau wie `pwa-elo-shot-counting` (ELO) und `alco-map`.
@@ -42,7 +44,7 @@ Demo-Daten liegen **nur im Backend**: `API_MOCK_DATA.initMockData()` (nicht in P
 seedet Mandant, Demo-User, App-Katalog + Rollen und schreibt danach den Datensatz
 `mocks/tenant/tenant.mock.json` («SLIM Demo», llumi-Muster): Schiessplätze mit Stellungsräumen,
 zulässigen Waffen (= Quellen), Empfangspunkten, Berechnungszuständen (WLR-Pegel) und den
-Nutzungen des laufenden Jahres (`{{year}}`-Platzhalter). Ein Marker (`slim_demo_seed`) merkt sich
+Nutzungen des laufenden Jahres (`{{year}}`-Platzhalter). Ein Marker (`demo_datensatz`) merkt sich
 Version und Jahr; Jahreswechsel, Versionssprung oder `DEMO_RESEED=1` schreiben den Mandanten neu,
 `DEMO_SEED=0` lässt ihn in Ruhe. Generator: `tools/tenant-dataset.generator.ts`.
 
@@ -93,22 +95,23 @@ Client. Kein NgRx im App-Code, keine Mocks, keine handgeschriebenen API-Modelle.
 - **Area (Schiessplatz)** `area`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr.),
   `sectoralPlanNo` (Sachplan-Nr.), `quotaStatus` / `noiseStatus` (`ok | warn | over | none`),
   `enabled`, `tenantId`. Endpunkte `admin/area` (Liste, Summary, Dashboard, CRUD).
-- **Stellungsraum** `area_room`: `areaId`, `coordinationSectionNo` (optional), `name`, `groupName`,
+- **Stellungsraum** `stellungsraum`: `areaId`, `coordinationSectionNo` (optional), `name`, `groupName`,
   `builtAfter1985` (Planungswert gilt), `sortOrder`, `enabled`.
-- **Zuordnung Waffen / Quelle** `area_weapon` (5.17): `areaId`, `roomId`, `weaponName` (Erfassung), `weapon`,
+- **Zuordnung Waffen / Quelle** `stellungsraum_waffe` (5.17): `areaId`, `roomId`, `weaponName` (Erfassung), `weapon`,
   `caliber`, `category` (`artillery | air_defence | handguns | mortar`), `annex7Category` (`a`–`f`, zivil),
   `sourceId` (sonARMS QuellenID), `quota` (Kontingent Plangenehmigung).
-- **Schiessplatz-Nutzung** `area_usage` (5.11): `roomId`, `weaponId` (zulässige Kombination), `unit`, `date`,
+- **Schiessplatz-Nutzung** `nutzung` (5.11): `roomId`, `weaponId` (zulässige Kombination), `unit`, `date`,
   `timeFrom`/`timeTo`, `usageType` (`military | civil`), `shots`, `recordedBy`, `source` (`manual | elo | import`),
   `note`; Soft-Delete für «Rückgängig». Endpunkte `admin/area/:areaId/usage/{overview,restore}`, CRUD.
-- **Berechnungsgrundlage / Zustand** `area_calculation` (5.18): `name`, `supplier`, `deliveredAt`, `referenceYear`,
+- **Immissionsberechnung** `immissionsberechnung` (5.18, Lieferung): `name`, `supplier`, `deliveredAt`; Hierarchie Schiessplatz → Immissionsberechnung → Zustand.
+- **Zustand** `zustand` (5.18, ZustandsID): `calculationId` (→ Immissionsberechnung), `name`, `referenceYear`,
   `buildYearClass` (`before1985 | after1985 | mixed`), `isCurrent`, `isMgdm`.
-- **Empfangspunkt** `area_receiver` (5.12): `code`, `egid`, `address`, `municipality`, `type` (`facade | reserve`),
+- **Empfangspunkt** `empfangspunkt` (5.12): `code`, `egid`, `address`, `municipality`, `type` (`facade | reserve`),
   `sensitivityLevel` (ES I–IV), `east`/`north` (LV95), `mapX`/`mapY` (schematische Karte).
-- **WLR-Pegel** `area_wlr`: je Zustand × Empfangspunkt × Quelle `laeDay`, `laeEve` (Anhang 9), `lafmaxDay` (Anhang 7).
+- **WLR-Pegel** `wlr_pegel`: je Zustand × Empfangspunkt × Quelle `laeDay`, `laeEve` (Anhang 9), `lafmaxDay` (Anhang 7).
 - **Beurteilung / Simulation**: nicht persistiert, `AssessmentService` und `SimulationService` rechnen mit
   `@slim/lsv` aus Nutzungen + WLR (`admin/area/:areaId/calculation/{assessment,simulation}`).
-- **Waffe / Kaliber / Waffenkategorie** (Datenverwaltung, 5.22–5.25): Stammdaten-Masken — folgt (heute über `area_weapon`).
+- **Waffe / Kaliber / Waffenkategorie** (Datenverwaltung, 5.22–5.25): Stammdaten-Masken — folgt (heute über `stellungsraum_waffe`).
 - **Benutzer / Rollen / Mandanten**: galaxy (`@app-galaxy/auth-api`, `core-api`); App-Katalog
   und Rollen-Rechte über `API_APPS_MAPPING`.
 - **MGDM Export**: Export nach dem minimalen Geodatenmodell — folgt.

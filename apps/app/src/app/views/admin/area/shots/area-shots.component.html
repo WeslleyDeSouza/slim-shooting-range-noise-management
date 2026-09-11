@@ -306,7 +306,8 @@
                   </td>
                   <td [attr.data-label]="'shots.columns.weapon' | translate">{{ row.usage.weaponName }}</td>
                   <td [attr.data-label]="'shots.columns.shots' | translate" class="slim-table__cell--num">
-                    <b>{{ row.usage.shots | number: '1.0-0' }}</b>
+                    <b>{{ row.usage.shots | number: '1.0-3' }}</b>
+                    <small class="slim-text--muted">{{ (row.usage.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</small>
                   </td>
                   <td [attr.data-label]="'shots.columns.recorded_by' | translate">
                     {{ row.usage.recordedBy }}
@@ -552,9 +553,14 @@
               {{ 'shots.columns.shots' | translate }} <span class="slim-field__required">*</span>
             </label>
             <div class="slim-stepper slim-stepper--block">
-              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.minus' | translate" (click)="step(-50)">−</button>
-              <input class="slim-stepper__input" id="shots-shots" type="number" inputmode="numeric" min="0" formControlName="shots" data-testid="shots-shots" />
-              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.plus' | translate" (click)="step(50)">+</button>
+              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.minus' | translate" (click)="step(-1)">−</button>
+              <input class="slim-stepper__input" id="shots-shots" type="number" inputmode="decimal" min="0" step="0.001" formControlName="shots" data-testid="shots-shots" />
+              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.plus' | translate" (click)="step(1)">+</button>
+              <select class="slim-select slim-stepper__unit" formControlName="quantityUnit" [attr.aria-label]="'shots.form.quantity_unit' | translate" data-testid="shots-unit">
+                @for (u of quantityUnits; track u) {
+                  <option [value]="u">{{ (u === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</option>
+                }
+              </select>
             </div>
             <p class="slim-field__error">{{ 'shots.form.err_shots' | translate }}</p>
           </div>

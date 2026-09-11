@@ -83,6 +83,8 @@ export interface DatasetWlr {
 
 export interface DatasetCalculation {
   name: string;
+  /** Immissionsberechnung (delivery) the state belongs to; defaults to its own name. */
+  calculation?: string;
   supplier: string;
   deliveredAt: string;
   referenceYear: number;

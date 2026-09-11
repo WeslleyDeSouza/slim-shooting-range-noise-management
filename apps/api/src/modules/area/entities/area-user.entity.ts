@@ -10,7 +10,8 @@ import { AreaEntity } from './area.entity';
  * `area-scope` rule (galaxy RulesGuard) for every `admin/area/:areaId/*`
  * request of a user whose role carries `settings.ownAreasOnly`.
  */
-@Entity('area_user')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('schiessplatz_benutzer')
 @Unique(['tenantId', 'areaId', 'userId'])
 @Index(['tenantId', 'userId'])
 export class AreaUserEntity extends SlimBaseEntity {

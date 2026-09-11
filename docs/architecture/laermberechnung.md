@@ -16,7 +16,7 @@ verwendet. Die Specs (`libs/shared/lsv/src/lib/*.spec.ts`) laufen mit `npx nx te
 | `operating-data.ts` | Schritt 1 (7.4): `splitAnnex9` (Schuss innerhalb/ausserhalb Werktag), `annex7HalfDays` (Schiesshalbtage); `CalendarOptions.holidays` = lokale Feiertage des Standorts, ganz (`'YYYY-MM-DD'`) oder halb (`{ date, from: '12:00' }` – B1 S. 71) |
 | `types.ts`          | `USAGE_CATEGORIES` (Militär, Zivil, Blaulicht, SAT – B1 Tabelle 2) und `countsForAnnex7(category, annex7Overall)`: Anhang 9 rechnet alle Kategorien, Anhang 7 Zivil + SAT bzw. alle bei «Gesamtbeurteilung nach Anhang 7» |
 | `limits.ts`         | Grenzwerte PW/IGW/AW je Empfindlichkeitsstufe und Anhang, `applicableLimits` nach Baujahr (7.7)          |
-| `traffic-light.ts`  | Ampeln (5.10): `noiseState`, `worstState` (Aggregation), `quotaState` (Kontingent 100 % / 125 %)         |
+| `traffic-light.ts`  | Ampeln (5.10): `noiseState` (Vergleich mit dem auf **ganze dB** gerundeten Pegel, Projekthandbuch B1.2 Kap. 10.4: 60.4 → 60 eingehalten, 60.5 → 61 überschritten; Modus `whole`/`tenth`/`none` als Parameter), `assessedLevel`, `worstState` (Aggregation), `quotaState` (Kontingent 100 % / 125 %) |
 
 `LSV_EMPTY_LEVEL = −99` ist – wie in sonARMS und B1.4 – der Marker für «keine Energie»
 (keine Schüsse). Alle Pegel werden ungerundet zurückgegeben; für die Anzeige `roundDb`.

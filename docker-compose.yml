@@ -14,5 +14,22 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
       - app-slim:/var/lib/mysql
+  # Target database of the offer (PostgreSQL 17 + PostGIS 3.5). Select with
+  # DB_TYPE=postgres (see .env.example). Needs @app-galaxy/* with the
+  # PostgreSQL type mapping (double → double precision, datetime → timestamp,
+  # longtext → text) in DbPlatformColumn / DbAuthAwareColumn.
+  app-postgis:
+    container_name: app-slim-postgis
+    image: postgis/postgis:17-3.5
+    restart: no
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - app-slim-postgis:/var/lib/postgresql/data
 volumes:
   app-slim:
+  app-slim-postgis:

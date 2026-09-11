@@ -14,6 +14,13 @@ export type UsageType = UsageCategory;
 
 /** Where the row came from: typed in, the ELO interface (6.x) or an import (9.x). */
 export const USAGE_SOURCE = ['manual', 'elo', 'import'] as const;
+
+/** Unit of the quantity: shots (Stück) or kilograms of explosive (B1 6.2, 11.2.3). */
+export const QUANTITY_UNIT = ['shots', 'kg'] as const;
+export type QuantityUnit = (typeof QUANTITY_UNIT)[number];
+
+/** DECIMAL comes back as a string from MySQL/PostgreSQL drivers — keep it a number in the entity. */
+const decimalToNumber = { to: (v: number) => v, from: (v: string | number | null) => (v == null ? v : Number(v)) };
 export type UsageSource = (typeof USAGE_SOURCE)[number];
 
 /**
@@ -21,7 +28,8 @@ export type UsageSource = (typeof USAGE_SOURCE)[number];
  * calibre from one Stellungsraum during one time slot. The raw material
  * of the noise calculation (7.4) and of the quota check (5.10).
  */
-@Entity('area_usage')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('nutzung')
 @Unique(['tenantId', 'id'])
 @Index(['tenantId', 'areaId', 'date'])
 export class AreaUsageEntity extends SlimBaseEntity {
@@ -60,9 +68,14 @@ export class AreaUsageEntity extends SlimBaseEntity {
   @DbPlatformColumn({ type: 'varchar', length: 10, nullable: false })
   usageType: UsageType;
 
-  @ApiProperty({ description: 'Anzahl Schuss' })
-  @DbPlatformColumn({ type: 'int', nullable: false, default: 0 })
+  /** Menge als Dezimalzahl (B1 6.2/11.2.3): Anzahl Schuss oder kg Sprengstoff, 3 Dezimalen. */
+  @ApiProperty({ description: 'Menge (Dezimalzahl): Anzahl Schuss oder kg Sprengstoff' })
+  @DbPlatformColumn({ type: 'decimal', precision: 12, scale: 3, nullable: false, default: 0, transformer: decimalToNumber })
   shots: number;
+
+  @ApiProperty({ enum: QUANTITY_UNIT, description: 'Einheit der Menge: Stück oder kg' })
+  @DbPlatformColumn({ type: 'varchar', length: 5, nullable: false, default: 'shots' })
+  quantityUnit: QuantityUnit;
 
   @ApiProperty({ description: 'Erfasser (Anzeigename)' })
   @DbPlatformColumn({ length: 120, nullable: false, default: '' })

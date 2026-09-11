@@ -231,7 +231,9 @@ export class AreaShotsComponent extends ComponentBase {
       usageType: ['military' as UsageCreateDto['usageType'], Validators.required],
       category: ['', Validators.required],
       weaponId: ['', Validators.required],
-      shots: [0, [Validators.required, Validators.min(1)]],
+      // Menge als Dezimalzahl (B1 6.2/11.2.3): Schuss oder kg Sprengstoff, 3 Dezimalen.
+      shots: [0, [Validators.required, Validators.min(0.001), Validators.pattern(/^\d+([.,]\d{1,3})?$/)]],
+      quantityUnit: ['shots' as UsageCreateDto['quantityUnit'], Validators.required],
       note: [''],
     },
     { validators: timeRangeValidator },
@@ -378,6 +380,7 @@ export class AreaShotsComponent extends ComponentBase {
       category: usage?.category ?? '',
       weaponId: usage?.weaponId ?? '',
       shots: usage?.shots ?? 0,
+      quantityUnit: usage?.quantityUnit ?? 'shots',
       note: usage?.note ?? '',
     });
     if (this.readonly()) this.form.disable();
@@ -412,10 +415,16 @@ export class AreaShotsComponent extends ComponentBase {
     this.form.controls.timeTo.setValue(to);
   }
 
-  protected step(delta: number): void {
-    const current = Number(this.form.controls.shots.value) || 0;
-    this.form.controls.shots.setValue(Math.max(0, current + delta));
+  /** Stepper: 50 shots, or 0.1 kg when the quantity is explosive. */
+  protected step(direction: -1 | 1): void {
+    const kg = this.form.controls.quantityUnit.value === 'kg';
+    const delta = direction * (kg ? 0.1 : 50);
+    const current = Number(String(this.form.controls.shots.value).replace(',', '.')) || 0;
+    const next = Math.max(0, Math.round((current + delta) * 1000) / 1000);
+    this.form.controls.shots.setValue(next);
   }
+
+  protected readonly quantityUnits = ['shots', 'kg'] as const;
 
   protected invalid(control: keyof typeof this.form.controls): boolean {
     const c = this.form.controls[control];
@@ -434,7 +443,8 @@ export class AreaShotsComponent extends ComponentBase {
       timeFrom: v.timeFrom,
       timeTo: v.timeTo,
       usageType: v.usageType,
-      shots: Number(v.shots),
+      shots: Number(String(v.shots).replace(',', '.')),
+      quantityUnit: v.quantityUnit,
       note: v.note?.trim() || null,
     };
     const id = this.editId();

@@ -150,6 +150,7 @@ export class UsageService {
         timeTo: input.timeTo,
         usageType: input.usageType,
         shots: input.shots,
+        quantityUnit: input.quantityUnit ?? 'shots',
         recordedBy: input.recordedBy,
         source: 'manual',
         note: input.note?.trim() || null,
@@ -176,6 +177,7 @@ export class UsageService {
       timeTo: merged.timeTo,
       usageType: merged.usageType,
       shots: merged.shots,
+      quantityUnit: merged.quantityUnit ?? usage.quantityUnit,
       note: merged.note?.trim() || null,
     });
     const saved = await this.repo.save(usage);
@@ -279,6 +281,7 @@ export function toUsageDto(
     timeTo: usage.timeTo,
     usageType: usage.usageType,
     shots: usage.shots,
+    quantityUnit: usage.quantityUnit,
     recordedBy: usage.recordedBy,
     source: usage.source,
     note: usage.note,

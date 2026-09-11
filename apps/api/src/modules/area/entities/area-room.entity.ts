@@ -10,7 +10,8 @@ import { AreaEntity } from './area.entity';
  * `builtAfter1985` drives which LSV limit applies (7.7: Planungswert for
  * new plant parts, Immissionsgrenzwert for the rest).
  */
-@Entity('area_room')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('stellungsraum')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'areaId', 'name'])
 export class AreaRoomEntity extends SlimBaseEntity {

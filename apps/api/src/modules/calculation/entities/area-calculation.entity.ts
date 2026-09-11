@@ -4,20 +4,24 @@ import { DbPlatformColumn } from '@app-galaxy/core-api';
 import { SlimBaseEntity } from '@api-slim/common';
 import { AreaEntity } from '../../area/entities';
 import { AreaWlrEntity } from './area-wlr.entity';
+import { ImmissionCalculationEntity } from './immission-calculation.entity';
 
 /** Baujahr der Anlagenteile (B1 5.18): which LSV limit applies (7.7). */
 export const BUILD_YEAR_CLASS = ['before1985', 'after1985', 'mixed'] as const;
 export type BuildYearClassCode = (typeof BUILD_YEAR_CLASS)[number];
 
 /**
- * Berechnungsgrundlage / Zustand (B1 5.18 «Berechnungen»): one delivered
- * noise model state of an area (e.g. «Initiale Aufnahme 2019», «Sanierter
- * Zustand 2025»). Its WLR rows carry the sonARMS levels per receiver ×
- * source that the assessment (5.12) and the simulation (5.13) plug the
- * shot counts into. Exactly one state per area is the current one and
- * exactly one is the MGDM state (both may be the same).
+ * Zustand (B1 5.18 «Berechnungen», ZustandsID): one state of the noise
+ * model inside an Immissionsberechnung (e.g. «Initiale Aufnahme 2019»,
+ * «Sanierter Zustand 2025»). Its WLR rows carry the sonARMS levels per
+ * receiver × source that the assessment (5.12) and the simulation (5.13)
+ * plug the shot counts into. Exactly one state per area is the current one
+ * and exactly one is the MGDM state (both may be the same); the service that
+ * switches them keeps that invariant (partial unique index on PostgreSQL to follow).
+ *
+ * Physical table `zustand` (German database objects, B1 12.2 / slm 51).
  */
-@Entity('area_calculation')
+@Entity('zustand')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'areaId', 'name'])
 export class AreaCalculationEntity extends SlimBaseEntity {
@@ -27,17 +31,14 @@ export class AreaCalculationEntity extends SlimBaseEntity {
   @DbPlatformColumn({ type: 'uuid', nullable: false })
   areaId: string;
 
+  /** The Immissionsberechnung (delivery) this state belongs to. */
+  @ApiProperty()
+  @DbPlatformColumn({ type: 'uuid', nullable: false })
+  calculationId: string;
+
   @ApiProperty({ description: 'Bezeichnung des Zustands' })
   @DbPlatformColumn({ length: 120, nullable: false })
   name: string;
-
-  @ApiProperty({ description: 'Lieferantin (z. B. Empa)' })
-  @DbPlatformColumn({ length: 80, nullable: false, default: '' })
-  supplier: string;
-
-  @ApiProperty({ description: 'Lieferdatum YYYY-MM-DD' })
-  @DbPlatformColumn({ type: 'varchar', length: 10, nullable: false })
-  deliveredAt: string;
 
   @ApiProperty({ description: 'Referenzjahr' })
   @DbPlatformColumn({ type: 'int', nullable: false })
@@ -65,6 +66,13 @@ export class AreaCalculationEntity extends SlimBaseEntity {
     { name: 'areaId', referencedColumnName: 'id' },
   ])
   area: AreaEntity;
+
+  @ManyToOne(() => ImmissionCalculationEntity, (c) => c.states, { onDelete: 'CASCADE' })
+  @JoinColumn([
+    { name: 'tenantId', referencedColumnName: 'tenantId' },
+    { name: 'calculationId', referencedColumnName: 'id' },
+  ])
+  calculation: ImmissionCalculationEntity;
 
   @OneToMany(() => AreaWlrEntity, (row) => row.calculation)
   wlr: AreaWlrEntity[];

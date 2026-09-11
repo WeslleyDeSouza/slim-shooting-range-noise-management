@@ -28,7 +28,7 @@ import { LogAction, LoggerService } from '../../core/logger';
 
 /**
  * Audit logging of the auth administration (users, roles, apps) into the
- * logbook (`core_log_user`), via the `@app-galaxy/auth-api` lifecycle hooks.
+ * logbook (`logbuch`), via the `@app-galaxy/auth-api` lifecycle hooks.
  *
  * The library's ADMIN endpoints already write `AUTH_USER_CREATED/UPDATED/
  * DELETED` through the wired `AUTH_API_LOGGER` — the user hook therefore

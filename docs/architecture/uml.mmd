@@ -229,7 +229,7 @@ OPERATIONS: Broad range of activities related to business operations."
     text metaValue
     datetime createdAt
   }
-  core_log_user {
+  logbuch {
     text tenantId
     varchar logId PK
     varchar userId FK
@@ -244,7 +244,7 @@ OPERATIONS: Broad range of activities related to business operations."
     text device
     datetime createdAt
   }
-  area_room {
+  stellungsraum {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -258,7 +258,7 @@ OPERATIONS: Broad range of activities related to business operations."
     integer sortOrder
     integer enabled
   }
-  area_weapon {
+  stellungsraum_waffe {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -275,7 +275,7 @@ OPERATIONS: Broad range of activities related to business operations."
     integer quota
     integer enabled
   }
-  area {
+  schiessplatz {
     text tenantId
     varchar id PK
     datetime createdAt
@@ -289,7 +289,7 @@ OPERATIONS: Broad range of activities related to business operations."
     integer annex7Overall
     integer enabled
   }
-  area_user {
+  schiessplatz_benutzer {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -298,7 +298,7 @@ OPERATIONS: Broad range of activities related to business operations."
     varchar areaId FK
     text userId
   }
-  area_receiver {
+  empfangspunkt {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -318,7 +318,7 @@ OPERATIONS: Broad range of activities related to business operations."
     integer sortOrder
     integer enabled
   }
-  area_wlr {
+  wlr_pegel {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -331,7 +331,7 @@ OPERATIONS: Broad range of activities related to business operations."
     real laeEve
     real lafmaxDay
   }
-  area_calculation {
+  immissionsberechnung {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -341,13 +341,24 @@ OPERATIONS: Broad range of activities related to business operations."
     varchar name
     varchar supplier
     text deliveredAt
+    integer enabled
+  }
+  zustand {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    varchar calculationId FK
+    varchar name
     integer referenceYear
     text buildYearClass
     integer isCurrent
     integer isMgdm
     integer enabled
   }
-  area_usage {
+  nutzung {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -361,12 +372,13 @@ OPERATIONS: Broad range of activities related to business operations."
     text timeFrom
     text timeTo
     text usageType
-    integer shots
+    numeric shots
+    text quantityUnit
     varchar recordedBy
     text source
     text note
   }
-  slim_demo_seed {
+  demo_datensatz {
     varchar tenantId PK
     varchar datasetKey
     integer version
@@ -387,16 +399,18 @@ OPERATIONS: Broad range of activities related to business operations."
   tenant_user_role }|--|| auth_user: user
   tenant_user_role }|--|| tenant: tenant
   tenant_structure_user_role }|--|| auth_user: user
-  core_log_user }|--|| auth_user: user
-  area_room }|--|| area: area
-  area_weapon }|--|| area: area
-  area_weapon }|--|| area_room: room
-  area_user }|--|| area: area
-  area_receiver }|--|| area: area
-  area_wlr }|--|| area_calculation: calculation
-  area_wlr }|--|| area_receiver: receiver
-  area_wlr }|--|| area_weapon: weapon
-  area_calculation }|--|| area: area
-  area_usage }|--|| area: area
-  area_usage }|--|| area_room: room
-  area_usage }|--|| area_weapon: weapon
+  logbuch }|--|| auth_user: user
+  stellungsraum }|--|| schiessplatz: area
+  stellungsraum_waffe }|--|| schiessplatz: area
+  stellungsraum_waffe }|--|| stellungsraum: room
+  schiessplatz_benutzer }|--|| schiessplatz: area
+  empfangspunkt }|--|| schiessplatz: area
+  wlr_pegel }|--|| zustand: calculation
+  wlr_pegel }|--|| empfangspunkt: receiver
+  wlr_pegel }|--|| stellungsraum_waffe: weapon
+  immissionsberechnung }|--|| schiessplatz: area
+  zustand }|--|| schiessplatz: area
+  zustand }|--|| immissionsberechnung: calculation
+  nutzung }|--|| schiessplatz: area
+  nutzung }|--|| stellungsraum: room
+  nutzung }|--|| stellungsraum_waffe: weapon

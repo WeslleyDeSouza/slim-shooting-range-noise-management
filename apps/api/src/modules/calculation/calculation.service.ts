@@ -30,7 +30,8 @@ export class CalculationService {
   list(tenantId: string, areaId: string): Promise<AreaCalculationEntity[]> {
     return this.calculations.find({
       where: { tenantId, areaId, enabled: true },
-      order: { deliveredAt: 'ASC' },
+      relations: { calculation: true },
+      order: { calculation: { deliveredAt: 'ASC' }, referenceYear: 'ASC' },
     });
   }
 
@@ -85,8 +86,10 @@ export class CalculationService {
     return {
       id: calc.id,
       name: calc.name,
-      supplier: calc.supplier,
-      deliveredAt: calc.deliveredAt,
+      calculationId: calc.calculationId,
+      calculationName: calc.calculation?.name ?? '',
+      supplier: calc.calculation?.supplier ?? '',
+      deliveredAt: calc.calculation?.deliveredAt ?? '',
       referenceYear: calc.referenceYear,
       buildYearClass: calc.buildYearClass,
       // SQLite hands booleans back as 0/1.

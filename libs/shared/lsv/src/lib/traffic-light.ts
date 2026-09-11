@@ -10,21 +10,38 @@ export const QUOTA_WARN_FACTOR = 1.25;
 const RANK: Record<NoiseState, number> = { none: 0, ok: 1, warn: 2, over: 3 };
 
 /**
+ * How the Beurteilungspegel is rounded before it meets the limit.
+ * `whole` = Projekthandbuch B1.2 Kap. 10.4 (mathematical rounding to whole
+ * dB: 60.4 → 60 eingehalten, 60.5 → 61 überschritten), `tenth` = as
+ * displayed with one decimal, `none` = unrounded.
+ */
+export type NoiseRounding = 'whole' | 'tenth' | 'none';
+export const NOISE_ROUNDING_DEFAULT: NoiseRounding = 'whole';
+
+/** The level as it enters the limit comparison. */
+export function assessedLevel(level: number, rounding: NoiseRounding = NOISE_ROUNDING_DEFAULT): number {
+  if (rounding === 'whole') return roundDb(level, 0);
+  if (rounding === 'tenth') return roundDb(level, 1);
+  return level;
+}
+
+/**
  * Ampel Lärmbelastung (B1 5.10, 7.7) for one level against one limit:
  * red when `Lr > limit`, orange when `Lr > limit − warnBand`, else green;
- * `none` without a usable level. The comparison uses the level rounded to
- * one decimal — the way it is printed — so 60.04 dB against 60 dB reads as
- * 60.0 and is not "over".
+ * `none` without a usable level. `Lr` is the level rounded as the
+ * Projekthandbuch prescribes (`rounding`, default whole dB), so 60.4 dB
+ * against 60 dB is eingehalten and 60.5 dB überschritten.
  */
 export function noiseState(
   level: number | null | undefined,
   limit: number,
   warnBand = NOISE_WARN_BAND_DB,
+  rounding: NoiseRounding = NOISE_ROUNDING_DEFAULT,
 ): NoiseState {
   if (level == null || !Number.isFinite(level) || level <= LSV_EMPTY_LEVEL) {
     return 'none';
   }
-  const lr = roundDb(level, 1);
+  const lr = assessedLevel(level, rounding);
   if (lr > limit) return 'over';
   if (lr > limit - warnBand) return 'warn';
   return 'ok';

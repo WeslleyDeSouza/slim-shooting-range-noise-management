@@ -1,18 +1,20 @@
 {
-  "name": "Nome",
-  "email": "E-mail",
-  "password": "Password",
-  "description": "Descrizione",
-  "remark": "Osservazione",
-  "date": "Data",
-  "amount": "Numero",
-  "required": "Campo obbligatorio",
-  "optional": "Facoltativo",
-  "select": "Selezionare",
-  "validation": {
-    "required": "Questo campo è obbligatorio.",
-    "email": "Inserire un indirizzo e-mail valido.",
-    "min": "Valore troppo piccolo.",
-    "max": "Valore troppo grande."
+  "forms": {
+    "name": "Nome",
+    "email": "E-mail",
+    "password": "Password",
+    "description": "Descrizione",
+    "remark": "Osservazione",
+    "date": "Data",
+    "amount": "Numero",
+    "required": "Campo obbligatorio",
+    "optional": "Facoltativo",
+    "select": "Selezionare",
+    "validation": {
+      "required": "Questo campo è obbligatorio.",
+      "email": "Inserire un indirizzo e-mail valido.",
+      "min": "Valore troppo piccolo.",
+      "max": "Valore troppo grande."
+    }
   }
 }

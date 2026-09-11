@@ -15,7 +15,8 @@ export type AreaStatus = (typeof AREA_STATUS)[number];
  * are refreshed by the calculation module (assessment) and seeded for the
  * demo tenant.
  */
-@Entity('area')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('schiessplatz')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'coordinationSectionNo'])
 export class AreaEntity extends SlimBaseEntity {

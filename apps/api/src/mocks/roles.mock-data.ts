@@ -1,4 +1,5 @@
 import { API_APPS_MAPPING as GALAXY_APPS } from '@app-galaxy/auth-api';
+import { rawQuery } from '@api-slim/common';
 import { DataSource } from 'typeorm';
 import { GALAXY_ROLE_KEY, SLIM_ROLE_KEY, SlimRoleSettings } from '@slim/shared';
 import { API_APPS_MAPPING } from './apps.mapping';
@@ -142,7 +143,7 @@ export async function fillSlimRoles(connection: DataSource, tenantId: string): P
   // so every row of the role overview identifies itself in code. Only set
   // when missing – this runs with the mock seed, not as a sync on every boot.
   for (const [roleId, key] of [[1, GALAXY_ROLE_KEY.admin], [2, GALAXY_ROLE_KEY.user]] as const) {
-    const [row]: { settings: string | null }[] = await connection.query(
+    const [row]: { settings: string | null }[] = await rawQuery(connection,
       'select settings from app_role where tenantId = ? and roleId = ?',
       [tenantId, roleId],
     );
@@ -154,26 +155,26 @@ export async function fillSlimRoles(connection: DataSource, tenantId: string): P
       settings = {};
     }
     if (settings.key) continue;
-    await connection.query('update app_role set settings = ? where tenantId = ? and roleId = ?', [
+    await rawQuery(connection, 'update app_role set settings = ? where tenantId = ? and roleId = ?', [
       JSON.stringify(<SlimRoleSettings>{ ...settings, key }),
       tenantId,
       roleId,
     ]);
   }
   for (const role of SLIM_ROLES) {
-    const existing: { roleId: number }[] = await connection.query(
+    const existing: { roleId: number }[] = await rawQuery(connection,
       'select roleId from app_role where tenantId = ? and roleId = ?',
       [tenantId, role.roleId],
     );
     if (!existing.length) {
-      await connection.query(
+      await rawQuery(connection,
         'insert into app_role (roleId, tenantId, type, domain, title, state, isDefault, hasAdminRights, hasOnBoardingRights, hasPaymentRights, sensitiveDataDisplay, permissionMode, settings) ' +
           "values (?, ?, 'business', 'business', ?, 1, 0, 0, 0, 0, 0, 'simple', ?)",
         [role.roleId, tenantId, role.title, JSON.stringify(<SlimRoleSettings>{ key: role.key, ownAreasOnly: role.ownAreasOnly, slim: true })],
       );
     } else {
       // Keep key and flags in sync with the code; a renamed title stays.
-      const [row]: { settings: string | null }[] = await connection.query(
+      const [row]: { settings: string | null }[] = await rawQuery(connection,
         'select settings from app_role where tenantId = ? and roleId = ?',
         [tenantId, role.roleId],
       );
@@ -183,16 +184,16 @@ export async function fillSlimRoles(connection: DataSource, tenantId: string): P
       } catch {
         settings = {};
       }
-      await connection.query('update app_role set settings = ? where tenantId = ? and roleId = ?', [
+      await rawQuery(connection, 'update app_role set settings = ? where tenantId = ? and roleId = ?', [
         JSON.stringify(<SlimRoleSettings>{ ...settings, key: role.key, ownAreasOnly: role.ownAreasOnly, slim: true }),
         tenantId,
         role.roleId,
       ]);
     }
-    await connection.query('delete from app_role_right where tenantId = ? and roleId = ?', [tenantId, role.roleId]);
+    await rawQuery(connection, 'delete from app_role_right where tenantId = ? and roleId = ?', [tenantId, role.roleId]);
     for (const [appId, access] of Object.entries(role.rights)) {
       if (!access) continue;
-      await connection.query(
+      await rawQuery(connection,
         'insert into app_role_right (id, tenantId, roleId, appId, access) values (?, ?, ?, ?, ?)',
         [`slim-role-${role.roleId}-app-${appId}`, tenantId, role.roleId, Number(appId), access],
       );

@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { rawQuery } from '@api-slim/common';
 import { DataSource } from 'typeorm';
 import { UserEntity } from '@app-galaxy/auth-api';
 import { TenantUserRoleEntity } from '@app-galaxy/core-api';
@@ -14,6 +15,7 @@ import {
   AreaCalculationEntity,
   AreaReceiverEntity,
   AreaWlrEntity,
+  ImmissionCalculationEntity,
 } from '../../modules/calculation/entities';
 import { AreaUsageEntity } from '../../modules/usage/entities';
 import { DemoSeedMarkerEntity } from './demo-seed-marker.entity';
@@ -32,14 +34,15 @@ const log = new Logger('DemoDataset');
  * the galaxy tenant tables is touched.
  */
 const WIPE = [
-  'area_user',
-  'area_wlr',
-  'area_usage',
-  'area_calculation',
-  'area_receiver',
-  'area_weapon',
-  'area_room',
-  'area',
+  'schiessplatz_benutzer',
+  'wlr_pegel',
+  'nutzung',
+  'zustand',
+  'immissionsberechnung',
+  'empfangspunkt',
+  'stellungsraum_waffe',
+  'stellungsraum',
+  'schiessplatz',
 ];
 
 /**
@@ -128,7 +131,7 @@ export async function seedDemoDataset(
 async function wipeTenant(connection: DataSource, tenantId: string): Promise<void> {
   for (const table of WIPE) {
     try {
-      await connection.query(`DELETE FROM ${table} WHERE tenantId = ?`, [tenantId]);
+      await rawQuery(connection, `DELETE FROM ${table} WHERE tenantId = ?`, [tenantId]);
     } catch (err) {
       log.warn(`Could not empty ${table}: ${(err as Error).message}`);
     }
@@ -138,7 +141,7 @@ async function wipeTenant(connection: DataSource, tenantId: string): Promise<voi
 /** The tenant itself: name, identifier and description sit on the platform's `tenant` row. */
 async function writeTenantHead(connection: DataSource, tenantId: string, dataset: TenantDataset): Promise<void> {
   try {
-    await connection.query(
+    await rawQuery(connection,
       'UPDATE tenant SET tenantName = ?, identifier = ?, tenantDescription = ? WHERE tenantId = ?',
       [dataset.name, dataset.identifier, dataset.description, tenantId],
     );
@@ -186,12 +189,12 @@ async function writeUsers(connection: DataSource, tenantId: string, dataset: Ten
         );
       }
       const roleId = SLIM_ROLE_BY_KEY[user.role ?? 'admin'];
-      const has: { n: string }[] = await connection.query(
+      const has: { n: string }[] = await rawQuery(connection,
         'select count(*) as n from app_user_right where tenantId = ? and userId = ? and roleId = ?',
         [tenantId, row.userId, roleId],
       );
       if (!Number(has[0]?.n)) {
-        await connection.query('insert into app_user_right (userId, tenantId, roleId) values (?, ?, ?)', [
+        await rawQuery(connection, 'insert into app_user_right (userId, tenantId, roleId) values (?, ?, ?)', [
           row.userId,
           tenantId,
           roleId,
@@ -229,6 +232,7 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
   const weapons = connection.getRepository(AreaWeaponEntity);
   const receivers = connection.getRepository(AreaReceiverEntity);
   const calculations = connection.getRepository(AreaCalculationEntity);
+  const deliveries = connection.getRepository(ImmissionCalculationEntity);
   const wlr = connection.getRepository(AreaWlrEntity);
   const usages = connection.getRepository(AreaUsageEntity);
 
@@ -314,13 +318,28 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
 
   let wlrCount = 0;
   for (const c of data.calculations) {
+    // Hierarchy B1 5.18: Immissionsberechnung (delivery) → Zustand. The
+    // dataset lists states; each becomes its own delivery unless it names
+    // an existing one (`calculation`).
+    const deliveryName = c.calculation ?? c.name;
+    const delivery =
+      (await deliveries.findOne({ where: { tenantId, areaId: area.id, name: deliveryName } })) ??
+      (await deliveries.save(
+        deliveries.create({
+          tenantId,
+          areaId: area.id,
+          name: deliveryName,
+          supplier: c.supplier,
+          deliveredAt: c.deliveredAt,
+          enabled: true,
+        }),
+      ));
     const calculation = await calculations.save(
       calculations.create({
         tenantId,
         areaId: area.id,
+        calculationId: delivery.id,
         name: c.name,
-        supplier: c.supplier,
-        deliveredAt: c.deliveredAt,
         referenceYear: c.referenceYear,
         buildYearClass: c.buildYearClass,
         isCurrent: c.isCurrent,

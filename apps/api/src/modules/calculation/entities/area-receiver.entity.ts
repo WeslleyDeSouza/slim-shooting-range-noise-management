@@ -17,7 +17,8 @@ export type ReceiverType = (typeof RECEIVER_TYPE)[number];
  * Coordinates: LV95 for the GIS map, plus a position on the schematic map
  * of the prototype (percent of width / height).
  */
-@Entity('area_receiver')
+// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
+@Entity('empfangspunkt')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'areaId', 'code'])
 export class AreaReceiverEntity extends SlimBaseEntity {

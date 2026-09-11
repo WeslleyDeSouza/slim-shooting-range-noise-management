@@ -7,7 +7,7 @@ import { LogAction } from './dto/log-action.enum';
 import { AdminLogController } from './controllers/admin-log.controller';
 
 /**
- * Logbook (`core_log_user`, ELO pattern): every entry says who did what,
+ * Logbook (`logbuch`, ELO pattern): every entry says who did what,
  * where (IP / device from `RequestOriginMiddleware`) and when. Fed by the
  * galaxy auth API (logins, sign-ups, password resets, admin user writes via
  * `AUTH_API_LOGGER`), by the auth-audit lifecycle hooks (roles, apps,

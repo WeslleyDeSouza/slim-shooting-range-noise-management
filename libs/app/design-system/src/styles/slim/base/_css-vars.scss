@@ -1,0 +1,124 @@
+// ---------------------------------------------------------------------------
+// Emits the tokens as CSS custom properties. This is the runtime contract:
+// the ThemeService writes the same `--slim-*` names on <html>.
+//
+//   :root                       light theme + all non-colour tokens
+//   :root[data-theme='dark']    dark theme (explicit choice)
+//   prefers-color-scheme: dark  dark theme unless data-theme='light' is set
+// ---------------------------------------------------------------------------
+@use 'sass:map';
+@use 'sass:color';
+@use 'sass:meta';
+@use '../abstracts/tokens';
+
+$-p: tokens.$prefix;
+
+@function -rgb($c) {
+  @return #{color.channel($c, 'red', $space: rgb)},
+    #{color.channel($c, 'green', $space: rgb)},
+    #{color.channel($c, 'blue', $space: rgb)};
+}
+
+@mixin -colors($map) {
+  @each $name, $value in $map {
+    --#{$-p}-color-#{$name}: #{$value};
+    @if meta.type-of($value) == 'color' {
+      --#{$-p}-color-#{$name}-rgb: #{-rgb($value)};
+    }
+  }
+}
+
+@mixin -shadows($map) {
+  @each $name, $value in $map {
+    --#{$-p}-shadow-#{$name}: #{$value};
+  }
+}
+
+// Shades derived from the base colours. Defined once with color-mix so a
+// runtime change of `--slim-color-primary` updates hover/subtle/muted too.
+@mixin -derived {
+  --#{$-p}-color-primary-hover: var(--#{$-p}-color-primary-strong);
+  --#{$-p}-color-primary-subtle: color-mix(
+    in srgb,
+    var(--#{$-p}-color-primary) 12%,
+    var(--#{$-p}-color-surface)
+  );
+  --#{$-p}-color-primary-muted: color-mix(
+    in srgb,
+    var(--#{$-p}-color-primary) 40%,
+    var(--#{$-p}-color-surface)
+  );
+
+  @each $state in ('success', 'warning', 'danger', 'info') {
+    --#{$-p}-color-#{$state}-subtle: color-mix(
+      in srgb,
+      var(--#{$-p}-color-#{$state}) 14%,
+      var(--#{$-p}-color-surface)
+    );
+    --#{$-p}-color-#{$state}-muted: color-mix(
+      in srgb,
+      var(--#{$-p}-color-#{$state}) 40%,
+      var(--#{$-p}-color-surface)
+    );
+  }
+
+  // Generic interaction overlays on any surface.
+  --#{$-p}-color-hover: color-mix(in srgb, var(--#{$-p}-color-ink) 5%, transparent);
+  --#{$-p}-color-active: color-mix(in srgb, var(--#{$-p}-color-ink) 9%, transparent);
+  --#{$-p}-color-disabled: var(--#{$-p}-color-text-4);
+  --#{$-p}-color-disabled-bg: var(--#{$-p}-color-surface-2);
+}
+
+@mixin -static-tokens {
+  --#{$-p}-font-family: #{tokens.$font-family};
+  --#{$-p}-font-family-mono: #{tokens.$font-family-mono};
+  --#{$-p}-font-size-base: #{tokens.$font-size-base};
+  --#{$-p}-line-height: #{tokens.$line-height-base};
+
+  @each $k, $v in tokens.$font-sizes {
+    --#{$-p}-font-size-#{$k}: #{$v};
+  }
+  @each $k, $v in tokens.$font-weights {
+    --#{$-p}-font-weight-#{$k}: #{$v};
+  }
+  @each $k, $v in tokens.$spacing {
+    --#{$-p}-space-#{$k}: #{$v};
+  }
+  @each $k, $v in tokens.$radii {
+    --#{$-p}-radius-#{$k}: #{$v};
+  }
+  @each $k, $v in tokens.$sizes {
+    --#{$-p}-size-#{$k}: #{$v};
+  }
+
+  --#{$-p}-transition-fast: #{tokens.$transition-fast};
+  --#{$-p}-transition-base: #{tokens.$transition-base};
+}
+
+@mixin theme-light {
+  color-scheme: light;
+  @include -colors(tokens.$colors-light);
+  @include -shadows(tokens.$shadows-light);
+}
+
+@mixin theme-dark {
+  color-scheme: dark;
+  @include -colors(tokens.$colors-dark);
+  @include -shadows(tokens.$shadows-dark);
+}
+
+:root {
+  @include -static-tokens;
+  @include theme-light;
+  @include -derived;
+}
+
+:root[data-theme='dark'] {
+  @include theme-dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include theme-dark;
+  }
+}

@@ -1,0 +1,6 @@
+// Abstracts: no CSS output. Use from any component stylesheet:
+//   @use 'slim/abstracts' as slim;
+//   .app-thing { padding: slim.space(4); @include slim.mq('md') { … } }
+@forward 'tokens';
+@forward 'functions';
+@forward 'mixins';

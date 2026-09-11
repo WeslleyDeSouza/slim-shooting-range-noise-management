@@ -1,0 +1,168 @@
+// ---------------------------------------------------------------------------
+// SLIM design tokens (single source of truth, build-time).
+//
+// Every value here is emitted as a CSS custom property (`--slim-*`) by
+// base/_css-vars.scss, so at runtime the ThemeService can override any of
+// them from JS. Components never read these maps directly — they use the
+// `color()`, `space()`, `radius()`, … functions, which return `var(--slim-*)`.
+//
+// Override at build time with `@use 'slim' with ($colors-light: (...));`.
+// Colour scheme: ELO redesign (pwa-elo-shot-counting), light + dark.
+// ---------------------------------------------------------------------------
+
+$prefix: 'slim' !default;
+
+// Typography ----------------------------------------------------------------
+$font-family:
+  'Helvetica Now',
+  'Helvetica Neue',
+  Helvetica,
+  'Segoe UI',
+  Arial,
+  sans-serif !default;
+$font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !default;
+$font-size-base: 15px !default;
+$line-height-base: 1.5 !default;
+
+// Relative to the 15px base: 11.25 / 13 / 15 / 17 / 20 / 24 / 30 px
+$font-sizes: (
+  'xs': 0.75rem,
+  'sm': 0.8667rem,
+  'md': 1rem,
+  'lg': 1.1333rem,
+  'xl': 1.3333rem,
+  '2xl': 1.6rem,
+  '3xl': 2rem,
+) !default;
+
+$font-weights: (
+  'regular': 400,
+  'medium': 500,
+  'semibold': 600,
+  'bold': 700,
+) !default;
+
+// Spacing (4px grid) --------------------------------------------------------
+$spacing: (
+  '0': 0,
+  '1': 4px,
+  '2': 8px,
+  '3': 12px,
+  '4': 16px,
+  '5': 20px,
+  '6': 24px,
+  '8': 32px,
+  '10': 40px,
+  '12': 48px,
+  '16': 64px,
+) !default;
+
+// Radii ---------------------------------------------------------------------
+$radii: (
+  'sm': 4px,
+  'md': 6px,
+  'lg': 10px,
+  'xl': 16px,
+  'pill': 999px,
+) !default;
+
+// Breakpoints (mobile first: min-width) -------------------------------------
+$breakpoints: (
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+) !default;
+
+// Layout sizes --------------------------------------------------------------
+$sizes: (
+  'topbar-h': 56px,
+  'tabbar-h': 58px,
+  'sidebar-w': 264px,
+  'container': 1200px,
+  'container-narrow': 720px,
+  'control-h': 40px,
+  'control-h-sm': 32px,
+  'control-h-lg': 48px,
+  'touch': 44px,
+) !default;
+
+// Stacking ------------------------------------------------------------------
+$z-index: (
+  'base': 0,
+  'raised': 10,
+  'sticky': 20,
+  'sidebar': 30,
+  'topbar': 40,
+  'scrim': 45,
+  'sheet': 50,
+  'toast': 60,
+) !default;
+
+// Motion --------------------------------------------------------------------
+$transition-fast: 120ms ease !default;
+$transition-base: 200ms ease !default;
+
+// Colours -------------------------------------------------------------------
+// Semantic names only. `primary-contrast` is the text colour on primary.
+$colors-light: (
+  'primary': #dc0018,
+  'primary-strong': #b00013,
+  'primary-contrast': #ffffff,
+  'ink': #17181c,
+  'text-2': #3e434c,
+  'text-3': #6b7280,
+  'text-4': #9aa1ab,
+  'line': #e2e4e9,
+  'line-strong': #c9cdd4,
+  'bg': #f4f5f7,
+  'surface': #ffffff,
+  'surface-2': #f4f5f7,
+  'success': #1e7a3c,
+  'warning': #8a6100,
+  'danger': #c71624,
+  'info': #006699,
+  'link': #006699,
+  'focus': #006699,
+  'scrim': rgba(23, 24, 28, 0.4),
+) !default;
+
+$colors-dark: (
+  'primary': #dc0018,
+  'primary-strong': #f0334a,
+  'primary-contrast': #ffffff,
+  'ink': #f1f2f4,
+  'text-2': #c6cad2,
+  'text-3': #9aa1ab,
+  'text-4': #6b7280,
+  'line': #2e333b,
+  'line-strong': #3d434d,
+  'bg': #14161a,
+  'surface': #1d2025,
+  'surface-2': #262a30,
+  'success': #46b56b,
+  'warning': #d9a93f,
+  'danger': #f0475a,
+  'info': #58a6d6,
+  'link': #58a6d6,
+  'focus': #58a6d6,
+  'scrim': rgba(0, 0, 0, 0.6),
+) !default;
+
+$shadows-light: (
+  'sm': 0 1px 2px rgba(23, 24, 28, 0.06),
+  'md': (
+    0 1px 2px rgba(23, 24, 28, 0.06),
+    0 4px 16px rgba(23, 24, 28, 0.08),
+  ),
+  'lg': 0 8px 32px rgba(23, 24, 28, 0.16),
+) !default;
+
+$shadows-dark: (
+  'sm': 0 1px 2px rgba(0, 0, 0, 0.3),
+  'md': (
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 4px 16px rgba(0, 0, 0, 0.35),
+  ),
+  'lg': 0 8px 32px rgba(0, 0, 0, 0.55),
+) !default;

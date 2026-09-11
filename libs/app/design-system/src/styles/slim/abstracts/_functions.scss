@@ -1,0 +1,79 @@
+// ---------------------------------------------------------------------------
+// Token accessors. All of them return `var(--slim-*)` so the value can be
+// changed at runtime (ThemeService) — never hard-code a colour or spacing.
+//
+//   .slim-card { background: color('surface'); padding: space(4); }
+// ---------------------------------------------------------------------------
+@use 'sass:map';
+@use 'sass:meta';
+@use 'tokens';
+
+@function -var($group, $key) {
+  @return var(--#{tokens.$prefix}-#{$group}-#{$key});
+}
+
+/// Semantic colour, e.g. color('primary'), color('surface'), color('text-3').
+/// Derived shades exist too: color('primary-hover'), color('primary-subtle'),
+/// color('success-subtle'), color('hover'), color('disabled') …
+@function color($name) {
+  @return -var('color', $name);
+}
+
+/// RGB triplet of a colour for alpha use: rgba(rgb-of('primary'), 0.5).
+@function rgb-of($name) {
+  @return var(--#{tokens.$prefix}-color-#{$name}-rgb);
+}
+
+/// Translucent variant of a token colour. alpha('ink', 0.08)
+@function alpha($name, $alpha) {
+  @return rgba(var(--#{tokens.$prefix}-color-#{$name}-rgb), $alpha);
+}
+
+/// Spacing step on the 4px grid: space(4) = 16px.
+@function space($key) {
+  @if not map.has-key(tokens.$spacing, '#{$key}') {
+    @error "Unknown spacing step `#{$key}`. Known: #{map.keys(tokens.$spacing)}";
+  }
+  @return -var('space', $key);
+}
+
+@function radius($key: 'md') {
+  @return -var('radius', $key);
+}
+
+@function shadow($key: 'md') {
+  @return -var('shadow', $key);
+}
+
+@function font-size($key: 'md') {
+  @return -var('font-size', $key);
+}
+
+@function font-weight($key: 'regular') {
+  @return -var('font-weight', $key);
+}
+
+/// Layout size, e.g. size('topbar-h'), size('sidebar-w'), size('touch').
+@function size($key) {
+  @return -var('size', $key);
+}
+
+/// z-index is resolved at build time (stacking must be predictable).
+@function z($key) {
+  @if not map.has-key(tokens.$z-index, $key) {
+    @error "Unknown z-index layer `#{$key}`.";
+  }
+  @return map.get(tokens.$z-index, $key);
+}
+
+/// Breakpoint value from the map (used by the mq mixins).
+@function breakpoint($key) {
+  @if not map.has-key(tokens.$breakpoints, $key) {
+    @error "Unknown breakpoint `#{$key}`. Known: #{map.keys(tokens.$breakpoints)}";
+  }
+  @return map.get(tokens.$breakpoints, $key);
+}
+
+@function transition($speed: 'base') {
+  @return -var('transition', $speed);
+}

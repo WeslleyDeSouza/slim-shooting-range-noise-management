@@ -64,3 +64,17 @@ export function hasSession(page: Page): Promise<boolean> {
     SESSION_KEY,
   );
 }
+
+/** userId of the stored session (auth-ui wraps the JSON in { value }). */
+export async function currentUserId(page: Page): Promise<string> {
+  const userId = await page.evaluate((key) => {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    const outer = JSON.parse(raw) as { value?: unknown };
+    const inner = (
+      typeof outer.value === 'string' ? JSON.parse(outer.value) : outer.value
+    ) as { user?: { userId?: string } } | undefined;
+    return inner?.user?.userId ?? null;
+  }, SESSION_KEY);
+  return userId ?? '';
+}

@@ -2,14 +2,13 @@ import { expect, test } from '@playwright/test';
 import { ROUTES } from './support/selectors';
 
 /** Signed-in pages (session from auth.setup.ts). */
-test('serves the entry page with the API status', async ({ page }) => {
+test('serves the entry page with the area KPIs from the API', async ({ page }) => {
   await page.goto(ROUTES.home);
 
   await expect(page).toHaveTitle(/SLIM/i);
   await expect(page.locator('.slim-hello__name')).toBeVisible();
-  await expect(page.locator('.slim-home__status .slim-badge')).toHaveText(
-    /online/,
-  );
+  // Tile KPIs come from GET admin/area/summary (8 seeded areas).
+  await expect(page.locator('.slim-tile__kpi').first()).toContainText('8');
 });
 
 test('switches the theme and keeps it', async ({ page }) => {

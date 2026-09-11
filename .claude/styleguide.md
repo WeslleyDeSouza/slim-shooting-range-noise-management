@@ -114,6 +114,10 @@ Rules of thumb:
 
 Breakpoints (min-width): `sm 480` · `md 768` · `lg 1024` · `xl 1280`.
 Mobile = below `lg` (topbar + tabbar); desktop = `lg` and up (sidebar).
+`slim-sidebar` and `slim-tabbar` own their visibility (sidebar hidden below `lg`,
+tabbar hidden from `lg`); `slim-shell` only places them in the grid. Never show both.
+
+Default theme is **light**; `system` follows the OS only when the user picks it.
 
 ## Colour scheme (from pwa-elo-shot-counting redesign)
 

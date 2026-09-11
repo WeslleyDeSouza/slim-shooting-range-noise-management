@@ -190,12 +190,15 @@
   }
 }
 
-// Tabbar (mobile) ----------------------------------------------------------
+// Tabbar (mobile only; desktop uses the sidebar) ---------------------------
 .slim-tabbar {
   position: sticky;
   bottom: 0;
   z-index: z('topbar');
   display: grid;
+  @include mq('lg') {
+    display: none;
+  }
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
   height: calc(size('tabbar-h') + env(safe-area-inset-bottom, 0px));
@@ -239,7 +242,7 @@
   }
 }
 
-// Sidebar (desktop) --------------------------------------------------------
+// Sidebar (desktop only; phones use the tabbar) ----------------------------
 .slim-sidebar {
   position: sticky;
   top: 0;
@@ -249,7 +252,10 @@
   padding: space(4) space(3);
   background: color('surface');
   border-right: 1px solid color('line');
-  display: flex;
+  display: none;
+  @include mq('lg') {
+    display: flex;
+  }
   flex-direction: column;
   gap: space(6);
 

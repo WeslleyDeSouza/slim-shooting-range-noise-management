@@ -18,7 +18,6 @@
   }
   @include elem('sidebar') {
     grid-area: sidebar;
-    display: none;
   }
   @include elem('main') {
     grid-area: main;
@@ -34,13 +33,6 @@
     grid-template-areas:
       'sidebar topbar'
       'sidebar main';
-
-    @include elem('sidebar') {
-      display: block;
-    }
-    @include elem('tabbar') {
-      display: none;
-    }
   }
 }
 

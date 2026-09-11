@@ -5,3 +5,4 @@ export * from './lib/annex7';
 export * from './lib/operating-data';
 export * from './lib/limits';
 export * from './lib/traffic-light';
+export * from './lib/distribution';

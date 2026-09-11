@@ -5,16 +5,8 @@
   },
   "menu": {
     "home": "Home",
-    "ranges": "Panoramica piazze di tiro",
-    "range": "Piazza di tiro",
-    "range_overview": "Panoramica",
-    "range_shots": "Numero di colpi",
-    "range_details": "Dettagli",
-    "range_simulation": "Simulazione",
+    "areas": "Panoramica piazze di tiro",
     "data_management": "Gestione dei dati",
-    "range_general": "Generale",
-    "range_master_data": "Dati di base",
-    "range_weapon_assignment": "Assegnazione armi",
     "calculations": "Calcoli",
     "calculations_overview": "Panoramica",
     "calculations_import": "Importazione",
@@ -28,7 +20,15 @@
     "users": "Utenti",
     "mgdm_export": "Esportazione MGDM",
     "system_settings": "Impostazioni di sistema avanzate",
-    "styleguide": "Guida di stile"
+    "styleguide": "Guida di stile",
+    "area": "Piazza di tiro",
+    "area_overview": "Panoramica",
+    "area_shots": "Numero di colpi",
+    "area_details": "Dettagli",
+    "area_simulation": "Simulazione",
+    "area_general": "Generale",
+    "area_master_data": "Dati di base",
+    "area_weapon_assignment": "Assegnazione armi"
   },
   "common": {
     "save": "Salva",
@@ -60,7 +60,8 @@
       "message": "Questa pagina è obsoleta, eliminata o non esiste.",
       "go_home": "Alla pagina iniziale"
     },
-    "generic": "Si è verificato un errore."
+    "generic": "Si è verificato un errore.",
+    "network": "Nessuna connessione al server. Verificare la connessione Internet e riprovare."
   },
   "shell": {
     "org": "armasuisse",
@@ -71,7 +72,6 @@
     "account": "Account utente",
     "signed_in_as": "Connesso come",
     "permission": "Accesso in lettura",
-    "ranges_count": "{{n}} piazze di tiro",
     "account_overview": "Panoramica account",
     "settings": "Impostazioni",
     "sign_out": "Esci",
@@ -85,16 +85,18 @@
     "version": "Versione",
     "more": "Altro",
     "documentation": "Documentazione",
-    "data": "Dati"
-  },
-  "status_range": {
-    "ok": "Rispettato",
-    "warn": "Da verificare",
-    "over": "Superato",
-    "none": "Nessun dato"
+    "data": "Dati",
+    "areas_count": "{{n}} piazze di tiro",
+    "user": "Utente"
   },
   "placeholder": {
     "title": "In preparazione",
     "text": "Quest'area è in fase di realizzazione secondo la sitemap (docs/architecture/sitemap.md)."
+  },
+  "status_area": {
+    "ok": "Rispettato",
+    "warn": "Da verificare",
+    "over": "Superato",
+    "none": "Nessun dato"
   }
 }

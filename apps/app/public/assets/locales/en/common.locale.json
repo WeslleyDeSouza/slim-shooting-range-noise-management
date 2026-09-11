@@ -5,16 +5,8 @@
   },
   "menu": {
     "home": "Home",
-    "ranges": "Shooting ranges overview",
-    "range": "Shooting range",
-    "range_overview": "Overview",
-    "range_shots": "Shot counts",
-    "range_details": "Details",
-    "range_simulation": "Simulation",
+    "areas": "Shooting ranges overview",
     "data_management": "Data management",
-    "range_general": "General",
-    "range_master_data": "Master data",
-    "range_weapon_assignment": "Weapon assignment",
     "calculations": "Calculations",
     "calculations_overview": "Overview",
     "calculations_import": "Import",
@@ -28,7 +20,15 @@
     "users": "Users",
     "mgdm_export": "MGDM export",
     "system_settings": "Advanced system settings",
-    "styleguide": "Styleguide"
+    "styleguide": "Styleguide",
+    "area": "Shooting range",
+    "area_overview": "Overview",
+    "area_shots": "Shot counts",
+    "area_details": "Details",
+    "area_simulation": "Simulation",
+    "area_general": "General",
+    "area_master_data": "Master data",
+    "area_weapon_assignment": "Weapon assignment"
   },
   "common": {
     "save": "Save",
@@ -60,7 +60,8 @@
       "message": "This page is outdated, deleted or does not exist.",
       "go_home": "Go to home"
     },
-    "generic": "An error occurred."
+    "generic": "An error occurred.",
+    "network": "No connection to the server. Please check your internet connection and try again."
   },
   "shell": {
     "org": "armasuisse",
@@ -71,7 +72,6 @@
     "account": "Account",
     "signed_in_as": "Signed in as",
     "permission": "Read access",
-    "ranges_count": "{{n}} shooting ranges",
     "account_overview": "Account overview",
     "settings": "Settings",
     "sign_out": "Sign out",
@@ -85,16 +85,18 @@
     "version": "Version",
     "more": "More",
     "documentation": "Documentation",
-    "data": "Data"
-  },
-  "status_range": {
-    "ok": "Compliant",
-    "warn": "To review",
-    "over": "Exceeded",
-    "none": "No data"
+    "data": "Data",
+    "areas_count": "{{n}} shooting ranges",
+    "user": "User"
   },
   "placeholder": {
     "title": "In preparation",
     "text": "This area is being built according to the sitemap (docs/architecture/sitemap.md)."
+  },
+  "status_area": {
+    "ok": "Compliant",
+    "warn": "To review",
+    "over": "Exceeded",
+    "none": "No data"
   }
 }

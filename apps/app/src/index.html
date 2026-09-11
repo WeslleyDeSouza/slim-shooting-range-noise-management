@@ -15,10 +15,21 @@
     <meta name="robots" content="noindex" />
 
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <link rel="manifest" href="manifest.webmanifest" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1d2025" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1d2025"
+      media="(prefers-color-scheme: dark)"
+    />
 
     <!-- Apply the stored theme before the first paint (no light→dark flash).
          Same key and attributes as SlimThemeService (@ui-slim/design-system). -->
@@ -26,11 +37,14 @@
       (function () {
         try {
           var mode = localStorage.getItem('slim.theme');
+          // Default is light; 'system' follows the OS only when chosen explicitly.
           var dark =
             mode === 'dark' ||
-            (mode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+            (mode === 'system' &&
+              matchMedia('(prefers-color-scheme: dark)').matches);
           var root = document.documentElement;
-          if (mode === 'dark' || mode === 'light') root.setAttribute('data-theme', mode);
+          if (mode !== 'system')
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
           root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
         } catch (e) {
           /* private mode: CSS falls back to prefers-color-scheme */

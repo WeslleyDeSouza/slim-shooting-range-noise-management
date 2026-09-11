@@ -11,7 +11,7 @@
     "show": "Show"
   },
   "tiles": {
-    "ranges": {
+    "area": {
       "title": "Shooting range usage",
       "text": "Overview of all authorised shooting ranges with traffic-light status for quota compliance and noise exposure. From here to shot counts, details and simulation.",
       "foot": "Go to overview",
@@ -24,9 +24,9 @@
       "title": "Data management",
       "text": "Master data of the shooting ranges, weapon assignment and categories, import and export of calculations, users and permissions, MGDM export.",
       "foot": "Go to data management",
-      "kpi_ranges": "shooting ranges",
       "kpi_weapons": "weapons",
-      "kpi_users": "users"
+      "kpi_users": "users",
+      "kpi_areas": "shooting ranges"
     },
     "reports": {
       "title": "Reports",

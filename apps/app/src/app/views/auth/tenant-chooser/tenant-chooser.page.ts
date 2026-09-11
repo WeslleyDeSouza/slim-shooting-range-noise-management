@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
+import { APP_ROUTES } from '@slim/shared';
 import { AuthFacade, Tenant, toAuthError } from '../auth.facade';
 
 const I18N = 'auth';
@@ -90,10 +91,12 @@ export class TenantChooserPage implements OnInit {
       this.success.set(true);
       // After the login the admin dashboard is the destination — a returnUrl is
       // honoured only when it points into the admin (deep link from the guard).
-      const requested = this.route.snapshot.queryParamMap.get('returnUrl') || '';
-      const returnUrl = requested.startsWith('/admin') ? requested : '/admin/dashboard';
+      const requested =
+        this.route.snapshot.queryParamMap.get('returnUrl') || '';
+      const returnUrl = requested.startsWith(APP_ROUTES.admin.root)
+        ? requested
+        : APP_ROUTES.admin.home;
       setTimeout(() => this.router.navigateByUrl(returnUrl), 400);
-      console.log('Tenant chooser: redirecting to', returnUrl);
     } catch (error) {
       this.error.set(
         toAuthError(error, {

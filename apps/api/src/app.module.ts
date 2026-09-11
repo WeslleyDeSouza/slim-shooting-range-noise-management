@@ -33,6 +33,7 @@ import { DataSource } from 'typeorm';
 import { HealthModule } from './core/health-check';
 import { AuthThrottlerGuard } from './core/guards';
 import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA } from './mocks';
+import { AreaModule } from './modules';
 
 const isProd: boolean = env.isProd();
 
@@ -86,7 +87,8 @@ const isProd: boolean = env.isProd();
         ...(<never[]>TenantAdminModule.dbSettings.entities),
         ...(<never[]>TenantAppConfigModule.dbSettings.entities),
         ...(<never[]>TenantAdminEmailWithRoutingModule.dbSettings.entities),
-        // Own modules: spread every module's `DBOptions.entities` here.
+        // Own modules
+        ...(<never[]>AreaModule.DBOptions.entities),
       ],
     }),
 
@@ -110,6 +112,7 @@ const isProd: boolean = env.isProd();
     TenantAdminEmailWithRoutingModule,
 
     // Own modules (apps/api/src/modules)
+    AreaModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthThrottlerGuard },

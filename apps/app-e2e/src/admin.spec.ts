@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { ROUTES } from './support/selectors';
 
-/** Smoke test: the shell renders and the API answers through the proxy. */
+/** Signed-in pages (session from auth.setup.ts). */
 test('serves the entry page with the API status', async ({ page }) => {
-  await page.goto('/');
+  await page.goto(ROUTES.home);
 
   await expect(page).toHaveTitle(/SLIM/i);
-  await expect(page.locator('app-root')).toBeAttached();
   await expect(page.locator('.slim-hello__name')).toBeVisible();
   await expect(page.locator('.slim-home__status .slim-badge')).toHaveText(
     /online/,
@@ -13,7 +13,7 @@ test('serves the entry page with the API status', async ({ page }) => {
 });
 
 test('switches the theme and keeps it', async ({ page }) => {
-  await page.goto('/');
+  await page.goto(ROUTES.home);
   const html = page.locator('html');
 
   await page.getByRole('button', { name: /Design/ }).click();
@@ -24,11 +24,11 @@ test('switches the theme and keeps it', async ({ page }) => {
   await expect(html).toHaveAttribute('data-theme', theme as string);
 });
 
-test('navigates to the ranges overview and filters it', async ({ page }) => {
-  await page.goto('/');
+test('navigates to the area overview and filters it', async ({ page }) => {
+  await page.goto(ROUTES.home);
   await page.locator('.slim-tile').first().click();
 
-  await expect(page).toHaveURL(/\/schiessplaetze$/);
+  await expect(page).toHaveURL(/\/admin\/area$/);
   await expect(page.locator('.slim-table tbody tr')).toHaveCount(8);
 
   await page.locator('.slim-search__input').fill('Thun');
@@ -37,12 +37,13 @@ test('navigates to the ranges overview and filters it', async ({ page }) => {
 
 test('switches the language', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/schiessplaetze');
+  await page.goto(ROUTES.area);
 
-  await page.getByRole('button', { name: 'FR' }).click();
+  await page.getByRole('button', { name: 'FR', exact: true }).click();
   await expect(page.locator('.slim-page__title')).toHaveText(
     /Aperçu des places de tir/,
   );
+  await page.getByRole('button', { name: 'DE', exact: true }).click();
 });
 
 test('renders the styleguide', async ({ page }) => {

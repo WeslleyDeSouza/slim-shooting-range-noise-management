@@ -16,12 +16,13 @@ import {
 } from '@angular/common/http';
 import { DecimalPipe } from '@angular/common';
 import { provideServiceWorker } from '@angular/service-worker';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideAuth } from '@app-galaxy/auth-ui';
 import {
   LANGUAGES_CONSTANTS,
   provideTranslate,
 } from '@app-galaxy/translate-ui';
 import { provideDesignSystem } from '@ui-slim/design-system';
+import { ApiConfiguration } from '@ui-slim/apiClient';
 import { APP_LANGUAGES } from '@slim/shared';
 
 import { routes } from './app.routes';
@@ -38,7 +39,6 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
-    provideStoreDevtools({ maxAge: 25, logOnly: environment.production }),
     provideServiceWorker('ngsw-worker.js', {
       enabled: environment.sw,
       registrationStrategy: 'registerWhenStable',
@@ -55,6 +55,38 @@ export const appConfig: ApplicationConfig = {
         (APP_LANGUAGES as readonly string[]).includes(lang.name),
       ),
     }),
+
+    // Single provideAuth registration (galaxy auth-ui): session store,
+    // interceptors (bearer, tenant token, refresh, replay header) and the
+    // tenant flow. Same configuration as ELO / alco-map.
+    provideAuth({
+      env: environment,
+      mock: {
+        defaultUser: environment.sampleUser,
+      },
+      hooks: {
+        onLogin: 'api/auth/me/session',
+      },
+      endpoints: {
+        signOut: 'logout',
+        encryptCredentials: true,
+      },
+      tenant: {
+        enabled: true,
+        effects: true,
+      },
+      display: {
+        sensitiveData: true,
+      },
+      effects: true,
+    }),
+
+    // Generated client (@ui-slim/apiClient): relative root, the dev server
+    // proxies /api; in production the API serves the app.
+    {
+      provide: ApiConfiguration,
+      useValue: Object.assign(new ApiConfiguration(), { rootUrl: '' }),
+    },
 
     // Design system runtime: theme mode + brand colours (see .claude/styleguide.md).
     // Tenant colours can be passed here or later via SlimThemeService.setColors().

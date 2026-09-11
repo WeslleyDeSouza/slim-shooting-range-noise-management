@@ -36,7 +36,7 @@ export interface SlimThemeColorSet {
 export interface SlimThemeConfig {
   /** localStorage key for the chosen mode. Default `slim.theme`. */
   storageKey: string;
-  /** Mode used when nothing is stored. Default `system`. */
+  /** Mode used when nothing is stored. Default `light`. */
   defaultMode: SlimThemeMode;
   /** Brand colours applied on start (e.g. from a tenant config). */
   colors: SlimThemeColorSet;
@@ -48,7 +48,7 @@ export interface SlimThemeConfig {
 
 export const SLIM_THEME_DEFAULTS: SlimThemeConfig = {
   storageKey: 'slim.theme',
-  defaultMode: 'system',
+  defaultMode: 'light',
   colors: {},
   syncBootstrap: true,
   prefix: 'slim',

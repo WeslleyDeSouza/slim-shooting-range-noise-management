@@ -11,7 +11,7 @@
     "show": "Mostra"
   },
   "tiles": {
-    "ranges": {
+    "area": {
       "title": "Utilizzo delle piazze di tiro",
       "text": "Panoramica di tutte le piazze di tiro autorizzate con semaforo per il rispetto del contingente e le immissioni di rumore. Da qui a numero di colpi, dettagli e simulazione.",
       "foot": "Alla panoramica",
@@ -24,9 +24,9 @@
       "title": "Gestione dei dati",
       "text": "Dati di base delle piazze di tiro, assegnazione e categorie delle armi, importazione ed esportazione dei calcoli, utenti e autorizzazioni, esportazione MGDM.",
       "foot": "Alla gestione dei dati",
-      "kpi_ranges": "piazze di tiro",
       "kpi_weapons": "armi",
-      "kpi_users": "utenti"
+      "kpi_users": "utenti",
+      "kpi_areas": "piazze di tiro"
     },
     "reports": {
       "title": "Analisi",

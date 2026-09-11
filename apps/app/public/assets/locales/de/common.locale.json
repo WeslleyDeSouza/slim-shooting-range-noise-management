@@ -5,16 +5,8 @@
   },
   "menu": {
     "home": "Home",
-    "ranges": "Übersicht Schiessplätze",
-    "range": "Schiessplatz",
-    "range_overview": "Übersicht",
-    "range_shots": "Schusszahlen",
-    "range_details": "Details",
-    "range_simulation": "Simulation",
+    "areas": "Übersicht Schiessplätze",
     "data_management": "Datenverwaltung",
-    "range_general": "Allgemein",
-    "range_master_data": "Stammdaten",
-    "range_weapon_assignment": "Zuordnung Waffen",
     "calculations": "Berechnungen",
     "calculations_overview": "Übersicht",
     "calculations_import": "Import",
@@ -28,7 +20,15 @@
     "users": "Benutzer",
     "mgdm_export": "MGDM Export",
     "system_settings": "Erweiterte Systemeinstellungen",
-    "styleguide": "Styleguide"
+    "styleguide": "Styleguide",
+    "area": "Schiessplatz",
+    "area_overview": "Übersicht",
+    "area_shots": "Schusszahlen",
+    "area_details": "Details",
+    "area_simulation": "Simulation",
+    "area_general": "Allgemein",
+    "area_master_data": "Stammdaten",
+    "area_weapon_assignment": "Zuordnung Waffen"
   },
   "common": {
     "save": "Speichern",
@@ -60,7 +60,8 @@
       "message": "Diese Seite ist veraltet, gelöscht oder existiert nicht.",
       "go_home": "Zur Startseite"
     },
-    "generic": "Es ist ein Fehler aufgetreten."
+    "generic": "Es ist ein Fehler aufgetreten.",
+    "network": "Keine Verbindung zum Server. Bitte prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
   },
   "shell": {
     "org": "armasuisse",
@@ -71,7 +72,6 @@
     "account": "Benutzerkonto",
     "signed_in_as": "Angemeldet als",
     "permission": "Leseberechtigung",
-    "ranges_count": "{{n}} Schiessplätze",
     "account_overview": "Kontoübersicht",
     "settings": "Einstellungen",
     "sign_out": "Abmelden",
@@ -85,16 +85,18 @@
     "version": "Version",
     "more": "Mehr",
     "documentation": "Dokumentation",
-    "data": "Daten"
-  },
-  "status_range": {
-    "ok": "Eingehalten",
-    "warn": "Zu prüfen",
-    "over": "Überschritten",
-    "none": "Keine Daten"
+    "data": "Daten",
+    "areas_count": "{{n}} Schiessplätze",
+    "user": "Benutzer"
   },
   "placeholder": {
     "title": "In Vorbereitung",
     "text": "Dieser Bereich wird gemäss Sitemap (docs/architecture/sitemap.md) umgesetzt."
+  },
+  "status_area": {
+    "ok": "Eingehalten",
+    "warn": "Zu prüfen",
+    "over": "Überschritten",
+    "none": "Keine Daten"
   }
 }

@@ -1,6 +1,6 @@
 # Struktur der Benutzeroberfläche (Sitemap)
 
-Quelle: Anforderungskatalog, *Abbildung 18 – Struktur Benutzeroberfläche (Sitemap)*.
+Quelle: Anforderungskatalog, _Abbildung 18 – Struktur Benutzeroberfläche (Sitemap)_.
 Die Einrückung der Abbildung wurde so gelesen; **offene Punkte** sind unten markiert
 und mit dem Auftraggeber zu bestätigen.
 
@@ -34,55 +34,76 @@ Datenverwaltung
 
 ## Umsetzung: Routen, Views, API-Module
 
-Konvention wie im ELO-Projekt: fachliche Bereiche unter `/`, Verwaltung unter `/admin`.
-Angular-Views liegen unter `apps/app/src/app/views/<bereich>/`, NestJS-Module unter
-`apps/api/src/modules/<modul>/`. Menü-Texte kommen aus `common.locale.json` → `menu.*`.
+Konventionen (wie ELO / alco-map):
 
-| Sitemap | Route | View (apps/app) | Locale-Sektion | API-Modul (apps/api) | Status |
-|---|---|---|---|---|---|
-| Home | `/` | `views/home` | `home` | – (Kennzahlen aus `ranges`) | Mock-Daten |
-| Übersicht Schiessplätze | `/schiessplaetze` | `views/ranges/ranges-overview` | `ranges` | `ranges` | Mock-Daten |
-| Schiessplatz – Übersicht | `/schiessplaetze/:id/uebersicht` | `views/ranges/range-overview` | `ranges` | `ranges` | Platzhalter |
-| Schiessplatz – Schusszahlen | `/schiessplaetze/:id/schusszahlen` | `views/ranges/range-shots` | `ranges` | `shots` | Platzhalter |
-| Schiessplatz – Details | `/schiessplaetze/:id/details` | `views/ranges/range-details` | `ranges` | `ranges` | Platzhalter |
-| Schiessplatz – Simulation | `/schiessplaetze/:id/simulation` | `views/ranges/range-simulation` | `ranges` | `simulation` | Platzhalter |
-| Datenverwaltung › Schiessplatz › Allgemein › Übersicht | `/admin/schiessplatz/uebersicht` | `views/admin/range` | `admin` | `admin-range` | Platzhalter |
-| … › Stammdaten | `/admin/schiessplatz/stammdaten` | `views/admin/range` | `admin` | `admin-range` | Platzhalter |
-| … › Zuordnung Waffen | `/admin/schiessplatz/zuordnung-waffen` | `views/admin/range` | `admin` | `admin-range-weapon` | Platzhalter |
-| … › Berechnungen › Übersicht | `/admin/schiessplatz/berechnungen/uebersicht` | `views/admin/calculations` | `admin` | `admin-calculation` | Platzhalter |
-| … › Berechnungen › Import | `/admin/schiessplatz/berechnungen/import` | `views/admin/calculations` | `admin` | `admin-calculation` | Platzhalter |
-| … › Berechnungen › Export | `/admin/schiessplatz/berechnungen/export` | `views/admin/calculations` | `admin` | `admin-calculation` | Platzhalter |
-| … › Berechnungen › Details | `/admin/schiessplatz/berechnungen/details` | `views/admin/calculations` | `admin` | `admin-calculation` | Platzhalter |
-| Waffen › Kaliber | `/admin/waffen/kaliber` | `views/admin/weapons` | `admin` | `admin-weapon` | Platzhalter |
-| Waffen › Waffe | `/admin/waffen/waffe` | `views/admin/weapons` | `admin` | `admin-weapon` | Platzhalter |
-| Waffen › Waffenkategorie | `/admin/waffen/waffenkategorie` | `views/admin/weapons` | `admin` | `admin-weapon` | Platzhalter |
-| Benutzer | `/admin/benutzer` | `views/admin/users` | `admin` | `@app-galaxy/auth-api` (wie ELO) | Platzhalter |
-| MGDM Export | `/admin/mgdm-export` | `views/admin/mgdm-export` | `admin` | `mgdm-export` | Platzhalter |
-| Erweiterte Systemeinstellungen | `/admin/system` | `views/admin/system` | `admin` | `@app-galaxy/core-api` App-Config (wie ELO) | Platzhalter |
-| Styleguide (Entwicklung) | `/styleguide` | `views/styleguide` | – | – | umgesetzt |
+- **Pfade sind englisch** und stehen zentral in `libs/shared/constants/src/lib/app-routes.constants.ts`
+  (`ROUTE_SEGMENT` für den Router, `APP_ROUTES` für Links, Guards, Redirects). Dieselbe Konstante
+  nutzt das Backend für den App-Katalog (`apps/api/src/mocks/main.mock-data.ts` →
+  `API_APPS_MAPPING`, `API_CATEGORY_MAPPING`, `API_MOCK_DATA.customApps`).
+- **`/auth/*`** = öffentliche Anmeldeseiten (`views/auth`, `app-auth-layout`), aus ELO / alco-map übernommen
+  (Login, 2FA, Mandantenwahl, Passwort zurücksetzen, E-Mail bestätigen) — Backend ist `@app-galaxy/auth-api`.
+- **`/admin/*`** = alles hinter dem Login (`views/admin`, `app-admin-layout` mit Topbar / Sidebar / Tabbar),
+  Guard `adminGuard` in `app.routes.ts`, `returnUrl` beim Login.
+- Angular-Views unter `apps/app/src/app/views/admin/<bereich>/`, NestJS-Module unter
+  `apps/api/src/modules/<modul>/`. Menü-Texte aus `common.locale.json` → `menu.*`.
+- Begriff **Area = Schiessplatz** (ELO-Namenskonvention) in Code, Routen und API.
 
-Platzhalter rendern `views/placeholder` mit Breadcrumbs und Titel, damit Navigation
-und Menü bereits jetzt vollständig sind (`apps/app/src/app/app.routes.ts`).
+| Sitemap                                                | Route                                                                                                     | View (apps/app)                            | Locale  | API-Modul                                | App-Id                       | Status      |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------- | ---------------------------------------- | ---------------------------- | ----------- |
+| Anmeldung                                              | `/auth/login`, `/auth/two-fa-login`, `/auth/tenant-login`, `/auth/recover-password`, `/auth/verify-email` | `views/auth/*`                             | `auth`  | `@app-galaxy/auth-api`                   | –                            | umgesetzt   |
+| Home                                                   | `/admin`                                                                                                  | `views/admin/home`                         | `home`  | `area` (summary, dashboard)              | –                            | umgesetzt   |
+| Übersicht Schiessplätze                                | `/admin/area`                                                                                             | `views/admin/area/area-overview`           | `area`  | `area` (`GET admin/area`)                | 40 `ADMIN_AREA`              | umgesetzt   |
+| Schiessplatz – Übersicht                               | `/admin/area/:id/overview`                                                                                | `views/admin/area/…`                       | `area`  | `area`                                   | 40                           | Platzhalter |
+| Schiessplatz – Schusszahlen                            | `/admin/area/:id/shots`                                                                                   | `views/admin/area/…`                       | `area`  | `shots`                                  | 40                           | Platzhalter |
+| Schiessplatz – Details                                 | `/admin/area/:id/details`                                                                                 | `views/admin/area/…`                       | `area`  | `area`                                   | 40                           | Platzhalter |
+| Schiessplatz – Simulation                              | `/admin/area/:id/simulation`                                                                              | `views/admin/area/…`                       | `area`  | `simulation`                             | 40                           | Platzhalter |
+| Datenverwaltung › Schiessplatz › Allgemein › Übersicht | `/admin/data-management/area/overview`                                                                    | `views/admin/data-management/area`         | `admin` | `area` (CRUD)                            | 41 `ADMIN_DATA_AREA`         | Platzhalter |
+| … › Stammdaten                                         | `/admin/data-management/area/master-data`                                                                 | dito                                       | `admin` | `area`                                   | 41                           | Platzhalter |
+| … › Zuordnung Waffen                                   | `/admin/data-management/area/weapon-assignment`                                                           | dito                                       | `admin` | `area-weapon`                            | 41                           | Platzhalter |
+| … › Berechnungen › Übersicht                           | `/admin/data-management/area/calculations/overview`                                                       | `views/admin/data-management/calculations` | `admin` | `calculation`                            | 42 `ADMIN_DATA_CALCULATIONS` | Platzhalter |
+| … › Berechnungen › Import                              | `/admin/data-management/area/calculations/import`                                                         | dito                                       | `admin` | `calculation`                            | 42                           | Platzhalter |
+| … › Berechnungen › Export                              | `/admin/data-management/area/calculations/export`                                                         | dito                                       | `admin` | `calculation`                            | 42                           | Platzhalter |
+| … › Berechnungen › Details                             | `/admin/data-management/area/calculations/details`                                                        | dito                                       | `admin` | `calculation`                            | 42                           | Platzhalter |
+| Waffen › Kaliber                                       | `/admin/data-management/weapons/caliber`                                                                  | `views/admin/data-management/weapons`      | `admin` | `weapon`                                 | 43 `ADMIN_DATA_WEAPONS`      | Platzhalter |
+| Waffen › Waffe                                         | `/admin/data-management/weapons/weapon`                                                                   | dito                                       | `admin` | `weapon`                                 | 43                           | Platzhalter |
+| Waffen › Waffenkategorie                               | `/admin/data-management/weapons/weapon-category`                                                          | dito                                       | `admin` | `weapon`                                 | 43                           | Platzhalter |
+| Benutzer                                               | `/admin/data-management/users`                                                                            | `views/admin/data-management/users`        | `admin` | `@app-galaxy/auth-api` (AdminUsers)      | galaxy                       | Platzhalter |
+| MGDM Export                                            | `/admin/data-management/mgdm-export`                                                                      | `views/admin/data-management/mgdm-export`  | `admin` | `mgdm-export`                            | 44 `ADMIN_DATA_MGDM_EXPORT`  | Platzhalter |
+| Erweiterte Systemeinstellungen                         | `/admin/data-management/system`                                                                           | `views/admin/data-management/system`       | `admin` | `@app-galaxy/core-api` (TenantAppConfig) | 45 `ADMIN_DATA_SYSTEM`       | Platzhalter |
+| Styleguide (Entwicklung)                               | `/styleguide`                                                                                             | `views/styleguide`                         | –       | –                                        | –                            | umgesetzt   |
 
-## Navigation (Shell)
+Platzhalter rendern `views/admin/_placeholder` mit Breadcrumbs und Titel, damit
+Navigation und Menü bereits jetzt vollständig sind (`views/admin/admin.routes.ts`).
+
+## Navigation (app-admin-layout)
 
 Aus dem Mock `_mocks/home/index.html` und dem ELO-Admin-Shell:
 
 - **Kopfzeile** (alle Geräte): Brand mit Schweizer Kreuz, Organisation (ab Tablet),
   Sprache DE/FR/IT/EN (Desktop im Kopf, Mobile im Hauptmenü), Hell/Dunkel,
-  Hauptmenü (Hilfe & Kontakt, Applikation/Version), Benutzermenü (Konto, Einstellungen, Abmelden).
+  Hauptmenü (Hilfe & Kontakt, Applikation/Version), Benutzermenü (Konto, Einstellungen,
+  Mandant wechseln, Abmelden).
 - **Seitenleiste** (Desktop ≥ 1024 px): Arbeitsbereich → Startseite, Übersicht Schiessplätze;
   Datenverwaltung → Schiessplatz, Waffen, Benutzer, MGDM Export, Erweiterte Systemeinstellungen.
 - **Tabbar** (Mobile): Start, Schiessplatz, Daten, Benutzer.
 
 ## Seiten
 
+### Anmeldung (`/auth`)
+
+Übernommen aus ELO / alco-map, Design auf die SLIM-Tokens umgestellt (`auth-layout.component.scss`):
+dunkles Marken-Panel auf Desktop, Karte mit Sprache und Hell/Dunkel. Ablauf: Login →
+(2FA) → Mandant wählen → `returnUrl` oder `/admin`. Passwort-Reset per Mail-Link,
+E-Mail-Bestätigung, erzwungener Passwortwechsel beim ersten Login. Demo-User im Dev:
+`APP_DEFAULT_USER` / `APP_DEFAULT_PASSWORD` aus `.env` (Seed in `apps/api/src/mocks`).
+
 ### Home (Einstiegsseite)
 
-Begrüssung nach Tageszeit, Name, Datum und Anzahl berechtigter Schiessplätze;
+Begrüssung nach Tageszeit, Name aus der Session, Datum und Anzahl berechtigter Schiessplätze;
 Hinweis (Warnung), wenn Plätze «zu prüfen» oder «überschritten» sind, mit Absprung
-in die gefilterte Übersicht; drei Kacheln: Schiessplatz-Nutzungen (Ampel-KPIs),
-Datenverwaltung (Stammdaten-KPIs), Auswertungen (in Vorbereitung).
+in die gefilterte Übersicht; drei Kacheln: Schiessplatz-Nutzungen (Ampel-KPIs aus
+`GET admin/area/summary`), Datenverwaltung (Zähler aus `GET admin/area/dashboard`),
+Auswertungen (in Vorbereitung).
 
 ### Übersicht Schiessplätze (Kapitel 5.8 / 5.9)
 
@@ -92,15 +113,19 @@ Keine Daten); Hinweis «Nur berechtigte Schiessplätze»; Tabelle mit Bezeichnun
 Koordinationsabschnitt-Nr., Sachplan-Nr., Kontingent (Ampel), Lärmbelastung (Ampel),
 Navigation (Übersicht, Schusszahlen); Zeilenklick öffnet die Schiessplatz-Übersicht;
 Pager; Legende. Auf dem Smartphone wird die Tabelle zu Karten (`slim-table--stack`).
+Daten: `GET admin/area` (mandantenbezogen, `AreaFacade`).
 
-Ampel-Status (`RangeStatus`): `ok` Eingehalten · `warn` Zu prüfen · `over` Überschritten ·
-`none` Keine Daten. «Handlungsbedarf» = `warn` oder `over` bei Kontingent oder Lärm.
+Ampel-Status (`AreaStatus`, aus dem API-DTO): `ok` Eingehalten · `warn` Zu prüfen ·
+`over` Überschritten · `none` Keine Daten. «Handlungsbedarf» = `warn` oder `over` bei
+Kontingent oder Lärm.
 
 ## Offene Punkte
 
-1. Hierarchie von *Allgemein* / *Berechnungen* unter *Schiessplatz* (aus der Einrückung
+1. Hierarchie von _Allgemein_ / _Berechnungen_ unter _Schiessplatz_ (aus der Einrückung
    der Abbildung abgeleitet).
-2. *Kaliber/Waffe* als Zwischenebene über Kaliber, Waffe, Waffenkategorie – oder eigener Eintrag?
+2. _Kaliber/Waffe_ als Zwischenebene über Kaliber, Waffe, Waffenkategorie – oder eigener Eintrag?
 3. Sachplan-Nr.: im Mock leer («—»); Herkunft und Pflichtfeld klären.
-4. Benutzer / Systemeinstellungen: Übernahme der ELO-Module (`@app-galaxy/auth-api`,
-   `core-api`) oder eigene Umsetzung.
+4. Ampel-Status: aktuell Spalten am Schiessplatz (`quotaStatus`, `noiseStatus`); sobald das
+   Berechnungsmodul steht, werden sie daraus abgeleitet.
+5. Benutzer / Systemeinstellungen: galaxy-Module (`@app-galaxy/auth-api`, `core-api`) sind
+   im Backend bereits eingebunden; UI folgt.

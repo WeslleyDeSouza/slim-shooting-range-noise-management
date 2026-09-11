@@ -6,10 +6,13 @@ import { nxE2EPreset } from '@nx/playwright/preset';
 import { workspaceRoot } from '@nx/devkit';
 import { config as loadEnv } from 'dotenv';
 
+import { STORAGE_STATE } from './src/support/storage';
+
 /**
- * Load the workspace env for the specs and for the API, since `webServer`
- * inherits this process's env. `.env.example` is the fallback because CI has
- * no `.env`; dotenv never overwrites what is already in `process.env`.
+ * Load the workspace env — for the specs (which user to sign in as, see
+ * support/credentials.ts) and for the API, since `webServer` inherits this
+ * process's env. `.env.example` is the fallback because CI has no `.env`;
+ * dotenv never overwrites what is already in `process.env`.
  */
 const envFile = existsSync(join(workspaceRoot, '.env'))
   ? '.env'
@@ -26,7 +29,8 @@ export default defineConfig({
     timeout: 10000,
   },
   retries: isCI ? 2 : 1,
-  // Serial on purpose: the specs share one API instance and its state.
+  // Serial on purpose: the specs share one API instance and one session
+  // (signing in again deletes the device's previous session rows).
   fullyParallel: false,
   workers: 1,
   forbidOnly: isCI,
@@ -56,9 +60,17 @@ export default defineConfig({
     },
   ],
   projects: [
+    // Signs in once; the admin project starts from that session.
+    // `login.spec.ts` opts back out with its own empty storageState.
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      testMatch: ['**/src/*.spec.ts'],
+      use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
+      dependencies: ['setup'],
     },
   ],
 });

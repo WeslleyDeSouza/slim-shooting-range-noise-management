@@ -1,35 +1,64 @@
+import {
+  createTestSourceOptions,
+  TenantEntity,
+  TenantUserRoleEntity,
+  TenantUserRoleStructureEntity,
+  TestMockTenantMock,
+} from '@app-galaxy/core-api';
+import { UserEntity, SessionEntity } from '@app-galaxy/auth-api';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import type { DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { mockUserId } from './constants';
 
-/**
- * In-memory SQLite options for service tests. Stand-in for
- * `createTestSourceOptions` of @app-galaxy/core-api: once the galaxy
- * packages are added, swap this for that call and put the tenant/user
- * entities into the base list (see alco-map `libs/api/tests/utils.ts`).
- */
-export const createTestSourceOptions = (
-  entities: unknown[],
-): DataSourceOptions => ({
-  type: 'sqlite',
-  database: ':memory:',
-  dropSchema: true,
-  synchronize: true,
+const TenantDBOptionWithUser = {
+  entities: [
+    TenantEntity,
+    UserEntity,
+    SessionEntity,
+    TenantUserRoleEntity,
+    TenantUserRoleStructureEntity,
+  ],
+};
+
+const config: DataSourceOptions = createTestSourceOptions({
+  entities: TenantDBOptionWithUser.entities,
+  logger: 'simple-console',
   logging: false,
-  entities: entities as never[],
 });
 
 /**
- * In-memory SQLite TypeORM setup for service tests (ELO pattern): the base
- * entities plus the entities under test, followed by the modules to import.
+ * In-memory SQLite TypeORM setup for service tests (ELO / alco-map pattern):
+ * galaxy tenant/user tables plus the entities under test.
  */
 export const testDbSetup = (
-  mods: unknown[] = [],
+  mods?: unknown[],
   customEntities: unknown[] = [],
 ) => {
-  const entities = [customEntities].flat(2) as never[];
   return [
-    TypeOrmModule.forRoot(createTestSourceOptions(entities)),
-    TypeOrmModule.forFeature(entities),
-    ...(mods as never[]),
+    TypeOrmModule.forRoot(config),
+    TypeOrmModule.forFeature(
+      [config.entities as unknown[], customEntities].flat(2) as never[],
+    ),
+    ...((mods as never[]) || []),
   ];
+};
+
+export const testDbSeedBeforeEach = async (
+  datasource: DataSource = new DataSource(config),
+) => {
+  await TestMockTenantMock.fill.All(datasource);
+
+  await datasource.query(
+    'insert into auth_user (userId, email, host,password, pin, salt, authCreatedAt)' +
+      'values (?,?,?,?,?,?,?)',
+    [
+      mockUserId,
+      process.env['APP_DEFAULT_USER'] || 'user@mail.com',
+      (process.env['APP_DEFAULT_USER'] || 'user@mail.com').split('@')[1],
+      process.env['APP_DEFAULT_PASSWORD'] || 'user@mail.com',
+      '1234',
+      '1234@test',
+      new Date().getFullYear(),
+    ],
+  );
 };

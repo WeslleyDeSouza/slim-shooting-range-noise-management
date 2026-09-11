@@ -5,16 +5,8 @@
   },
   "menu": {
     "home": "Accueil",
-    "ranges": "Aperçu des places de tir",
-    "range": "Place de tir",
-    "range_overview": "Aperçu",
-    "range_shots": "Nombre de coups",
-    "range_details": "Détails",
-    "range_simulation": "Simulation",
+    "areas": "Aperçu des places de tir",
     "data_management": "Gestion des données",
-    "range_general": "Général",
-    "range_master_data": "Données de base",
-    "range_weapon_assignment": "Attribution des armes",
     "calculations": "Calculs",
     "calculations_overview": "Aperçu",
     "calculations_import": "Importation",
@@ -28,7 +20,15 @@
     "users": "Utilisateurs",
     "mgdm_export": "Export MGDM",
     "system_settings": "Paramètres système avancés",
-    "styleguide": "Guide de style"
+    "styleguide": "Guide de style",
+    "area": "Place de tir",
+    "area_overview": "Aperçu",
+    "area_shots": "Nombre de coups",
+    "area_details": "Détails",
+    "area_simulation": "Simulation",
+    "area_general": "Général",
+    "area_master_data": "Données de base",
+    "area_weapon_assignment": "Attribution des armes"
   },
   "common": {
     "save": "Enregistrer",
@@ -60,7 +60,8 @@
       "message": "Cette page est obsolète, supprimée ou n'existe pas.",
       "go_home": "Vers l'accueil"
     },
-    "generic": "Une erreur s'est produite."
+    "generic": "Une erreur s'est produite.",
+    "network": "Pas de connexion au serveur. Veuillez vérifier votre connexion Internet et réessayer."
   },
   "shell": {
     "org": "armasuisse",
@@ -71,7 +72,6 @@
     "account": "Compte utilisateur",
     "signed_in_as": "Connecté en tant que",
     "permission": "Accès en lecture",
-    "ranges_count": "{{n}} places de tir",
     "account_overview": "Aperçu du compte",
     "settings": "Paramètres",
     "sign_out": "Se déconnecter",
@@ -85,16 +85,18 @@
     "version": "Version",
     "more": "Plus",
     "documentation": "Documentation",
-    "data": "Données"
-  },
-  "status_range": {
-    "ok": "Respecté",
-    "warn": "À vérifier",
-    "over": "Dépassé",
-    "none": "Pas de données"
+    "data": "Données",
+    "areas_count": "{{n}} places de tir",
+    "user": "Utilisateur"
   },
   "placeholder": {
     "title": "En préparation",
     "text": "Cette zone est en cours de réalisation selon le plan du site (docs/architecture/sitemap.md)."
+  },
+  "status_area": {
+    "ok": "Respecté",
+    "warn": "À vérifier",
+    "over": "Dépassé",
+    "none": "Pas de données"
   }
 }

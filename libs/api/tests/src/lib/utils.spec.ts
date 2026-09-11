@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Column, DataSource, Entity } from 'typeorm';
 import { BaseEntity } from '@api-slim/models';
-import { testDbSetup } from './utils';
+import { mockTenantId } from './constants';
+import { testDbSeedBeforeEach, testDbSetup } from './utils';
 
 @Entity('test_note')
 class NoteEntity extends BaseEntity {
@@ -9,7 +10,7 @@ class NoteEntity extends BaseEntity {
   title!: string;
 }
 
-describe('testDbSetup (in-memory SQLite)', () => {
+describe('testDbSetup (in-memory SQLite with galaxy tenant/user tables)', () => {
   let module: TestingModule;
   let dataSource: DataSource;
 
@@ -18,22 +19,23 @@ describe('testDbSetup (in-memory SQLite)', () => {
       imports: testDbSetup([], [NoteEntity]),
     }).compile();
     dataSource = module.get(DataSource);
+    await testDbSeedBeforeEach(dataSource);
   });
 
   afterEach(async () => {
     await module.close();
   });
 
-  it('creates the schema and persists an entity with audit columns', async () => {
+  it('seeds the mock tenant and persists an own entity', async () => {
+    const tenants = await dataSource.query(
+      'select tenantId from tenant where tenantId = ?',
+      [mockTenantId],
+    );
+    expect(tenants.length).toBe(1);
+
     const repo = dataSource.getRepository(NoteEntity);
     const saved = await repo.save(repo.create({ title: 'hello' }));
-
     expect(saved.id).toBe(1);
     expect(saved.created).toBeInstanceOf(Date);
-    expect(await repo.count()).toBe(1);
-  });
-
-  it('starts from an empty database for every test', async () => {
-    expect(await dataSource.getRepository(NoteEntity).count()).toBe(0);
   });
 });

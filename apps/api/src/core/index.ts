@@ -1,2 +1,2 @@
-export * from './config';
 export * from './health-check';
+export * from './guards';

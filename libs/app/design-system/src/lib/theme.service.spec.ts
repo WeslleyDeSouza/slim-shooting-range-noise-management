@@ -34,11 +34,16 @@ describe('SlimThemeService', () => {
     });
   });
 
-  it('follows the OS in system mode and leaves data-theme to CSS', () => {
+  it('defaults to light and ignores the OS until system mode is chosen', () => {
     mockMatchMedia(true);
     const service = TestBed.inject(SlimThemeService);
     TestBed.tick();
 
+    expect(service.mode()).toBe('light');
+    expect(root().getAttribute('data-theme')).toBe('light');
+
+    service.setMode('system');
+    TestBed.tick();
     expect(service.mode()).toBe('system');
     expect(service.resolved()).toBe('dark');
     expect(root().hasAttribute('data-theme')).toBe(false);
@@ -70,10 +75,18 @@ describe('SlimThemeService', () => {
     service.setColors({ primary: '#0066cc', primaryContrast: 'white' });
     TestBed.tick();
 
-    expect(root().style.getPropertyValue('--slim-color-primary')).toBe('#0066cc');
-    expect(root().style.getPropertyValue('--slim-color-primary-rgb')).toBe('0, 102, 204');
-    expect(root().style.getPropertyValue('--slim-color-primary-contrast')).toBe('white');
-    expect(root().style.getPropertyValue('--slim-color-primary-contrast-rgb')).toBe('');
+    expect(root().style.getPropertyValue('--slim-color-primary')).toBe(
+      '#0066cc',
+    );
+    expect(root().style.getPropertyValue('--slim-color-primary-rgb')).toBe(
+      '0, 102, 204',
+    );
+    expect(root().style.getPropertyValue('--slim-color-primary-contrast')).toBe(
+      'white',
+    );
+    expect(
+      root().style.getPropertyValue('--slim-color-primary-contrast-rgb'),
+    ).toBe('');
 
     service.resetColors();
     TestBed.tick();

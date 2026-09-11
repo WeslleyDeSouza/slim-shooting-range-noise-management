@@ -2,7 +2,8 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 
 # Workspace
 
-- Nx monorepo: `apps/app` (Angular 22, PWA), `apps/api` (NestJS 12 + TypeORM), `apps/app-e2e` (Playwright).
+- Nx monorepo: `apps/app` (Angular 22, PWA), `apps/api` (NestJS 12 + TypeORM + `@app-galaxy/*` auth/tenant), `apps/app-e2e` (Playwright).
+- App structure: `views/auth` (public auth pages, `app-auth-layout`), `views/admin` (everything behind the login, `app-admin-layout`), `views/styleguide`. Sitemap + routes: `docs/architecture/sitemap.md`.
 - Shared code: `libs/api/*` (Nest only), `libs/shared/*` (dependency-free, used by both), `libs/app/*` (Angular only).
 - Path aliases live in `tsconfig.base.json` (`@api-slim/*`, `@ui-slim/*`, `@slim/shared`).
 - Run: `npx nx serve api` (port 3333), `npx nx serve app` (port 4200, proxies `/api`), `npm run all` for both.
@@ -50,6 +51,32 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
 
+## Data loading, state and facades (ELO pattern — NO NgRx)
+
+- Do NOT use `@ngrx/*` in app code (eslint blocks it). `@ngrx/store` is installed only because
+  `@app-galaxy/auth-ui` needs it internally (`provideStore` in `bootstrap.ts`, nothing else).
+- State lives in a **facade per feature** (`apps/app/src/app/core/<feature>/<feature>.facade.ts`) that extends
+  `SignalStore<State>` (`core/store/signal-store.ts`): `select()` for derived signals, `patch()` for updates.
+  The facade calls the generated API client (`@ui-slim/apiClient`) and exposes signals; pages never call HTTP.
+- Pages that load data **extend `ComponentBase` from `@app-galaxy/sdk-ui`** and implement `getData()`.
+  ComponentBase calls it on init and on every `DATA_RELOAD` emit (tenant switch, saves). Do NOT load data in
+  `ngOnInit()` / constructors:
+  ```ts
+  export class AreaOverviewComponent extends ComponentBase {
+    private readonly area = inject(AreaFacade);
+    /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
+    override getData(): void {
+      void this.area.load();
+    }
+  }
+  ```
+  After a mutation, `this.emit(EDataEmitterAction.DATA_RELOAD)` refreshes every mounted page.
+- Forms extend `ComponentFormBase` (same lib): `save` / `delete` / `cancel` outputs, `getId()`.
+- Routes and links: never hard-code `/admin/...`. Use `ROUTE_SEGMENT` (router config) and `APP_ROUTES`
+  (links, guards, redirects) from `@slim/shared`; the API app catalogue (`apps/api/src/mocks`) uses the same constant.
+- Demo data lives ONLY in the API (`apps/api/src/mocks`, `modules/<feature>/<feature>.mock-data.ts`, seeded in
+  non-production). The app has no mock data and no hand-written models.
+
 ## Services
 
 - Design services around a single responsibility
@@ -65,12 +92,11 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
   (`tools/swagger.generator.js`, ng-openapi-gen) → `libs/app/generated/src/core` = `@ui-slim/apiClient`
   (models, services, `ApiConfiguration`). `src/core` is git-ignored; the spec is committed.
 - **Never hand-write API interfaces, DTO types or HTTP calls in the app.** Import models and
-  services from `@ui-slim/apiClient` (`import type { RangeDto } from '@ui-slim/apiClient'`,
-  `inject(RangesService).rangesFindAll()`), wrap them in app facades/services under `apps/app/src/app/core`.
+  services from `@ui-slim/apiClient` (`import type { AreaResultDto } from '@ui-slim/apiClient'`,
+  `inject(AdminAreaService).adminAreaList()`), wrap them in facades under `apps/app/src/app/core`.
 - Changing the API contract = change the DTO/controller in `apps/api`, restart the API (or
   `npm run ng-swagger` from the committed spec), then use the regenerated types.
-- Mock data in the app (e.g. `core/ranges/ranges.mock.ts`) is typed with the generated models
-  as soon as the corresponding API module exists; local model files are only a stopgap.
+- No mock data and no model files in the app: demo data is seeded by the API (`apps/api/src/mocks`).
 
 ## Documentation
 
@@ -98,6 +124,6 @@ Read `.claude/styleguide.md` before writing any template or stylesheet.
 - In component stylesheets: `@use 'slim/abstracts' as slim;` — never raw hex values or px spacing.
 - Design-system blocks use the `slim-` prefix; app/feature blocks get their own short prefix.
 - Component selectors use the `app` prefix (`app-*`); design-system components use `slim-*`.
-- Page structure follows the mock `_mocks/home/index.html` and the ELO admin shell: `views/shell` (topbar, sidebar, tabbar),
+- Page structure follows the mock `_mocks/home/index.html` and the ELO admin shell: `views/admin/_layout` (app-admin-layout: topbar, sidebar, tabbar),
   `slim-page` with breadcrumbs + header + body, cards / tiles / tables from the design system.
 - All UI text via `translate` pipe with keys from `apps/app/public/assets/locales/<lang>/<section>.locale.json`.

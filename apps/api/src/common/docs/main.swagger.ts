@@ -15,7 +15,7 @@ export const SWAGGER_SPEC_FILE = 'config/api-gateway-swagger-spec.json';
  * `npm run ng-swagger` — so every DTO / controller change reaches the app
  * as typed models and services without hand-written interfaces.
  */
-export function setupSwagger(app: INestApplication, path = 'api/docs'): void {
+export function setupSwagger(app: INestApplication, path = 'docs'): void {
   const config = new DocumentBuilder()
     .setTitle(process.env['APP_NAME'] || 'SLIM API')
     .setDescription('Schiesslärmimmissions-Management – REST API')
@@ -46,12 +46,22 @@ export function setupSwagger(app: INestApplication, path = 'api/docs'): void {
     // Strip the "Controller" suffix so generated service names read
     // `RangesService`, not `RangesControllerService`.
     writeFileSync(file, JSON.stringify(document).replace(/Controller/g, ''));
-    logger.log(`Spec written to ${SWAGGER_SPEC_FILE}, generating @ui-slim/apiClient …`);
+    logger.log(
+      `Spec written to ${SWAGGER_SPEC_FILE}, generating @ui-slim/apiClient …`,
+    );
 
-    exec('npm run ng-swagger', { cwd: process.cwd() }, (error, _stdout, stderr) => {
-      if (error) logger.error(`ng-swagger failed: ${stderr || error.message}`);
-      else logger.log('@ui-slim/apiClient regenerated (libs/app/generated/src/core)');
-    });
+    exec(
+      'npm run ng-swagger',
+      { cwd: process.cwd() },
+      (error, _stdout, stderr) => {
+        if (error)
+          logger.error(`ng-swagger failed: ${stderr || error.message}`);
+        else
+          logger.log(
+            '@ui-slim/apiClient regenerated (libs/app/generated/src/core)',
+          );
+      },
+    );
   } catch (e) {
     logger.error(`Could not write swagger spec: ${(e as Error).message}`);
   }

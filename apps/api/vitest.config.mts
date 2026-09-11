@@ -19,7 +19,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['src/**/*.spec.ts', '../../libs/api/**/*.spec.ts'],
+    include: [
+      'src/**/*.spec.ts',
+      '../../libs/api/**/*.spec.ts',
+      '../../libs/shared/**/*.spec.ts',
+    ],
     setupFiles: ['./vitest.setup.ts'],
     coverage: {
       provider: 'v8',

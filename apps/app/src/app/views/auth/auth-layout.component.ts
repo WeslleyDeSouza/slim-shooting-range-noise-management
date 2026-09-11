@@ -8,16 +8,16 @@ import {
   signal,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
+import { SlimThemeToggleComponent } from '@ui-slim/design-system';
 
 const I18N = 'auth';
 
 /**
- * Rotating notes of the brand panel. The panel is seen only by administrators
- * signing in, so these state things that help them (where the reporting flow
- * lives, where the help is, that changes are logged) instead of advertising
- * the product — and carry no invented figures.
+ * Rotating notes of the brand panel (seen by people signing in): what the
+ * application does, where help is, that changes are traceable. No invented
+ * figures.
  */
 const FACTS = [
   {
@@ -34,11 +34,16 @@ const FACTS = [
   },
 ];
 
+/**
+ * Layout of the auth pages (ELO / alco-map redesign): dark brand panel on
+ * desktop, card side with language switch, theme toggle and the routed
+ * page. Styles use the SLIM tokens (auth-layout.component.scss).
+ */
 @Component({
   selector: 'app-auth-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  imports: [RouterLink, RouterOutlet, TranslatePipe],
+  imports: [RouterOutlet, TranslatePipe, SlimThemeToggleComponent],
   templateUrl: './auth-layout.component.html',
   styleUrl: './auth-layout.component.scss',
 })
@@ -60,7 +65,7 @@ export class AuthLayoutComponent {
     this.langChanged();
     const raw =
       this.translate.translate(`${I18N}.brand_headline`) ??
-      'Adminbereich der<br><em>SLIM</em>';
+      'Schiesslärmimmissions-<br><em>Management</em>';
     return this.sanitizer.bypassSecurityTrustHtml(raw);
   });
 

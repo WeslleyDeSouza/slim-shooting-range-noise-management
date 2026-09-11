@@ -266,8 +266,28 @@ export class AuthFacade {
     return this.store.eventEmitter.subscribe(handler);
   }
 
+  /**
+   * Full display name (first + last), else the given name / e-mail local
+   * part, else empty. Reads the store's `changed` signal so computed() callers
+   * update when the session is (re)written (login, me/session, tenant).
+   */
+  currentUserName(): string {
+    (this.store as unknown as { changed?: () => unknown }).changed?.();
+    const user = (
+      this.sessionService.session as {
+        user?: { firstName?: string | null; lastName?: string | null };
+      } | null
+    )?.user;
+    const full = [user?.firstName, user?.lastName]
+      .map((p) => (p || '').trim())
+      .filter(Boolean)
+      .join(' ');
+    return full || this.currentUserFirstName();
+  }
+
   /** The signed-in user's given name, for greetings. */
   currentUserFirstName(): string {
+    (this.store as unknown as { changed?: () => unknown }).changed?.();
     const user = (
       this.sessionService.session as {
         user?: {
@@ -348,6 +368,12 @@ export function toAuthError(
     error?: { message?: string | string[] } | string;
     message?: string;
   };
+
+  // Network first: with the fetch backend a failed request is status 0 and the
+  // body is a TypeError('Failed to fetch') — not a server message.
+  if (err?.status === 0 || err?.error instanceof TypeError) {
+    return fallbacks.network;
+  }
 
   const body = err?.error;
   const bodyMessage =

@@ -4,7 +4,7 @@
   display: block;
 }
 
-.ranges {
+.area {
   &__status {
     width: 100%;
     @include slim.mq('md') {

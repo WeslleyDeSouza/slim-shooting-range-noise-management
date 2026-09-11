@@ -11,7 +11,7 @@
     "show": "Anzeigen"
   },
   "tiles": {
-    "ranges": {
+    "area": {
       "title": "Schiessplatz-Nutzungen",
       "text": "Übersicht aller berechtigten Schiessplätze mit Ampelstatus für Kontingent-Einhaltung und Lärmbelastung. Von hier zu Schusszahlen, Details und Simulation.",
       "foot": "Zur Übersicht",
@@ -24,9 +24,9 @@
       "title": "Datenverwaltung",
       "text": "Stammdaten der Schiessplätze, Zuordnung und Kategorien der Waffen, Berechnungen importieren und exportieren, Benutzer und Berechtigungen, MGDM-Export.",
       "foot": "Zur Datenverwaltung",
-      "kpi_ranges": "Schiessplätze",
       "kpi_weapons": "Waffen",
-      "kpi_users": "Benutzer"
+      "kpi_users": "Benutzer",
+      "kpi_areas": "Schiessplätze"
     },
     "reports": {
       "title": "Auswertungen",

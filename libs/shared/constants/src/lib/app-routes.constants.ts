@@ -31,6 +31,7 @@ export const ROUTE_SEGMENT = {
   weaponCategory: 'weapon-category',
   users: 'users',
   roles: 'roles',
+  logs: 'logs',
   apps: 'apps',
   create: 'create',
   edit: 'edit',
@@ -122,6 +123,8 @@ export const APP_ROUTES = {
       rolesCreate: join(S.admin, S.dataManagement, S.roles, S.create),
       rolesEdit: (id: string) => join(S.admin, S.dataManagement, S.roles, S.edit, id),
       apps: join(S.admin, S.dataManagement, S.apps),
+      /** Logbuch (slm 56) */
+      logs: join(S.admin, S.dataManagement, S.logs),
       appsCreate: join(S.admin, S.dataManagement, S.apps, S.create),
       appsEdit: (id: string) => join(S.admin, S.dataManagement, S.apps, S.edit, id),
       mgdmExport: join(S.admin, S.dataManagement, S.mgdmExport),

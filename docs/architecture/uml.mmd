@@ -229,6 +229,21 @@ OPERATIONS: Broad range of activities related to business operations."
     text metaValue
     datetime createdAt
   }
+  core_log_user {
+    text tenantId
+    varchar logId PK
+    varchar userId FK
+    integer isSystem
+    text section
+    text action
+    text refType
+    text refId
+    text message
+    text data
+    text ip
+    text device
+    datetime createdAt
+  }
   area_room {
     text tenantId FK
     varchar id PK
@@ -273,6 +288,15 @@ OPERATIONS: Broad range of activities related to business operations."
     text noiseStatus
     integer annex7Overall
     integer enabled
+  }
+  area_user {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    text userId
   }
   area_receiver {
     text tenantId FK
@@ -363,9 +387,11 @@ OPERATIONS: Broad range of activities related to business operations."
   tenant_user_role }|--|| auth_user: user
   tenant_user_role }|--|| tenant: tenant
   tenant_structure_user_role }|--|| auth_user: user
+  core_log_user }|--|| auth_user: user
   area_room }|--|| area: area
   area_weapon }|--|| area: area
   area_weapon }|--|| area_room: room
+  area_user }|--|| area: area
   area_receiver }|--|| area: area
   area_wlr }|--|| area_calculation: calculation
   area_wlr }|--|| area_receiver: receiver

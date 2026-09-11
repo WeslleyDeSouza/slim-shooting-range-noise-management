@@ -13,10 +13,10 @@ import {
  * implementation mirrors the wizard's `AutofocusDirective`.
  */
 @Directive({
-  selector: '[eloAutofocus]',
+  selector: '[appAutofocus]',
 })
-export class EloAutofocusDirective {
-  readonly eloAutofocus = input<boolean, unknown>(true, {
+export class AppAutofocusDirective {
+  readonly appAutofocus = input<boolean, unknown>(true, {
     transform: (value) => value === '' || booleanAttribute(value),
   });
 
@@ -24,7 +24,7 @@ export class EloAutofocusDirective {
 
   constructor() {
     effect(() => {
-      if (this.eloAutofocus()) {
+      if (this.appAutofocus()) {
         this.focus();
       }
     });

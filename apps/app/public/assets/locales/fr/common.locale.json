@@ -28,7 +28,12 @@
     "area_simulation": "Simulation",
     "area_general": "Général",
     "area_master_data": "Données de base",
-    "area_weapon_assignment": "Attribution des armes"
+    "area_weapon_assignment": "Attribution des armes",
+    "roles": "Rôles",
+    "apps": "Apps",
+    "area_calculation_run": "Calcul des immissions",
+    "user_management": "Gestion des utilisateurs",
+    "logs": "Journal"
   },
   "common": {
     "save": "Enregistrer",

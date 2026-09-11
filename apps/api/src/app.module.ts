@@ -22,7 +22,7 @@ import {
   AuthAppAdminWithRoutingModule,
   PasswordHistoryEntity,
 } from '@app-galaxy/auth-api';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -31,6 +31,8 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { HealthModule } from './core/health-check';
+import { CoreLoggerModule, RequestOriginMiddleware } from './core/logger';
+import { AuthAuditModule } from './modules/auth-audit/auth-audit.module';
 import { AuthThrottlerGuard } from './core/guards';
 import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA, DemoSeedMarkerEntity } from './mocks';
 import { AreaModule, CalculationModule, UsageModule } from './modules';
@@ -88,6 +90,7 @@ const isProd: boolean = env.isProd();
         ...(<never[]>TenantAppConfigModule.dbSettings.entities),
         ...(<never[]>TenantAdminEmailWithRoutingModule.dbSettings.entities),
         // Own modules
+        ...(<never[]>CoreLoggerModule.DBOptions.entities),
         ...(<never[]>AreaModule.DBOptions.entities),
         ...(<never[]>UsageModule.DBOptions.entities),
         ...(<never[]>CalculationModule.DBOptions.entities),
@@ -98,6 +101,8 @@ const isProd: boolean = env.isProd();
 
     CoreConfigModule,
     HealthModule,
+    // Logbook (core_log_user) + AUTH_API_LOGGER bridge, global (slm 56)
+    CoreLoggerModule,
 
     // Auth & admin section (galaxy)
     AuthRoleWithRoutingModule,
@@ -119,16 +124,24 @@ const isProd: boolean = env.isProd();
     AreaModule,
     UsageModule,
     CalculationModule,
+    // Audit hooks of the galaxy user / role / app lifecycle → logbook
+    AuthAuditModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthThrottlerGuard },
     API_EMAIL_PARSER_PROVIDER,
   ],
 })
-export class AppModule {
+export class AppModule implements NestModule {
   constructor(protected dataSource: DataSource) {
     if (!isProd) {
       setTimeout(() => API_MOCK_DATA.initMockData(dataSource), 2000);
     }
+  }
+
+  configure(consumer: MiddlewareConsumer): void {
+    // Log entries carry who acted from where: IP + user agent, provided as
+    // async-local context so every LoggerService caller gets them for free.
+    consumer.apply(RequestOriginMiddleware).forRoutes('*');
   }
 }

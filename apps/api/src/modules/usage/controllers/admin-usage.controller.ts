@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
@@ -25,7 +24,8 @@ import {
   IAuthUser,
   ReplayGuard,
 } from '@app-galaxy/auth-api';
-import { GetTenantId, TenantGuard } from '@app-galaxy/core-api';
+import { GetTenantId, RulesGuard, TenantGuard } from '@app-galaxy/core-api';
+import { AreaScoped, TenantIdOnRequestGuard } from '../../area/scope/area-scope.rule';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
 import {
   UsageCreateDto,
@@ -55,7 +55,10 @@ function displayName(user: Partial<IAuthUser> | undefined): string {
   TenantGuard,
   AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA),
   ReplayGuard,
+  TenantIdOnRequestGuard,
+  RulesGuard,
 )
+@AreaScoped()
 export class AdminUsageController {
   constructor(private readonly usages: UsageService) {}
 
@@ -100,8 +103,12 @@ export class AdminUsageController {
     return this.usages.update(tenantId, areaId, id, dto);
   }
 
-  /** Bulk soft delete (single row = one id). */
-  @Delete()
+  /**
+   * Bulk soft delete (single row = one id). A POST on purpose: the galaxy
+   * AppsRolesGuard lets `write` roles do everything but the DELETE method,
+   * and B1 8.1.2 «W» includes deleting a usage.
+   */
+  @Post('delete')
   @HttpCode(200)
   @ApiParam({ name: 'areaId' })
   @ApiOkResponse({ type: UsageMutationResultDto })

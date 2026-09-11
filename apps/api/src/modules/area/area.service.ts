@@ -8,6 +8,7 @@ import {
   DashboardDto,
 } from './dto';
 import { AreaEntity, AreaStatus } from './entities';
+import { AreaScopeService } from './scope/area-scope.service';
 
 const ORDER: AreaStatus[] = ['none', 'ok', 'warn', 'over'];
 
@@ -38,14 +39,20 @@ export class AreaService {
     @InjectRepository(AreaEntity)
     protected readonly repo: Repository<AreaEntity>,
     protected readonly dataSource: DataSource,
+    protected readonly scope: AreaScopeService,
   ) {}
 
-  async list(tenantId: string): Promise<AreaEntity[]> {
+  /**
+   * All areas of the tenant; with `userId` only the ones the user may see
+   * («W/R-O» roles, B1 8.1.2 — AreaScopeService).
+   */
+  async list(tenantId: string, userId?: string): Promise<AreaEntity[]> {
     const areas = await this.repo.find({
       where: { tenantId },
       order: { coordinationSectionNo: 'ASC' },
     });
-    return areas.map(normalise);
+    const allowed = userId ? await this.scope.allowedAreaIds(tenantId, userId) : null;
+    return areas.filter((a) => allowed === null || allowed.includes(a.id)).map(normalise);
   }
 
   async get(tenantId: string, id: string): Promise<AreaEntity> {
@@ -82,7 +89,7 @@ export class AreaService {
     await this.repo.softRemove(area);
   }
 
-  async summary(tenantId: string): Promise<AreaSummaryDto> {
+  async summary(tenantId: string, userId?: string): Promise<AreaSummaryDto> {
     const summary: AreaSummaryDto = {
       total: 0,
       ok: 0,
@@ -91,7 +98,7 @@ export class AreaService {
       none: 0,
       attention: 0,
     };
-    for (const area of await this.list(tenantId)) {
+    for (const area of await this.list(tenantId, userId)) {
       summary.total++;
       summary[worstStatus(area.quotaStatus, area.noiseStatus)]++;
       if (needsAttention(area)) summary.attention++;

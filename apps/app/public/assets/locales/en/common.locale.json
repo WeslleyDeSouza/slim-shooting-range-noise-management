@@ -28,7 +28,12 @@
     "area_simulation": "Simulation",
     "area_general": "General",
     "area_master_data": "Master data",
-    "area_weapon_assignment": "Weapon assignment"
+    "area_weapon_assignment": "Weapon assignment",
+    "roles": "Roles",
+    "apps": "Apps",
+    "area_calculation_run": "Immission calculation",
+    "user_management": "User management",
+    "logs": "Log book"
   },
   "common": {
     "save": "Save",

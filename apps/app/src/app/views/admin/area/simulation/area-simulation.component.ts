@@ -134,6 +134,11 @@ export class AreaSimulationComponent extends ComponentBase {
     return this.values()[row.weaponId]?.[key] ?? row[key];
   }
 
+  /** The Ist of a cell (typed access for the template). */
+  protected ist(row: SimulationRowDto, key: ShotKey): number {
+    return row[key];
+  }
+
   protected changed(row: SimulationRowDto, key: ShotKey): boolean {
     return this.value(row, key) !== row[key];
   }

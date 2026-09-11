@@ -84,6 +84,18 @@ tunes the sonARMS levels to the UI mock targets:
 npx ts-node -T -O '{"module":"commonjs","moduleResolution":"node10","esModuleInterop":true,"ignoreDeprecations":"6.0"}' tools/tenant-dataset.generator.ts
 ```
 
+### Demo accounts (password `1234`)
+
+| Account | Role (B1 8.1.1) | Sees |
+| --- | --- | --- |
+| `slim@demo.ch` | galaxy admin | everything (e2e, setup wizard) |
+| `fachspezialist@demo.ch` | Fachspezialist KOMZ Lärm | everything but administration |
+| `schiessplatz@demo.ch` | Schiessplatz-Verantwortlicher | only Geissalp and Thun (`area_user`) |
+| `interessent@demo.ch` | Interessent Schiessplatznutzung | read only, no simulation |
+| `appadmin@demo.ch` | Applikationsadministrator*in | administration, read elsewhere |
+
+Roles and rights: `docs/architecture/berechtigungen.md`.
+
 ## API client & models (generated)
 
 The backend is the source of truth. With `API_SWAGGER_ENABLED=1` (non-production) the

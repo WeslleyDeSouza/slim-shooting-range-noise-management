@@ -65,7 +65,7 @@
 
   @if (error()) {
     <div class="slim-alert slim-alert--danger slim-u-mb-4">
-      <div class="slim-alert__body">{{ error() | translate }}</div>
+      <div class="slim-alert__body">{{ (error() ?? '') | translate }}</div>
     </div>
   }
 
@@ -429,7 +429,7 @@
         <form class="slim-sheet__body shots__form" [formGroup]="form" (ngSubmit)="save()" novalidate>
           @if (error()) {
             <div class="slim-alert slim-alert--danger">
-              <div class="slim-alert__body">{{ error() | translate }}</div>
+              <div class="slim-alert__body">{{ (error() ?? '') | translate }}</div>
             </div>
           }
 

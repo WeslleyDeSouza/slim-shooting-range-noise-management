@@ -16,6 +16,7 @@ Stand der Ablage: 2026-09-11
 | [sitemap.md](architecture/sitemap.md)                 | **Struktur der Benutzeroberfläche** (Abbildung 18 des Anforderungskatalogs) mit Routen, Angular-Views und API-Modulen   |
 | [datenstruktur.md](architecture/datenstruktur.md)     | Ordnerstruktur von API und App, Modul-Muster (galaxy Auth/Tenant + eigene Module), Facade/SignalStore, Libs             |
 | [i18n.md](architecture/i18n.md)                       | Mehrsprachigkeit (de/fr/it/en) nach dem ELO-Muster: Locale-Sektionen, Resolver, Transmart                               |
+| [berechtigungen.md](architecture/berechtigungen.md) | **Rollen und Rechte** (B1 8.1): galaxy-Rollenmodell, Matrix Bereiche → Apps → vier Rollen (Seed), übernommene Benutzerverwaltung aus ELO, offene Punkte W/R-O und AGOV |
 | [laermberechnung.md](architecture/laermberechnung.md) | **Lärmberechnung** `@slim/lsv`: GEMW/ESM, Anhang 9 / 7, Betriebsdaten, Grenzwerte, Ampeln; Kontrollwerte B1.4 als Tests |
 | [gesamtarchitektur.md](architecture/gesamtarchitektur.md) | **Gesamtarchitektur (Ist)**: Schichten Angular · NestJS · TypeORM, Datenfluss Lärmberechnung, Buildkette; Geplantes separat (ELO, GIS, Import/Export, Worker) |
 | [deployment-sicherheit.md](architecture/deployment-sicherheit.md) | **Deployment und Sicherheit (Ist)**: Docker-Image, pm2, docker-compose, `.env`, umgesetzte Sicherheitsmassnahmen; offene Punkte für die Produktion |

@@ -17,11 +17,18 @@ import type { BuildYearClassCode, ReceiverType, SensitivityLevelCode } from '../
 import type { UsageSource, UsageType } from '../../modules/usage/entities';
 import datasetJson from './tenant.mock.json';
 
+/** Role keys of `roles.mock-data.ts` (`SLIM_ROLE_BY_KEY`). */
+export type DatasetRoleKey = 'admin' | 'specialist' | 'range_owner' | 'interested' | 'app_admin';
+
 export interface DatasetUser {
   username: string;
   password: string;
   firstName: string;
   lastName: string;
+  /** Role assigned on seed; `admin` = galaxy admin role (everything). */
+  role?: DatasetRoleKey;
+  /** Area names for a «W/R-O» role (`range_owner`); resolved against `areas`. */
+  areas?: string[];
 }
 
 export interface DatasetRoom {

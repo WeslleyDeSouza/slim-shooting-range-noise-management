@@ -11,8 +11,10 @@
     gap: slim.space(4);
     align-items: start;
 
-    @include slim.mq('xl') {
-      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 1fr);
+    // The input table needs the room: give it the larger column and let the
+    // text cells wrap instead of scrolling sideways on a desktop.
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
     }
   }
 
@@ -58,6 +60,13 @@
     border: 0;
     border-radius: 0;
     box-shadow: none;
+
+    @include slim.mq('md') {
+      td,
+      th {
+        white-space: normal;
+      }
+    }
   }
 
   &__th-sub {
@@ -116,7 +125,7 @@
   }
 
   &__value {
-    width: 120px;
+    width: 96px;
     text-align: right;
     font-weight: slim.font-weight('semibold');
     font-variant-numeric: tabular-nums;

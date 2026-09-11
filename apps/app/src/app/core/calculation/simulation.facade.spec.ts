@@ -84,6 +84,12 @@ const RESULT: SimulationResultDto = {
 
 describe('SimulationFacade', () => {
   let facade: SimulationFacade;
+
+  // jest-environment-jsdom does not expose Node's structuredClone (the facade
+  // uses it to freeze the values a result was computed with).
+  beforeAll(() => {
+    globalThis.structuredClone ??= (value: unknown) => JSON.parse(JSON.stringify(value));
+  });
   let api: { adminCalculationSimulationBase: jest.Mock; adminCalculationSimulate: jest.Mock };
 
   beforeEach(() => {

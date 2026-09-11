@@ -42,7 +42,7 @@
 
   @if (error()) {
     <div class="slim-alert slim-alert--danger slim-u-mb-4">
-      <div class="slim-alert__body">{{ error() | translate }}</div>
+      <div class="slim-alert__body">{{ error()! | translate }}</div>
     </div>
   }
 
@@ -138,7 +138,7 @@
                       @if (deltaLabel(row, $any(key)); as delta) {
                         <span
                           class="sim__delta"
-                          [class.sim__delta--down]="value(row, $any(key)) < row[$any(key)]"
+                          [class.sim__delta--down]="value(row, $any(key)) < ist(row, $any(key))"
                         >
                           {{ delta === 'simulation.delta_new' ? (delta | translate) : delta }}
                         </span>

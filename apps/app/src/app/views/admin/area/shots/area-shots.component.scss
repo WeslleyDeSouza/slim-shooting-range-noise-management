@@ -27,7 +27,7 @@
     align-items: start;
 
     @include slim.mq('lg') {
-      grid-template-columns: 260px minmax(0, 1fr);
+      grid-template-columns: 232px minmax(0, 1fr);
     }
   }
 
@@ -138,6 +138,14 @@
   }
 
   &__table-wrap {
+    // Ten columns: wrap the text cells on a desktop rather than scrolling sideways.
+    @include slim.mq('md') {
+      td,
+      th {
+        white-space: normal;
+      }
+    }
+
     border: 0;
     border-radius: 0;
     box-shadow: none;

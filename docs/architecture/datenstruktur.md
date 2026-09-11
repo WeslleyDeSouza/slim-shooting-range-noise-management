@@ -13,14 +13,16 @@ apps/api/src/
 ├── core/
 │   ├── env-loader.ts        # lädt .env VOR allen Imports
 │   ├── guards/              # AuthThrottlerGuard (/api/auth, /api/public)
-│   └── health-check/        # /api/health, /alive, /ready (Terminus)
+│   ├── health-check/        # /api/health, /alive, /ready (Terminus)
+│   └── logger/              # Logbuch core_log_user (slm 56): LoggerService, AUTH_API_LOGGER-Brücke, RequestOriginMiddleware (IP/Gerät), admin/logs
 ├── common/docs/             # Swagger (/api/docs) + Generierung von @ui-slim/apiClient, ERD (/erd → docs/architecture/uml.mmd)
 ├── mocks/                   # API_APPS_MAPPING, API_CATEGORY_MAPPING, API_MOCK_DATA (Seed), E-Mail-Parser
 │   └── tenant/              # «SLIM Demo»-Datensatz: tenant.mock.json, tenant-dataset.ts, demo-dataset.seed.ts, Marker-Entity
 └── modules/                 # Geschäftslogik-Module (siehe sitemap.md)
     ├── area/                # Schiessplätze, Stellungsräume, Zuordnung Waffen (= Quellen): entities/, dto/, controllers/, db/, service, spec
     ├── usage/               # Schiessplatz-Nutzungen (5.11): overview / create / update / delete / restore
-    └── calculation/         # Berechnungsgrundlagen, Empfangspunkte, WLR-Pegel; AssessmentService (5.12), SimulationService (5.13)
+    ├── calculation/         # Berechnungsgrundlagen, Empfangspunkte, WLR-Pegel; AssessmentService (5.12), SimulationService (5.13)
+    └── auth-audit/          # galaxy Lifecycle-Hooks (Benutzer/Rollen/Apps) → Logbuch
 ```
 
 #### Modul-Muster (wie ELO)

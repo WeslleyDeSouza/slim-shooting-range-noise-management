@@ -153,6 +153,9 @@ describe('AreaSimulationComponent', () => {
 
     fixture = TestBed.createComponent(AreaSimulationComponent);
     fixture.detectChanges();
+    // ComponentBase schedules getData() with a 10 ms timeout.
+    jest.advanceTimersByTime(20);
+    fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -163,9 +166,16 @@ describe('AreaSimulationComponent', () => {
     Array.from(fixture.nativeElement.querySelectorAll(`[data-testid="${testId}"]`));
 
   it('loads the area of the parent route through getData()', () => {
-    expect(facade.load).not.toHaveBeenCalled();
-    jest.advanceTimersByTime(20); // ComponentBase schedules getData() with a timeout
+    expect(facade.load).toHaveBeenCalledTimes(1);
     expect(facade.load).toHaveBeenCalledWith('a1', new Date().getFullYear());
+  });
+
+  it('reloads when the year changes', () => {
+    const select = fixture.nativeElement.querySelector('[data-testid="sim-year"]') as HTMLSelectElement;
+    select.value = String(new Date().getFullYear() - 1);
+    select.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(facade.load).toHaveBeenLastCalledWith('a1', new Date().getFullYear() - 1);
   });
 
   it('renders one row per room × weapon with formatted, read-only values', () => {
@@ -231,7 +241,7 @@ describe('AreaSimulationComponent', () => {
     });
 
     el('sim-run')[0].click();
-    await fixture.whenStable();
+    await facade.run.mock.results[0].value;
     fixture.detectChanges();
 
     expect(facade.run).toHaveBeenCalled();

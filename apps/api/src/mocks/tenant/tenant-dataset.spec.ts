@@ -38,7 +38,9 @@ describe('the SLIM Demo dataset', () => {
 
   it('is what the demo promises', () => {
     expect(dataset.identifier).toBe('SLIM_DEMO');
-    expect(dataset.users[0]).toMatchObject({ username: 'slim@demo.ch', password: '1234' });
+    expect(dataset.users[0]).toMatchObject({ username: 'slim@demo.ch', password: '1234', role: 'admin' });
+    expect(dataset.users.map((u) => u.role)).toEqual(['admin', 'specialist', 'range_owner', 'interested', 'app_admin']);
+    expect(dataset.users.find((u) => u.role === 'range_owner')?.areas).toEqual(['Geissalp', 'Thun']);
     expect(dataset.areas).toHaveLength(9);
     expect(geissalp.coordinationSectionNo).toBe('1104.020');
     expect(geissalp.rooms).toHaveLength(14);
@@ -132,7 +134,7 @@ describe('seedDemoDataset', () => {
     expect(await dataSource.getRepository(AreaEntity).count({ where: { tenantId: mockTenantId } })).toBe(9);
     expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(160);
     const marker = await dataSource.getRepository(DemoSeedMarkerEntity).findOneByOrFail({ tenantId: mockTenantId });
-    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 1, year: 2026 });
+    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 3, year: 2026 });
   });
 
   it('rewrites the demo when the year turns, without duplicating rows', async () => {

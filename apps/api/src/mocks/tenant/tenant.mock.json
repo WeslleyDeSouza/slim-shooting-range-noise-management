@@ -3,13 +3,46 @@
     "name": "SLIM Demo",
     "identifier": "SLIM_DEMO",
     "description": "Demo-Mandant des Prototyps: neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Waffen, Empfangspunkten, zwei Berechnungszuständen und den Nutzungen des laufenden Jahres.",
-    "version": 1,
+    "version": 3,
     "users": [
       {
         "username": "slim@demo.ch",
         "password": "1234",
         "firstName": "Hans",
-        "lastName": "Muster"
+        "lastName": "Muster",
+        "role": "admin"
+      },
+      {
+        "username": "fachspezialist@demo.ch",
+        "password": "1234",
+        "firstName": "Fiona",
+        "lastName": "Meier",
+        "role": "specialist"
+      },
+      {
+        "username": "schiessplatz@demo.ch",
+        "password": "1234",
+        "firstName": "Beat",
+        "lastName": "Roth",
+        "role": "range_owner",
+        "areas": [
+          "Geissalp",
+          "Thun"
+        ]
+      },
+      {
+        "username": "interessent@demo.ch",
+        "password": "1234",
+        "firstName": "Nina",
+        "lastName": "Huber",
+        "role": "interested"
+      },
+      {
+        "username": "appadmin@demo.ch",
+        "password": "1234",
+        "firstName": "Sven",
+        "lastName": "Keller",
+        "role": "app_admin"
       }
     ],
     "areas": [

@@ -98,9 +98,9 @@ import { AreaFacade } from '../../../../core/area/area.facade';
         }
       </nav>
 
-      @if (error()) {
+      @if (error(); as message) {
         <div class="slim-alert slim-alert--danger slim-u-mb-4">
-          <div class="slim-alert__body">{{ error() | translate }}</div>
+          <div class="slim-alert__body">{{ message | translate }}</div>
         </div>
       }
 
@@ -147,9 +147,12 @@ export class AreaContextComponent extends ComponentBase {
     if (!(event.target as HTMLElement).closest('.area-ctx__area')) this.switcherOpen.set(false);
   }
 
-  /** ComponentBase: on init and on every DATA_RELOAD (e.g. tenant switch). */
+  /**
+   * ComponentBase: on init and on every DATA_RELOAD (e.g. tenant switch).
+   * Always reloads — the facade itself skips a call while one is in flight.
+   */
   override getData(): void {
-    if (!this.facade.loaded()) void this.facade.load();
+    void this.facade.load();
   }
 }
 

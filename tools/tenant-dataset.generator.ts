@@ -337,8 +337,16 @@ const dataset = {
     name: 'SLIM Demo',
     identifier: 'SLIM_DEMO',
     description: 'Demo-Mandant des Prototyps: neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Waffen, Empfangspunkten, zwei Berechnungszuständen und den Nutzungen des laufenden Jahres.',
-    version: 1,
-    users: [{ username: 'slim@demo.ch', password: '1234', firstName: 'Hans', lastName: 'Muster' }],
+    version: 3,
+    // One account per role of B1 8.1.1 (roles.mock-data.ts); slim@demo.ch is the
+    // galaxy admin the e2e suite and the setup wizard sign in with.
+    users: [
+      { username: 'slim@demo.ch', password: '1234', firstName: 'Hans', lastName: 'Muster', role: 'admin' },
+      { username: 'fachspezialist@demo.ch', password: '1234', firstName: 'Fiona', lastName: 'Meier', role: 'specialist' },
+      { username: 'schiessplatz@demo.ch', password: '1234', firstName: 'Beat', lastName: 'Roth', role: 'range_owner', areas: ['Geissalp', 'Thun'] },
+      { username: 'interessent@demo.ch', password: '1234', firstName: 'Nina', lastName: 'Huber', role: 'interested' },
+      { username: 'appadmin@demo.ch', password: '1234', firstName: 'Sven', lastName: 'Keller', role: 'app_admin' },
+    ],
     areas: [geissalp, ...OTHER_AREAS.map(lightArea)],
   },
 };

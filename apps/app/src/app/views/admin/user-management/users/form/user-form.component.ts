@@ -5,7 +5,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { APP_ROUTES } from '@slim/shared';
 import {
   FormControl,
@@ -16,8 +16,7 @@ import {
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { AUTH_STORE } from '@app-galaxy/auth-ui';
-import { ELO_FORM_STYLES } from '../../../_common/form.styles';
-import { EloAutofocusDirective } from '../../../_common/autofocus.directive';
+import { AppAutofocusDirective } from '../../../_common/autofocus.directive';
 import { UsersFacade } from '../_data/users.facade';
 import { AdminUser } from '../_data/user.model';
 
@@ -33,259 +32,13 @@ const OVERVIEW = APP_ROUTES.admin.dataManagement.users;
 @Component({
   selector: 'app-elo-user-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, EloAutofocusDirective],
-  styles: [
-    ELO_FORM_STYLES,
-    `
-      .elo-grid2 {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0 16px;
-      }
-      @media (min-width: 720px) {
-        .elo-grid2 {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      .elo-role-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 9px 12px;
-        border: 1px solid var(--elo-line, #e3e5e8);
-        border-radius: 8px;
-        margin-bottom: 8px;
-        cursor: pointer;
-      }
-      .elo-role-row input {
-        accent-color: var(--elo-red, #d8232a);
-      }
-      .elo-role-row--locked {
-        opacity: 0.55;
-        cursor: default;
-      }
-      .elo-role-row small {
-        color: var(--elo-gray-500, #6b7280);
-        margin-left: auto;
-      }
-      .elo-reset-note {
-        font-size: 13px;
-        color: var(--elo-gray-500, #6b7280);
-        margin-top: 8px;
-      }
-      .elo-restore {
-        font-weight: 400;
-      }
-      .elo-restore p {
-        margin: 0 0 10px;
-      }
-      .elo-lock {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        padding: 12px 14px;
-        border: 1px solid var(--elo-red, #d8232a);
-        border-radius: 8px;
-        margin-bottom: 14px;
-      }
-      .elo-lock__text {
-        flex: 1 1 240px;
-      }
-      .elo-lock__text b {
-        display: block;
-        margin-bottom: 2px;
-      }
-      .elo-lock__text span {
-        font-size: 13px;
-        color: var(--elo-gray-500, #6b7280);
-      }
-    `,
-  ],
-  template: `
-    <div class="elo-form__head">
-      <button
-        type="button"
-        class="elo-form__back"
-        [attr.aria-label]="prefix + '.cancel' | translate"
-        (click)="cancel()"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-      </button>
-      <div class="elo-form__crumb">
-        <b>{{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}</b>
-        <span>{{ current()?.email }}</span>
-      </div>
-    </div>
-
-    @if (facade.error(); as message) {
-      <div class="elo-alert" [class.elo-alert--warn]="facade.restorableUserId()">
-        {{ message }}
-      </div>
-    }
-    @if (facade.restorableUserId(); as restorableId) {
-      <div class="elo-alert elo-alert--warn elo-restore">
-        <p>{{ prefix + '.restore_consequences' | translate }}</p>
-        <button
-          type="button"
-          class="elo-btn elo-btn--primary"
-          [disabled]="saving()"
-          (click)="restore(restorableId)"
-        >
-          {{ prefix + '.restore_action' | translate }}
-        </button>
-      </div>
-    }
-    @if (notice(); as message) {
-      <div class="elo-alert elo-alert--ok" role="status">{{ message }}</div>
-    }
-
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <div class="elo-card">
-        <h2>{{ prefix + '.section_base' | translate }}</h2>
-        <div class="elo-grid2">
-          <div class="elo-field" [class.elo-field--err]="invalid('firstName')">
-            <label for="elo-u-first">
-              {{ prefix + '.first_name' | translate }} <span class="elo-req">*</span>
-            </label>
-            <input id="elo-u-first" type="text" eloAutofocus formControlName="firstName" />
-          </div>
-          <div class="elo-field" [class.elo-field--err]="invalid('lastName')">
-            <label for="elo-u-last">
-              {{ prefix + '.last_name' | translate }} <span class="elo-req">*</span>
-            </label>
-            <input id="elo-u-last" type="text" formControlName="lastName" />
-          </div>
-        </div>
-        <div class="elo-grid2">
-          <div class="elo-field" [class.elo-field--err]="invalid('email')">
-            <label for="elo-u-email">
-              {{ prefix + '.email' | translate }} <span class="elo-req">*</span>
-            </label>
-            <input id="elo-u-email" type="email" formControlName="email" />
-            @if (invalid('email')) {
-              <div class="elo-error-msg">{{ prefix + '.email_error' | translate }}</div>
-            }
-          </div>
-          <div class="elo-field">
-            <label for="elo-u-phone">{{ prefix + '.phone' | translate }}</label>
-            <input id="elo-u-phone" type="tel" formControlName="phone" />
-          </div>
-        </div>
-        @if (!isEdit()) {
-          <div class="elo-hint">
-            {{ prefix + '.create_reset_hint' | translate }}
-          </div>
-        }
-      </div>
-
-      <div class="elo-card">
-        <h2>{{ prefix + '.section_roles' | translate }}</h2>
-        @for (role of facade.roles(); track role.roleId) {
-          <label
-            class="elo-role-row"
-            [class.elo-role-row--locked]="roleLocked(role)"
-          >
-            <input
-              type="checkbox"
-              [checked]="draftRoles().has(role.roleId)"
-              [disabled]="roleLocked(role)"
-              (change)="toggleRole(role.roleId)"
-            />
-            <b>{{ role.title }}</b>
-            @if (roleLocked(role)) {
-              <small>{{ prefix + '.role_locked_hint' | translate }}</small>
-            } @else if (role.hasAdminRights) {
-              <small>{{ prefix + '.role_admin_hint' | translate }}</small>
-            }
-          </label>
-        } @empty {
-          <div class="elo-hint">{{ prefix + '.roles_empty' | translate }}</div>
-        }
-      </div>
-
-      @if (isEdit()) {
-        <div class="elo-card">
-          <h2>{{ prefix + '.section_security' | translate }}</h2>
-          @if (locked()) {
-            <div class="elo-lock" role="alert">
-              <div class="elo-lock__text">
-                <b>{{ prefix + '.locked_title' | translate }}</b>
-                <span>
-                  {{ prefix + '.locked_hint' | translate: { n: loginAttempt() } }}
-                </span>
-              </div>
-              @if (facade.canUnlock()) {
-                <button
-                  type="button"
-                  class="elo-btn elo-btn--primary"
-                  data-action="users.unlock"
-                  [disabled]="saving()"
-                  (click)="unlock()"
-                >
-                  {{ prefix + '.unlock' | translate }}
-                </button>
-              } @else {
-                <small>{{ prefix + '.unlock_forbidden' | translate }}</small>
-              }
-            </div>
-          }
-          <div class="elo-toggle-row">
-            <button
-              type="button"
-              class="elo-toggle"
-              data-action="users.forceReset"
-              [attr.aria-pressed]="forceReset()"
-              [attr.aria-label]="prefix + '.force_reset' | translate"
-              (click)="forceReset.set(!forceReset())"
-            ></button>
-            <div>
-              <b>{{ prefix + '.force_reset' | translate }}</b>
-              <span class="elo-hint">
-                {{ prefix + '.force_reset_hint' | translate }}
-              </span>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="elo-btn elo-btn--ghost"
-            data-action="users.sendReset"
-            [disabled]="resetSent()"
-            (click)="sendReset()"
-          >
-            {{ prefix + '.send_reset' | translate }}
-          </button>
-          <div class="elo-reset-note">{{ prefix + '.send_reset_hint' | translate }}</div>
-        </div>
-      }
-
-      <div class="elo-actions">
-        <div class="elo-actions__inner">
-          <div class="elo-dirty">
-            @if (assignmentDirty()) {
-              {{ prefix + '.unsaved_roles' | translate }}
-            }
-          </div>
-          <button type="button" class="elo-btn elo-btn--ghost" (click)="cancel()">
-            {{ prefix + '.cancel' | translate }}
-          </button>
-          <button
-            type="submit"
-            class="elo-btn elo-btn--primary"
-            data-action="users.save"
-            [disabled]="saving()"
-          >
-            {{ prefix + '.save' | translate }}
-          </button>
-        </div>
-      </div>
-    </form>
-  `,
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, AppAutofocusDirective],
+  templateUrl: './user-form.component.html',
+  styleUrl: './user-form.component.scss',
 })
 export class EloUserFormComponent extends ComponentBase {
   protected readonly prefix = I18N;
+  protected readonly routes = APP_ROUTES;
   protected readonly facade = inject(UsersFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);

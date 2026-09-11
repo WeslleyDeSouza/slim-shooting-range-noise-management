@@ -67,6 +67,7 @@
     "class-validator": "^0.14.2",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "ioredis": "^5.10.0",
     "json-schema-ref-parser": "^9.0.9",

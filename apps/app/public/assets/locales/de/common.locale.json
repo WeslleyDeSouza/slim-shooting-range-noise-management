@@ -28,7 +28,12 @@
     "area_simulation": "Simulation",
     "area_general": "Allgemein",
     "area_master_data": "Stammdaten",
-    "area_weapon_assignment": "Zuordnung Waffen"
+    "area_weapon_assignment": "Zuordnung Waffen",
+    "roles": "Rollen",
+    "apps": "Apps",
+    "area_calculation_run": "Immissionsberechnung",
+    "user_management": "Benutzerverwaltung",
+    "logs": "Logbuch"
   },
   "common": {
     "save": "Speichern",

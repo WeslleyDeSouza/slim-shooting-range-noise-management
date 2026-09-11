@@ -18,7 +18,7 @@
 
   @if (error()) {
     <div class="slim-alert slim-alert--danger slim-u-mb-4">
-      <div class="slim-alert__body">{{ error() | translate }}</div>
+      <div class="slim-alert__body">{{ (error() ?? '') | translate }}</div>
     </div>
   }
 

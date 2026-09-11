@@ -1,13 +1,14 @@
 import type { Route, Routes } from '@angular/router';
 import { LocaleResolver } from '@app-galaxy/translate-ui';
 import { ROUTE_SEGMENT as S } from '@slim/shared';
-import { PlaceholderData } from './_placeholder/placeholder.component';
+import { PlaceholderData } from './_components/placeholder.component';
 import { AppsFacade } from './user-management/apps/_data/apps.facade';
 import { EloAppsOverviewComponent } from './user-management/apps/apps-overview.component';
 import { EloAppFormComponent } from './user-management/apps/form/app-form.component';
 import { RolesFacade } from './user-management/roles/_data/roles.facade';
 import { EloRolesOverviewComponent } from './user-management/roles/roles-overview.component';
 import { EloRoleFormComponent } from './user-management/roles/form/role-form.component';
+import { LogsFacade } from './logs/_data/logs.facade';
 import { UsersFacade } from './user-management/users/_data/users.facade';
 import { EloUsersOverviewComponent } from './user-management/users/users-overview.component';
 import { EloUserFormComponent } from './user-management/users/form/user-form.component';
@@ -16,7 +17,7 @@ const placeholder = (path: string, data: PlaceholderData): Route => ({
   path,
   data,
   loadComponent: () =>
-    import('./_placeholder/placeholder.component').then(
+    import('./_components/placeholder.component').then(
       (c) => c.PlaceholderComponent,
     ),
 });
@@ -203,6 +204,14 @@ export const ADMIN_ROUTES: Routes = [
               { path: S.create, component: EloAppFormComponent },
               { path: `${S.edit}/:id`, component: EloAppFormComponent },
             ],
+          },
+          // Logbuch (slm 56): the tenant's audit log (views/admin/logs).
+          {
+            path: S.logs,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            providers: [LogsFacade],
+            loadComponent: () => import('./logs/logs.component').then((c) => c.AppLogsComponent),
           },
           placeholder(S.mgdmExport, { title: 'menu.mgdm_export', crumbs: DM }),
           placeholder(S.system, { title: 'menu.system_settings', crumbs: DM }),

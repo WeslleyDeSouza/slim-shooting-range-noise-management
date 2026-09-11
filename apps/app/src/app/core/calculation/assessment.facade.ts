@@ -54,8 +54,11 @@ export class AssessmentFacade extends SignalStore<AssessmentState> {
     }
   }
 
-  /** Re-runs the last query for a new state / period. */
-  async select(query: AssessmentQuery): Promise<void> {
+  /**
+   * Re-runs the last query for a new state / period. (Named `refine`:
+   * `select` is the protected selector helper of SignalStore.)
+   */
+  async refine(query: AssessmentQuery): Promise<void> {
     const areaId = this.snapshot().areaId;
     if (areaId) await this.load(areaId, { ...this.snapshot().query, ...query });
   }

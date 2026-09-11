@@ -1,9 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { UserEntity } from '@app-galaxy/auth-api';
+import { TenantUserRoleEntity } from '@app-galaxy/core-api';
+import { genSalt } from 'bcryptjs';
+import { SLIM_ROLE_BY_KEY } from '../roles.mock-data';
 import {
   AreaEntity,
   AreaRoomEntity,
+  AreaUserEntity,
   AreaWeaponEntity,
 } from '../../modules/area/entities';
 import {
@@ -28,6 +32,7 @@ const log = new Logger('DemoDataset');
  * the galaxy tenant tables is touched.
  */
 const WIPE = [
+  'area_user',
   'area_wlr',
   'area_usage',
   'area_calculation',
@@ -99,7 +104,7 @@ export async function seedDemoDataset(
   );
   await wipeTenant(connection, tenantId);
   await writeTenantHead(connection, tenantId, dataset);
-  await writeUserNames(connection, dataset);
+  await writeUsers(connection, tenantId, dataset);
 
   const result: DemoSeedResult = { skipped: false, year, areas: 0, rooms: 0, weapons: 0, receivers: 0, calculations: 0, wlr: 0, usages: 0 };
   for (const area of dataset.areas) {
@@ -112,6 +117,8 @@ export async function seedDemoDataset(
     result.wlr += counts.wlr;
     result.usages += counts.usages;
   }
+
+  await writeAreaAssignments(connection, tenantId, dataset);
 
   await markers.save(markers.create({ tenantId, datasetKey: key, version: dataset.version, year }));
   return result;
@@ -141,17 +148,77 @@ async function writeTenantHead(connection: DataSource, tenantId: string, dataset
 }
 
 /**
- * The galaxy seed creates the demo user with e-mail and password only
- * (`TestMockUserMock.fill.User`); the dataset adds the name so the greeting
- * and the «Erfasser» column have something to show. Never touches passwords.
+ * The accounts of the dataset, one per role (B1 8.1.1). The galaxy seed
+ * creates `APP_DEFAULT_USER` with e-mail and password only; every other
+ * account is created here the same way (`UserEntity.initialise` +
+ * `setPasswordAndEncrypt`), existing accounts only get their name — a
+ * password is never overwritten. Role assignment (`app_user_right`) is
+ * added once; the galaxy admin role of the default user stays.
  */
-async function writeUserNames(connection: DataSource, dataset: TenantDataset): Promise<void> {
+async function writeUsers(connection: DataSource, tenantId: string, dataset: TenantDataset): Promise<void> {
   const users = connection.getRepository(UserEntity);
   for (const user of dataset.users) {
     try {
-      await users.update({ email: user.username }, { firstName: user.firstName, lastName: user.lastName });
+      let row = await users.findOne({ where: { email: user.username } });
+      if (!row) {
+        row = UserEntity.create().initialise(
+          { email: user.username, firstName: user.firstName, lastName: user.lastName } as Partial<UserEntity>,
+          false,
+        );
+        await row.setPasswordAndEncrypt(user.password, await genSalt());
+        row.host = user.username.split('@')[1];
+        row.authCreatedAt = new Date().getFullYear();
+        row = await users.save(row);
+      } else {
+        await users.update({ email: user.username }, { firstName: user.firstName, lastName: user.lastName });
+      }
+      // Membership of the tenant (galaxy tenant_user_role): without it the user
+      // administration and the tenant chooser do not list the account.
+      const membership = connection.getRepository(TenantUserRoleEntity);
+      if (!(await membership.findOne({ where: { tenantId, userId: row.userId } }))) {
+        await membership.save(
+          membership.create({
+            tenantId,
+            userId: row.userId,
+            roles: user.role === 'admin' ? 'root' : 'user',
+            userCreatedAt: row.authCreatedAt,
+          } as Partial<TenantUserRoleEntity>),
+        );
+      }
+      const roleId = SLIM_ROLE_BY_KEY[user.role ?? 'admin'];
+      const has: { n: string }[] = await connection.query(
+        'select count(*) as n from app_user_right where tenantId = ? and userId = ? and roleId = ?',
+        [tenantId, row.userId, roleId],
+      );
+      if (!Number(has[0]?.n)) {
+        await connection.query('insert into app_user_right (userId, tenantId, roleId) values (?, ?, ?)', [
+          row.userId,
+          tenantId,
+          roleId,
+        ]);
+      }
     } catch (err) {
-      log.warn(`Could not name ${user.username}: ${(err as Error).message}`);
+      log.warn(`Could not write user ${user.username}: ${(err as Error).message}`);
+    }
+  }
+}
+
+/** «W/R-O»: which Schiessplätze a range owner is assigned to (area_user). */
+async function writeAreaAssignments(connection: DataSource, tenantId: string, dataset: TenantDataset): Promise<void> {
+  const users = connection.getRepository(UserEntity);
+  const areas = connection.getRepository(AreaEntity);
+  const assignments = connection.getRepository(AreaUserEntity);
+  for (const user of dataset.users) {
+    if (!user.areas?.length) continue;
+    const row = await users.findOne({ where: { email: user.username } });
+    if (!row) continue;
+    for (const name of user.areas) {
+      const area = await areas.findOne({ where: { tenantId, name } });
+      if (!area) {
+        log.warn(`${user.username}: area "${name}" is not in the dataset`);
+        continue;
+      }
+      await assignments.save(assignments.create({ tenantId, areaId: area.id, userId: row.userId }));
     }
   }
 }

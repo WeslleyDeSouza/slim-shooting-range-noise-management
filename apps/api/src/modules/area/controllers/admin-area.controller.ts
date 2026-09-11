@@ -16,8 +16,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { AppsRolesGuard, ReplayGuard } from '@app-galaxy/auth-api';
-import { GetTenantId, TenantGuard } from '@app-galaxy/core-api';
+import { AppsRolesGuard, GetUserId, ReplayGuard } from '@app-galaxy/auth-api';
+import { GetTenantId, RulesGuard, TenantGuard } from '@app-galaxy/core-api';
+import { AreaScoped, TenantIdOnRequestGuard } from '../scope/area-scope.rule';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
 import { AreaService } from '../area.service';
 import {
@@ -41,20 +42,31 @@ import {
   TenantGuard,
   AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA),
   ReplayGuard,
+  // «W/R-O»: routes with :id are checked by the area-scope rule; the lists
+  // are filtered in the service by the same scope.
+  TenantIdOnRequestGuard,
+  RulesGuard,
 )
+@AreaScoped()
 export class AdminAreaController {
   constructor(private readonly areaService: AreaService) {}
 
   @Get()
   @ApiOkResponse({ type: AreaResultDto, isArray: true })
-  list(@GetTenantId() tenantId: string): Promise<AreaResultDto[]> {
-    return this.areaService.list(tenantId);
+  list(
+    @GetTenantId() tenantId: string,
+    @GetUserId() userId: string,
+  ): Promise<AreaResultDto[]> {
+    return this.areaService.list(tenantId, userId);
   }
 
   @Get('summary')
   @ApiOkResponse({ type: AreaSummaryDto })
-  summary(@GetTenantId() tenantId: string): Promise<AreaSummaryDto> {
-    return this.areaService.summary(tenantId);
+  summary(
+    @GetTenantId() tenantId: string,
+    @GetUserId() userId: string,
+  ): Promise<AreaSummaryDto> {
+    return this.areaService.summary(tenantId, userId);
   }
 
   @Get('dashboard')

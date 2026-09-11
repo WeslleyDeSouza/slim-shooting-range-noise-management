@@ -2,36 +2,12 @@ import { TestMockUserMock } from '@app-galaxy/auth-api';
 import { TestMockTenantMock } from '@app-galaxy/core-api';
 import { DataSource } from 'typeorm';
 import { APP_ROUTES } from '@slim/shared';
+import { API_APPS_MAPPING, API_CATEGORY_MAPPING } from './apps.mapping';
+import { fillSlimRoles } from './roles.mock-data';
 import { demoSeedEnabled, seedDemoDataset } from './tenant/demo-dataset.seed';
 import { loadRawDatasets, DEFAULT_DATASET_KEY } from './tenant/tenant-dataset';
 
-/**
- * App ids of this installation (galaxy `app_app.appId` rows). They are
- * assigned to the admin role and guard the admin controllers
- * (`AppsRolesGuard`). Ids start at 40 to stay clear of the galaxy defaults.
- * One app per sitemap area (docs/architecture/sitemap.md); paths from
- * `APP_ROUTES` (@slim/shared) so the app catalogue and the router agree.
- */
-export enum API_APPS_MAPPING {
-  /** Übersicht Schiessplätze (+ Übersicht / Schusszahlen / Details / Simulation) */
-  ADMIN_AREA = 40,
-  /** Datenverwaltung › Schiessplatz (Allgemein) */
-  ADMIN_DATA_AREA = 41,
-  /** Datenverwaltung › Schiessplatz › Berechnungen */
-  ADMIN_DATA_CALCULATIONS = 42,
-  /** Datenverwaltung › Waffen (Kaliber / Waffe / Waffenkategorie) */
-  ADMIN_DATA_WEAPONS = 43,
-  /** Datenverwaltung › MGDM Export */
-  ADMIN_DATA_MGDM_EXPORT = 44,
-  /** Datenverwaltung › Erweiterte Systemeinstellungen */
-  ADMIN_DATA_SYSTEM = 45,
-}
-
-/** Category ids (galaxy `app_category`), start at 8 to stay clear of defaults. */
-export enum API_CATEGORY_MAPPING {
-  WORKSPACE = 8,
-  DATA_MANAGEMENT = 9,
-}
+export { API_APPS_MAPPING, API_CATEGORY_MAPPING } from './apps.mapping';
 
 export namespace API_MOCK_DATA {
   export const customCategories = [
@@ -52,6 +28,44 @@ export namespace API_MOCK_DATA {
   ];
 
   export const customApps = [
+    // Rights-only apps (no menu entry of their own): they split one sitemap
+    // area into the rows of the B1 8.1.2 matrix.
+    {
+      appId: API_APPS_MAPPING.ADMIN_AREA_SIMULATION,
+      domain: 'business',
+      tenantId: null,
+      title: 'menu.area_simulation',
+      roleKey: 'SLIM_AREA_SIMULATION',
+      path: null,
+      categoryId: API_CATEGORY_MAPPING.WORKSPACE,
+      img: null,
+      icon: 'ri-line-chart-line',
+      hiddenInMenu: true,
+    },
+    {
+      appId: API_APPS_MAPPING.ADMIN_AREA_CALCULATION_RUN,
+      domain: 'business',
+      tenantId: null,
+      title: 'menu.area_calculation_run',
+      roleKey: 'SLIM_AREA_CALCULATION_RUN',
+      path: null,
+      categoryId: API_CATEGORY_MAPPING.WORKSPACE,
+      img: null,
+      icon: 'ri-calculator-line',
+      hiddenInMenu: true,
+    },
+    {
+      appId: API_APPS_MAPPING.ADMIN_DATA_AREA_WEAPONS,
+      domain: 'business',
+      tenantId: null,
+      title: 'menu.area_weapon_assignment',
+      roleKey: 'SLIM_DATA_AREA_WEAPONS',
+      path: APP_ROUTES.admin.dataManagement.area.weaponAssignment,
+      categoryId: API_CATEGORY_MAPPING.DATA_MANAGEMENT,
+      img: null,
+      icon: 'ri-links-line',
+      hiddenInMenu: true,
+    },
     {
       appId: API_APPS_MAPPING.ADMIN_AREA,
       domain: 'business',
@@ -118,6 +132,17 @@ export namespace API_MOCK_DATA {
       img: null,
       icon: 'ri-settings-3-line',
     },
+    {
+      appId: API_APPS_MAPPING.ADMIN_LOGS,
+      domain: 'business',
+      tenantId: null,
+      title: 'menu.logs',
+      roleKey: 'SLIM_LOGS',
+      path: APP_ROUTES.admin.dataManagement.logs,
+      categoryId: API_CATEGORY_MAPPING.DATA_MANAGEMENT,
+      img: null,
+      icon: 'ri-file-list-3-line',
+    },
   ];
 
   /**
@@ -148,6 +173,8 @@ export namespace API_MOCK_DATA {
       'role user com',
       TestMockTenantMock.fill.RoleUserCom(connection),
     );
+    // The four SLIM roles of B1 8.1 with the rights matrix (roles.mock-data.ts).
+    await fill('slim roles', fillSlimRoles(connection, TestMockTenantMock.tenantId));
 
     // The «SLIM Demo» dataset (mocks/tenant/tenant.mock.json): areas with
     // rooms, weapons, receivers, calculation states and this year's usages,

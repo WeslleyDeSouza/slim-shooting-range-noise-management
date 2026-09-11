@@ -353,6 +353,37 @@ interface NavItem {
             </a>
           }
         </nav>
+        <nav
+          class="slim-sidebar__section"
+          [attr.aria-label]="'menu.user_management' | translate"
+        >
+          <div class="slim-sidebar__heading">
+            {{ 'menu.user_management' | translate }}
+          </div>
+          @for (item of userManagement; track item.key) {
+            <a
+              class="slim-sidebar__link"
+              [routerLink]="item.link"
+              routerLinkActive="slim-sidebar__link--active"
+            >
+              <svg
+                class="slim-sidebar__icon"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  [attr.d]="item.icon"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              {{ item.key | translate }}
+            </a>
+          }
+        </nav>
         <div class="slim-sidebar__footer slim-text--muted slim-text--xs">
           {{ 'shell.org' | translate }} · SLIM {{ version }}
         </div>
@@ -443,11 +474,6 @@ export class AdminLayoutComponent {
       icon: ICON.weapon,
     },
     {
-      key: 'menu.users',
-      link: APP_ROUTES.admin.dataManagement.users,
-      icon: ICON.users,
-    },
-    {
       key: 'menu.mgdm_export',
       link: APP_ROUTES.admin.dataManagement.mgdmExport,
       icon: ICON.export,
@@ -456,6 +482,30 @@ export class AdminLayoutComponent {
       key: 'menu.system_settings',
       link: APP_ROUTES.admin.dataManagement.system,
       icon: ICON.settings,
+    },
+  ];
+
+  /** Benutzerverwaltung (B1 5.26 / 8.1): users, roles, app catalogue. */
+  protected readonly userManagement: NavItem[] = [
+    {
+      key: 'menu.users',
+      link: APP_ROUTES.admin.dataManagement.users,
+      icon: ICON.users,
+    },
+    {
+      key: 'menu.roles',
+      link: APP_ROUTES.admin.dataManagement.roles,
+      icon: ICON.shield,
+    },
+    {
+      key: 'menu.logs',
+      link: APP_ROUTES.admin.dataManagement.logs,
+      icon: ICON.log,
+    },
+    {
+      key: 'menu.apps',
+      link: APP_ROUTES.admin.dataManagement.apps,
+      icon: ICON.apps,
     },
   ];
 
@@ -518,6 +568,9 @@ const ICON = {
   users:
     'M6 8a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-4 6c.4-2.3 2-3.5 4-3.5s3.6 1.2 4 3.5M11 8.5a2 2 0 100-4M14 14c-.3-1.7-1.3-2.8-2.7-3.2',
   export: 'M8 2v8M8 10l-3-3M8 10l3-3M2.5 13.5h11',
+  log: 'M4 2.5h8a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a1 1 0 011-1zM5.5 6h5M5.5 8.5h5M5.5 11h3',
+  shield: 'M8 1.5l5.5 2v4c0 3.2-2.3 5.6-5.5 7-3.2-1.4-5.5-3.8-5.5-7v-4l5.5-2zM5.5 8l1.8 1.8L10.5 6',
+  apps: 'M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z',
   settings:
     'M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4',
 } as const;

@@ -18,7 +18,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AppsRolesGuard, ReplayGuard } from '@app-galaxy/auth-api';
-import { GetTenantId, TenantGuard } from '@app-galaxy/core-api';
+import { GetTenantId, RulesGuard, TenantGuard } from '@app-galaxy/core-api';
+import { AreaScoped, TenantIdOnRequestGuard } from '../../area/scope/area-scope.rule';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
 import { AssessmentService } from '../assessment.service';
 import { CalculationService } from '../calculation.service';
@@ -45,7 +46,10 @@ import { SimulationService } from '../simulation.service';
   TenantGuard,
   AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA),
   ReplayGuard,
+  TenantIdOnRequestGuard,
+  RulesGuard,
 )
+@AreaScoped()
 export class AdminCalculationController {
   constructor(
     private readonly calculations: CalculationService,
@@ -79,7 +83,9 @@ export class AdminCalculationController {
     return this.assessment.assess(tenantId, areaId, query);
   }
 
+  /** Simulation (5.13) needs its own right on top of the area right (B1 8.1.2). */
   @Get('simulation')
+  @UseGuards(AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA_SIMULATION))
   @ApiParam({ name: 'areaId' })
   @ApiQuery({ name: 'year', required: false, description: 'Calendar year, default: current' })
   @ApiQuery({ name: 'calculationId', required: false })
@@ -95,6 +101,7 @@ export class AdminCalculationController {
   }
 
   @Post('simulation')
+  @UseGuards(AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA_SIMULATION))
   @HttpCode(200)
   @ApiParam({ name: 'areaId' })
   @ApiOkResponse({ type: SimulationResultDto })

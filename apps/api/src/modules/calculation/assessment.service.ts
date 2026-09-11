@@ -352,10 +352,13 @@ function operatingRows(
     .sort((a, b) => a.roomName.localeCompare(b.roomName) || a.weaponName.localeCompare(b.weaponName));
 }
 
-/** Default: 1 January of this year until today. `years` = whole years for the average. */
+/**
+ * Default: the whole current calendar year (B1 7.4 assesses annual operating
+ * data; the simulation uses the same year). `years` = whole years for the average.
+ */
 export function resolvePeriod(from: string | undefined, to: string | undefined, now: Date) {
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  const end = to ?? iso(now);
+  const year = now.toISOString().slice(0, 4);
+  const end = to ?? `${year}-12-31`;
   const start = from ?? `${end.slice(0, 4)}-01-01`;
   const [a, b] = start <= end ? [start, end] : [end, start];
   const days = (Date.parse(b) - Date.parse(a)) / 86_400_000 + 1;

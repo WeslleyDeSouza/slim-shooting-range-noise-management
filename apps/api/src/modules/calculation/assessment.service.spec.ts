@@ -169,8 +169,9 @@ describe('AssessmentService (5.12 Details)', () => {
 describe('resolvePeriod', () => {
   const now = new Date(Date.UTC(2026, 8, 11));
 
-  it('defaults to the year to date', () => {
-    expect(resolvePeriod(undefined, undefined, now)).toEqual({ from: '2026-01-01', to: '2026-09-11', years: 1 });
+  it('defaults to the whole current year', () => {
+    expect(resolvePeriod(undefined, undefined, now)).toEqual({ from: '2026-01-01', to: '2026-12-31', years: 1 });
+    expect(resolvePeriod(undefined, '2026-09-11', now)).toEqual({ from: '2026-01-01', to: '2026-09-11', years: 1 });
   });
 
   it('orders the bounds and counts whole years', () => {

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RulesModule } from '@app-galaxy/core-api';
 import { AreaModule } from '../area/area.module';
 import { AreaRoomEntity, AreaWeaponEntity } from '../area/entities';
 import { UsageModule } from '../usage/usage.module';
@@ -13,6 +14,7 @@ import { SimulationService } from './simulation.service';
   imports: [
     TypeOrmModule.forFeature([...DBOptions.entities, AreaRoomEntity, AreaWeaponEntity]),
     AreaModule,
+    RulesModule,
     UsageModule,
   ],
   controllers: [AdminCalculationController],

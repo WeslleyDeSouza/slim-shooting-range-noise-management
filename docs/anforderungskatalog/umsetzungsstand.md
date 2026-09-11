@@ -1,6 +1,6 @@
 # Umsetzungsstand Prototyp SLIM
 
-**Stand:** 11.09.2026 · **Zweck:** Grundlage für die nächste Sitzung – was läuft, was fehlt,
+**Stand:** 11.09.2026, abends · **Zweck:** Grundlage für die nächste Sitzung – was läuft, was fehlt,
 was zu entscheiden ist. Lesehilfe zu den Beilagen: [index.md](index.md); Roadmap:
 [../projects/prototyp-roadmap.md](../projects/prototyp-roadmap.md).
 
@@ -26,6 +26,7 @@ mobile first, hinter dem galaxy-Login (MFA-fähig) und per Setup-Wizard installi
 | Anmeldung, Mandant, Rollen | Login, 2FA, Mandantenwahl, Passwort zurücksetzen, App-Katalog + Admin-Rolle (`API_APPS_MAPPING`) | e2e `auth.spec`, `login.spec`; Setup-Schritte 09/10 |
 | Startseite, Übersicht Schiessplätze (5.8/5.9) | Kacheln mit Kennzahlen, Tabelle mit Kontingent- und Lärm-Ampel, Suche, Filter «Handlungsbedarf» | e2e `admin.spec` |
 | Schiessplatz-Kontext | Kontextleiste mit Zurück, Schiessplatz-Wechsler, Ampeln, Reiter Übersicht · Schusszahlen · Details · Simulation | `views/admin/area/_context` |
+| Menü | Sidebar/Tabbar mit den Gruppen Arbeitsbereich, Datenverwaltung, **Benutzerverwaltung** (Benutzer, Rollen, Apps) | `views/admin/_layout` |
 | **Schusszahlen (5.11)** | Stellungsräume mit Zählern, Nutzungstabelle (Filter Jahr/Datum/Freitext/Nutzung/Kategorie, Sortierung, Gruppierung, Mehrfachauswahl), Erfassen/Bearbeiten im Drawer (nur zulässige Kombinationen Stellungsraum × Waffe), Löschen mit «Rückgängig», ELO-Kennzeichnung | API `usage.service.spec` (11 Tests), Jest + e2e `area-shots.spec` |
 | **Lärmberechnung (7.4–7.7)** | `@slim/lsv`: GEMW/ESM, Anhang 9 (LAE1/LAE2/Lr), Anhang 7 (Li/Lri/Lr, Halbtage), Werktag-Split Mo–Fr 07–19 Uhr, Grenzwerte je Empfindlichkeitsstufe, Baujahr-Regel (IGW/PW/gemischt), Ampel-Regeln (Lärm −5 dB, Kontingent 125 %) | 95 Unit-Tests gegen B1.4 (`libs/shared/lsv`); [laermberechnung.md](../architecture/laermberechnung.md) |
 | **Details Empfangspunkte (5.12)** | Beurteilung je Empfangspunkt: 4 Zeilen (Anh. 9 IGW/PW, Anh. 7 IGW/PW) mit Pegel, Reserve, Ampel; schematische Karte mit Pins, Listenansicht, Wechsel der Berechnungsgrundlage mit Abweichung zum gültigen Zustand, Betrachtungszeitraum | API `assessment.service.spec` (12 Tests), Jest + e2e `area-details.spec` |
@@ -33,11 +34,19 @@ mobile first, hinter dem galaxy-Login (MFA-fähig) und per Setup-Wizard installi
 | Datenmodell | `area`, `area_room`, `area_weapon` (= Quelle, mit Kontingent), `area_usage`, `area_calculation`, `area_receiver`, `area_wlr`; ERD automatisch generiert (`docs/architecture/uml.mmd`, `/erd`) | `tenant-dataset.spec`, [datenstruktur.md](../architecture/datenstruktur.md) |
 | Demo-Datensatz | `tenant.mock.json` (llumi-Muster): 9 Schiessplätze, Geissalp mit 14 Stellungsräumen, 16 Quellen, 6 Empfangspunkten, 2 Berechnungszuständen (initial 2019 = gültig, saniert 2025), 72 Nutzungen; jährlich rollend, Regenerierung per Generator | `tenant-dataset.spec` (7 Tests) |
 | API-Client, Doku | Angular-Client und Modelle werden bei jedem API-Start aus Swagger generiert; Swagger UI `/api/docs` | `libs/app/generated` |
+| Benutzerverwaltung (5.26, 8.1) | Benutzer/Rollen/Apps-Masken aus ELO über die galaxy-Admin-API; vier SLIM-Rollen mit der Rechte-Matrix 8.1.2 als Seed (ein Demo-Konto je Rolle); Guards prüfen R/W/X pro Bereich; «W/R-O» über galaxy Rules (`area-scope`) + `area_user`; 2FA vorhanden (erfüllt «MFA oder AGOV») | API `area-scope.spec` (6 Tests); [berechtigungen.md](../architecture/berechtigungen.md) |
+| Login-Logging / Logbuch (`slm 56`) | **in Arbeit**: ELO-Logger (`core_log_user`), Audit-Hooks für Benutzer/Rollen/Apps und die Maske «Logbuch» werden übernommen | `core/logger`, `modules/auth-audit`, `views/admin/logs` |
 | Setup-Wizard | `npm run setup`: 12 Schritte (Toolchain, .env, Registry, Abhängigkeiten, DB SQLite/MariaDB/MySQL/PostgreSQL, Workspace, API, Frontend, Login, Rechte, Demo-Daten, e2e) | live durchgespielt, 12/12 grün |
 | Architektur-Doku (A2) | Gesamtarchitektur, Deployment/Sicherheit, UI-Ansichten – nur Ist-Zustand | [gesamtarchitektur.md](../architecture/gesamtarchitektur.md), [deployment-sicherheit.md](../architecture/deployment-sicherheit.md), [ui-ansichten.md](../architecture/ui-ansichten.md) |
 
-Testbilanz: API 155 Vitest-Tests (inkl. 95 Berechnung), Angular Jest-Tests der Seiten und
-Facades, Playwright-Suite (Auth, Admin, drei Schiessplatz-Seiten).
+Testbilanz: API 161 Vitest-Tests (inkl. 95 Berechnung, 6 Berechtigungen), 53 Angular Jest-Tests
+(Seiten, Facades), Playwright-Suite 35 Fälle (Auth, Admin, drei Schiessplatz-Seiten) grün.
+
+### Screenshots
+
+Die Bilder der vier Schiessplatz-Seiten liegen unter `docs/architecture/images/` (Übersicht, Schusszahlen,
+Details, Simulation, Details auf Telefonbreite) und sind in [ui-ansichten.md](../architecture/ui-ansichten.md)
+eingebunden.
 
 ## 3. Bewusste Vereinfachungen im Prototyp
 
@@ -48,10 +57,11 @@ Facades, Playwright-Suite (Auth, Admin, drei Schiessplatz-Seiten).
 | Betrachtungszeitraum | Summe des Zeitraums, Ø bei mehreren Jahren | 3 wählbare repräsentative Jahre |
 | Feiertage | Parameter vorhanden, kein Kalender hinterlegt | Feiertage am Standort (Anhang 7/9) |
 | Berechnungsgrundlage | Zwei Zustände im Seed; kein Upload | Import FGDB/WLR/Betriebsdaten (5.19), Verwaltung (5.18–5.21) |
-| Rollen | Admin-Rolle mit allen Apps; Lese-Modus in der Maske vorbereitet | Vier Rollen, Schiessplatz-Verantwortlicher nur eigene Plätze |
+| Rollen | Vier Rollen mit Matrix und Demo-Konten; «W/R-O» erzwungen (API); Menü/Schaltflächen im Frontend noch statisch | CASL im Frontend (wie ELO), Zuordnung Schiessplätze im Benutzerformular |
 | Schiessplatz – Übersicht (5.10) | Ampeln in Kontextleiste (aus Seed), Seite selbst Platzhalter | Kontingent-Tabelle Soll/Ist/Ø 3 Jahre, Karte |
 | Grenzwerte | LSV-Tabellen als Konstante (`ANNEX9_LIMITS`, `ANNEX7_LIMITS`) | Konfigurierbar (5.28) |
 | Export | Buttons vorhanden, deaktiviert | Excel/PDF (`slm 3`, `slm 39`–`41`) |
+| Benutzerverwaltung | Masken aus ELO (Funktion vollständig), Umstellung auf das Design System läuft | `slim-*`-Blöcke, CASL im Frontend |
 
 ## 4. Offen / nächste Schritte (Vorschlag)
 
@@ -68,12 +78,16 @@ Facades, Playwright-Suite (Auth, Admin, drei Schiessplatz-Seiten).
 6. **Produktion**: Auslieferung des Frontends fehlt heute (das Docker-Image kopiert `dist/app`,
    aber niemand serviert es) – nginx oder Static-Serving in der API festlegen; Hosting, Backup,
    Monitoring gemäss [deployment-sicherheit.md](../architecture/deployment-sicherheit.md).
-7. Entscheidungen des Auftraggebers (index.md, Abschnitt 10): Feiertagskalender, drei Referenzjahre,
+7. **Rechte im Frontend** (CASL wie in ELO): Menü, Schaltflächen und Lese-Modus aus den App-Rechten
+   der Session; Zuordnung Schiessplätze im Benutzerformular; Rollen-e2e je Demo-Konto
+   ([berechtigungen.md](../architecture/berechtigungen.md), Abschnitt 5).
+8. Entscheidungen des Auftraggebers (index.md, Abschnitt 10): Feiertagskalender, drei Referenzjahre,
    Grenzwert-Konfiguration, Rollen-Zuschnitt, GIS-Format.
 
 ## 5. Demo-Pfad für die Sitzung
 
-1. `npm run setup` (oder `npm run all`), Anmeldung `slim@demo.ch / 1234`.
+1. `npm run setup` (oder `npm run all`), Anmeldung `slim@demo.ch / 1234` (weitere Konten je Rolle:
+   `fachspezialist@`, `schiessplatz@` (nur Geissalp, Thun), `interessent@`, `appadmin@demo.ch`).
 2. Startseite → Übersicht Schiessplätze (Ampeln) → **Geissalp**.
 3. Reiter **Schusszahlen**: Nutzung erfassen (z. B. Stellungsrm Mw Neuhaus, Pz Hb 74, 200 Schuss,
    Nachtschiessen) – Löschen – Rückgängig.
@@ -81,4 +95,6 @@ Facades, Playwright-Suite (Auth, Admin, drei Schiessplatz-Seiten).
    Abweichung −4.4 dB; E6 ohne Berechnung.
 5. Reiter **Simulation**: «Werte überschreiben», −20 % → Simulation ausführen → E1 wird orange;
    ×10 (mehrfach +50 %) → alle rot.
-6. `/api/docs` (Swagger) und `/erd` (Datenmodell) zeigen die generierte Dokumentation.
+6. Benutzerverwaltung: Benutzer → `schiessplatz@demo.ch` öffnen (Rolle Schiessplatz-Verantwortlicher);
+   mit diesem Konto anmelden → Übersicht zeigt nur Geissalp und Thun, Bière antwortet 403.
+7. `/api/docs` (Swagger) und `/erd` (Datenmodell) zeigen die generierte Dokumentation.

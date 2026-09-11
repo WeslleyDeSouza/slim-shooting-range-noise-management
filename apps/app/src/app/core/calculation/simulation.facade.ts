@@ -147,13 +147,18 @@ export class SimulationFacade extends SignalStore<SimulationState> {
           },
         }),
       );
-      this.patch({ result, resultValues: structuredClone(values), running: false });
+      this.patch({ result, resultValues: copyValues(values), running: false });
       return result;
     } catch (error) {
       this.patch({ running: false, error: apiErrorMessage(error) });
       return null;
     }
   }
+}
+
+/** Deep-enough copy (jsdom has no structuredClone). */
+function copyValues(values: SimulationValues): SimulationValues {
+  return Object.fromEntries(Object.entries(values).map(([id, v]) => [id, { ...v }]));
 }
 
 function toValues(base: SimulationBaseDto | null): SimulationValues {

@@ -8,16 +8,21 @@ Nx monorepo with an Angular 22 PWA frontend and a NestJS 12 API, structured like
 
 ## Layout
 
-| Path                    | What                                                                 |
-| ----------------------- | -------------------------------------------------------------------- |
-| `apps/app`              | Angular 22 application (standalone, PWA, SCSS, Jest)                 |
-| `apps/app-e2e`          | Playwright end-to-end tests                                          |
-| `apps/api`              | NestJS 12 API (TypeORM, Swagger, Terminus, Throttler)                |
-| `libs/api/common`       | `@api-slim/common` – Nest helpers                                    |
-| `libs/api/models`       | `@api-slim/models` – shared entities / DTOs                          |
-| `libs/shared/constants` | `@slim/shared` – dependency-free constants (api + app)               |
-| `libs/app/generated`    | `@ui-slim/apiClient` – generated from Swagger (`npm run ng-swagger`) |
-| `tools/`                | Swagger generator, e2e API launcher                                  |
+| Path                    | What                                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `apps/app`              | Angular 22 application (standalone, PWA, SCSS, Jest)                                               |
+| `apps/app-e2e`          | Playwright end-to-end tests                                                                        |
+| `apps/api`              | NestJS 12 API (TypeORM, Swagger, Terminus, Throttler)                                              |
+| `libs/api/common`       | `api-common` → `@api-slim/common` – Nest helpers (proxy, prefix, env flags)                        |
+| `libs/api/models`       | `api-models` → `@api-slim/models` – shared entities / DTOs                                         |
+| `libs/api/tests`        | `api-tests` → `@api-slim/tests` – in-memory SQLite setup for API service tests (Vitest)            |
+| `libs/shared/constants` | `shared-constants` → `@slim/shared` – dependency-free constants (api + app)                        |
+| `libs/app/generated`    | `api-client` → `@ui-slim/apiClient` – Angular client generated from Swagger (`npm run ng-swagger`) |
+| `tools/`                | Swagger generator, e2e API launcher                                                                |
+
+All libs are Nx projects generated with `nx g @nx/nest:library`, `nx g @nx/js:library`
+and `nx g @nx/angular:library` (project.json, eslint, tsconfig per lib). Add a new one
+the same way, e.g. `npx nx g @nx/nest:library libs/api/<name> --importPath=@api-slim/<name> --unitTestRunner=none`.
 
 ## Getting started
 

@@ -73,3 +73,6 @@ Thumbs.db
 /test-output/
 
 .angular
+
+# Generated API client (npm run ng-swagger)
+/libs/app/generated/src/core/

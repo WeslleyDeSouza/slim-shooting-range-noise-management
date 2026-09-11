@@ -1,0 +1,13 @@
+{
+  "name": "api-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/app/generated/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "tags": ["scope:app"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

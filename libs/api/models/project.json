@@ -1,0 +1,9 @@
+{
+  "name": "api-models",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/models/src",
+  "projectType": "library",
+  "tags": ["scope:api"],
+  "// targets": "to see all targets run: nx show project api-models --web",
+  "targets": {}
+}

@@ -1,0 +1,31 @@
+{
+  "title": "Panoramica piazze di tiro",
+  "subtitle": "Contingenti e immissioni di rumore a colpo d'occhio.",
+  "year": "Anno",
+  "export": "Esporta",
+  "search_placeholder": "Cerca piazza di tiro o n. settore di coordinamento",
+  "filter": {
+    "all": "Stato: tutti",
+    "attention": "Solo da trattare"
+  },
+  "scope_lock": "Solo piazze di tiro autorizzate",
+  "count": "{{n}} piazze di tiro",
+  "foot_count": "1–{{n}} di {{total}} piazze di tiro",
+  "empty": "Nessuna piazza di tiro per questa selezione.",
+  "columns": {
+    "name": "Denominazione",
+    "ka": "N. settore di coordinamento",
+    "sp": "N. piano settoriale",
+    "quota": "Contingente",
+    "quota_info": "Rispetto del contingente secondo l'approvazione dei piani; semaforo come nella valutazione del rumore della piazza",
+    "noise": "Immissioni di rumore",
+    "noise_info": "Immissioni di rumore attuali secondo il calcolo; semaforo come nella valutazione del rumore della piazza",
+    "nav": "Navigazione"
+  },
+  "actions": {
+    "overview": "Panoramica",
+    "shots": "Numero di colpi"
+  },
+  "legend": "Legenda",
+  "sample_note": "Dati di esempio · bozza UI · capitoli 5.8 / 5.9"
+}

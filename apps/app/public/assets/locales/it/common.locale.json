@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "SLIM",
+    "subtitle": "Gestione delle immissioni di rumore da tiro"
+  },
+  "menu": {
+    "home": "Home",
+    "ranges": "Panoramica piazze di tiro",
+    "range": "Piazza di tiro",
+    "range_overview": "Panoramica",
+    "range_shots": "Numero di colpi",
+    "range_details": "Dettagli",
+    "range_simulation": "Simulazione",
+    "data_management": "Gestione dei dati",
+    "range_general": "Generale",
+    "range_master_data": "Dati di base",
+    "range_weapon_assignment": "Assegnazione armi",
+    "calculations": "Calcoli",
+    "calculations_overview": "Panoramica",
+    "calculations_import": "Importazione",
+    "calculations_export": "Esportazione",
+    "calculations_details": "Dettagli",
+    "weapons": "Armi",
+    "caliber_weapon": "Calibro/arma",
+    "caliber": "Calibro",
+    "weapon": "Arma",
+    "weapon_category": "Categoria di arma",
+    "users": "Utenti",
+    "mgdm_export": "Esportazione MGDM",
+    "system_settings": "Impostazioni di sistema avanzate",
+    "styleguide": "Guida di stile"
+  },
+  "common": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "search": "Cerca",
+    "back": "Indietro",
+    "close": "Chiudi",
+    "next": "Avanti",
+    "confirm": "Conferma",
+    "loading": "Caricamento …",
+    "yes": "Sì",
+    "no": "No",
+    "language": "Lingua",
+    "theme_dark": "Tema scuro",
+    "theme_light": "Tema chiaro",
+    "no_results": "Nessuna voce"
+  },
+  "status": {
+    "api": "API",
+    "online": "online",
+    "offline": "offline"
+  },
+  "error": {
+    "404": {
+      "title": "Pagina non trovata",
+      "message": "Questa pagina è obsoleta, eliminata o non esiste.",
+      "go_home": "Alla pagina iniziale"
+    },
+    "generic": "Si è verificato un errore."
+  },
+  "shell": {
+    "org": "armasuisse",
+    "org_sub": "Ufficio federale dell'armamento",
+    "workspace": "Area di lavoro",
+    "main_menu": "Menu principale",
+    "home": "Pagina iniziale",
+    "account": "Account utente",
+    "signed_in_as": "Connesso come",
+    "permission": "Accesso in lettura",
+    "ranges_count": "{{n}} piazze di tiro",
+    "account_overview": "Panoramica account",
+    "settings": "Impostazioni",
+    "sign_out": "Esci",
+    "help": "Aiuto e contatto",
+    "manual": "Manuale utente",
+    "manual_sub": "PDF, stato 08/2026",
+    "specialist": "Responsabile specialistico",
+    "specialist_sub": "armasuisse Immobili · +41 58 000 00 00",
+    "sysadmin": "Amministrazione di sistema",
+    "application": "Applicazione",
+    "version": "Versione",
+    "more": "Altro",
+    "documentation": "Documentazione",
+    "data": "Dati"
+  },
+  "status_range": {
+    "ok": "Rispettato",
+    "warn": "Da verificare",
+    "over": "Superato",
+    "none": "Nessun dato"
+  },
+  "placeholder": {
+    "title": "In preparazione",
+    "text": "Quest'area è in fase di realizzazione secondo la sitemap (docs/architecture/sitemap.md)."
+  }
+}

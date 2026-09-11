@@ -1,0 +1,18 @@
+{
+  "name": "Nom",
+  "email": "E-mail",
+  "password": "Mot de passe",
+  "description": "Description",
+  "remark": "Remarque",
+  "date": "Date",
+  "amount": "Nombre",
+  "required": "Champ obligatoire",
+  "optional": "Facultatif",
+  "select": "Veuillez choisir",
+  "validation": {
+    "required": "Ce champ est obligatoire.",
+    "email": "Veuillez saisir une adresse e-mail valide.",
+    "min": "Valeur trop petite.",
+    "max": "Valeur trop grande."
+  }
+}

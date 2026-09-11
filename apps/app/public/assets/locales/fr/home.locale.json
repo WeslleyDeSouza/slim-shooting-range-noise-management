@@ -1,0 +1,37 @@
+{
+  "greet": {
+    "morning": "Bonjour",
+    "day": "Bonjour",
+    "evening": "Bonsoir"
+  },
+  "authorized_for": "Autorisé pour {{n}} places de tir",
+  "notice": {
+    "title": "{{n}} places de tir requièrent votre attention.",
+    "text": "{{over}} dépassé(s), {{warn}} à vérifier.",
+    "show": "Afficher"
+  },
+  "tiles": {
+    "ranges": {
+      "title": "Utilisation des places de tir",
+      "text": "Aperçu de toutes les places de tir autorisées avec feux de signalisation pour le respect du contingent et les nuisances sonores. Accès aux nombres de coups, détails et simulation.",
+      "foot": "Vers l'aperçu",
+      "kpi_total": "places",
+      "kpi_ok": "respectées",
+      "kpi_warn": "à vérifier",
+      "kpi_over": "dépassées"
+    },
+    "data": {
+      "title": "Gestion des données",
+      "text": "Données de base des places de tir, attribution et catégories des armes, importation et exportation des calculs, utilisateurs et droits, export MGDM.",
+      "foot": "Vers la gestion des données",
+      "kpi_ranges": "places de tir",
+      "kpi_weapons": "armes",
+      "kpi_users": "utilisateurs"
+    },
+    "reports": {
+      "title": "Analyses",
+      "text": "Comparaisons annuelles, tendance des nuisances sonores et utilisation du contingent sur toutes les places autorisées.",
+      "foot": "En préparation"
+    }
+  }
+}

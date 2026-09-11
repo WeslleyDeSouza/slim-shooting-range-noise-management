@@ -45,6 +45,26 @@ npx nx lint app
 
 Swagger UI: http://localhost:3333/api/docs (when `API_SWAGGER_ENABLED=1`).
 
+## API client & models (generated)
+
+The backend is the source of truth. With `API_SWAGGER_ENABLED=1` (non-production) the
+API writes `config/api-gateway-swagger-spec.json` on start and runs `npm run ng-swagger`,
+which generates `libs/app/generated/src/core` (`@ui-slim/apiClient`: models, services).
+Never hand-write API types in the app; import them from `@ui-slim/apiClient`. On a fresh
+clone run the API once or `npm run ng-swagger` from the committed spec.
+
+## i18n
+
+`de` is the source, `fr` / `it` / `en` are generated with `npm run translate` (Transmart,
+needs `OPEN_API_KEY`) and reviewed. Sections per feature under
+`apps/app/public/assets/locales/<lang>/`, see `docs/architecture/i18n.md`.
+
+## Docs
+
+`docs/README.md` (index) · `docs/architecture/sitemap.md` (UI structure, routes, modules) ·
+`docs/architecture/datenstruktur.md` · `docs/architecture/i18n.md` · `docs/projects/design-system.md`.
+Styling rules for development: `.claude/styleguide.md`, living styleguide at `/styleguide`.
+
 ## Tests
 
 ```bash

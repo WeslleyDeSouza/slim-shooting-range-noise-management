@@ -1,0 +1,31 @@
+{
+  "title": "Aperçu des places de tir",
+  "subtitle": "Contingents et nuisances sonores en un coup d'œil.",
+  "year": "Année",
+  "export": "Exporter",
+  "search_placeholder": "Rechercher une place de tir ou un n° de secteur de coordination",
+  "filter": {
+    "all": "Statut : tous",
+    "attention": "Uniquement à traiter"
+  },
+  "scope_lock": "Uniquement les places de tir autorisées",
+  "count": "{{n}} places de tir",
+  "foot_count": "1–{{n}} sur {{total}} places de tir",
+  "empty": "Aucune place de tir pour cette sélection.",
+  "columns": {
+    "name": "Désignation",
+    "ka": "N° secteur de coordination",
+    "sp": "N° plan sectoriel",
+    "quota": "Contingent",
+    "quota_info": "Respect du contingent selon l'approbation des plans ; feu comme dans l'évaluation du bruit de la place",
+    "noise": "Nuisances sonores",
+    "noise_info": "Nuisances sonores actuelles selon le calcul ; feu comme dans l'évaluation du bruit de la place",
+    "nav": "Navigation"
+  },
+  "actions": {
+    "overview": "Aperçu",
+    "shots": "Nombre de coups"
+  },
+  "legend": "Légende",
+  "sample_note": "Données d'exemple · maquette UI · chapitres 5.8 / 5.9"
+}

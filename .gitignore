@@ -76,3 +76,6 @@ Thumbs.db
 
 # Generated API client (npm run ng-swagger)
 /libs/app/generated/src/core/
+
+# Transmart translation cache
+/apps/app/public/assets/locales/.cache/

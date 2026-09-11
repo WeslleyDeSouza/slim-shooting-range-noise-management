@@ -1,0 +1,37 @@
+{
+  "greet": {
+    "morning": "Good morning",
+    "day": "Good day",
+    "evening": "Good evening"
+  },
+  "authorized_for": "Authorised for {{n}} shooting ranges",
+  "notice": {
+    "title": "{{n}} shooting ranges need attention.",
+    "text": "{{over}} exceeded, {{warn}} to review.",
+    "show": "Show"
+  },
+  "tiles": {
+    "ranges": {
+      "title": "Shooting range usage",
+      "text": "Overview of all authorised shooting ranges with traffic-light status for quota compliance and noise exposure. From here to shot counts, details and simulation.",
+      "foot": "Go to overview",
+      "kpi_total": "ranges",
+      "kpi_ok": "compliant",
+      "kpi_warn": "to review",
+      "kpi_over": "exceeded"
+    },
+    "data": {
+      "title": "Data management",
+      "text": "Master data of the shooting ranges, weapon assignment and categories, import and export of calculations, users and permissions, MGDM export.",
+      "foot": "Go to data management",
+      "kpi_ranges": "shooting ranges",
+      "kpi_weapons": "weapons",
+      "kpi_users": "users"
+    },
+    "reports": {
+      "title": "Reports",
+      "text": "Year-on-year comparisons, noise exposure trend and quota utilisation across all authorised ranges.",
+      "foot": "In preparation"
+    }
+  }
+}

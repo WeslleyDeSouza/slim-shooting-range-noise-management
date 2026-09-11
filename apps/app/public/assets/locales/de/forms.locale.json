@@ -1,0 +1,18 @@
+{
+  "name": "Name",
+  "email": "E-Mail",
+  "password": "Passwort",
+  "description": "Beschreibung",
+  "remark": "Bemerkung",
+  "date": "Datum",
+  "amount": "Anzahl",
+  "required": "Pflichtfeld",
+  "optional": "Optional",
+  "select": "Bitte wählen",
+  "validation": {
+    "required": "Dieses Feld ist erforderlich.",
+    "email": "Bitte eine gültige E-Mail-Adresse eingeben.",
+    "min": "Wert zu klein.",
+    "max": "Wert zu gross."
+  }
+}

@@ -287,3 +287,39 @@
     }
   }
 }
+
+// Search field (icon left) ---------------------------------------------------
+.slim-search {
+  position: relative;
+
+  @include elem('input') {
+    @include control-base;
+    padding-left: space(8);
+  }
+  @include elem('icon') {
+    position: absolute;
+    left: space(3);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    color: color('text-4');
+    pointer-events: none;
+  }
+}
+
+// Compact inline filter control (label + select on one line)
+.slim-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: space(2);
+  font-size: font-size('sm');
+  color: color('text-3');
+
+  .slim-select {
+    width: auto;
+    min-height: size('control-h');
+    font-size: font-size('sm');
+    font-weight: font-weight('semibold');
+  }
+}

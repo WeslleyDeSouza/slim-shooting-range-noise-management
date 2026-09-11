@@ -1,0 +1,31 @@
+{
+  "title": "Shooting ranges overview",
+  "subtitle": "Quotas and noise exposure at a glance.",
+  "year": "Year",
+  "export": "Export",
+  "search_placeholder": "Search shooting range or coordination section no.",
+  "filter": {
+    "all": "Status: all",
+    "attention": "Needs action only"
+  },
+  "scope_lock": "Authorised shooting ranges only",
+  "count": "{{n}} shooting ranges",
+  "foot_count": "1–{{n}} of {{total}} shooting ranges",
+  "empty": "No shooting ranges for this selection.",
+  "columns": {
+    "name": "Name",
+    "ka": "Coordination section no.",
+    "sp": "Sectoral plan no.",
+    "quota": "Quota",
+    "quota_info": "Quota compliance according to the plan approval; traffic light as in the noise assessment of the range",
+    "noise": "Noise exposure",
+    "noise_info": "Current noise exposure according to the calculation; traffic light as in the noise assessment of the range",
+    "nav": "Navigation"
+  },
+  "actions": {
+    "overview": "Overview",
+    "shots": "Shot counts"
+  },
+  "legend": "Legend",
+  "sample_note": "Sample data · UI draft · chapters 5.8 / 5.9"
+}

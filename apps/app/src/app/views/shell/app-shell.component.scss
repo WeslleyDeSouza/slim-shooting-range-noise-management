@@ -1,0 +1,39 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.shell {
+  &__avatar {
+    background: #5b3e76;
+    color: #fff;
+  }
+
+  &__menu-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+
+    small {
+      font-size: slim.font-size('xs');
+      color: slim.color('text-3');
+    }
+  }
+
+  &__menu-static {
+    cursor: default;
+  }
+
+  &__menu-user {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: slim.space(1) slim.space(3) slim.space(2);
+    font-size: slim.font-size('sm');
+  }
+
+  &__menu-lang {
+    padding: slim.space(1) slim.space(2) slim.space(2);
+  }
+}

@@ -271,6 +271,64 @@ interface SwatchDef {
             </div>
           </section>
 
+          <!-- Entry page blocks ------------------------------------------ -->
+          <section class="slim-card" id="entry">
+            <header class="slim-card__header"><h2 class="slim-card__title">Einstiegsseite: Hello, Kacheln, Breadcrumbs</h2></header>
+            <div class="slim-card__body slim-stack">
+              <ol class="slim-breadcrumbs">
+                <li class="slim-breadcrumbs__item"><a href="#entry">Startseite</a></li>
+                <li class="slim-breadcrumbs__item"><a href="#entry">Schiessplatz-Nutzungen</a></li>
+                <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">Übersicht</li>
+              </ol>
+              <div class="slim-hello">
+                <div class="slim-hello__greet">Guten Tag</div>
+                <div class="slim-hello__name">Hans Muster</div>
+                <div class="slim-hello__sub">Freitag, 11. September 2026 · Berechtigt für 8 Schiessplätze</div>
+              </div>
+              <div class="slim-tiles">
+                <a class="slim-tile" href="#entry">
+                  <span class="slim-tile__icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.5"/></svg></span>
+                  <span class="slim-tile__title">Schiessplatz-Nutzungen</span>
+                  <span class="slim-tile__text">Übersicht mit Ampelstatus für Kontingent und Lärmbelastung.</span>
+                  <span class="slim-tile__kpi"><span><b>8</b> Plätze</span><span><b>5</b> eingehalten</span><span><b>1</b> überschritten</span></span>
+                  <span class="slim-tile__foot">Zur Übersicht <svg viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </a>
+                <div class="slim-tile slim-tile--disabled">
+                  <span class="slim-tile__icon slim-tile__icon--neutral"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 13.5h11M4 11V7M8 11V4M12 11V8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                  <span class="slim-tile__title">Auswertungen</span>
+                  <span class="slim-tile__text">Jahresvergleiche und Trends.</span>
+                  <span class="slim-tile__foot">In Vorbereitung</span>
+                </div>
+              </div>
+              <div class="slim-toolbar" style="padding: 0">
+                <div class="slim-search slim-toolbar__grow">
+                  <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6"/></svg>
+                  <input class="slim-search__input" type="search" placeholder="Suchen … (.slim-search)" />
+                </div>
+                <label class="slim-filter">Jahr <select class="slim-select"><option>2026</option><option>2025</option></select></label>
+              </div>
+              <div class="slim-u-flex-between">
+                <span class="slim-badge slim-badge--success"><svg class="slim-badge__icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="currentColor"/><path d="M4.5 8.5l2.3 2.3L11.5 6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Eingehalten · .slim-badge__icon</span>
+                <div class="slim-pager">
+                  <button type="button" class="slim-pager__btn" disabled>‹</button>
+                  <button type="button" class="slim-pager__btn slim-pager__btn--active">1</button>
+                  <button type="button" class="slim-pager__btn">2</button>
+                  <button type="button" class="slim-pager__btn">›</button>
+                </div>
+              </div>
+              <div class="slim-dropdown" [class.slim-dropdown--open]="dropdown()">
+                <button type="button" class="slim-btn" (click)="dropdown.set(!dropdown())">Dropdown öffnen · .slim-dropdown</button>
+                <div class="slim-dropdown__panel">
+                  <div class="slim-menu">
+                    <div class="slim-menu__heading">Aktionen</div>
+                    <button type="button" class="slim-menu__item" (click)="dropdown.set(false)">Bearbeiten</button>
+                    <button type="button" class="slim-menu__item slim-menu__item--danger" (click)="dropdown.set(false)">Löschen</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <!-- Data ------------------------------------------------------ -->
           <section class="slim-card" id="data">
             <header class="slim-card__header"><h2 class="slim-card__title">Daten</h2></header>
@@ -372,6 +430,7 @@ export class StyleguideComponent {
 
   protected readonly modes = ['light', 'dark', 'system'] as const;
   protected readonly sheet = signal(false);
+  protected readonly dropdown = signal(false);
   protected readonly chip = signal('Alle');
   protected readonly chips = ['Alle', 'Offen', 'Erledigt', 'Bern', 'Thun', 'Bière', 'Chur'];
   protected readonly active = signal('theme');
@@ -383,6 +442,7 @@ export class StyleguideComponent {
     { id: 'buttons', label: 'Buttons' },
     { id: 'forms', label: 'Formulare' },
     { id: 'feedback', label: 'Feedback' },
+    { id: 'entry', label: 'Einstiegsseite' },
     { id: 'data', label: 'Daten' },
     { id: 'overlay', label: 'Sheet / Dialog' },
   ];

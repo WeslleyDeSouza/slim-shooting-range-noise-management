@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "SLIM",
+    "subtitle": "Shooting noise immission management"
+  },
+  "menu": {
+    "home": "Home",
+    "ranges": "Shooting ranges overview",
+    "range": "Shooting range",
+    "range_overview": "Overview",
+    "range_shots": "Shot counts",
+    "range_details": "Details",
+    "range_simulation": "Simulation",
+    "data_management": "Data management",
+    "range_general": "General",
+    "range_master_data": "Master data",
+    "range_weapon_assignment": "Weapon assignment",
+    "calculations": "Calculations",
+    "calculations_overview": "Overview",
+    "calculations_import": "Import",
+    "calculations_export": "Export",
+    "calculations_details": "Details",
+    "weapons": "Weapons",
+    "caliber_weapon": "Calibre/weapon",
+    "caliber": "Calibre",
+    "weapon": "Weapon",
+    "weapon_category": "Weapon category",
+    "users": "Users",
+    "mgdm_export": "MGDM export",
+    "system_settings": "Advanced system settings",
+    "styleguide": "Styleguide"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "back": "Back",
+    "close": "Close",
+    "next": "Next",
+    "confirm": "Confirm",
+    "loading": "Loading …",
+    "yes": "Yes",
+    "no": "No",
+    "language": "Language",
+    "theme_dark": "Dark theme",
+    "theme_light": "Light theme",
+    "no_results": "No entries"
+  },
+  "status": {
+    "api": "API",
+    "online": "online",
+    "offline": "offline"
+  },
+  "error": {
+    "404": {
+      "title": "Page not found",
+      "message": "This page is outdated, deleted or does not exist.",
+      "go_home": "Go to home"
+    },
+    "generic": "An error occurred."
+  },
+  "shell": {
+    "org": "armasuisse",
+    "org_sub": "Federal Office for Defence Procurement",
+    "workspace": "Workspace",
+    "main_menu": "Main menu",
+    "home": "Home",
+    "account": "Account",
+    "signed_in_as": "Signed in as",
+    "permission": "Read access",
+    "ranges_count": "{{n}} shooting ranges",
+    "account_overview": "Account overview",
+    "settings": "Settings",
+    "sign_out": "Sign out",
+    "help": "Help & contact",
+    "manual": "User manual",
+    "manual_sub": "PDF, as of 08/2026",
+    "specialist": "Subject-matter lead",
+    "specialist_sub": "armasuisse Real Estate · +41 58 000 00 00",
+    "sysadmin": "System administration",
+    "application": "Application",
+    "version": "Version",
+    "more": "More",
+    "documentation": "Documentation",
+    "data": "Data"
+  },
+  "status_range": {
+    "ok": "Compliant",
+    "warn": "To review",
+    "over": "Exceeded",
+    "none": "No data"
+  },
+  "placeholder": {
+    "title": "In preparation",
+    "text": "This area is being built according to the sitemap (docs/architecture/sitemap.md)."
+  }
+}

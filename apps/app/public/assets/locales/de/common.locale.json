@@ -1,0 +1,100 @@
+{
+  "app": {
+    "title": "SLIM",
+    "subtitle": "Schiesslärmimmissions-Management"
+  },
+  "menu": {
+    "home": "Home",
+    "ranges": "Übersicht Schiessplätze",
+    "range": "Schiessplatz",
+    "range_overview": "Übersicht",
+    "range_shots": "Schusszahlen",
+    "range_details": "Details",
+    "range_simulation": "Simulation",
+    "data_management": "Datenverwaltung",
+    "range_general": "Allgemein",
+    "range_master_data": "Stammdaten",
+    "range_weapon_assignment": "Zuordnung Waffen",
+    "calculations": "Berechnungen",
+    "calculations_overview": "Übersicht",
+    "calculations_import": "Import",
+    "calculations_export": "Export",
+    "calculations_details": "Details",
+    "weapons": "Waffen",
+    "caliber_weapon": "Kaliber/Waffe",
+    "caliber": "Kaliber",
+    "weapon": "Waffe",
+    "weapon_category": "Waffenkategorie",
+    "users": "Benutzer",
+    "mgdm_export": "MGDM Export",
+    "system_settings": "Erweiterte Systemeinstellungen",
+    "styleguide": "Styleguide"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "back": "Zurück",
+    "close": "Schliessen",
+    "next": "Weiter",
+    "confirm": "Bestätigen",
+    "loading": "Wird geladen …",
+    "yes": "Ja",
+    "no": "Nein",
+    "language": "Sprache",
+    "theme_dark": "Dunkles Design",
+    "theme_light": "Helles Design",
+    "no_results": "Keine Einträge"
+  },
+  "status": {
+    "api": "API",
+    "online": "online",
+    "offline": "offline"
+  },
+  "error": {
+    "404": {
+      "title": "Seite nicht gefunden",
+      "message": "Diese Seite ist veraltet, gelöscht oder existiert nicht.",
+      "go_home": "Zur Startseite"
+    },
+    "generic": "Es ist ein Fehler aufgetreten."
+  },
+  "shell": {
+    "org": "armasuisse",
+    "org_sub": "Bundesamt für Rüstung",
+    "workspace": "Arbeitsbereich",
+    "main_menu": "Hauptmenü",
+    "home": "Startseite",
+    "account": "Benutzerkonto",
+    "signed_in_as": "Angemeldet als",
+    "permission": "Leseberechtigung",
+    "ranges_count": "{{n}} Schiessplätze",
+    "account_overview": "Kontoübersicht",
+    "settings": "Einstellungen",
+    "sign_out": "Abmelden",
+    "help": "Hilfe & Kontakt",
+    "manual": "Benutzerhandbuch",
+    "manual_sub": "PDF, Stand 08/2026",
+    "specialist": "Fachverantwortliche/r",
+    "specialist_sub": "armasuisse Immobilien · +41 58 000 00 00",
+    "sysadmin": "Systemadministration",
+    "application": "Applikation",
+    "version": "Version",
+    "more": "Mehr",
+    "documentation": "Dokumentation",
+    "data": "Daten"
+  },
+  "status_range": {
+    "ok": "Eingehalten",
+    "warn": "Zu prüfen",
+    "over": "Überschritten",
+    "none": "Keine Daten"
+  },
+  "placeholder": {
+    "title": "In Vorbereitung",
+    "text": "Dieser Bereich wird gemäss Sitemap (docs/architecture/sitemap.md) umgesetzt."
+  }
+}

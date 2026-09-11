@@ -1,0 +1,23 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.home {
+  &__notice {
+    margin-bottom: slim.space(5);
+
+    b {
+      color: slim.color('ink');
+    }
+    a {
+      margin-left: slim.space(1);
+      font-weight: slim.font-weight('semibold');
+    }
+  }
+}
+
+.slim-hello {
+  margin-bottom: slim.space(5);
+}

@@ -1,0 +1,37 @@
+{
+  "greet": {
+    "morning": "Guten Morgen",
+    "day": "Guten Tag",
+    "evening": "Guten Abend"
+  },
+  "authorized_for": "Berechtigt für {{n}} Schiessplätze",
+  "notice": {
+    "title": "{{n}} Schiessplätze brauchen Aufmerksamkeit.",
+    "text": "{{over}} überschritten, {{warn}} zu prüfen.",
+    "show": "Anzeigen"
+  },
+  "tiles": {
+    "ranges": {
+      "title": "Schiessplatz-Nutzungen",
+      "text": "Übersicht aller berechtigten Schiessplätze mit Ampelstatus für Kontingent-Einhaltung und Lärmbelastung. Von hier zu Schusszahlen, Details und Simulation.",
+      "foot": "Zur Übersicht",
+      "kpi_total": "Plätze",
+      "kpi_ok": "eingehalten",
+      "kpi_warn": "zu prüfen",
+      "kpi_over": "überschritten"
+    },
+    "data": {
+      "title": "Datenverwaltung",
+      "text": "Stammdaten der Schiessplätze, Zuordnung und Kategorien der Waffen, Berechnungen importieren und exportieren, Benutzer und Berechtigungen, MGDM-Export.",
+      "foot": "Zur Datenverwaltung",
+      "kpi_ranges": "Schiessplätze",
+      "kpi_weapons": "Waffen",
+      "kpi_users": "Benutzer"
+    },
+    "reports": {
+      "title": "Auswertungen",
+      "text": "Jahresvergleiche, Trend der Lärmbelastung und Kontingentausschöpfung über alle berechtigten Plätze.",
+      "foot": "In Vorbereitung"
+    }
+  }
+}

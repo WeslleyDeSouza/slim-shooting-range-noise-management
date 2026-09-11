@@ -1,0 +1,37 @@
+{
+  "greet": {
+    "morning": "Buongiorno",
+    "day": "Buongiorno",
+    "evening": "Buonasera"
+  },
+  "authorized_for": "Autorizzato per {{n}} piazze di tiro",
+  "notice": {
+    "title": "{{n}} piazze di tiro richiedono attenzione.",
+    "text": "{{over}} superato/i, {{warn}} da verificare.",
+    "show": "Mostra"
+  },
+  "tiles": {
+    "ranges": {
+      "title": "Utilizzo delle piazze di tiro",
+      "text": "Panoramica di tutte le piazze di tiro autorizzate con semaforo per il rispetto del contingente e le immissioni di rumore. Da qui a numero di colpi, dettagli e simulazione.",
+      "foot": "Alla panoramica",
+      "kpi_total": "piazze",
+      "kpi_ok": "rispettate",
+      "kpi_warn": "da verificare",
+      "kpi_over": "superate"
+    },
+    "data": {
+      "title": "Gestione dei dati",
+      "text": "Dati di base delle piazze di tiro, assegnazione e categorie delle armi, importazione ed esportazione dei calcoli, utenti e autorizzazioni, esportazione MGDM.",
+      "foot": "Alla gestione dei dati",
+      "kpi_ranges": "piazze di tiro",
+      "kpi_weapons": "armi",
+      "kpi_users": "utenti"
+    },
+    "reports": {
+      "title": "Analisi",
+      "text": "Confronti annuali, andamento delle immissioni di rumore e utilizzo del contingente su tutte le piazze autorizzate.",
+      "foot": "In preparazione"
+    }
+  }
+}

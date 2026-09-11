@@ -1,0 +1,46 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.ranges {
+  &__status {
+    width: 100%;
+    @include slim.mq('md') {
+      width: auto;
+    }
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__name {
+    font-weight: slim.font-weight('bold');
+    color: slim.color('link');
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__info {
+    display: inline-grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    margin-left: slim.space(1);
+    border-radius: 50%;
+    background: slim.color('line');
+    color: slim.color('text-3');
+    font-size: 10px;
+    font-weight: slim.font-weight('bold');
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: help;
+    vertical-align: middle;
+  }
+}

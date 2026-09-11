@@ -1,0 +1,31 @@
+{
+  "title": "Übersicht Schiessplätze",
+  "subtitle": "Kontingente und Lärmbelastung im Blick.",
+  "year": "Jahr",
+  "export": "Exportieren",
+  "search_placeholder": "Schiessplatz oder Koordinationsabschnitt-Nr. suchen",
+  "filter": {
+    "all": "Status: Alle",
+    "attention": "Nur Handlungsbedarf"
+  },
+  "scope_lock": "Nur berechtigte Schiessplätze",
+  "count": "{{n}} Schiessplätze",
+  "foot_count": "1–{{n}} von {{total}} Schiessplätzen",
+  "empty": "Keine Schiessplätze für diese Auswahl.",
+  "columns": {
+    "name": "Bezeichnung",
+    "ka": "Koordinationsabschnitt-Nr.",
+    "sp": "Sachplan-Nr.",
+    "quota": "Kontingent",
+    "quota_info": "Einhaltung Kontingent gemäss Plangenehmigung, Ampel wie in der Beurteilung Lärmbelastung des Schiessplatzes",
+    "noise": "Lärmbelastung",
+    "noise_info": "Aktuelle Lärmbelastung gemäss Berechnung, Ampel wie in der Beurteilung Lärmbelastung des Schiessplatzes",
+    "nav": "Navigation"
+  },
+  "actions": {
+    "overview": "Übersicht",
+    "shots": "Schusszahlen"
+  },
+  "legend": "Legende",
+  "sample_note": "Beispieldaten · Entwurf UI · Kapitel 5.8 / 5.9"
+}

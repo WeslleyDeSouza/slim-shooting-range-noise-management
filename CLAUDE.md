@@ -56,6 +56,28 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
 
+## API contract: models and client are GENERATED from the backend (ELO pattern)
+
+- The backend is the single source of truth. Every DTO / entity shape the app needs is
+  declared in NestJS (`class-validator` + `@nestjs/swagger` decorators on DTOs and controllers).
+- When the API starts outside production (`API_SWAGGER_ENABLED=1`), `apps/api/src/common/docs/main.swagger.ts`
+  writes `config/api-gateway-swagger-spec.json` and runs `npm run ng-swagger`
+  (`tools/swagger.generator.js`, ng-openapi-gen) → `libs/app/generated/src/core` = `@ui-slim/apiClient`
+  (models, services, `ApiConfiguration`). `src/core` is git-ignored; the spec is committed.
+- **Never hand-write API interfaces, DTO types or HTTP calls in the app.** Import models and
+  services from `@ui-slim/apiClient` (`import type { RangeDto } from '@ui-slim/apiClient'`,
+  `inject(RangesService).rangesFindAll()`), wrap them in app facades/services under `apps/app/src/app/core`.
+- Changing the API contract = change the DTO/controller in `apps/api`, restart the API (or
+  `npm run ng-swagger` from the committed spec), then use the regenerated types.
+- Mock data in the app (e.g. `core/ranges/ranges.mock.ts`) is typed with the generated models
+  as soon as the corresponding API module exists; local model files are only a stopgap.
+
+## Documentation
+
+- `docs/README.md` is the index (structure like ELO: architecture / projects / userstories / anforderungskatalog).
+- The UI structure (sitemap, routes, views, API modules) is `docs/architecture/sitemap.md`; keep it in sync with `app.routes.ts`.
+- i18n rules: `docs/architecture/i18n.md` — no hard-coded UI texts, sections per feature, `de` is the source, `npm run translate` for fr/it/en.
+
 ## NestJS
 
 - One folder per feature under `apps/api/src/modules/<feature>` with `*.module.ts`, `*.controller.ts`, `*.service.ts`, `entities/`, `dto/`.
@@ -68,11 +90,14 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 
 # UI / Styling
 
-Read  before writing any template or stylesheet.
+Read `.claude/styleguide.md` before writing any template or stylesheet.
 
-- Design system:  (), living styleguide at .
-- Mobile first, everything in SCSS, BEM (), tokens only via
-  , , … (they return ; light + dark + runtime colours).
-- In component stylesheets:  — never raw hex values or px spacing.
-- Design-system blocks use the  prefix; app/feature blocks get their own short prefix.
-- Component selectors use the  prefix (); design-system components use .
+- Design system: `libs/app/design-system` (`@ui-slim/design-system`), living styleguide at `/styleguide`.
+- Mobile first, everything in SCSS, BEM (`.block__element--modifier`), tokens only via
+  `slim.color()`, `slim.space()`, … (they return `var(--slim-*)`; light + dark + runtime colours).
+- In component stylesheets: `@use 'slim/abstracts' as slim;` — never raw hex values or px spacing.
+- Design-system blocks use the `slim-` prefix; app/feature blocks get their own short prefix.
+- Component selectors use the `app` prefix (`app-*`); design-system components use `slim-*`.
+- Page structure follows the mock `_mocks/home/index.html` and the ELO admin shell: `views/shell` (topbar, sidebar, tabbar),
+  `slim-page` with breadcrumbs + header + body, cards / tiles / tables from the design system.
+- All UI text via `translate` pipe with keys from `apps/app/public/assets/locales/<lang>/<section>.locale.json`.

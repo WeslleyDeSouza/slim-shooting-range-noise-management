@@ -152,9 +152,12 @@ Font: `'Helvetica Now', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-ser
 - **Layout**: `slim-shell` (`__topbar __sidebar __main __tabbar`), `slim-page`
   (`__header __title __subtitle __actions __body`), `slim-container` (`--narrow --flush`),
   `slim-stack` (`--xs --sm --lg --row --row-md`), `slim-grid` (`--2 --3 --4 --auto`), `slim-divider`
-- **Navigation**: `slim-topbar` (`__brand __mark __title __actions __btn`, `--primary`),
+- **Navigation**: `slim-topbar` (`__brand __mark __brand-text __org __title __actions __btn __iconbtn __user __user-name`, `--primary`),
   `slim-tabbar` (`__item --active __icon __label __badge`) mobile only,
-  `slim-sidebar` (`__brand __section __heading __link --active __icon __footer`) desktop only
+  `slim-sidebar` (`__brand __section __heading __link --active __icon __footer`) desktop only,
+  `slim-breadcrumbs` (`__item --current`)
+- **Entry page**: `slim-hello` (`__greet __name __sub`), `slim-tiles` + `slim-tile`
+  (`__icon --neutral __title __text __kpi __foot --muted`; `--disabled`)
 - **Button**: `slim-btn` (`__icon __label`; `--primary --secondary --ghost --danger --link`,
   `--sm --lg --block --block-mobile --icon --pill --loading`), `slim-btn-group` (`--stretch`)
 - **Card**: `slim-card` (`__header __title __subtitle __actions __body __footer __media`;
@@ -171,12 +174,16 @@ Font: `'Helvetica Now', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-ser
   `slim-spinner` (`--sm --lg`), `slim-skeleton` (`--text --title --circle --block`),
   `slim-empty` (`__icon __title __text __action`), `slim-avatar` (`--sm --lg`)
 - **Data**: `slim-list` (`__item --interactive __leading __content __title __meta __trailing`;
-  `--divided --card`), `slim-table-wrap` + `slim-table` (`__cell--num --wrap --actions`,
-  `__row--clickable --selected`; `--striped --dense --stack`), `slim-segmented`
+  `--divided --card`), `slim-toolbar` (`__grow __meta __lock`), `slim-search` (`__input __icon`),
+  `slim-filter`, `slim-table-wrap` + `slim-table` (`__cell--num --wrap --actions`,
+  `__row--clickable --selected`; `--striped --dense --stack`), `slim-table-foot` (`__grow`),
+  `slim-pager` (`__btn --active`), `slim-legend` (`__item`), `slim-row-actions`, `slim-segmented`
   (`__item --active`; `--block`), `slim-tabs` (`__tab --active`), `slim-kv` (`__key __value`)
 - **Overlay**: `slim-sheet` (`__backdrop __panel __handle __header __title __close __body __footer`;
-  `--open --lg --full`) bottom sheet on phones, dialog from `md`; `slim-menu`
+  `--open --lg --full`) bottom sheet on phones, dialog from `md`; `slim-dropdown`
+  (`__panel`; `--open --left`) anchor for a `slim-menu`
   (`__item --active --danger __icon __divider __heading`)
+- **Badge icons**: `slim-badge__icon` (14px svg before the label; see `app-status-pill`)
 - **Typography**: `slim-h1…h4`, `slim-text--muted --secondary --small --xs --strong --mono --danger --success`, `slim-eyebrow`
 - **Utilities** (`slim-u-*`): `sr-only truncate text-center text-right flex flex-between grow desktop-only mobile-only mt-N mb-N`
 

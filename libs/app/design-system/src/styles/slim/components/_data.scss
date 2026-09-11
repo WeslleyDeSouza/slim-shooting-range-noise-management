@@ -156,6 +156,14 @@
   }
 
   // Card rows on phones: each <td> shows its `data-label` as a heading.
+  // Denser rows for long lists (ELO collections look).
+  @include mod('compact') {
+    th,
+    td {
+      padding: space(2) space(2);
+    }
+  }
+
   @include mod('stack') {
     @include mq-down('md') {
       thead {

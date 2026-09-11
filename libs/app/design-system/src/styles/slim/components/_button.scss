@@ -146,6 +146,15 @@
       width: 20px;
       height: 20px;
     }
+    // Row action: 32px square, 16px glyph.
+    &.slim-btn--sm {
+      width: size('control-h-sm');
+      min-height: size('control-h-sm');
+      .slim-btn__icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
   }
   @include mod('pill') {
     border-radius: radius('pill');

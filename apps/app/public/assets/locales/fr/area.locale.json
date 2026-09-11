@@ -24,7 +24,9 @@
   },
   "actions": {
     "overview": "Aperçu",
-    "shots": "Nombre de coups"
+    "shots": "Nombre de coups",
+    "details": "Détails",
+    "simulation": "Simulation"
   },
   "legend": "Légende",
   "sample_note": "Données d'exemple · maquette UI · chapitres 5.8 / 5.9",
@@ -52,7 +54,7 @@
     "date_to": "Date au",
     "columns": {
       "room": "Position de tir",
-      "unit": "Unité utilisatrice",
+      "unit": "Unité utili­satrice",
       "period": "Période",
       "type": "Utilisation",
       "category": "Catégorie",

@@ -30,7 +30,7 @@ test.describe('area: shot counts', () => {
     // Overview → «Schusszahlen» of the first area (Geissalp).
     await page.goto(ROUTES.area);
     await expect(page.locator('.slim-table tbody tr').first()).toContainText('Geissalp');
-    await page.locator('.slim-table tbody tr').first().locator('.slim-row-actions a').nth(1).click();
+    await page.locator('.slim-table tbody tr').first().locator('[data-testid="area-action-shots"]').click();
     await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/shots$/);
 
     // KPIs and the year's usages.

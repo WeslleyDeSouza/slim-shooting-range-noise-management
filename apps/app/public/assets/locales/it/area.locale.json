@@ -24,7 +24,9 @@
   },
   "actions": {
     "overview": "Panoramica",
-    "shots": "Numero di colpi"
+    "shots": "Numero di colpi",
+    "details": "Dettagli",
+    "simulation": "Simulazione"
   },
   "legend": "Legenda",
   "sample_note": "Dati di esempio · bozza UI · capitoli 5.8 / 5.9",
@@ -52,7 +54,7 @@
     "date_to": "Data al",
     "columns": {
       "room": "Posizione di tiro",
-      "unit": "Unità utilizzatrice",
+      "unit": "Unità utiliz­zatrice",
       "period": "Periodo",
       "type": "Utilizzo",
       "category": "Categoria",

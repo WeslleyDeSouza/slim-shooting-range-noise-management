@@ -24,7 +24,9 @@
   },
   "actions": {
     "overview": "Übersicht",
-    "shots": "Schusszahlen"
+    "shots": "Schusszahlen",
+    "details": "Details",
+    "simulation": "Simulation"
   },
   "legend": "Legende",
   "sample_note": "Beispieldaten · Entwurf UI · Kapitel 5.8 / 5.9",
@@ -51,8 +53,8 @@
     "date_from": "Datum von",
     "date_to": "Datum bis",
     "columns": {
-      "room": "Stellungsraum",
-      "unit": "Nutzungseinheit",
+      "room": "Stellungs­raum",
+      "unit": "Nutzungs­einheit",
       "period": "Zeitraum",
       "type": "Nutzung",
       "category": "Kategorie",

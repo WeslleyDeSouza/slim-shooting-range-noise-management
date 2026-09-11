@@ -40,7 +40,7 @@ type StatusFilter = '' | 'attention' | AreaStatus;
         </li>
         <li class="slim-breadcrumbs__item">
           <a [routerLink]="routes.admin.area.root">{{
-            'tiles.area.title' | translate
+            'menu.areas' | translate
           }}</a>
         </li>
         <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">
@@ -162,7 +162,7 @@ type StatusFilter = '' | 'attention' | AreaStatus;
         </div>
 
         <div class="slim-table-wrap area__table-wrap">
-          <table class="slim-table slim-table--stack">
+          <table class="slim-table slim-table--stack slim-table--compact">
             <thead>
               <tr>
                 <th>{{ 'columns.name' | translate }}</th>
@@ -225,19 +225,21 @@ type StatusFilter = '' | 'attention' | AreaStatus;
                     [attr.data-label]="'columns.nav' | translate"
                     class="slim-table__cell--actions"
                   >
-                    <div class="slim-row-actions">
-                      <a
-                        class="slim-btn slim-btn--sm slim-btn--pill"
-                        [routerLink]="routes.admin.area.overview(r.id)"
-                        (click)="$event.stopPropagation()"
-                        >{{ 'actions.overview' | translate }}</a
-                      >
-                      <a
-                        class="slim-btn slim-btn--sm slim-btn--pill"
-                        [routerLink]="routes.admin.area.shots(r.id)"
-                        (click)="$event.stopPropagation()"
-                        >{{ 'actions.shots' | translate }}</a
-                      >
+                    <div class="slim-row-actions area__actions">
+                      @for (action of rowActions; track action.id) {
+                        <a
+                          class="slim-btn slim-btn--ghost slim-btn--icon slim-btn--sm"
+                          [routerLink]="action.link(r.id)"
+                          [attr.title]="action.key | translate"
+                          [attr.aria-label]="action.key | translate"
+                          [attr.data-testid]="'area-action-' + action.id"
+                          (click)="$event.stopPropagation()"
+                        >
+                          <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path [attr.d]="action.icon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </a>
+                      }
                     </div>
                   </td>
                 </tr>
@@ -316,6 +318,14 @@ export class AreaOverviewComponent extends ComponentBase {
   protected readonly years = [2026, 2025, 2024];
   protected readonly legend: AreaStatus[] = ['ok', 'warn', 'over', 'none'];
 
+  /** Icon row actions (ELO collections look): the four pages of a Schiessplatz. */
+  protected readonly rowActions = [
+    { id: 'overview', key: 'actions.overview', link: APP_ROUTES.admin.area.overview, icon: ICON.home },
+    { id: 'shots', key: 'actions.shots', link: APP_ROUTES.admin.area.shots, icon: ICON.target },
+    { id: 'details', key: 'actions.details', link: APP_ROUTES.admin.area.details, icon: ICON.info },
+    { id: 'simulation', key: 'actions.simulation', link: APP_ROUTES.admin.area.simulation, icon: ICON.chart },
+  ];
+
   protected readonly year = signal(this.years[0]);
   protected readonly query = signal('');
 
@@ -357,3 +367,10 @@ export class AreaOverviewComponent extends ComponentBase {
     void this.area.load();
   }
 }
+
+const ICON = {
+  home: 'M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z',
+  target: 'M8 2a6 6 0 100 12A6 6 0 008 2zm0 3a3 3 0 100 6 3 3 0 000-6z',
+  info: 'M8 1.7a6.3 6.3 0 100 12.6A6.3 6.3 0 008 1.7zM8 7.2v4M8 5v.2',
+  chart: 'M2 12l4-5 3 3 5-6',
+} as const;

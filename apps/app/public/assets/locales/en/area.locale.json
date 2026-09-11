@@ -24,7 +24,9 @@
   },
   "actions": {
     "overview": "Overview",
-    "shots": "Shot counts"
+    "shots": "Shot counts",
+    "details": "Details",
+    "simulation": "Simulation"
   },
   "legend": "Legend",
   "sample_note": "Sample data · UI draft · chapters 5.8 / 5.9",

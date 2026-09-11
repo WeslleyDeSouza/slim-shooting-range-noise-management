@@ -23,6 +23,11 @@
     color: slim.color('link');
   }
 
+  &__actions {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
   &__num {
     font-variant-numeric: tabular-nums;
   }

@@ -4,7 +4,7 @@ Nx monorepo with an Angular 22 PWA frontend and a NestJS 12 API, structured like
 `pwa-elo-shot-counting`.
 
 > [!NOTE]
-> Packages from the `@app-galaxy` scope need an `.npmrc` with a valid npm token.
+> Packages from the `@app-galaxy` scope come from a private Nexus registry. The committed `.npmrc` only maps the scope; the token goes into your user-level `~/.npmrc` (`npm run setup`, step 03, writes it there) — never into the project file, GitHub push protection rejects committed tokens. CI reads it from the `NPM_TOKEN` secret (`.github/workflows/build-and-deploy.yml`).
 
 ## Layout
 
@@ -37,7 +37,7 @@ Opens the setup wizard (`@app-galaxy/setup-api`), which walks the steps in
 
 | Step        | Checks                                                                                  |
 | ----------- | --------------------------------------------------------------------------------------- |
-| `01` – `03` | Toolchain (Node ≥ 22.12), `.env` from `.env.example`, `.npmrc` token for `@app-galaxy` |
+| `01` – `03` | Toolchain (Node ≥ 22.12), `.env` from `.env.example`, `~/.npmrc` token for `@app-galaxy` |
 | `04` – `06` | Dependencies, database (SQLite / MariaDB / MySQL / PostgreSQL), Nx workspace          |
 | `07` – `08` | API health (`/api/health/alive`, `/api/health/ready`), frontend + `/api` proxy         |
 | `09` – `10` | Demo login (`slim@demo.ch`), seeded admin role behind the `/admin` guards               |
@@ -135,6 +135,10 @@ the in-memory SQLite setup for service tests. The Angular app keeps Jest with
 
 `.env` is loaded by `apps/api/src/core/env-loader.ts` (imported first in
 `main.ts`) so library modules that read secrets at import time see it.
+
+## CI/CD (GitHub Actions)
+
+`.github/workflows/build-and-deploy.yml` mirrors ELO: **install** (npm cache, `nx affected`) → **tests** (lint, API build + `ng-swagger`, Vitest + Jest) and **build** (API, app production, service worker → artifact `nXdist`) → **deploy** (only `master`, environment `production`: Docker image from `dockerfile` pushed to the registry). Secrets: `NPM_TOKEN`, optional `NX_CLOUD_ACCESS_TOKEN`, `REGISTRY_URL`, `REGISTRY_URL_PATH`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`. The npm token reaches the Docker build as BuildKit secret `npm_token` and is removed from the image again after `npm install`.
 
 ## Database
 

@@ -1,0 +1,235 @@
+# CI/CD like ELO (pwa-elo-shot-counting): install → tests + build → deploy.
+#
+# Secrets (repository → Settings → Secrets and variables → Actions):
+#   NPM_TOKEN            token of the private @app-galaxy registry (nexus)
+#   NX_CLOUD_ACCESS_TOKEN optional, Nx remote cache
+#   REGISTRY_URL / REGISTRY_URL_PATH / REGISTRY_USERNAME / REGISTRY_PASSWORD
+#                        container registry for the deploy job (environment «production»)
+#
+# The generated API client (@ui-slim/apiClient) is git-ignored: every job
+# that compiles the app first builds the API and runs `npm run ng-swagger`
+# from the committed OpenAPI spec (config/api-gateway-swagger-spec.json).
+name: Nx Build and Deploy
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+env:
+  NODE_VERSION: '24'
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_BRANCH: ${{ github.event.number || github.ref_name }}
+  NX_RUN_GROUP: ${{ github.run_id }}
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+      has-affected: ${{ steps.affected.outputs.has-affected }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure npm registry
+        run: |
+          echo "//nexus-repository.revolvit.ch/repository/npm_hosted/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      - name: Generate cache key
+        id: cache-key
+        run: echo "key=${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}" >> $GITHUB_OUTPUT
+
+      - name: Cache node_modules
+        id: cache-deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ steps.cache-key.outputs.key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Check affected projects
+        id: affected
+        run: |
+          npx nx --version
+          HAS_AFFECTED=$(npx nx show projects --affected --base=$NX_BASE --head=$NX_HEAD | grep -c . || true)
+          echo "has-affected=$HAS_AFFECTED" >> $GITHUB_OUTPUT
+          echo "Affected projects: $HAS_AFFECTED"
+
+  tests:
+    needs: install
+    runs-on: ubuntu-latest
+    if: needs.install.outputs.has-affected != '0'
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure npm registry
+        run: |
+          echo "//nexus-repository.revolvit.ch/repository/npm_hosted/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ needs.install.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss)
+        run: test -d node_modules/.bin || npm ci --legacy-peer-deps
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Cache Nx
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/nx
+          key: nx-${{ runner.os }}-${{ hashFiles('**/nx.json', '**/project.json', '**/package.json') }}
+          restore-keys: |
+            nx-${{ runner.os }}-
+
+      - name: Lint, generate client, test
+        run: |
+          npx nx run-many --target=lint --projects=api,app
+          npx nx run api:build && npm run ng-swagger
+          npx nx run-many --target=test --projects=api,app --parallel=2
+
+  build:
+    needs: install
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure npm registry
+        run: |
+          echo "//nexus-repository.revolvit.ch/repository/npm_hosted/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ needs.install.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss)
+        run: test -d node_modules/.bin || npm ci --legacy-peer-deps
+
+      - name: Build applications
+        run: |
+          npx nx run api:build && npm run ng-swagger
+          npx nx run-many --target=build --projects=api,app --configuration=production
+          npm run ngsw
+          ls dist/apps
+
+      # Unconditional: deploy's own `if` gates master — a ref-gated upload left
+      # the deploy job with «Artifact not found» on job re-runs (ELO lesson).
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nXdist
+          path: |
+            ./dist
+          if-no-files-found: error
+          retention-days: 3
+
+  deploy:
+    needs: [build, tests]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: nXdist
+          path: ./dist
+
+      - name: Verify artifacts
+        run: ls -la dist/apps
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.REGISTRY_URL }}/${{ secrets.REGISTRY_URL_PATH }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          file: ./dockerfile
+          push: true
+          secrets: |
+            npm_token=${{ secrets.NPM_TOKEN }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ secrets.REGISTRY_URL }}/${{ secrets.REGISTRY_URL_PATH }}:latest
+          cache-to: type=inline
+
+      - name: Image digest
+        run: echo "Image pushed with digest ${{ steps.meta.outputs.digest }}"

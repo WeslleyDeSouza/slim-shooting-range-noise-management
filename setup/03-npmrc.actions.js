@@ -1,4 +1,5 @@
-const { copyFileSync, readFileSync, writeFileSync } = require('node:fs');
+const { copyFileSync, existsSync, readFileSync, writeFileSync } = require('node:fs');
+const { homedir } = require('node:os');
 const { join } = require('node:path');
 
 const REGISTRY = 'https://nexus-repository.revolvit.ch/repository/npm_hosted/';
@@ -15,18 +16,32 @@ function readNpmrc(ctx) {
   return ctx.exists('.npmrc') ? readFileSync(join(ctx.projectDir, '.npmrc'), 'utf8') : '';
 }
 
+/**
+ * The token lives in the user-level npmrc (~/.npmrc), never in the project
+ * file: the project .npmrc is committed (registry mapping only) and GitHub
+ * push protection rejects a committed npm token.
+ */
+const USER_NPMRC = join(homedir(), '.npmrc');
+
+function readUserNpmrc() {
+  return existsSync(USER_NPMRC) ? readFileSync(USER_NPMRC, 'utf8') : '';
+}
+
+function hasRegistryToken(contents) {
+  const prefix = `${REGISTRY_HOST}:_authToken=`;
+  return contents
+    .split(/\r?\n/)
+    .some((line) => line.startsWith(prefix) && line.slice(prefix.length).trim() !== '');
+}
+
 function hasToken(contents) {
   const match = /_authToken\s*=\s*(\S+)/.exec(contents);
   return Boolean(match && match[1]);
 }
 
-function render(token) {
-  return [
-    `${REGISTRY_HOST}:_authToken=${token}`,
-    `${SCOPE}:registry=${REGISTRY}`,
-    'legacy-peer-deps=true',
-    '',
-  ].join('\n');
+/** Project .npmrc: registry mapping only (committed). */
+function render() {
+  return [`${SCOPE}:registry=${REGISTRY}`, 'legacy-peer-deps=true', ''].join('\n');
 }
 
 /** A backup is itself a file we did not write. Never land on one that exists. */
@@ -38,20 +53,28 @@ function backupPath(ctx) {
   throw new Error('too many .npmrc backups — clean them up first');
 }
 
-/** Mirrors writeEnv's contract: back the old file up before replacing it. */
+/**
+ * Writes the registry mapping to the project .npmrc (backing up a foreign
+ * one, mirroring writeEnv's contract) and the token to ~/.npmrc, replacing
+ * an older token line for the same registry. A token found in the project
+ * file is moved out of it.
+ */
 function writeNpmrc(ctx, token) {
   const target = join(ctx.projectDir, '.npmrc');
-  if (ctx.exists('.npmrc')) {
+  const current = readNpmrc(ctx);
+  if (current && current.trim() !== render().trim()) {
     const backup = backupPath(ctx);
     copyFileSync(target, join(ctx.projectDir, backup));
     ctx.log('warn', `kept a copy of the old .npmrc at ${backup}`);
   }
-  writeFileSync(target, render(token), 'utf8');
+  writeFileSync(target, render(), 'utf8');
 
-  const gitignore = ctx.exists('.gitignore') ? readFileSync(join(ctx.projectDir, '.gitignore'), 'utf8') : '';
-  if (!/^\.npmrc\s*$/m.test(gitignore)) {
-    ctx.log('warn', '.npmrc is not in .gitignore — the token will be committed.');
-  }
+  const authLine = `${REGISTRY_HOST}:_authToken=${token}`;
+  const user = readUserNpmrc()
+    .split('\n')
+    .filter((line) => !line.startsWith(`${REGISTRY_HOST}:_authToken=`) && line.trim() !== '');
+  user.push(authLine);
+  writeFileSync(USER_NPMRC, user.join('\n') + '\n', 'utf8');
 }
 
 /** @type {import('@app-galaxy/setup-api').StepDefinition} */
@@ -63,7 +86,8 @@ module.exports = {
     const npmrc = readNpmrc(ctx);
     if (!npmrc) return { ok: false, note: '.npmrc is missing' };
     if (!npmrc.includes(`${SCOPE}:registry=`)) return { ok: false, note: `no registry mapped for ${SCOPE}` };
-    if (!hasToken(npmrc)) return { ok: false, note: 'no _authToken in .npmrc' };
+    if (hasToken(npmrc)) return { ok: false, note: '.npmrc holds a token — it belongs in ~/.npmrc (the project file is committed)' };
+    if (!hasRegistryToken(readUserNpmrc())) return { ok: false, note: `no _authToken for ${REGISTRY_HOST} in ~/.npmrc` };
 
     return { ok: true, note: `${SCOPE} points at the Nexus registry` };
   },
@@ -71,13 +95,16 @@ module.exports = {
   async heal(ctx) {
     // An existing .npmrc is someone's deliberate configuration. If it is merely
     // incomplete, say so and let the user decide — do not rewrite it from under them.
-    if (ctx.exists('.npmrc')) throw new Error('.npmrc exists but is incomplete');
+    const current = readNpmrc(ctx);
+    if (current && current.trim() !== render().trim() && !hasToken(current)) {
+      throw new Error('.npmrc exists but is incomplete');
+    }
 
     const token = clean((await ctx.readEnv())['NPM_TOKEN']);
     if (!token) throw new Error('NPM_TOKEN is not set in .env');
 
     writeNpmrc(ctx, token);
-    ctx.log('heal', 'wrote .npmrc from NPM_TOKEN');
+    ctx.log('heal', 'wrote .npmrc (registry) and ~/.npmrc (token) from NPM_TOKEN');
   },
 
   async escalate(ctx) {
@@ -116,7 +143,7 @@ module.exports = {
       writeNpmrc(ctx, token);
       // The user just handed us this token, so it wins over a stale NPM_TOKEN.
       await ctx.writeEnv({ NPM_TOKEN: token }, { overwrite: true });
-      ctx.log('ok', 'stored the token in .npmrc and .env');
+      ctx.log('ok', 'stored the token in ~/.npmrc and .env');
     }
     // Returning nothing re-runs check().
   },

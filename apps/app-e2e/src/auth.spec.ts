@@ -222,6 +222,9 @@ test.describe('auth: 2fa', () => {
   test('resend starts the 60 s cooldown and blocks itself', async ({
     page,
   }) => {
+    // The verification mail needs SMTP; without MAIL_HOST the API answers
+    // an error and the card shows the banner instead of the cooldown note.
+    test.skip(!process.env['MAIL_HOST'], 'needs SMTP (MAIL_HOST)');
     await page.goto(pageUrl());
     await page.waitForSelector(OTP.boxes);
 

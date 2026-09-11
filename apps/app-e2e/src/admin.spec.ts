@@ -49,5 +49,7 @@ test('renders the styleguide', async ({ page }) => {
   await page.goto('/styleguide');
 
   await expect(page.locator('.slim-btn--primary').first()).toBeVisible();
-  await expect(page.locator('.slim-tabbar')).toBeVisible();
+  // Desktop viewport: sidebar visible, tabbar hidden (never both).
+  await expect(page.locator('.slim-sidebar')).toBeVisible();
+  await expect(page.locator('.slim-tabbar')).toBeHidden();
 });

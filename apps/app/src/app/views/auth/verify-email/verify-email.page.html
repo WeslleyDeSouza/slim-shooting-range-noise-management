@@ -1,0 +1,97 @@
+<div class="auth-card">
+  @switch (state()) {
+    @case ('checking') {
+      <h2>{{ prefix + '.verify_checking' | translate }}</h2>
+      <p class="auth-sub">{{ prefix + '.verify_checking_sub' | translate }}</p>
+    }
+    @case ('enter-code') {
+      <h2>{{ prefix + '.verify_code_title' | translate }}</h2>
+      <p class="auth-sub">
+        {{ prefix + '.verify_code_sub' | translate: { email: email() } }}
+      </p>
+      @if (error()) {
+        <div class="auth-form-err auth-on">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.8V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.4" r=".9" fill="currentColor"/></svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+      <form [formGroup]="codeForm" (ngSubmit)="submitCode()">
+        <div class="auth-f">
+          <input
+            id="auth-verify-code"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            formControlName="code"
+            [class.auth-filled]="!!codeForm.value.code"
+          />
+          <label for="auth-verify-code">
+            {{ prefix + '.verify_code_label' | translate }}
+          </label>
+          <span class="auth-accent"></span>
+        </div>
+        <button
+          class="auth-submit"
+          type="submit"
+          [class.auth-loading]="loading()"
+        >
+          <span class="auth-lbl">
+            {{ prefix + '.verify_code_submit' | translate }}
+          </span>
+          <span class="auth-spinner"></span>
+        </button>
+      </form>
+      @if (resent()) {
+        <div class="auth-ok-note">
+          {{ prefix + '.verify_resent' | translate }}
+        </div>
+      } @else {
+        <div class="auth-card-foot">
+          <button type="button" class="auth-link" (click)="resend()">
+            {{ prefix + '.verify_resend' | translate }}
+          </button>
+        </div>
+      }
+      <div class="auth-card-foot">
+        <a class="auth-link" routerLink="../login">{{ prefix + '.back' | translate }}</a>
+      </div>
+    }
+    @case ('verified') {
+      <div class="auth-success">
+        <div class="auth-ok-ring">
+          <svg viewBox="0 0 96 96">
+            <circle class="auth-ring" cx="48" cy="48" r="42"/>
+            <path class="auth-tick" d="M32 49l11 11 21-24"/>
+          </svg>
+        </div>
+        <h2>{{ prefix + '.verify_done_title' | translate }}</h2>
+        <p>{{ prefix + '.verify_done_text' | translate }}</p>
+        <a class="auth-submit" style="display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:20px" routerLink="../login">
+          <span class="auth-lbl">{{ prefix + '.sign_in' | translate }}</span>
+        </a>
+      </div>
+    }
+    @case ('failed') {
+      <h2>{{ prefix + '.verify_failed_title' | translate }}</h2>
+      <p class="auth-sub">{{ prefix + '.verify_failed_text' | translate }}</p>
+      @if (error()) {
+        <div class="auth-form-err auth-on">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.8V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.4" r=".9" fill="currentColor"/></svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+      @if (resent()) {
+        <div class="auth-ok-note">
+          {{ prefix + '.verify_resent' | translate }}
+        </div>
+      } @else if (email()) {
+        <button type="button" class="auth-submit" (click)="resend()">
+          <span class="auth-lbl">{{ prefix + '.verify_resend' | translate }}</span>
+        </button>
+      }
+      <div class="auth-card-foot">
+        <a class="auth-link" routerLink="../login">{{ prefix + '.back' | translate }}</a>
+      </div>
+    }
+  }
+</div>

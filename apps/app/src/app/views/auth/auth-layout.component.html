@@ -1,0 +1,101 @@
+<div class="auth-wrap">
+  <!-- ============ Marken-Panel ============ -->
+  <aside class="auth-brand" aria-hidden="true">
+    <svg class="auth-topo" viewBox="0 0 900 900" preserveAspectRatio="xMidYMid slice">
+      <g class="auth-drift-a">
+        <path d="M-50 180 C 120 120, 260 240, 420 190 S 720 90, 950 170"/>
+        <path d="M-50 260 C 140 200, 300 320, 460 265 S 740 170, 950 250"/>
+        <path class="auth-hl" d="M-50 345 C 160 285, 330 400, 500 340 S 760 250, 950 330"/>
+        <path d="M-50 430 C 170 375, 350 480, 530 420 S 780 335, 950 415"/>
+      </g>
+      <g class="auth-drift-b">
+        <path d="M-50 540 C 150 490, 320 600, 490 545 S 770 455, 950 535"/>
+        <path class="auth-hl" d="M-50 630 C 170 575, 340 690, 520 630 S 790 545, 950 625"/>
+        <path d="M-50 720 C 180 665, 360 775, 540 715 S 800 635, 950 710"/>
+        <path d="M-50 810 C 190 760, 380 860, 560 805 S 810 725, 950 800"/>
+      </g>
+    </svg>
+    <span class="auth-scan"></span>
+    <span class="auth-blip" style="top:31%;left:58%"></span>
+    <span class="auth-blip auth-b2" style="top:66%;left:30%"></span>
+    <span class="auth-blip auth-b3" style="top:47%;left:78%"></span>
+
+    <div class="auth-brand-top">
+      <div class="auth-cross"></div>
+      <div>
+        <b>SLIM</b>
+        <span>{{ prefix + '.brand_sub' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="auth-brand-mid">
+      <h1 [innerHTML]="headline()"></h1>
+      <p>{{ prefix + '.brand_text' | translate }}</p>
+      <div class="auth-facts">
+        @for (fact of facts; track fact.key; let i = $index) {
+          <div class="auth-fact" [class.auth-fact--on]="factIndex() === i">
+            <span class="auth-fact__ic" [innerHTML]="fact.icon"></span>
+            <div>
+              <b>{{ prefix + '.fact_' + fact.key | translate }}</b>
+              <span>{{ prefix + '.fact_' + fact.key + '_sub' | translate }}</span>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="auth-fact-dots">
+        @for (fact of facts; track fact.key; let i = $index) {
+          <i [class.auth-on]="factIndex() === i"></i>
+        }
+      </div>
+    </div>
+
+    <div class="auth-brand-foot">
+      <a class="auth-badge" routerLink="/">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 3.5C6.8 2.6 5 2.2 2.5 2.2v10.6c2.5 0 4.3.4 5.5 1.3 1.2-.9 3-1.3 5.5-1.3V2.2C11 2.2 9.2 2.6 8 3.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 3.5v10.6" stroke="currentColor" stroke-width="1.4"/></svg>
+        {{ prefix + '.badge_manual' | translate }}
+      </a>
+      <a [hidden]="true" class="auth-badge" routerLink="/">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 6l3.5 2-3.5 2V6z" fill="currentColor"/></svg>
+        {{ prefix + '.badge_video' | translate }}
+      </a>
+      <a class="auth-badge" routerLink="/admin">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.4"/><path d="M6.2 6.2a1.9 1.9 0 013.7.6c0 1.2-1.9 1.5-1.9 2.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11.6" r=".9" fill="currentColor"/></svg>
+        {{ prefix + '.badge_support' | translate }}
+      </a>
+    </div>
+  </aside>
+
+  <!-- ============ Karten-Seite ============ -->
+  <div class="auth-side">
+    <div class="auth-side-top">
+      <div class="auth-m-logo">
+        <div class="auth-cross"></div>
+        <b>{{ prefix + '.m_logo' | translate }}</b>
+      </div>
+      <div class="auth-grow"></div>
+      <div class="auth-lang" role="group" [attr.aria-label]="prefix + '.language' | translate">
+        @for (lang of languages(); track lang) {
+          <button
+            type="button"
+            [attr.aria-pressed]="currentLang() === lang"
+            (click)="setLang(lang)"
+          >
+            {{ lang.toUpperCase() }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="auth-center">
+      <div class="auth-stage">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+    <div class="auth-side-foot">
+      <span>{{ prefix + '.foot_support' | translate }}</span>
+      <span>{{ prefix + '.foot_privacy' | translate }}</span>
+      <span>{{ prefix + '.foot_version' | translate }}</span>
+    </div>
+  </div>
+</div>

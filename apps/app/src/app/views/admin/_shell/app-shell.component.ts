@@ -9,8 +9,8 @@ import {
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { SlimThemeToggleComponent } from '@ui-slim/design-system';
-import { LanguageSwitchComponent } from '../../common/language-switch.component';
-import { RangesService } from '../../core/ranges/ranges.service';
+import { LanguageSwitchComponent } from '../../../common/language-switch.component';
+import { RangesService } from '../../../core/ranges/ranges.service';
 
 interface NavItem {
   key: string;

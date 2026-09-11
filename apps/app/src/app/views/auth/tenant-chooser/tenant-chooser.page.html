@@ -1,0 +1,70 @@
+<div class="auth-card">
+  @if (success()) {
+    @if(autoLogin()){
+      <div class="auth-success">
+        <div class="auth-ok-ring">
+          <svg viewBox="0 0 96 96">
+            <circle class="auth-ring" cx="48" cy="48" r="42"/>
+            <path class="auth-tick" d="M32 49l11 11 21-24"/>
+          </svg>
+        </div>
+        <h2>{{ (prefix + '.signed_in_forward') | translate }}</h2>
+        <p>{{ (prefix + '.signed_in_text_forward') | translate: { name: firstName() } }}</p>
+        <div class="auth-progressbar"><i></i></div>
+      </div>
+    }@else{
+      <div class="auth-success">
+        <div class="auth-ok-ring">
+          <svg viewBox="0 0 96 96">
+            <circle class="auth-ring" cx="48" cy="48" r="42"/>
+            <path class="auth-tick" d="M32 49l11 11 21-24"/>
+          </svg>
+        </div>
+        <h2>{{ prefix + '.signed_in' | translate }}</h2>
+        <p>{{ prefix + '.signed_in_text' | translate: { name: firstName() } }}</p>
+        <div class="auth-progressbar"><i></i></div>
+      </div>
+    }
+} @else {
+    <h2 class="auth-st auth-st1">{{ prefix + '.tenant_title' | translate }}</h2>
+    <p class="auth-sub auth-st auth-st2">{{ prefix + '.tenant_sub' | translate }}</p>
+
+    @if (error()) {
+      <div class="auth-form-err auth-on">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.8V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.4" r=".9" fill="currentColor"/></svg>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    @if (loading()) {
+      <p class="auth-sub">{{ prefix + '.tenant_loading' | translate }}</p>
+    } @else {
+      <div class="auth-tenants auth-st auth-st3">
+        @for (tenant of tenants(); track tenantId(tenant)) {
+          <button
+            type="button"
+            class="auth-tenant"
+            [class.auth-tenant--current]="isCurrent(tenant)"
+            [disabled]="selecting() !== null"
+            (click)="select(tenant)"
+          >
+            <span class="auth-tenant__ic">{{ initials(tenant) }}</span>
+            <span class="auth-tenant__t">
+              <b>{{ tenantName(tenant) }}</b>
+              @if (isCurrent(tenant)) {
+                <span>{{ prefix + '.tenant_current' | translate }}</span>
+              }
+            </span>
+            @if (selecting() === tenantId(tenant)) {
+              <span class="auth-spinner" style="display:block"></span>
+            } @else {
+              <svg width="14" height="14" viewBox="0 0 8 12" fill="none"><path d="M1.5 1l5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            }
+          </button>
+        } @empty {
+          <p class="auth-sub">{{ prefix + '.tenant_none' | translate }}</p>
+        }
+      </div>
+    }
+  }
+</div>

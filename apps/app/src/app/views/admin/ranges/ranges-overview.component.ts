@@ -10,13 +10,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
-import { StatusPillComponent } from '../../common/status-pill.component';
+import { StatusPillComponent } from '../../../common/status-pill.component';
 import {
   needsAttention,
   RangeStatus,
   ShootingRange,
-} from '../../core/ranges/ranges.model';
-import { RangesService } from '../../core/ranges/ranges.service';
+} from '../../../core/ranges/ranges.model';
+import { RangesService } from '../../../core/ranges/ranges.service';
 
 type StatusFilter = '' | 'attention' | RangeStatus;
 

@@ -10,8 +10,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
-import { environment } from '../../../environments/environment';
-import { RangesService } from '../../core/ranges/ranges.service';
+import { environment } from '../../../../environments/environment';
+import { RangesService } from '../../../core/ranges/ranges.service';
 
 /**
  * Entry page (mock `_mocks/home/index.html` → "Einstiegsseite"): greeting,

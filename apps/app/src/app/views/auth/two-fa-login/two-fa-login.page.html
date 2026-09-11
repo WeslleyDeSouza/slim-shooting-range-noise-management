@@ -1,0 +1,77 @@
+<div class="auth-card" [class.auth-shake]="shake()">
+  @if (!verified()) {
+    <h2 class="auth-st auth-st1">{{ prefix + '.otp_title' | translate }}</h2>
+    <p class="auth-sub auth-st auth-st2">
+      {{ (prefix + '.otp_sub') | translate: { email: maskedEmail() } }}
+    </p>
+
+    @if (error()) {
+      <div class="auth-form-err auth-on">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 4.8V9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.4" r=".9" fill="currentColor"/></svg>
+        <span>{{ error() }}</span>
+      </div>
+    }
+    @if (resendCooldown() > 0) {
+      <div class="auth-ok-note">
+        {{ (prefix + '.otp_resent_in') | translate: { sec: resendCooldown() } }}
+      </div>
+    }
+
+    <div
+      class="auth-otp auth-st auth-st3"
+      role="group"
+      [attr.aria-label]="prefix + '.otp_code' | translate"
+    >
+      @for (digit of digits(); track $index) {
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="6"
+          autocomplete="one-time-code"
+          [value]="digit"
+          (input)="onInput($index, $event)"
+          (keydown)="onKeydown($index, $event)"
+        />
+      }
+    </div>
+
+    <button
+      type="button"
+      class="auth-submit auth-st auth-st4"
+      [class.auth-loading]="loading()"
+      data-action="auth.verifyOtp"
+      (click)="verify()"
+    >
+      <span class="auth-lbl">{{ prefix + '.otp_verify' | translate }}</span>
+      <span class="auth-spinner"></span>
+    </button>
+
+    <div class="auth-row auth-st auth-st5" style="margin-top: 14px">
+      <button type="button" class="auth-link" (click)="back()">
+        {{ prefix + '.back' | translate }}
+      </button>
+      <span class="auth-grow"></span>
+      <button
+        type="button"
+        class="auth-link"
+        [disabled]="!canResend()"
+        [style.opacity]="canResend() ? '1' : '.45'"
+        (click)="resend()"
+      >
+        {{ prefix + '.otp_resend' | translate }}
+      </button>
+    </div>
+  } @else {
+    <div class="auth-success">
+      <div class="auth-ok-ring">
+        <svg viewBox="0 0 96 96">
+          <circle class="auth-ring" cx="48" cy="48" r="42"/>
+          <path class="auth-tick" d="M32 49l11 11 21-24"/>
+        </svg>
+      </div>
+      <h2>{{ (prefix + '.otp_verified') | translate }}</h2>
+      <p>{{ (prefix + '.otp_verified_text') | translate }}</p>
+      <div class="auth-progressbar"><i></i></div>
+    </div>
+  }
+</div>

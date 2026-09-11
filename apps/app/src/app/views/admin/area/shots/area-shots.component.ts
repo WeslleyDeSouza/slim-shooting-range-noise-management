@@ -96,7 +96,8 @@ export class AreaShotsComponent extends ComponentBase {
   private readonly fb = inject(FormBuilder);
 
   protected readonly categories = WEAPON_CATEGORIES;
-  protected readonly types = ['military', 'civil'] as const;
+  /** Nutzungskategorien of B1 Tabelle 2 (API enum USAGE_TYPE). */
+  protected readonly types = ['military', 'civil', 'blue_light', 'sat'] as const;
 
   /** The area id is a param of the parent route (`/admin/area/:id/shots`). */
   readonly areaId = toSignal(

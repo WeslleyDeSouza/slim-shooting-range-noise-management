@@ -117,9 +117,29 @@ export const ADMIN_ROUTES: Routes = [
             pathMatch: 'full',
             redirectTo: `${S.area}/${S.overview}`,
           },
-          placeholder(`${S.area}/${S.overview}`, {
-            title: 'menu.area_overview',
+          // 5.14 Schiessplatz › Übersicht: search + table + jumps (mock
+          // _mocks/data-management/area.index.html); no «Neuer Schiessplatz».
+          {
+            path: `${S.area}/${S.overview}`,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            loadComponent: () =>
+              import('./data-management/area/dm-area-overview.component').then(
+                (c) => c.DmAreaOverviewComponent,
+              ),
+          },
+          // 5.15–5.18 of one Schiessplatz (targets of the jumps)
+          placeholder(`${S.area}/:areaId/${S.masterData}`, {
+            title: 'menu.area_master_data',
             crumbs: DM_AREA,
+          }),
+          placeholder(`${S.area}/:areaId/${S.weaponAssignment}`, {
+            title: 'menu.area_weapon_assignment',
+            crumbs: DM_AREA,
+          }),
+          placeholder(`${S.area}/:areaId/${S.calculations}`, {
+            title: 'menu.calculations',
+            crumbs: DM_CALC,
           }),
           placeholder(`${S.area}/${S.masterData}`, {
             title: 'menu.area_master_data',

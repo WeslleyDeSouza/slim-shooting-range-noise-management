@@ -317,6 +317,26 @@
       "export_failed": "L'exportation a échoué.",
       "col_action": "Action",
       "col_entry": "Entrée"
+    },
+    "dm_area": {
+      "title": "Aperçu des places de tir",
+      "subtitle": "Choisir une place de tir et accéder à Général, Attribution des armes ou Calculs.",
+      "search_placeholder": "Désignation, n° de secteur de coordination ou n° de plan sectoriel",
+      "count": "{{n}} sur {{total}} places de tir",
+      "no_create": "Les nouvelles places de tir sont créées par import ou par l’administration de la base de données (5.14).",
+      "col_ka": "N° de secteur de coordination",
+      "col_sp": "N° de plan sectoriel",
+      "col_name": "Désignation",
+      "col_active": "Active",
+      "col_nav": "Accès",
+      "active": "Active",
+      "inactive": "Inactive",
+      "sort": "Trier par {{col}}",
+      "jump_general": "Général",
+      "jump_weapons": "Attribution des armes",
+      "jump_calculations": "Calculs",
+      "empty": "Aucune place de tir trouvée. Vérifiez la désignation, le n° de secteur de coordination ou le n° de plan sectoriel.",
+      "scope_lock": "Uniquement les places de tir autorisées"
     }
   }
 }

@@ -21,8 +21,10 @@ import {
   Annex9Source,
   annex7HalfDays,
   annex7Level,
+  countsForAnnex7,
   annex9Level,
   splitAnnex9,
+  UsageCategory,
 } from '../libs/shared/lsv/src';
 
 // ---------------------------------------------------------------------------
@@ -121,7 +123,7 @@ const RECORDERS = ['Lt Meier Fiona', 'Hptm Roth Beat', 'Oblt Keller Sven', 'Wm H
 const SLOTS_MIL = [['08:00', '11:30'], ['13:30', '17:00'], ['08:00', '16:00'], ['09:00', '12:00'], ['14:00', '17:30']];
 const SLOTS_NIGHT = [['19:00', '22:00'], ['18:00', '21:30']];
 
-interface Usage { room: string; source: string; unit: string; date: string; from: string; to: string; usageType: 'military' | 'civil'; shots: number; recordedBy: string; source_kind?: 'manual' | 'elo' | 'import' }
+interface Usage { room: string; source: string; unit: string; date: string; from: string; to: string; usageType: UsageCategory; shots: number; recordedBy: string; source_kind?: 'manual' | 'elo' | 'import' }
 
 function iso(y: number, m: number, d: number) { return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
 function dow(y: number, m: number, d: number) { return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
@@ -173,6 +175,16 @@ function generateUsages(): { usages: Usage[]; tuning: Usage[] } {
     usages.push({ room: roomName('07'), source: sourceId('07', 'stgw90'), unit: 'Schützenverein Geissalp', date: iso(YEAR, m, wed), from: '18:00', to: '20:00', usageType: 'civil', shots: 900, recordedBy: 'ELO-Import', source_kind: 'elo' });
   }
 
+  // Blaulicht (Kantonspolizei, weekday mornings on B 2 with the Pist 75) and
+  // SAT (Jungschützenkurs, Saturday mornings on B 2 with the Stgw 90) — the two
+  // further Nutzungskategorien of B1 Tabelle 2 (annex 9: all; annex 7: SAT).
+  for (const [m, d] of [[4, 8], [6, 10], [9, 9]] as const) {
+    usages.push({ room: roomName('07'), source: sourceId('07', 'pist75'), unit: 'Kantonspolizei Freiburg', date: iso(YEAR, m, d), from: '08:00', to: '11:00', usageType: 'blue_light', shots: 750, recordedBy: 'ELO-Import', source_kind: 'elo' });
+  }
+  for (const [m, d] of [[5, 9], [8, 22]] as const) {
+    usages.push({ room: roomName('07'), source: sourceId('07', 'stgw90'), unit: 'Jungschützenkurs Sense', date: iso(YEAR, m, d), from: '08:30', to: '11:30', usageType: 'sat', shots: 1200, recordedBy: 'ELO-Import', source_kind: 'elo' });
+  }
+
   usages.sort((a, b) => a.date.localeCompare(b.date) || a.from.localeCompare(b.from));
   const tuning = [...usages];
 
@@ -197,16 +209,16 @@ function tuneWlr(stateKey: string, usages: Usage[]): Wlr[] {
   const combos = COMBOS.map(([no, type]) => ({ no, type, src: sourceId(no, type), t: WEAPON_TYPES[type], new: ROOMS.find((r) => r.no === no)!.new }));
   const rows: Wlr[] = [];
 
-  // Operating data per source (military → annex 9, civil → annex 7).
+  // Operating data per source (B1 Tabelle 2): annex 9 takes every category,
+  // annex 7 only Zivil + SAT (the demo areas have no «Gesamtbeurteilung» flag).
   const a9 = new Map<string, { inside: number; outside: number }>();
   const a7 = new Map<string, number>();
   const cat: (Usage & { category: Annex7Category })[] = [];
   for (const u of usages) {
-    if (u.usageType === 'military') {
-      const s = splitAnnex9({ date: u.date, from: u.from, to: u.to, shots: u.shots });
-      const e = a9.get(u.source) ?? { inside: 0, outside: 0 };
-      e.inside += s.inside; e.outside += s.outside; a9.set(u.source, e);
-    } else {
+    const s = splitAnnex9({ date: u.date, from: u.from, to: u.to, shots: u.shots });
+    const e = a9.get(u.source) ?? { inside: 0, outside: 0 };
+    e.inside += s.inside; e.outside += s.outside; a9.set(u.source, e);
+    if (countsForAnnex7(u.usageType, false)) {
       a7.set(u.source, (a7.get(u.source) ?? 0) + u.shots);
       const c = combos.find((x) => x.src === u.source)!;
       cat.push({ ...u, category: c.t.a7 as Annex7Category });
@@ -337,7 +349,7 @@ const dataset = {
     name: 'SLIM Demo',
     identifier: 'SLIM_DEMO',
     description: 'Demo-Mandant des Prototyps: neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Waffen, Empfangspunkten, zwei Berechnungszuständen und den Nutzungen des laufenden Jahres.',
-    version: 3,
+    version: 4,
     // One account per role of B1 8.1.1 (roles.mock-data.ts); slim@demo.ch is the
     // galaxy admin the e2e suite and the setup wizard sign in with.
     users: [

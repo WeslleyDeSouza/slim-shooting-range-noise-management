@@ -66,6 +66,22 @@ describe('splitAnnex9 — innerhalb / ausserhalb Werktag (B1 7.4.5)', () => {
       inside: 0,
       outside: 100,
     });
+    // Half holiday (free from 12:00): the afternoon shots are outside.
+    expect(
+      splitAnnex9(slot(WED, '10:00', '14:00', 100), {
+        holidays: [{ date: WED, from: '12:00' }],
+      }),
+    ).toEqual({ inside: 50, outside: 50 });
+    expect(
+      splitAnnex9(slot(WED, '14:00', '17:00'), {
+        holidays: [{ date: WED, from: '12:00' }],
+      }),
+    ).toEqual({ inside: 0, outside: 100 });
+    expect(
+      splitAnnex9(slot(WED, '08:00', '11:00'), {
+        holidays: [{ date: WED, from: '12:00' }],
+      }),
+    ).toEqual({ inside: 100, outside: 0 });
     // The same Wednesday without the holiday list is a workday.
     expect(splitAnnex9(slot(WED, '08:00', '11:30'))).toEqual({
       inside: 100,
@@ -195,6 +211,26 @@ describe('annex7HalfDays — Schiesshalbtage (B1 7.4)', () => {
       work: 2,
       sunday: 0,
     });
+  });
+
+  it('counts only the free half of a half holiday as Sunday (B1 7.4)', () => {
+    // Free afternoon (e.g. 24 December from 12:00): morning stays a workday half.
+    const hd = annex7HalfDays(
+      [a(WED, '08:00', '11:30'), a(WED, '14:00', '17:00')],
+      { holidays: [{ date: WED, from: '12:00' }] },
+    ).a;
+    expect(hd).toEqual({ work: 1, sunday: 1 });
+    // Free morning: the afternoon is the workday half.
+    expect(
+      annex7HalfDays([a(WED, '08:00', '11:30'), a(WED, '14:00', '17:00')], {
+        holidays: [{ date: WED, to: '12:00' }],
+      }).a,
+    ).toEqual({ work: 1, sunday: 1 });
+    expect(
+      annex7HalfDays([a(WED, '14:00', '17:00')], {
+        holidays: [{ date: WED, to: '12:00' }],
+      }).a,
+    ).toEqual({ work: 1, sunday: 0 });
   });
 
   it('adds several usages of the same category in the same half', () => {

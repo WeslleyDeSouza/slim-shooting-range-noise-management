@@ -17,6 +17,7 @@ import type {
   AuthRequestContextBase,
 } from '@app-galaxy/auth-api';
 import { LogAction, LoggerService } from '../../core/logger';
+import { AuthTenantResolver } from './auth-tenant.resolver';
 
 /**
  * Logbook sections of the authentication events (B1 `slm 56`: Login-
@@ -58,12 +59,27 @@ export class AuditAuthLifecycleHook
     AfterPasswordChangedHook,
     AfterEmailVerifiedHook
 {
-  constructor(private readonly loggerService: LoggerService) {}
+  constructor(
+    private readonly loggerService: LoggerService,
+    private readonly tenants: AuthTenantResolver,
+  ) {}
+
+  /**
+   * Writes the entry once per tenant of the event (see AuthTenantResolver):
+   * login-phase events carry no tenant themselves.
+   */
+  private async log(
+    ctx: { tenantId?: string | number | null; userId?: string | null },
+    entry: Omit<Parameters<LoggerService['createLog']>[0], 'tenantId'>,
+  ): Promise<void> {
+    for (const tenantId of await this.tenants.forEvent(ctx)) {
+      await this.loggerService.createLog({ ...entry, tenantId });
+    }
+  }
 
   async afterLogin(ctx: AfterLoginContext): Promise<void> {
-    await this.loggerService.createLog({
+    await this.log(ctx, {
       ...origin(ctx),
-      tenantId: tenantOf(ctx),
       userId: ctx.userId,
       section: AUTH_LOG_SECTION.login,
       action: LogAction.AUTH,
@@ -85,9 +101,8 @@ export class AuditAuthLifecycleHook
    * are what `slm 56` asks to be auditable.
    */
   async afterLoginFailed(ctx: AfterLoginFailedContext): Promise<void> {
-    await this.loggerService.createLog({
+    await this.log(ctx, {
       ...origin(ctx),
-      tenantId: tenantOf(ctx),
       userId: ctx.userId ?? null,
       isSystem: !ctx.userId,
       section: AUTH_LOG_SECTION.loginFailed,
@@ -99,8 +114,7 @@ export class AuditAuthLifecycleHook
   }
 
   async afterLogout(ctx: AfterLogoutContext): Promise<void> {
-    await this.loggerService.createLog({
-      tenantId: tenantOf(ctx),
+    await this.log(ctx, {
       userId: ctx.userId,
       section: AUTH_LOG_SECTION.logout,
       action: LogAction.AUTH,
@@ -112,9 +126,8 @@ export class AuditAuthLifecycleHook
 
   /** A revoked refresh token used again: the library revoked the device's sessions. */
   async afterTokenReuseDetected(ctx: AfterTokenReuseDetectedContext): Promise<void> {
-    await this.loggerService.createLog({
+    await this.log(ctx, {
       ...origin(ctx),
-      tenantId: tenantOf(ctx),
       userId: ctx.userId,
       section: AUTH_LOG_SECTION.tokenReuse,
       action: LogAction.ERROR,
@@ -126,8 +139,7 @@ export class AuditAuthLifecycleHook
 
   /** `ctx.resetToken` is deliberately not read. */
   async afterPasswordResetRequested(ctx: AfterPasswordResetRequestedContext): Promise<void> {
-    await this.loggerService.createLog({
-      tenantId: tenantOf(ctx),
+    await this.log(ctx, {
       userId: ctx.userId,
       section: AUTH_LOG_SECTION.passwordResetRequested,
       action: LogAction.MAIL,
@@ -138,8 +150,7 @@ export class AuditAuthLifecycleHook
   }
 
   async afterPasswordChanged(ctx: AfterPasswordChangedContext): Promise<void> {
-    await this.loggerService.createLog({
-      tenantId: tenantOf(ctx),
+    await this.log(ctx, {
       userId: ctx.actor?.userId ?? ctx.userId,
       section: AUTH_LOG_SECTION.passwordChanged,
       action: LogAction.UPDATE,
@@ -150,8 +161,7 @@ export class AuditAuthLifecycleHook
   }
 
   async afterEmailVerified(ctx: AfterEmailVerifiedContext): Promise<void> {
-    await this.loggerService.createLog({
-      tenantId: tenantOf(ctx),
+    await this.log(ctx, {
       userId: ctx.userId,
       section: AUTH_LOG_SECTION.emailVerified,
       action: LogAction.UPDATE,
@@ -160,10 +170,6 @@ export class AuditAuthLifecycleHook
       data: { email: ctx.user?.email },
     });
   }
-}
-
-function tenantOf(ctx: { tenantId?: string | number | null }): string {
-  return String(ctx.tenantId ?? '');
 }
 
 /** IP and user agent of request-bound events (the middleware context has none for the library's own calls). */

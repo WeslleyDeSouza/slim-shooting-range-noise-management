@@ -52,8 +52,11 @@ describe('SimulationService (5.13 Simulation)', () => {
     expect(base.rows.every((r) => r.hasLevels)).toBe(true);
     const shot = base.rows.filter((r) => r.inside + r.outside > 0);
     expect(shot.length).toBeGreaterThan(8);
-    // The Pist 75 is civil only → no military shots.
-    expect(base.rows.find((r) => r.weapon === 'Pist 75')).toMatchObject({ inside: 0, outside: 0 });
+    // The Pist 75 is shot by the Schützenverein (civil, Saturdays) and the
+    // Kantonspolizei (Blaulicht, weekday mornings): annex 9 counts both.
+    const pistol = base.rows.find((r) => r.weapon === 'Pist 75');
+    expect(pistol?.inside).toBeGreaterThan(0);
+    expect(pistol?.outside).toBeGreaterThan(0);
     // Same operating data as the assessment uses.
     const assessment = await module
       .get(AssessmentService)

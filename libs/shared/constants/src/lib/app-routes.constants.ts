@@ -78,6 +78,13 @@ export const APP_ROUTES = {
           S.area,
           S.weaponAssignment,
         ),
+        /** 5.15–5.18 of one Schiessplatz (jumps from the overview 5.14). */
+        masterDataOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.masterData),
+        weaponAssignmentOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.weaponAssignment),
+        calculationsOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.calculations),
       },
       calculations: {
         root: join(S.admin, S.dataManagement, S.area, S.calculations),

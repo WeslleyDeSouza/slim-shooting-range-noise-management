@@ -88,9 +88,34 @@ export interface WorkdaySplit {
   outside: number;
 }
 
+/**
+ * One public holiday of the site. A plain date is a whole day; `from` / `to`
+ * (`HH:mm`) bound a half holiday, e.g. `{ date: '2026-12-24', from: '12:00' }`
+ * for a free afternoon (B1 7.4: halbe Feiertage anteilig).
+ */
+export interface HolidayEntry {
+  date: string;
+  from?: string;
+  to?: string;
+}
+
 export interface CalendarOptions {
-  /** Public holidays at the site, `YYYY-MM-DD`. */
-  holidays?: readonly string[];
+  /** Public holidays valid at the site (local, B1 S. 71): whole or half days. */
+  holidays?: readonly (string | HolidayEntry)[];
+}
+
+/**
+ * Nutzungskategorien of a usage (B1 Tabelle 2). Anhang 9 assesses all of
+ * them; Anhang 7 normally only Zivil and SAT, all when the Schiessplatz has
+ * the flag «Gesamtbeurteilung nach Anhang 7».
+ */
+export const USAGE_CATEGORIES = ['military', 'civil', 'blue_light', 'sat'] as const;
+export type UsageCategory = (typeof USAGE_CATEGORIES)[number];
+export const ANNEX7_USAGE_CATEGORIES: readonly UsageCategory[] = ['civil', 'sat'];
+
+/** Whether a usage of this category enters the Anhang 7 assessment (B1 Tabelle 2). */
+export function countsForAnnex7(category: UsageCategory, annex7Overall: boolean): boolean {
+  return annex7Overall || ANNEX7_USAGE_CATEGORIES.includes(category);
 }
 
 /** Empfindlichkeitsstufe (Art. 43 LSV). */

@@ -1,0 +1,52 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dma {
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__num {
+    font-weight: slim.font-weight('semibold');
+    white-space: nowrap;
+  }
+
+  &__name {
+    font-weight: slim.font-weight('bold');
+    color: slim.color('link');
+  }
+
+  &__actions {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  // Sortable column header: inherits the th typography, shows the arrow only
+  // for the active column.
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(1);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+
+    &--active {
+      color: slim.color('ink');
+    }
+  }
+
+  &__sort-mark {
+    color: slim.color('text-4');
+  }
+}

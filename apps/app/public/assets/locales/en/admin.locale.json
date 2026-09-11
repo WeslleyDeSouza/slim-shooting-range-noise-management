@@ -317,6 +317,26 @@
       "export_failed": "The export failed.",
       "col_action": "Action",
       "col_entry": "Entry"
+    },
+    "dm_area": {
+      "title": "Shooting ranges overview",
+      "subtitle": "Select a shooting range and jump to General, Weapon assignment or Calculations.",
+      "search_placeholder": "Name, coordination section no. or sectoral plan no.",
+      "count": "{{n}} of {{total}} shooting ranges",
+      "no_create": "New shooting ranges are created via import or database administration (5.14).",
+      "col_ka": "Coordination section no.",
+      "col_sp": "Sectoral plan no.",
+      "col_name": "Name",
+      "col_active": "Active",
+      "col_nav": "Jump to",
+      "active": "Active",
+      "inactive": "Inactive",
+      "sort": "Sort by {{col}}",
+      "jump_general": "General",
+      "jump_weapons": "Weapon assignment",
+      "jump_calculations": "Calculations",
+      "empty": "No shooting range found. Check the name, coordination section no. or sectoral plan no.",
+      "scope_lock": "Authorised shooting ranges only"
     }
   }
 }

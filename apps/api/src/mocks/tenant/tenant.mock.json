@@ -3,7 +3,7 @@
     "name": "SLIM Demo",
     "identifier": "SLIM_DEMO",
     "description": "Demo-Mandant des Prototyps: neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Waffen, Empfangspunkten, zwei Berechnungszuständen und den Nutzungen des laufenden Jahres.",
-    "version": 3,
+    "version": 4,
     "users": [
       {
         "username": "slim@demo.ch",
@@ -408,562 +408,562 @@
               {
                 "receiver": "E1",
                 "source": "B3_Stgw90",
-                "laeDay": 62.3,
-                "laeEve": 62.5,
-                "lafmaxDay": 71.2
+                "laeDay": 61.6,
+                "laeEve": 61.8,
+                "lafmaxDay": 70.9
               },
               {
                 "receiver": "E1",
                 "source": "B3_PzHb74",
-                "laeDay": 90.3,
-                "laeEve": 90.5,
-                "lafmaxDay": 99.2
+                "laeDay": 89.6,
+                "laeEve": 89.8,
+                "lafmaxDay": 98.9
               },
               {
                 "receiver": "E1",
                 "source": "B3_FlzKan92",
-                "laeDay": 71.3,
-                "laeEve": 71.5,
-                "lafmaxDay": 80.2
+                "laeDay": 70.6,
+                "laeEve": 70.8,
+                "lafmaxDay": 79.9
               },
               {
                 "receiver": "E1",
                 "source": "C3_Stgw90",
-                "laeDay": 60.3,
-                "laeEve": 60.5,
-                "lafmaxDay": 69.2
+                "laeDay": 59.6,
+                "laeEve": 59.8,
+                "lafmaxDay": 68.9
               },
               {
                 "receiver": "E1",
                 "source": "C3_Mw87",
-                "laeDay": 77.3,
-                "laeEve": 77.5,
-                "lafmaxDay": 86.2
+                "laeDay": 76.6,
+                "laeEve": 76.8,
+                "lafmaxDay": 85.9
               },
               {
                 "receiver": "E1",
                 "source": "C3_PzHb79",
-                "laeDay": 88.3,
-                "laeEve": 88.5,
-                "lafmaxDay": 97.2
+                "laeDay": 87.6,
+                "laeEve": 87.8,
+                "lafmaxDay": 96.9
               },
               {
                 "receiver": "E1",
                 "source": "B2_Mg51",
-                "laeDay": 60.8,
-                "laeEve": 61,
-                "lafmaxDay": 69.7
+                "laeDay": 60.1,
+                "laeEve": 60.3,
+                "lafmaxDay": 69.4
               },
               {
                 "receiver": "E1",
                 "source": "B2_Stgw90",
-                "laeDay": 58.3,
-                "laeEve": 58.5,
-                "lafmaxDay": 67.2
-              },
-              {
-                "receiver": "E1",
-                "source": "B2_Pist75",
-                "laeDay": 52.3,
-                "laeEve": 52.5,
-                "lafmaxDay": 61.2
-              },
-              {
-                "receiver": "E1",
-                "source": "C1_Mw12cm",
-                "laeDay": 77.3,
-                "laeEve": 77.5,
-                "lafmaxDay": 86.2
-              },
-              {
-                "receiver": "E1",
-                "source": "C1_Mg51",
-                "laeDay": 57.8,
-                "laeEve": 58,
-                "lafmaxDay": 66.7
-              },
-              {
-                "receiver": "E1",
-                "source": "A3_Mw72",
-                "laeDay": 75.3,
-                "laeEve": 75.5,
-                "lafmaxDay": 84.2
-              },
-              {
-                "receiver": "E1",
-                "source": "NGST-CR_FlabKan6390",
-                "laeDay": 70.3,
-                "laeEve": 70.5,
-                "lafmaxDay": 79.2
-              },
-              {
-                "receiver": "E1",
-                "source": "A1L_Stgw90",
-                "laeDay": 57.3,
-                "laeEve": 57.5,
-                "lafmaxDay": 66.2
-              },
-              {
-                "receiver": "E1",
-                "source": "A2R_Stgw90",
-                "laeDay": 57.3,
-                "laeEve": 57.5,
-                "lafmaxDay": 66.2
-              },
-              {
-                "receiver": "E1",
-                "source": "D_Mw72",
-                "laeDay": 70.3,
-                "laeEve": 70.5,
-                "lafmaxDay": 79.2
-              },
-              {
-                "receiver": "E2",
-                "source": "B3_Stgw90",
-                "laeDay": 52.5,
-                "laeEve": 52.7,
-                "lafmaxDay": 57.1
-              },
-              {
-                "receiver": "E2",
-                "source": "B3_PzHb74",
-                "laeDay": 80.5,
-                "laeEve": 80.7,
-                "lafmaxDay": 85.1
-              },
-              {
-                "receiver": "E2",
-                "source": "B3_FlzKan92",
-                "laeDay": 61.5,
-                "laeEve": 61.7,
-                "lafmaxDay": 66.1
-              },
-              {
-                "receiver": "E2",
-                "source": "C3_Stgw90",
-                "laeDay": 54.5,
-                "laeEve": 54.7,
-                "lafmaxDay": 59.1
-              },
-              {
-                "receiver": "E2",
-                "source": "C3_Mw87",
-                "laeDay": 71.5,
-                "laeEve": 71.7,
-                "lafmaxDay": 76.1
-              },
-              {
-                "receiver": "E2",
-                "source": "C3_PzHb79",
-                "laeDay": 82.5,
-                "laeEve": 82.7,
-                "lafmaxDay": 87.1
-              },
-              {
-                "receiver": "E2",
-                "source": "B2_Mg51",
-                "laeDay": 60,
-                "laeEve": 60.2,
-                "lafmaxDay": 64.6
-              },
-              {
-                "receiver": "E2",
-                "source": "B2_Stgw90",
-                "laeDay": 57.5,
-                "laeEve": 57.7,
-                "lafmaxDay": 62.1
-              },
-              {
-                "receiver": "E2",
-                "source": "B2_Pist75",
-                "laeDay": 51.5,
-                "laeEve": 51.7,
-                "lafmaxDay": 56.1
-              },
-              {
-                "receiver": "E2",
-                "source": "C1_Mw12cm",
-                "laeDay": 77.5,
-                "laeEve": 77.7,
-                "lafmaxDay": 82.1
-              },
-              {
-                "receiver": "E2",
-                "source": "C1_Mg51",
-                "laeDay": 58,
-                "laeEve": 58.2,
-                "lafmaxDay": 62.6
-              },
-              {
-                "receiver": "E2",
-                "source": "A3_Mw72",
-                "laeDay": 67.5,
-                "laeEve": 67.7,
-                "lafmaxDay": 72.1
-              },
-              {
-                "receiver": "E2",
-                "source": "NGST-CR_FlabKan6390",
-                "laeDay": 68.5,
-                "laeEve": 68.7,
-                "lafmaxDay": 73.1
-              },
-              {
-                "receiver": "E2",
-                "source": "A1L_Stgw90",
-                "laeDay": 50.5,
-                "laeEve": 50.7,
-                "lafmaxDay": 55.1
-              },
-              {
-                "receiver": "E2",
-                "source": "A2R_Stgw90",
-                "laeDay": 51.5,
-                "laeEve": 51.7,
-                "lafmaxDay": 56.1
-              },
-              {
-                "receiver": "E2",
-                "source": "D_Mw72",
-                "laeDay": 69.5,
-                "laeEve": 69.7,
-                "lafmaxDay": 74.1
-              },
-              {
-                "receiver": "E3",
-                "source": "B3_Stgw90",
-                "laeDay": 55.6,
-                "laeEve": 55.8,
-                "lafmaxDay": 59.6
-              },
-              {
-                "receiver": "E3",
-                "source": "B3_PzHb74",
-                "laeDay": 83.6,
-                "laeEve": 83.8,
-                "lafmaxDay": 87.6
-              },
-              {
-                "receiver": "E3",
-                "source": "B3_FlzKan92",
-                "laeDay": 64.6,
-                "laeEve": 64.8,
-                "lafmaxDay": 68.6
-              },
-              {
-                "receiver": "E3",
-                "source": "C3_Stgw90",
                 "laeDay": 57.6,
                 "laeEve": 57.8,
+                "lafmaxDay": 66.9
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Pist75",
+                "laeDay": 51.6,
+                "laeEve": 51.8,
+                "lafmaxDay": 60.9
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mw12cm",
+                "laeDay": 76.6,
+                "laeEve": 76.8,
+                "lafmaxDay": 85.9
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mg51",
+                "laeDay": 57.1,
+                "laeEve": 57.3,
+                "lafmaxDay": 66.4
+              },
+              {
+                "receiver": "E1",
+                "source": "A3_Mw72",
+                "laeDay": 74.6,
+                "laeEve": 74.8,
+                "lafmaxDay": 83.9
+              },
+              {
+                "receiver": "E1",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 69.6,
+                "laeEve": 69.8,
+                "lafmaxDay": 78.9
+              },
+              {
+                "receiver": "E1",
+                "source": "A1L_Stgw90",
+                "laeDay": 56.6,
+                "laeEve": 56.8,
+                "lafmaxDay": 65.9
+              },
+              {
+                "receiver": "E1",
+                "source": "A2R_Stgw90",
+                "laeDay": 56.6,
+                "laeEve": 56.8,
+                "lafmaxDay": 65.9
+              },
+              {
+                "receiver": "E1",
+                "source": "D_Mw72",
+                "laeDay": 69.6,
+                "laeEve": 69.8,
+                "lafmaxDay": 78.9
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_Stgw90",
+                "laeDay": 50.4,
+                "laeEve": 50.6,
+                "lafmaxDay": 56.8
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_PzHb74",
+                "laeDay": 78.4,
+                "laeEve": 78.6,
+                "lafmaxDay": 84.8
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_FlzKan92",
+                "laeDay": 59.4,
+                "laeEve": 59.6,
+                "lafmaxDay": 65.8
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Stgw90",
+                "laeDay": 52.4,
+                "laeEve": 52.6,
+                "lafmaxDay": 58.8
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Mw87",
+                "laeDay": 69.4,
+                "laeEve": 69.6,
+                "lafmaxDay": 75.8
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_PzHb79",
+                "laeDay": 80.4,
+                "laeEve": 80.6,
+                "lafmaxDay": 86.8
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Mg51",
+                "laeDay": 57.9,
+                "laeEve": 58.1,
+                "lafmaxDay": 64.3
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Stgw90",
+                "laeDay": 55.4,
+                "laeEve": 55.6,
+                "lafmaxDay": 61.8
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Pist75",
+                "laeDay": 49.4,
+                "laeEve": 49.6,
+                "lafmaxDay": 55.8
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mw12cm",
+                "laeDay": 75.4,
+                "laeEve": 75.6,
+                "lafmaxDay": 81.8
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mg51",
+                "laeDay": 55.9,
+                "laeEve": 56.1,
+                "lafmaxDay": 62.3
+              },
+              {
+                "receiver": "E2",
+                "source": "A3_Mw72",
+                "laeDay": 65.4,
+                "laeEve": 65.6,
+                "lafmaxDay": 71.8
+              },
+              {
+                "receiver": "E2",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 66.4,
+                "laeEve": 66.6,
+                "lafmaxDay": 72.8
+              },
+              {
+                "receiver": "E2",
+                "source": "A1L_Stgw90",
+                "laeDay": 48.4,
+                "laeEve": 48.6,
+                "lafmaxDay": 54.8
+              },
+              {
+                "receiver": "E2",
+                "source": "A2R_Stgw90",
+                "laeDay": 49.4,
+                "laeEve": 49.6,
+                "lafmaxDay": 55.8
+              },
+              {
+                "receiver": "E2",
+                "source": "D_Mw72",
+                "laeDay": 67.4,
+                "laeEve": 67.6,
+                "lafmaxDay": 73.8
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_Stgw90",
+                "laeDay": 53.7,
+                "laeEve": 53.9,
+                "lafmaxDay": 59.3
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_PzHb74",
+                "laeDay": 81.7,
+                "laeEve": 81.9,
+                "lafmaxDay": 87.3
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_FlzKan92",
+                "laeDay": 62.7,
+                "laeEve": 62.9,
+                "lafmaxDay": 68.3
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Stgw90",
+                "laeDay": 55.7,
+                "laeEve": 55.9,
+                "lafmaxDay": 61.3
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Mw87",
+                "laeDay": 72.7,
+                "laeEve": 72.9,
+                "lafmaxDay": 78.3
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_PzHb79",
+                "laeDay": 83.7,
+                "laeEve": 83.9,
+                "lafmaxDay": 89.3
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Mg51",
+                "laeDay": 62.2,
+                "laeEve": 62.4,
+                "lafmaxDay": 67.8
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Stgw90",
+                "laeDay": 59.7,
+                "laeEve": 59.9,
+                "lafmaxDay": 65.3
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Pist75",
+                "laeDay": 53.7,
+                "laeEve": 53.9,
+                "lafmaxDay": 59.3
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mw12cm",
+                "laeDay": 81.7,
+                "laeEve": 81.9,
+                "lafmaxDay": 87.3
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mg51",
+                "laeDay": 62.2,
+                "laeEve": 62.4,
+                "lafmaxDay": 67.8
+              },
+              {
+                "receiver": "E3",
+                "source": "A3_Mw72",
+                "laeDay": 67.7,
+                "laeEve": 67.9,
+                "lafmaxDay": 73.3
+              },
+              {
+                "receiver": "E3",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 72.7,
+                "laeEve": 72.9,
+                "lafmaxDay": 78.3
+              },
+              {
+                "receiver": "E3",
+                "source": "A1L_Stgw90",
+                "laeDay": 50.7,
+                "laeEve": 50.9,
+                "lafmaxDay": 56.3
+              },
+              {
+                "receiver": "E3",
+                "source": "A2R_Stgw90",
+                "laeDay": 51.7,
+                "laeEve": 51.9,
+                "lafmaxDay": 57.3
+              },
+              {
+                "receiver": "E3",
+                "source": "D_Mw72",
+                "laeDay": 73.7,
+                "laeEve": 73.9,
+                "lafmaxDay": 79.3
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_Stgw90",
+                "laeDay": 46.6,
+                "laeEve": 46.8,
+                "lafmaxDay": 52.6
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_PzHb74",
+                "laeDay": 74.6,
+                "laeEve": 74.8,
+                "lafmaxDay": 80.6
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_FlzKan92",
+                "laeDay": 55.6,
+                "laeEve": 55.8,
                 "lafmaxDay": 61.6
               },
               {
-                "receiver": "E3",
+                "receiver": "E4",
+                "source": "C3_Stgw90",
+                "laeDay": 48.6,
+                "laeEve": 48.8,
+                "lafmaxDay": 54.6
+              },
+              {
+                "receiver": "E4",
                 "source": "C3_Mw87",
-                "laeDay": 74.6,
-                "laeEve": 74.8,
-                "lafmaxDay": 78.6
+                "laeDay": 65.6,
+                "laeEve": 65.8,
+                "lafmaxDay": 71.6
               },
               {
-                "receiver": "E3",
+                "receiver": "E4",
                 "source": "C3_PzHb79",
-                "laeDay": 85.6,
-                "laeEve": 85.8,
-                "lafmaxDay": 89.6
+                "laeDay": 76.6,
+                "laeEve": 76.8,
+                "lafmaxDay": 82.6
               },
               {
-                "receiver": "E3",
+                "receiver": "E4",
                 "source": "B2_Mg51",
-                "laeDay": 64.1,
-                "laeEve": 64.3,
-                "lafmaxDay": 68.1
+                "laeDay": 56.1,
+                "laeEve": 56.3,
+                "lafmaxDay": 62.1
               },
               {
-                "receiver": "E3",
+                "receiver": "E4",
                 "source": "B2_Stgw90",
-                "laeDay": 61.6,
-                "laeEve": 61.8,
-                "lafmaxDay": 65.6
-              },
-              {
-                "receiver": "E3",
-                "source": "B2_Pist75",
-                "laeDay": 55.6,
-                "laeEve": 55.8,
+                "laeDay": 53.6,
+                "laeEve": 53.8,
                 "lafmaxDay": 59.6
               },
               {
-                "receiver": "E3",
-                "source": "C1_Mw12cm",
-                "laeDay": 83.6,
-                "laeEve": 83.8,
-                "lafmaxDay": 87.6
-              },
-              {
-                "receiver": "E3",
-                "source": "C1_Mg51",
-                "laeDay": 64.1,
-                "laeEve": 64.3,
-                "lafmaxDay": 68.1
-              },
-              {
-                "receiver": "E3",
-                "source": "A3_Mw72",
-                "laeDay": 69.6,
-                "laeEve": 69.8,
-                "lafmaxDay": 73.6
-              },
-              {
-                "receiver": "E3",
-                "source": "NGST-CR_FlabKan6390",
-                "laeDay": 74.6,
-                "laeEve": 74.8,
-                "lafmaxDay": 78.6
-              },
-              {
-                "receiver": "E3",
-                "source": "A1L_Stgw90",
-                "laeDay": 52.6,
-                "laeEve": 52.8,
-                "lafmaxDay": 56.6
-              },
-              {
-                "receiver": "E3",
-                "source": "A2R_Stgw90",
-                "laeDay": 53.6,
-                "laeEve": 53.8,
-                "lafmaxDay": 57.6
-              },
-              {
-                "receiver": "E3",
-                "source": "D_Mw72",
-                "laeDay": 75.6,
-                "laeEve": 75.8,
-                "lafmaxDay": 79.6
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_Stgw90",
-                "laeDay": 48.6,
-                "laeEve": 48.8,
-                "lafmaxDay": 52.9
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_PzHb74",
-                "laeDay": 76.6,
-                "laeEve": 76.8,
-                "lafmaxDay": 80.9
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_FlzKan92",
-                "laeDay": 57.6,
-                "laeEve": 57.8,
-                "lafmaxDay": 61.9
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_Stgw90",
-                "laeDay": 50.6,
-                "laeEve": 50.8,
-                "lafmaxDay": 54.9
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_Mw87",
-                "laeDay": 67.6,
-                "laeEve": 67.8,
-                "lafmaxDay": 71.9
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_PzHb79",
-                "laeDay": 78.6,
-                "laeEve": 78.8,
-                "lafmaxDay": 82.9
-              },
-              {
-                "receiver": "E4",
-                "source": "B2_Mg51",
-                "laeDay": 58.1,
-                "laeEve": 58.3,
-                "lafmaxDay": 62.4
-              },
-              {
-                "receiver": "E4",
-                "source": "B2_Stgw90",
-                "laeDay": 55.6,
-                "laeEve": 55.8,
-                "lafmaxDay": 59.9
-              },
-              {
                 "receiver": "E4",
                 "source": "B2_Pist75",
-                "laeDay": 49.6,
-                "laeEve": 49.8,
-                "lafmaxDay": 53.9
-              },
-              {
-                "receiver": "E4",
-                "source": "C1_Mw12cm",
-                "laeDay": 77.6,
-                "laeEve": 77.8,
-                "lafmaxDay": 81.9
-              },
-              {
-                "receiver": "E4",
-                "source": "C1_Mg51",
-                "laeDay": 58.1,
-                "laeEve": 58.3,
-                "lafmaxDay": 62.4
-              },
-              {
-                "receiver": "E4",
-                "source": "A3_Mw72",
-                "laeDay": 63.6,
-                "laeEve": 63.8,
-                "lafmaxDay": 67.9
-              },
-              {
-                "receiver": "E4",
-                "source": "NGST-CR_FlabKan6390",
-                "laeDay": 68.6,
-                "laeEve": 68.8,
-                "lafmaxDay": 72.9
-              },
-              {
-                "receiver": "E4",
-                "source": "A1L_Stgw90",
-                "laeDay": 46.6,
-                "laeEve": 46.8,
-                "lafmaxDay": 50.9
-              },
-              {
-                "receiver": "E4",
-                "source": "A2R_Stgw90",
                 "laeDay": 47.6,
                 "laeEve": 47.8,
-                "lafmaxDay": 51.9
+                "lafmaxDay": 53.6
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mw12cm",
+                "laeDay": 75.6,
+                "laeEve": 75.8,
+                "lafmaxDay": 81.6
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mg51",
+                "laeDay": 56.1,
+                "laeEve": 56.3,
+                "lafmaxDay": 62.1
+              },
+              {
+                "receiver": "E4",
+                "source": "A3_Mw72",
+                "laeDay": 61.6,
+                "laeEve": 61.8,
+                "lafmaxDay": 67.6
+              },
+              {
+                "receiver": "E4",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 66.6,
+                "laeEve": 66.8,
+                "lafmaxDay": 72.6
+              },
+              {
+                "receiver": "E4",
+                "source": "A1L_Stgw90",
+                "laeDay": 44.6,
+                "laeEve": 44.8,
+                "lafmaxDay": 50.6
+              },
+              {
+                "receiver": "E4",
+                "source": "A2R_Stgw90",
+                "laeDay": 45.6,
+                "laeEve": 45.8,
+                "lafmaxDay": 51.6
               },
               {
                 "receiver": "E4",
                 "source": "D_Mw72",
-                "laeDay": 70.6,
-                "laeEve": 70.8,
-                "lafmaxDay": 74.9
+                "laeDay": 68.6,
+                "laeEve": 68.8,
+                "lafmaxDay": 74.6
               },
               {
                 "receiver": "E5",
                 "source": "B3_Stgw90",
-                "laeDay": 63.3,
-                "laeEve": 63.5,
-                "lafmaxDay": 75.5
+                "laeDay": 62.9,
+                "laeEve": 63.1,
+                "lafmaxDay": 75.2
               },
               {
                 "receiver": "E5",
                 "source": "B3_PzHb74",
-                "laeDay": 91.3,
-                "laeEve": 91.5,
-                "lafmaxDay": 103.5
+                "laeDay": 90.9,
+                "laeEve": 91.1,
+                "lafmaxDay": 103.2
               },
               {
                 "receiver": "E5",
                 "source": "B3_FlzKan92",
-                "laeDay": 72.3,
-                "laeEve": 72.5,
-                "lafmaxDay": 84.5
+                "laeDay": 71.9,
+                "laeEve": 72.1,
+                "lafmaxDay": 84.2
               },
               {
                 "receiver": "E5",
                 "source": "C3_Stgw90",
-                "laeDay": 62.3,
-                "laeEve": 62.5,
-                "lafmaxDay": 74.5
+                "laeDay": 61.9,
+                "laeEve": 62.1,
+                "lafmaxDay": 74.2
               },
               {
                 "receiver": "E5",
                 "source": "C3_Mw87",
-                "laeDay": 79.3,
-                "laeEve": 79.5,
-                "lafmaxDay": 91.5
+                "laeDay": 78.9,
+                "laeEve": 79.1,
+                "lafmaxDay": 91.2
               },
               {
                 "receiver": "E5",
                 "source": "C3_PzHb79",
-                "laeDay": 90.3,
-                "laeEve": 90.5,
-                "lafmaxDay": 102.5
+                "laeDay": 89.9,
+                "laeEve": 90.1,
+                "lafmaxDay": 102.2
               },
               {
                 "receiver": "E5",
                 "source": "B2_Mg51",
-                "laeDay": 58.8,
-                "laeEve": 59,
-                "lafmaxDay": 71
+                "laeDay": 58.4,
+                "laeEve": 58.6,
+                "lafmaxDay": 70.7
               },
               {
                 "receiver": "E5",
                 "source": "B2_Stgw90",
-                "laeDay": 56.3,
-                "laeEve": 56.5,
-                "lafmaxDay": 68.5
+                "laeDay": 55.9,
+                "laeEve": 56.1,
+                "lafmaxDay": 68.2
               },
               {
                 "receiver": "E5",
                 "source": "B2_Pist75",
-                "laeDay": 50.3,
-                "laeEve": 50.5,
-                "lafmaxDay": 62.5
+                "laeDay": 49.9,
+                "laeEve": 50.1,
+                "lafmaxDay": 62.2
               },
               {
                 "receiver": "E5",
                 "source": "C1_Mw12cm",
-                "laeDay": 76.3,
-                "laeEve": 76.5,
-                "lafmaxDay": 88.5
+                "laeDay": 75.9,
+                "laeEve": 76.1,
+                "lafmaxDay": 88.2
               },
               {
                 "receiver": "E5",
                 "source": "C1_Mg51",
-                "laeDay": 56.8,
-                "laeEve": 57,
-                "lafmaxDay": 69
+                "laeDay": 56.4,
+                "laeEve": 56.6,
+                "lafmaxDay": 68.7
               },
               {
                 "receiver": "E5",
                 "source": "A3_Mw72",
-                "laeDay": 77.3,
-                "laeEve": 77.5,
-                "lafmaxDay": 89.5
+                "laeDay": 76.9,
+                "laeEve": 77.1,
+                "lafmaxDay": 89.2
               },
               {
                 "receiver": "E5",
                 "source": "NGST-CR_FlabKan6390",
-                "laeDay": 69.3,
-                "laeEve": 69.5,
-                "lafmaxDay": 81.5
+                "laeDay": 68.9,
+                "laeEve": 69.1,
+                "lafmaxDay": 81.2
               },
               {
                 "receiver": "E5",
                 "source": "A1L_Stgw90",
-                "laeDay": 60.3,
-                "laeEve": 60.5,
-                "lafmaxDay": 72.5
+                "laeDay": 59.9,
+                "laeEve": 60.1,
+                "lafmaxDay": 72.2
               },
               {
                 "receiver": "E5",
                 "source": "A2R_Stgw90",
-                "laeDay": 59.3,
-                "laeEve": 59.5,
-                "lafmaxDay": 71.5
+                "laeDay": 58.9,
+                "laeEve": 59.1,
+                "lafmaxDay": 71.2
               },
               {
                 "receiver": "E5",
                 "source": "D_Mw72",
-                "laeDay": 70.3,
-                "laeEve": 70.5,
-                "lafmaxDay": 82.5
+                "laeDay": 69.9,
+                "laeEve": 70.1,
+                "lafmaxDay": 82.2
               }
             ]
           },
@@ -979,562 +979,562 @@
               {
                 "receiver": "E1",
                 "source": "B3_Stgw90",
-                "laeDay": 57,
-                "laeEve": 57.2,
-                "lafmaxDay": 64.7
+                "laeDay": 55.8,
+                "laeEve": 56,
+                "lafmaxDay": 64.4
               },
               {
                 "receiver": "E1",
                 "source": "B3_PzHb74",
-                "laeDay": 85,
-                "laeEve": 85.2,
-                "lafmaxDay": 92.7
+                "laeDay": 83.8,
+                "laeEve": 84,
+                "lafmaxDay": 92.4
               },
               {
                 "receiver": "E1",
                 "source": "B3_FlzKan92",
-                "laeDay": 66,
-                "laeEve": 66.2,
-                "lafmaxDay": 73.7
+                "laeDay": 64.8,
+                "laeEve": 65,
+                "lafmaxDay": 73.4
               },
               {
                 "receiver": "E1",
                 "source": "C3_Stgw90",
-                "laeDay": 55,
-                "laeEve": 55.2,
-                "lafmaxDay": 62.7
+                "laeDay": 53.8,
+                "laeEve": 54,
+                "lafmaxDay": 62.4
               },
               {
                 "receiver": "E1",
                 "source": "C3_Mw87",
-                "laeDay": 72,
-                "laeEve": 72.2,
-                "lafmaxDay": 79.7
-              },
-              {
-                "receiver": "E1",
-                "source": "C3_PzHb79",
-                "laeDay": 83,
-                "laeEve": 83.2,
-                "lafmaxDay": 90.7
-              },
-              {
-                "receiver": "E1",
-                "source": "B2_Mg51",
-                "laeDay": 59.5,
-                "laeEve": 59.7,
-                "lafmaxDay": 67.2
-              },
-              {
-                "receiver": "E1",
-                "source": "B2_Stgw90",
-                "laeDay": 57,
-                "laeEve": 57.2,
-                "lafmaxDay": 64.7
-              },
-              {
-                "receiver": "E1",
-                "source": "B2_Pist75",
-                "laeDay": 51,
-                "laeEve": 51.2,
-                "lafmaxDay": 58.7
-              },
-              {
-                "receiver": "E1",
-                "source": "C1_Mw12cm",
-                "laeDay": 76,
-                "laeEve": 76.2,
-                "lafmaxDay": 83.7
-              },
-              {
-                "receiver": "E1",
-                "source": "C1_Mg51",
-                "laeDay": 56.5,
-                "laeEve": 56.7,
-                "lafmaxDay": 64.2
-              },
-              {
-                "receiver": "E1",
-                "source": "A3_Mw72",
-                "laeDay": 74,
-                "laeEve": 74.2,
-                "lafmaxDay": 81.7
-              },
-              {
-                "receiver": "E1",
-                "source": "NGST-CR_FlabKan6390",
-                "laeDay": 69,
-                "laeEve": 69.2,
-                "lafmaxDay": 76.7
-              },
-              {
-                "receiver": "E1",
-                "source": "A1L_Stgw90",
-                "laeDay": 56,
-                "laeEve": 56.2,
-                "lafmaxDay": 63.7
-              },
-              {
-                "receiver": "E1",
-                "source": "A2R_Stgw90",
-                "laeDay": 56,
-                "laeEve": 56.2,
-                "lafmaxDay": 63.7
-              },
-              {
-                "receiver": "E1",
-                "source": "D_Mw72",
-                "laeDay": 69,
-                "laeEve": 69.2,
-                "lafmaxDay": 76.7
-              },
-              {
-                "receiver": "E2",
-                "source": "B3_Stgw90",
-                "laeDay": 47.9,
-                "laeEve": 48.1,
-                "lafmaxDay": 51.4
-              },
-              {
-                "receiver": "E2",
-                "source": "B3_PzHb74",
-                "laeDay": 75.9,
-                "laeEve": 76.1,
+                "laeDay": 70.8,
+                "laeEve": 71,
                 "lafmaxDay": 79.4
               },
               {
-                "receiver": "E2",
-                "source": "B3_FlzKan92",
-                "laeDay": 56.9,
-                "laeEve": 57.1,
-                "lafmaxDay": 60.4
-              },
-              {
-                "receiver": "E2",
-                "source": "C3_Stgw90",
-                "laeDay": 49.9,
-                "laeEve": 50.1,
-                "lafmaxDay": 53.4
-              },
-              {
-                "receiver": "E2",
-                "source": "C3_Mw87",
-                "laeDay": 66.9,
-                "laeEve": 67.1,
-                "lafmaxDay": 70.4
-              },
-              {
-                "receiver": "E2",
+                "receiver": "E1",
                 "source": "C3_PzHb79",
-                "laeDay": 77.9,
-                "laeEve": 78.1,
+                "laeDay": 81.8,
+                "laeEve": 82,
+                "lafmaxDay": 90.4
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Mg51",
+                "laeDay": 58.3,
+                "laeEve": 58.5,
+                "lafmaxDay": 66.9
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Stgw90",
+                "laeDay": 55.8,
+                "laeEve": 56,
+                "lafmaxDay": 64.4
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Pist75",
+                "laeDay": 49.8,
+                "laeEve": 50,
+                "lafmaxDay": 58.4
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mw12cm",
+                "laeDay": 74.8,
+                "laeEve": 75,
+                "lafmaxDay": 83.4
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mg51",
+                "laeDay": 55.3,
+                "laeEve": 55.5,
+                "lafmaxDay": 63.9
+              },
+              {
+                "receiver": "E1",
+                "source": "A3_Mw72",
+                "laeDay": 72.8,
+                "laeEve": 73,
                 "lafmaxDay": 81.4
               },
               {
+                "receiver": "E1",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 67.8,
+                "laeEve": 68,
+                "lafmaxDay": 76.4
+              },
+              {
+                "receiver": "E1",
+                "source": "A1L_Stgw90",
+                "laeDay": 54.8,
+                "laeEve": 55,
+                "lafmaxDay": 63.4
+              },
+              {
+                "receiver": "E1",
+                "source": "A2R_Stgw90",
+                "laeDay": 54.8,
+                "laeEve": 55,
+                "lafmaxDay": 63.4
+              },
+              {
+                "receiver": "E1",
+                "source": "D_Mw72",
+                "laeDay": 67.8,
+                "laeEve": 68,
+                "lafmaxDay": 76.4
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_Stgw90",
+                "laeDay": 45.1,
+                "laeEve": 45.3,
+                "lafmaxDay": 51.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_PzHb74",
+                "laeDay": 73.1,
+                "laeEve": 73.3,
+                "lafmaxDay": 79.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_FlzKan92",
+                "laeDay": 54.1,
+                "laeEve": 54.3,
+                "lafmaxDay": 60.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Stgw90",
+                "laeDay": 47.1,
+                "laeEve": 47.3,
+                "lafmaxDay": 53.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Mw87",
+                "laeDay": 64.1,
+                "laeEve": 64.3,
+                "lafmaxDay": 70.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_PzHb79",
+                "laeDay": 75.1,
+                "laeEve": 75.3,
+                "lafmaxDay": 81.1
+              },
+              {
                 "receiver": "E2",
                 "source": "B2_Mg51",
-                "laeDay": 59.4,
-                "laeEve": 59.6,
-                "lafmaxDay": 62.9
+                "laeDay": 56.6,
+                "laeEve": 56.8,
+                "lafmaxDay": 62.6
               },
               {
                 "receiver": "E2",
                 "source": "B2_Stgw90",
-                "laeDay": 56.9,
-                "laeEve": 57.1,
-                "lafmaxDay": 60.4
+                "laeDay": 54.1,
+                "laeEve": 54.3,
+                "lafmaxDay": 60.1
               },
               {
                 "receiver": "E2",
                 "source": "B2_Pist75",
-                "laeDay": 50.9,
-                "laeEve": 51.1,
-                "lafmaxDay": 54.4
+                "laeDay": 48.1,
+                "laeEve": 48.3,
+                "lafmaxDay": 54.1
               },
               {
                 "receiver": "E2",
                 "source": "C1_Mw12cm",
-                "laeDay": 76.9,
-                "laeEve": 77.1,
-                "lafmaxDay": 80.4
+                "laeDay": 74.1,
+                "laeEve": 74.3,
+                "lafmaxDay": 80.1
               },
               {
                 "receiver": "E2",
                 "source": "C1_Mg51",
-                "laeDay": 57.4,
-                "laeEve": 57.6,
-                "lafmaxDay": 60.9
+                "laeDay": 54.6,
+                "laeEve": 54.8,
+                "lafmaxDay": 60.6
               },
               {
                 "receiver": "E2",
                 "source": "A3_Mw72",
-                "laeDay": 66.9,
-                "laeEve": 67.1,
-                "lafmaxDay": 70.4
+                "laeDay": 64.1,
+                "laeEve": 64.3,
+                "lafmaxDay": 70.1
               },
               {
                 "receiver": "E2",
                 "source": "NGST-CR_FlabKan6390",
-                "laeDay": 67.9,
-                "laeEve": 68.1,
-                "lafmaxDay": 71.4
+                "laeDay": 65.1,
+                "laeEve": 65.3,
+                "lafmaxDay": 71.1
               },
               {
                 "receiver": "E2",
                 "source": "A1L_Stgw90",
-                "laeDay": 49.9,
-                "laeEve": 50.1,
-                "lafmaxDay": 53.4
+                "laeDay": 47.1,
+                "laeEve": 47.3,
+                "lafmaxDay": 53.1
               },
               {
                 "receiver": "E2",
                 "source": "A2R_Stgw90",
-                "laeDay": 50.9,
-                "laeEve": 51.1,
-                "lafmaxDay": 54.4
+                "laeDay": 48.1,
+                "laeEve": 48.3,
+                "lafmaxDay": 54.1
               },
               {
                 "receiver": "E2",
                 "source": "D_Mw72",
-                "laeDay": 68.9,
-                "laeEve": 69.1,
-                "lafmaxDay": 72.4
+                "laeDay": 66.1,
+                "laeEve": 66.3,
+                "lafmaxDay": 72.1
               },
               {
                 "receiver": "E3",
                 "source": "B3_Stgw90",
-                "laeDay": 51.4,
-                "laeEve": 51.6,
-                "lafmaxDay": 54
+                "laeDay": 49,
+                "laeEve": 49.2,
+                "lafmaxDay": 53.7
               },
               {
                 "receiver": "E3",
                 "source": "B3_PzHb74",
-                "laeDay": 79.4,
-                "laeEve": 79.6,
-                "lafmaxDay": 82
+                "laeDay": 77,
+                "laeEve": 77.2,
+                "lafmaxDay": 81.7
               },
               {
                 "receiver": "E3",
                 "source": "B3_FlzKan92",
-                "laeDay": 60.4,
-                "laeEve": 60.6,
-                "lafmaxDay": 63
+                "laeDay": 58,
+                "laeEve": 58.2,
+                "lafmaxDay": 62.7
               },
               {
                 "receiver": "E3",
                 "source": "C3_Stgw90",
-                "laeDay": 53.4,
-                "laeEve": 53.6,
-                "lafmaxDay": 56
+                "laeDay": 51,
+                "laeEve": 51.2,
+                "lafmaxDay": 55.7
               },
               {
                 "receiver": "E3",
                 "source": "C3_Mw87",
-                "laeDay": 70.4,
-                "laeEve": 70.6,
-                "lafmaxDay": 73
+                "laeDay": 68,
+                "laeEve": 68.2,
+                "lafmaxDay": 72.7
               },
               {
                 "receiver": "E3",
                 "source": "C3_PzHb79",
-                "laeDay": 81.4,
-                "laeEve": 81.6,
-                "lafmaxDay": 84
+                "laeDay": 79,
+                "laeEve": 79.2,
+                "lafmaxDay": 83.7
               },
               {
                 "receiver": "E3",
                 "source": "B2_Mg51",
-                "laeDay": 63.9,
-                "laeEve": 64.1,
-                "lafmaxDay": 66.5
+                "laeDay": 61.5,
+                "laeEve": 61.7,
+                "lafmaxDay": 66.2
               },
               {
                 "receiver": "E3",
                 "source": "B2_Stgw90",
-                "laeDay": 61.4,
-                "laeEve": 61.6,
-                "lafmaxDay": 64
+                "laeDay": 59,
+                "laeEve": 59.2,
+                "lafmaxDay": 63.7
               },
               {
                 "receiver": "E3",
                 "source": "B2_Pist75",
-                "laeDay": 55.4,
-                "laeEve": 55.6,
-                "lafmaxDay": 58
+                "laeDay": 53,
+                "laeEve": 53.2,
+                "lafmaxDay": 57.7
               },
               {
                 "receiver": "E3",
                 "source": "C1_Mw12cm",
-                "laeDay": 83.4,
-                "laeEve": 83.6,
-                "lafmaxDay": 86
+                "laeDay": 81,
+                "laeEve": 81.2,
+                "lafmaxDay": 85.7
               },
               {
                 "receiver": "E3",
                 "source": "C1_Mg51",
-                "laeDay": 63.9,
-                "laeEve": 64.1,
-                "lafmaxDay": 66.5
+                "laeDay": 61.5,
+                "laeEve": 61.7,
+                "lafmaxDay": 66.2
               },
               {
                 "receiver": "E3",
                 "source": "A3_Mw72",
-                "laeDay": 69.4,
-                "laeEve": 69.6,
-                "lafmaxDay": 72
+                "laeDay": 67,
+                "laeEve": 67.2,
+                "lafmaxDay": 71.7
               },
               {
                 "receiver": "E3",
                 "source": "NGST-CR_FlabKan6390",
-                "laeDay": 74.4,
-                "laeEve": 74.6,
+                "laeDay": 72,
+                "laeEve": 72.2,
+                "lafmaxDay": 76.7
+              },
+              {
+                "receiver": "E3",
+                "source": "A1L_Stgw90",
+                "laeDay": 50,
+                "laeEve": 50.2,
+                "lafmaxDay": 54.7
+              },
+              {
+                "receiver": "E3",
+                "source": "A2R_Stgw90",
+                "laeDay": 51,
+                "laeEve": 51.2,
+                "lafmaxDay": 55.7
+              },
+              {
+                "receiver": "E3",
+                "source": "D_Mw72",
+                "laeDay": 73,
+                "laeEve": 73.2,
+                "lafmaxDay": 77.7
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_Stgw90",
+                "laeDay": 41,
+                "laeEve": 41.2,
+                "lafmaxDay": 47
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_PzHb74",
+                "laeDay": 69,
+                "laeEve": 69.2,
+                "lafmaxDay": 75
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_FlzKan92",
+                "laeDay": 50,
+                "laeEve": 50.2,
+                "lafmaxDay": 56
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Stgw90",
+                "laeDay": 43,
+                "laeEve": 43.2,
+                "lafmaxDay": 49
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Mw87",
+                "laeDay": 60,
+                "laeEve": 60.2,
+                "lafmaxDay": 66
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_PzHb79",
+                "laeDay": 71,
+                "laeEve": 71.2,
                 "lafmaxDay": 77
               },
               {
-                "receiver": "E3",
-                "source": "A1L_Stgw90",
-                "laeDay": 52.4,
-                "laeEve": 52.6,
-                "lafmaxDay": 55
-              },
-              {
-                "receiver": "E3",
-                "source": "A2R_Stgw90",
-                "laeDay": 53.4,
-                "laeEve": 53.6,
-                "lafmaxDay": 56
-              },
-              {
-                "receiver": "E3",
-                "source": "D_Mw72",
-                "laeDay": 75.4,
-                "laeEve": 75.6,
-                "lafmaxDay": 78
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_Stgw90",
-                "laeDay": 43.4,
-                "laeEve": 43.6,
-                "lafmaxDay": 47.3
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_PzHb74",
-                "laeDay": 71.4,
-                "laeEve": 71.6,
-                "lafmaxDay": 75.3
-              },
-              {
-                "receiver": "E4",
-                "source": "B3_FlzKan92",
-                "laeDay": 52.4,
-                "laeEve": 52.6,
-                "lafmaxDay": 56.3
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_Stgw90",
-                "laeDay": 45.4,
-                "laeEve": 45.6,
-                "lafmaxDay": 49.3
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_Mw87",
-                "laeDay": 62.4,
-                "laeEve": 62.6,
-                "lafmaxDay": 66.3
-              },
-              {
-                "receiver": "E4",
-                "source": "C3_PzHb79",
-                "laeDay": 73.4,
-                "laeEve": 73.6,
-                "lafmaxDay": 77.3
-              },
-              {
                 "receiver": "E4",
                 "source": "B2_Mg51",
-                "laeDay": 56.9,
-                "laeEve": 57.1,
-                "lafmaxDay": 60.8
+                "laeDay": 54.5,
+                "laeEve": 54.7,
+                "lafmaxDay": 60.5
               },
               {
                 "receiver": "E4",
                 "source": "B2_Stgw90",
-                "laeDay": 54.4,
-                "laeEve": 54.6,
-                "lafmaxDay": 58.3
+                "laeDay": 52,
+                "laeEve": 52.2,
+                "lafmaxDay": 58
               },
               {
                 "receiver": "E4",
                 "source": "B2_Pist75",
-                "laeDay": 48.4,
-                "laeEve": 48.6,
-                "lafmaxDay": 52.3
+                "laeDay": 46,
+                "laeEve": 46.2,
+                "lafmaxDay": 52
               },
               {
                 "receiver": "E4",
                 "source": "C1_Mw12cm",
-                "laeDay": 76.4,
-                "laeEve": 76.6,
-                "lafmaxDay": 80.3
+                "laeDay": 74,
+                "laeEve": 74.2,
+                "lafmaxDay": 80
               },
               {
                 "receiver": "E4",
                 "source": "C1_Mg51",
-                "laeDay": 56.9,
-                "laeEve": 57.1,
-                "lafmaxDay": 60.8
+                "laeDay": 54.5,
+                "laeEve": 54.7,
+                "lafmaxDay": 60.5
               },
               {
                 "receiver": "E4",
                 "source": "A3_Mw72",
-                "laeDay": 62.4,
-                "laeEve": 62.6,
-                "lafmaxDay": 66.3
+                "laeDay": 60,
+                "laeEve": 60.2,
+                "lafmaxDay": 66
               },
               {
                 "receiver": "E4",
                 "source": "NGST-CR_FlabKan6390",
-                "laeDay": 67.4,
-                "laeEve": 67.6,
-                "lafmaxDay": 71.3
+                "laeDay": 65,
+                "laeEve": 65.2,
+                "lafmaxDay": 71
               },
               {
                 "receiver": "E4",
                 "source": "A1L_Stgw90",
-                "laeDay": 45.4,
-                "laeEve": 45.6,
-                "lafmaxDay": 49.3
+                "laeDay": 43,
+                "laeEve": 43.2,
+                "lafmaxDay": 49
               },
               {
                 "receiver": "E4",
                 "source": "A2R_Stgw90",
-                "laeDay": 46.4,
-                "laeEve": 46.6,
-                "lafmaxDay": 50.3
+                "laeDay": 44,
+                "laeEve": 44.2,
+                "lafmaxDay": 50
               },
               {
                 "receiver": "E4",
                 "source": "D_Mw72",
-                "laeDay": 69.4,
-                "laeEve": 69.6,
-                "lafmaxDay": 73.3
+                "laeDay": 67,
+                "laeEve": 67.2,
+                "lafmaxDay": 73
               },
               {
                 "receiver": "E5",
                 "source": "B3_Stgw90",
-                "laeDay": 61.4,
-                "laeEve": 61.6,
-                "lafmaxDay": 70.3
+                "laeDay": 60.7,
+                "laeEve": 60.9,
+                "lafmaxDay": 70
               },
               {
                 "receiver": "E5",
                 "source": "B3_PzHb74",
-                "laeDay": 89.4,
-                "laeEve": 89.6,
-                "lafmaxDay": 98.3
+                "laeDay": 88.7,
+                "laeEve": 88.9,
+                "lafmaxDay": 98
               },
               {
                 "receiver": "E5",
                 "source": "B3_FlzKan92",
-                "laeDay": 70.4,
-                "laeEve": 70.6,
-                "lafmaxDay": 79.3
+                "laeDay": 69.7,
+                "laeEve": 69.9,
+                "lafmaxDay": 79
               },
               {
                 "receiver": "E5",
                 "source": "C3_Stgw90",
-                "laeDay": 60.4,
-                "laeEve": 60.6,
-                "lafmaxDay": 69.3
+                "laeDay": 59.7,
+                "laeEve": 59.9,
+                "lafmaxDay": 69
               },
               {
                 "receiver": "E5",
                 "source": "C3_Mw87",
-                "laeDay": 77.4,
-                "laeEve": 77.6,
-                "lafmaxDay": 86.3
+                "laeDay": 76.7,
+                "laeEve": 76.9,
+                "lafmaxDay": 86
               },
               {
                 "receiver": "E5",
                 "source": "C3_PzHb79",
-                "laeDay": 88.4,
-                "laeEve": 88.6,
-                "lafmaxDay": 97.3
+                "laeDay": 87.7,
+                "laeEve": 87.9,
+                "lafmaxDay": 97
               },
               {
                 "receiver": "E5",
                 "source": "B2_Mg51",
-                "laeDay": 60.9,
-                "laeEve": 61.1,
-                "lafmaxDay": 69.8
+                "laeDay": 60.2,
+                "laeEve": 60.4,
+                "lafmaxDay": 69.5
               },
               {
                 "receiver": "E5",
                 "source": "B2_Stgw90",
-                "laeDay": 58.4,
-                "laeEve": 58.6,
-                "lafmaxDay": 67.3
+                "laeDay": 57.7,
+                "laeEve": 57.9,
+                "lafmaxDay": 67
               },
               {
                 "receiver": "E5",
                 "source": "B2_Pist75",
-                "laeDay": 52.4,
-                "laeEve": 52.6,
-                "lafmaxDay": 61.3
+                "laeDay": 51.7,
+                "laeEve": 51.9,
+                "lafmaxDay": 61
               },
               {
                 "receiver": "E5",
                 "source": "C1_Mw12cm",
-                "laeDay": 78.4,
-                "laeEve": 78.6,
-                "lafmaxDay": 87.3
+                "laeDay": 77.7,
+                "laeEve": 77.9,
+                "lafmaxDay": 87
               },
               {
                 "receiver": "E5",
                 "source": "C1_Mg51",
-                "laeDay": 58.9,
-                "laeEve": 59.1,
-                "lafmaxDay": 67.8
+                "laeDay": 58.2,
+                "laeEve": 58.4,
+                "lafmaxDay": 67.5
               },
               {
                 "receiver": "E5",
                 "source": "A3_Mw72",
-                "laeDay": 79.4,
-                "laeEve": 79.6,
-                "lafmaxDay": 88.3
+                "laeDay": 78.7,
+                "laeEve": 78.9,
+                "lafmaxDay": 88
               },
               {
                 "receiver": "E5",
                 "source": "NGST-CR_FlabKan6390",
-                "laeDay": 71.4,
-                "laeEve": 71.6,
-                "lafmaxDay": 80.3
+                "laeDay": 70.7,
+                "laeEve": 70.9,
+                "lafmaxDay": 80
               },
               {
                 "receiver": "E5",
                 "source": "A1L_Stgw90",
-                "laeDay": 62.4,
-                "laeEve": 62.6,
-                "lafmaxDay": 71.3
+                "laeDay": 61.7,
+                "laeEve": 61.9,
+                "lafmaxDay": 71
               },
               {
                 "receiver": "E5",
                 "source": "A2R_Stgw90",
-                "laeDay": 61.4,
-                "laeEve": 61.6,
-                "lafmaxDay": 70.3
+                "laeDay": 60.7,
+                "laeEve": 60.9,
+                "lafmaxDay": 70
               },
               {
                 "receiver": "E5",
                 "source": "D_Mw72",
-                "laeDay": 72.4,
-                "laeEve": 72.6,
-                "lafmaxDay": 81.3
+                "laeDay": 71.7,
+                "laeEve": 71.9,
+                "lafmaxDay": 81
               }
             ]
           }
@@ -1776,6 +1776,18 @@
           },
           {
             "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Kantonspolizei Freiburg",
+            "date": "{{year}}-04-08",
+            "from": "08:00",
+            "to": "11:00",
+            "usageType": "blue_light",
+            "shots": 750,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
             "source": "B2_Stgw90",
             "unit": "Schützenverein Geissalp",
             "date": "{{year}}-04-08",
@@ -1842,6 +1854,18 @@
             "to": "11:30",
             "usageType": "civil",
             "shots": 1550,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Jungschützenkurs Sense",
+            "date": "{{year}}-05-09",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "sat",
+            "shots": 1200,
             "recordedBy": "ELO-Import",
             "source_kind": "elo"
           },
@@ -1923,6 +1947,18 @@
             "usageType": "military",
             "shots": 96,
             "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Kantonspolizei Freiburg",
+            "date": "{{year}}-06-10",
+            "from": "08:00",
+            "to": "11:00",
+            "usageType": "blue_light",
+            "shots": 750,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
           },
           {
             "room": "Stellungsrm B 2",
@@ -2110,6 +2146,18 @@
             "recordedBy": "Oblt Keller Sven"
           },
           {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Jungschützenkurs Sense",
+            "date": "{{year}}-08-22",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "sat",
+            "shots": 1200,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
             "room": "Stellungsrm Mw Neuhaus, B 3",
             "source": "B3_Stgw90",
             "unit": "K1",
@@ -2153,6 +2201,18 @@
             "usageType": "military",
             "shots": 800,
             "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Kantonspolizei Freiburg",
+            "date": "{{year}}-09-09",
+            "from": "08:00",
+            "to": "11:00",
+            "usageType": "blue_light",
+            "shots": 750,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
           },
           {
             "room": "Stellungsrm B 2",

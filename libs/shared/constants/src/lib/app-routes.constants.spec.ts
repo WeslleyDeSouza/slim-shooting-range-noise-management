@@ -7,6 +7,9 @@ describe('APP_ROUTES', () => {
     expect(APP_ROUTES.admin.dataManagement.calculations.import).toBe(
       '/admin/data-management/area/calculations/import',
     );
+    expect(APP_ROUTES.admin.dataManagement.area.masterDataOf('thun')).toBe(
+      '/admin/data-management/area/thun/master-data',
+    );
     expect(APP_ROUTES.auth.login).toBe(
       `/${ROUTE_SEGMENT.auth}/${ROUTE_SEGMENT.login}`,
     );

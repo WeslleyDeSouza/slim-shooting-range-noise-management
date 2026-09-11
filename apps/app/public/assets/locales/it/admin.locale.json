@@ -317,6 +317,26 @@
       "export_failed": "Esportazione non riuscita.",
       "col_action": "Azione",
       "col_entry": "Voce"
+    },
+    "dm_area": {
+      "title": "Panoramica delle piazze di tiro",
+      "subtitle": "Selezionare una piazza di tiro e passare a Generale, Assegnazione armi o Calcoli.",
+      "search_placeholder": "Denominazione, n. settore di coordinamento o n. piano settoriale",
+      "count": "{{n}} di {{total}} piazze di tiro",
+      "no_create": "Le nuove piazze di tiro vengono create tramite importazione o amministrazione della banca dati (5.14).",
+      "col_ka": "N. settore di coordinamento",
+      "col_sp": "N. piano settoriale",
+      "col_name": "Denominazione",
+      "col_active": "Attiva",
+      "col_nav": "Accesso",
+      "active": "Attiva",
+      "inactive": "Inattiva",
+      "sort": "Ordina per {{col}}",
+      "jump_general": "Generale",
+      "jump_weapons": "Assegnazione armi",
+      "jump_calculations": "Calcoli",
+      "empty": "Nessuna piazza di tiro trovata. Verificare denominazione, n. settore di coordinamento o n. piano settoriale.",
+      "scope_lock": "Solo piazze di tiro autorizzate"
     }
   }
 }

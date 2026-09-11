@@ -11,6 +11,7 @@ import {
   annex7Level,
   annex9Level,
   applicableLimits,
+  countsForAnnex7,
   LSV_EMPTY_LEVEL,
   limits,
   LimitKind,
@@ -151,10 +152,10 @@ export function buildContext(
   const weaponById = new Map(weapons.map((w) => [w.id, w]));
   const roomById = new Map(rooms.map((r) => [r.id, r]));
 
-  // Annex 9: military shooting, split into inside / outside the workday (7.4.5).
+  // Annex 9 (B1 Tabelle 2): every category – Militär, Zivil, Blaulicht, SAT –
+  // split into inside / outside the workday (7.4.5).
   const annex9: Annex9OperatingData = new Map();
   for (const usage of usages) {
-    if (usage.usageType !== 'military') continue;
     const split = splitAnnex9(slot(usage));
     const entry = annex9.get(usage.weaponId) ?? { inside: 0, outside: 0 };
     entry.inside += split.inside;
@@ -162,8 +163,8 @@ export function buildContext(
     annex9.set(usage.weaponId, entry);
   }
 
-  // Annex 7: civil shooting (every usage with the «Gesamtbeurteilung» flag).
-  const civil = usages.filter((u) => area.annex7Overall || u.usageType === 'civil');
+  // Annex 7 (B1 Tabelle 2): Zivil + SAT, every category with the «Gesamtbeurteilung» flag.
+  const civil = usages.filter((u) => countsForAnnex7(u.usageType, area.annex7Overall));
   const annex7Shots = new Map<string, number>();
   const categorised: (ReturnType<typeof slot> & { category: Annex7Category })[] = [];
   for (const usage of civil) {

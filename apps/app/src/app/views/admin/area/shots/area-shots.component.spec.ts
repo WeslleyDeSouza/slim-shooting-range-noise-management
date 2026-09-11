@@ -153,11 +153,12 @@ describe('AreaShotsComponent', () => {
     search.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     const chips = el().querySelectorAll<HTMLButtonElement>('.slim-chip');
+    // Chips: the four Nutzungskategorien (military, civil, blue_light, sat), then the weapon categories.
     chips[1].click(); // civil
     fixture.detectChanges();
     expect(rows().length).toBe(1);
     chips[1].click();
-    chips[2].click(); // artillery
+    chips[4].click(); // artillery
     fixture.detectChanges();
     expect(rows().length).toBe(1);
     expect(rows()[0].textContent).toContain('Pz Hb 74');

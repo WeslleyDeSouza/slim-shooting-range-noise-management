@@ -35,6 +35,8 @@ mobile first, hinter dem galaxy-Login (MFA-fähig) und per Setup-Wizard installi
 | Demo-Datensatz | `tenant.mock.json` (llumi-Muster): 9 Schiessplätze, Geissalp mit 14 Stellungsräumen, 16 Quellen, 6 Empfangspunkten, 2 Berechnungszuständen (initial 2019 = gültig, saniert 2025), 72 Nutzungen; jährlich rollend, Regenerierung per Generator | `tenant-dataset.spec` (7 Tests) |
 | API-Client, Doku | Angular-Client und Modelle werden bei jedem API-Start aus Swagger generiert; Swagger UI `/api/docs` | `libs/app/generated` |
 | Benutzerverwaltung (5.26, 8.1) | Benutzer/Rollen/Apps-Masken aus ELO über die galaxy-Admin-API; vier SLIM-Rollen mit der Rechte-Matrix 8.1.2 als Seed (ein Demo-Konto je Rolle); Guards prüfen R/W/X pro Bereich; «W/R-O» über galaxy Rules (`area-scope`) + `area_user`; 2FA vorhanden (erfüllt «MFA oder AGOV») | API `area-scope.spec` (6 Tests); [berechtigungen.md](../architecture/berechtigungen.md) |
+| Nutzungskategorien (B1 Tabelle 2) und halbe Feiertage | `USAGE_TYPE` = Militär, Zivil, Blaulicht, SAT; Anhang 9 rechnet alle Kategorien, Anhang 7 Zivil + SAT (`countsForAnnex7`, alle bei «Gesamtbeurteilung»); Feiertage je Standort ganz oder halb (`{ date, from/to }`) in `splitAnnex9` / `annex7HalfDays`; Demo-Datensatz v4 mit Blaulicht-/SAT-Nutzungen neu getunt | `libs/shared/lsv` (`operating-data.spec`), `assessment.service.spec`, `simulation.service.spec` |
+| Datenverwaltung › Schiessplatz › Übersicht 5.14 (`slm 13`) | Mock `_mocks/data-management/area.index.html` umgesetzt: Suche über Bezeichnung, Koordinationsabschnitt- und Sachplan-Nr., sortierbare Spalten, Aktiv-Badge, Absprünge Allgemein / Zuordnung Waffen / Berechnungen je Zeile (Ziel-Routen `…/area/:areaId/…`, heute Platzhalter); kein «Neuer Schiessplatz» | `views/admin/data-management/area/dm-area-overview` |
 | Login-Logging / Logbuch (`slm 56`) | Logbuch `core_log_user` aus ELO übernommen, Maske «Logbuch» unter Datenverwaltung mit Filtern und XLSX-Export; mit `@app-galaxy/auth-api` 0.1.218 alle Auth-Ereignisse über Hooks: Login (Methode), fehlgeschlagener Login (Grund), Logout, Token-Wiederverwendung, Passwort-Reset/-Änderung, E-Mail-Verifikation | API `client-ip.spec`, `auth-audit.hooks.spec`; `views/admin/logs` |
 | Setup-Wizard | `npm run setup`: 12 Schritte (Toolchain, .env, Registry, Abhängigkeiten, DB SQLite/MariaDB/MySQL/PostgreSQL, Workspace, API, Frontend, Login, Rechte, Demo-Daten, e2e) | live durchgespielt, 12/12 grün |
 | Architektur-Doku (A2) | Gesamtarchitektur, Deployment/Sicherheit, UI-Ansichten – nur Ist-Zustand | [gesamtarchitektur.md](../architecture/gesamtarchitektur.md), [deployment-sicherheit.md](../architecture/deployment-sicherheit.md), [ui-ansichten.md](../architecture/ui-ansichten.md) |
@@ -69,7 +71,7 @@ eingebunden.
 1. **Schiessplatz – Übersicht (5.10)** mit Kontingent-Tabelle (Soll aus `area_weapon.quota`, Ist aus
    Nutzungen) und Ampel-Aggregation; `noiseStatus`/`quotaStatus` der Übersicht aus der Berechnung
    statt aus dem Seed.
-2. **Datenverwaltung** (5.14–5.17, 5.22–5.25): Masken für Schiessplatz, Stellungsräume,
+2. **Datenverwaltung** (5.15–5.17, 5.22–5.25; 5.14 ist umgesetzt): Masken für Schiessplatz, Stellungsräume,
    Zuordnung Waffen, Waffen-Stammdaten; Seed aus B1.6/B1.7 (echte 126 Schiessplätze).
 3. **ELO-Schnittstelle** (Kap. 6): `GET Anlageninformationen`, `POST Schiessplatznutzung` – Datenmodell
    ist bereit (`source = 'elo'`).

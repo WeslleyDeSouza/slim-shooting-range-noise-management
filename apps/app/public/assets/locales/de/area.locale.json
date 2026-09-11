@@ -64,7 +64,9 @@
     },
     "type": {
       "military": "Militärisch",
-      "civil": "Zivil"
+      "civil": "Zivil",
+      "blue_light": "Blaulicht",
+      "sat": "SAT"
     },
     "category": {
       "artillery": "Artillerie",

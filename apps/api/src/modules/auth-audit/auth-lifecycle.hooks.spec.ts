@@ -7,7 +7,10 @@ describe('auth lifecycle audit hooks (auth-api ≥ 0.1.218)', () => {
 
   beforeEach(() => {
     createLog = vi.fn().mockResolvedValue(undefined);
-    hook = new AuditAuthLifecycleHook({ createLog } as never);
+    // Tenant resolution is covered by auth-tenant.resolver.spec; here the
+    // context's tenant (or the fallback 't1') is used as-is.
+    const tenants = { forEvent: async (ctx: { tenantId?: unknown }) => [ctx.tenantId ? String(ctx.tenantId) : 't1'] };
+    hook = new AuditAuthLifecycleHook({ createLog } as never, tenants as never);
   });
 
   const user = { userId: 'u1', email: 'slim@demo.ch', password: 'HASH-NEVER-LOGGED' };

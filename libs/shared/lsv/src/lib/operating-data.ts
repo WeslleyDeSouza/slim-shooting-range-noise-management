@@ -4,6 +4,7 @@ import {
   Annex7HalfDays,
   CalendarOptions,
   HalfDays,
+  HolidayEntry,
   UsageSlot,
   WorkdaySplit,
 } from './types';
@@ -47,8 +48,30 @@ export function weekday(date: string): number {
   return d.getUTCDay();
 }
 
-function isHoliday(date: string, options?: CalendarOptions): boolean {
-  return options?.holidays?.includes(date) ?? false;
+/**
+ * Holiday minutes `[from, to)` of a calendar day at the site: `[0, 1440)` for
+ * a whole holiday, the bounded part for a half holiday, `null` for a workday.
+ * Several entries of the same date are merged into their outer bounds.
+ */
+function holidayWindow(
+  date: string,
+  options?: CalendarOptions,
+): [number, number] | null {
+  let window: [number, number] | null = null;
+  for (const entry of options?.holidays ?? []) {
+    const h: HolidayEntry = typeof entry === 'string' ? { date: entry } : entry;
+    if (h.date !== date) continue;
+    const from = h.from ? parseMinutes(h.from) : 0;
+    const to = h.to ? parseMinutes(h.to) : 24 * 60;
+    window = window
+      ? [Math.min(window[0], from), Math.max(window[1], to)]
+      : [from, to];
+  }
+  return window;
+}
+
+function isFullHoliday(window: [number, number] | null): boolean {
+  return !!window && window[0] <= 0 && window[1] >= 24 * 60;
 }
 
 /** Validated `[from, to]` minutes of a usage; `to` must be after `from`. */
@@ -79,10 +102,11 @@ function overlap(
 /**
  * Anhang 9 (B1 7.4.5): split the shots of one usage into "innerhalb" and
  * "ausserhalb Werktag". The workday is Mo–Fr 07:00–19:00; Saturday, Sunday
- * and the site's public holidays count entirely as outside. Inside a
- * workday the shots are split proportionally to the minutes inside / outside
- * the window and rounded to whole shots; the rounding remainder goes to the
- * larger share, so `inside + outside === shots` always holds.
+ * and the site's public holidays count entirely as outside; on a half
+ * holiday the free hours are outside as well. Inside a workday the shots are
+ * split proportionally to the minutes inside / outside the window and rounded
+ * to whole shots; the rounding remainder goes to the larger share, so
+ * `inside + outside === shots` always holds.
  */
 export function splitAnnex9(
   usage: UsageSlot,
@@ -92,16 +116,23 @@ export function splitAnnex9(
   const day = weekday(usage.date);
   const shots = usage.shots;
 
-  if (day === 0 || day === 6 || isHoliday(usage.date, options)) {
+  const holiday = holidayWindow(usage.date, options);
+  if (day === 0 || day === 6 || isFullHoliday(holiday)) {
     return { inside: 0, outside: shots };
   }
 
-  const insideMinutes = overlap(
+  let insideMinutes = overlap(
     from,
     to,
     ANNEX9_WORKDAY.fromMinute,
     ANNEX9_WORKDAY.toMinute,
   );
+  if (holiday) {
+    // Half holiday: the free part of the workday window is outside.
+    const hFrom = Math.max(holiday[0], ANNEX9_WORKDAY.fromMinute);
+    const hTo = Math.min(holiday[1], ANNEX9_WORKDAY.toMinute);
+    insideMinutes -= overlap(from, to, hFrom, hTo);
+  }
   const total = to - from;
   const insideShare = insideMinutes / total;
 
@@ -135,6 +166,21 @@ function halfDayValue(minutes: number): number {
   return minutes > ANNEX7_FULL_HALF_DAY_MINUTES ? 1 : 0.5;
 }
 
+/** "sunday" or "work" for the morning and the afternoon half of a date. */
+function halfDayKinds(
+  date: string,
+  options?: CalendarOptions,
+): [keyof HalfDays, keyof HalfDays] {
+  if (weekday(date) === 0) return ['sunday', 'sunday'];
+  const holiday = holidayWindow(date, options);
+  if (!holiday) return ['work', 'work'];
+  const covers = (minute: number) => holiday[0] <= minute && minute < holiday[1];
+  return [
+    covers(ANNEX7_NOON_MINUTE / 2) ? 'sunday' : 'work',
+    covers((ANNEX7_NOON_MINUTE + 24 * 60) / 2) ? 'sunday' : 'work',
+  ];
+}
+
 function emptyHalfDays(): Annex7HalfDays {
   const out = {} as Annex7HalfDays;
   for (const k of ANNEX7_CATEGORIES) out[k] = { work: 0, sunday: 0 };
@@ -144,11 +190,12 @@ function emptyHalfDays(): Annex7HalfDays {
 /**
  * Anhang 7 (B1 7.4): Schiesshalbtage per Waffenkategorie. The workday is
  * Mo–Sa except the site's holidays; Sunday and holidays are "sunday"
- * half-days. Per calendar day and category, the morning (before 13:00) and
- * the afternoon (from 13:00) each count 1 when the category's shooting time
- * in that half exceeds 2 h, ½ when it is shorter but not zero, and 0 when
- * nobody shot. Several usages of the same category in the same half add up;
- * a usage spanning 13:00 contributes to both halves.
+ * half-days, and on a half holiday only the free half (the one whose middle
+ * lies in the holiday window) is. Per calendar day and category, the morning
+ * (before 13:00) and the afternoon (from 13:00) each count 1 when the
+ * category's shooting time in that half exceeds 2 h, ½ when it is shorter
+ * but not zero, and 0 when nobody shot. Several usages of the same category
+ * in the same half add up; a usage spanning 13:00 contributes to both halves.
  */
 export function annex7HalfDays(
   usages: readonly (UsageSlot & { category: Annex7Category })[],
@@ -156,27 +203,25 @@ export function annex7HalfDays(
 ): Annex7HalfDays {
   // date|category → [morning minutes, afternoon minutes]
   const minutes = new Map<string, [number, number]>();
-  const kind = new Map<string, keyof HalfDays>();
+  // date|category → [morning kind, afternoon kind]
+  const kind = new Map<string, [keyof HalfDays, keyof HalfDays]>();
 
   for (const usage of usages) {
     const [from, to] = slotMinutes(usage);
-    const day = weekday(usage.date);
     const key = `${usage.date}|${usage.category}`;
     const acc = minutes.get(key) ?? [0, 0];
     acc[0] += overlap(from, to, 0, ANNEX7_NOON_MINUTE);
     acc[1] += overlap(from, to, ANNEX7_NOON_MINUTE, 24 * 60);
     minutes.set(key, acc);
-    kind.set(
-      key,
-      day === 0 || isHoliday(usage.date, options) ? 'sunday' : 'work',
-    );
+    kind.set(key, halfDayKinds(usage.date, options));
   }
 
   const out = emptyHalfDays();
   for (const [key, [morning, afternoon]] of minutes) {
     const category = key.slice(key.indexOf('|') + 1) as Annex7Category;
-    const which = kind.get(key) ?? 'work';
-    out[category][which] += halfDayValue(morning) + halfDayValue(afternoon);
+    const [morningKind, afternoonKind] = kind.get(key) ?? ['work', 'work'];
+    out[category][morningKind] += halfDayValue(morning);
+    out[category][afternoonKind] += halfDayValue(afternoon);
   }
   return out;
 }

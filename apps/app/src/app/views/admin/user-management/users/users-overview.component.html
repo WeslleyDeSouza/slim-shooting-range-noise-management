@@ -81,7 +81,6 @@
             <th class="um-users__sort" (click)="toggleSort('email')">
               {{ prefix + '.col_email' | translate }}{{ sortMark('email') }}
             </th>
-            <th>{{ prefix + '.col_phone' | translate }}</th>
             <th>{{ prefix + '.col_roles' | translate }}</th>
             <th class="um-users__sort" (click)="toggleSort('loginLast')">
               {{ prefix + '.col_login_last' | translate }}{{ sortMark('loginLast') }}
@@ -96,7 +95,7 @@
           @for (group of groups(); track group.key) {
             @if (groupByLoginMonth()) {
               <tr class="um-users__group">
-                <td colspan="7" class="slim-table__cell--wrap">
+                <td colspan="6" class="slim-table__cell--wrap">
                   <button type="button" class="um-users__group-btn" (click)="toggleGroup(group.key)">
                     <svg
                       viewBox="0 0 8 12"
@@ -134,7 +133,6 @@
                     </div>
                   </td>
                   <td [attr.data-label]="prefix + '.col_email' | translate">{{ user.email }}</td>
-                  <td [attr.data-label]="prefix + '.col_phone' | translate">{{ user.phone || '—' }}</td>
                   <td [attr.data-label]="prefix + '.col_roles' | translate" class="slim-table__cell--wrap">
                     <div class="slim-chips um-users__roles">
                       @for (role of user.roles; track role) {
@@ -195,7 +193,7 @@
             }
           } @empty {
             <tr>
-              <td colspan="7" class="slim-table__cell--wrap">
+              <td colspan="6" class="slim-table__cell--wrap">
                 <div class="slim-empty">
                   @if (facade.loading()) {
                     <span class="slim-spinner"></span>

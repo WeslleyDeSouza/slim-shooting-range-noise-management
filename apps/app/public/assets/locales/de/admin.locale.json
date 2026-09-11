@@ -317,6 +317,26 @@
       "export_failed": "Export fehlgeschlagen.",
       "col_action": "Aktion",
       "col_entry": "Eintrag"
+    },
+    "dm_area": {
+      "title": "Übersicht Schiessplätze",
+      "subtitle": "Schiessplatz wählen und in Allgemein, Zuordnung Waffen oder Berechnungen abspringen.",
+      "search_placeholder": "Bezeichnung, Koordinationsabschnitt-Nr. oder Sachplan-Nr.",
+      "count": "{{n}} von {{total}} Schiessplätzen",
+      "no_create": "Neue Schiessplätze werden über den Import bzw. die Datenbankadministration angelegt (5.14).",
+      "col_ka": "Koordinationsabschnitt-Nr.",
+      "col_sp": "Sachplan-Nr.",
+      "col_name": "Bezeichnung",
+      "col_active": "Aktiv",
+      "col_nav": "Absprung",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "sort": "Sortieren nach {{col}}",
+      "jump_general": "Allgemein",
+      "jump_weapons": "Zuordnung Waffen",
+      "jump_calculations": "Berechnungen",
+      "empty": "Kein Schiessplatz gefunden. Prüfen Sie Bezeichnung, Koordinationsabschnitt-Nr. oder Sachplan-Nr.",
+      "scope_lock": "Nur berechtigte Schiessplätze"
     }
   }
 }

@@ -74,7 +74,7 @@ describe('the SLIM Demo dataset', () => {
         expect(parseMinutes(u.to)).toBeGreaterThan(parseMinutes(u.from));
         expect(() => weekday(u.date)).not.toThrow();
         expect(u.shots).toBeGreaterThan(0);
-        if (u.usageType === 'civil') expect(weapon?.annex7Category).not.toBeNull();
+        if (u.usageType === 'civil' || u.usageType === 'sat') expect(weapon?.annex7Category).not.toBeNull();
       }
       for (const c of area.calculations) {
         for (const row of c.wlr) {
@@ -134,7 +134,7 @@ describe('seedDemoDataset', () => {
     expect(await dataSource.getRepository(AreaEntity).count({ where: { tenantId: mockTenantId } })).toBe(9);
     expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(160);
     const marker = await dataSource.getRepository(DemoSeedMarkerEntity).findOneByOrFail({ tenantId: mockTenantId });
-    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 3, year: 2026 });
+    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 4, year: 2026 });
   });
 
   it('rewrites the demo when the year turns, without duplicating rows', async () => {

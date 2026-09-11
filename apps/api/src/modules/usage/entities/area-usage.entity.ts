@@ -2,11 +2,15 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
 import { DbPlatformColumn } from '@app-galaxy/core-api';
 import { SlimBaseEntity } from '@api-slim/common';
+import { USAGE_CATEGORIES, UsageCategory } from '@slim/lsv';
 import { AreaEntity, AreaRoomEntity, AreaWeaponEntity } from '../../area/entities';
 
-/** Militärisch / Zivil (B1 5.11 «Nutzung»). */
-export const USAGE_TYPE = ['military', 'civil'] as const;
-export type UsageType = (typeof USAGE_TYPE)[number];
+/**
+ * Nutzungskategorie (B1 5.11 «Nutzung», Tabelle 2): Militär, Zivil, Blaulicht,
+ * SAT. Anhang 9 assesses all of them, Anhang 7 Zivil + SAT (see @slim/lsv).
+ */
+export const USAGE_TYPE = USAGE_CATEGORIES;
+export type UsageType = UsageCategory;
 
 /** Where the row came from: typed in, the ELO interface (6.x) or an import (9.x). */
 export const USAGE_SOURCE = ['manual', 'elo', 'import'] as const;

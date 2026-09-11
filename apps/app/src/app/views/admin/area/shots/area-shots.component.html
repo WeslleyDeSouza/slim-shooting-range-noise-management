@@ -294,8 +294,9 @@
                   <td [attr.data-label]="'shots.columns.type' | translate">
                     <span
                       class="slim-badge"
-                      [class.slim-badge--info]="row.usage.usageType === 'civil'"
+                      [class.slim-badge--info]="row.usage.usageType === 'civil' || row.usage.usageType === 'sat'"
                       [class.slim-badge--primary]="row.usage.usageType === 'military'"
+                      [class.slim-badge--danger]="row.usage.usageType === 'blue_light'"
                     >
                       {{ 'shots.type.' + row.usage.usageType | translate }}
                     </span>

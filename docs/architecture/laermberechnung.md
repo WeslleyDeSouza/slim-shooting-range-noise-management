@@ -13,7 +13,8 @@ verwendet. Die Specs (`libs/shared/lsv/src/lib/*.spec.ts`) laufen mit `npx nx te
 | `levels.ts`         | `gemw` (gewichtetes energetisches Mittel), `esm` (energetische Summe), `roundDb` (kaufmännisch runden)   |
 | `annex9.ts`         | `annex9Level` – Beurteilungspegel militärisches Schiessen (Anhang 9)                                     |
 | `annex7.ts`         | `annex7Level` – Beurteilungspegel ziviles Schiessen (Anhang 7, Waffenkategorien a–f)                     |
-| `operating-data.ts` | Schritt 1 (7.4): `splitAnnex9` (Schuss innerhalb/ausserhalb Werktag), `annex7HalfDays` (Schiesshalbtage) |
+| `operating-data.ts` | Schritt 1 (7.4): `splitAnnex9` (Schuss innerhalb/ausserhalb Werktag), `annex7HalfDays` (Schiesshalbtage); `CalendarOptions.holidays` = lokale Feiertage des Standorts, ganz (`'YYYY-MM-DD'`) oder halb (`{ date, from: '12:00' }` – B1 S. 71) |
+| `types.ts`          | `USAGE_CATEGORIES` (Militär, Zivil, Blaulicht, SAT – B1 Tabelle 2) und `countsForAnnex7(category, annex7Overall)`: Anhang 9 rechnet alle Kategorien, Anhang 7 Zivil + SAT bzw. alle bei «Gesamtbeurteilung nach Anhang 7» |
 | `limits.ts`         | Grenzwerte PW/IGW/AW je Empfindlichkeitsstufe und Anhang, `applicableLimits` nach Baujahr (7.7)          |
 | `traffic-light.ts`  | Ampeln (5.10): `noiseState`, `worstState` (Aggregation), `quotaState` (Kontingent 100 % / 125 %)         |
 

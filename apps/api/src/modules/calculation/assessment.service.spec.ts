@@ -85,11 +85,12 @@ describe('AssessmentService (5.12 Details)', () => {
     const e2 = result.receivers.find((r) => r.code === 'E2') as ReceiverAssessmentDto; // ES II, 54.2 dB
     expect(row(e2, 9, 'igw').state).toBe('ok');
     expect(e1.state).toBe('over');
-    // E2 is green on the IGW but its Planungswert row (new rooms only, 55 dB)
-    // is orange → the point is orange: the worst applicable row wins.
-    expect(e2.state).toBe('warn');
-    expect(row(e2, 9, 'pw').state).toBe('warn');
-    expect(result.counts).toEqual({ total: 6, ok: 1, warn: 2, over: 2, none: 1 });
+    // The point takes the worst applicable row: E3 is orange through its IGW
+    // row (58.6 > 55) and its Planungswert row (new rooms only, 52.8 > 50).
+    expect(e3.state).toBe('warn');
+    expect(row(e3, 9, 'pw').state).toBe('warn');
+    expect(e2.state).toBe('ok');
+    expect(result.counts).toEqual({ total: 6, ok: 2, warn: 1, over: 2, none: 1 });
   });
 
   it('assesses the Planungswert only for the rooms built after 1985 (mixed plant)', () => {

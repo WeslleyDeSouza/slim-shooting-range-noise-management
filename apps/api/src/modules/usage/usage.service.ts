@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { countsForAnnex7 } from '@slim/lsv';
 import { AreaRoomEntity, AreaWeaponEntity } from '../area/entities';
 import { AreaService } from '../area/area.service';
 import {
@@ -227,8 +228,9 @@ export class UsageService {
 
   private kpi(year: number, usages: AreaUsageEntity[], years: number[]): UsageKpiDto {
     const totalShots = usages.reduce((sum, u) => sum + u.shots, 0);
+    // «Zivilanteil»: the categories assessed under Anhang 7 (Zivil, SAT).
     const civil = usages
-      .filter((u) => u.usageType === 'civil')
+      .filter((u) => countsForAnnex7(u.usageType, false))
       .reduce((sum, u) => sum + u.shots, 0);
     const lastDate = usages.reduce<string | null>(
       (last, u) => (!last || u.date > last ? u.date : last),

@@ -316,7 +316,7 @@ export class AreaOverviewComponent extends ComponentBase {
 
   protected readonly routes = APP_ROUTES;
   protected readonly years = [2026, 2025, 2024];
-  protected readonly legend: AreaStatus[] = ['ok', 'warn', 'over', 'none'];
+  protected readonly legend: AreaStatus[] = ['ok', 'warn', 'over', 'incomplete', 'none'];
 
   /** Icon row actions (ELO collections look): the four pages of a Schiessplatz. */
   protected readonly rowActions = [

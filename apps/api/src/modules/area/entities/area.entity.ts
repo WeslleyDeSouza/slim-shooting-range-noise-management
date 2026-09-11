@@ -6,7 +6,8 @@ import { AreaRoomEntity } from './area-room.entity';
 import { AreaWeaponEntity } from './area-weapon.entity';
 
 /** Traffic-light status of an area (quota / noise), see sitemap.md. */
-export const AREA_STATUS = ['ok', 'warn', 'over', 'none'] as const;
+/** Ampel incl. `incomplete` = «nicht beurteilbar» (Fachregel O8, see @slim/lsv NoiseState). */
+export const AREA_STATUS = ['ok', 'warn', 'over', 'none', 'incomplete'] as const;
 export type AreaStatus = (typeof AREA_STATUS)[number];
 
 /**

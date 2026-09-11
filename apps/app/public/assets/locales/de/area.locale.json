@@ -166,7 +166,8 @@
       "over": "überschritten",
       "warn": "zu prüfen",
       "ok": "eingehalten",
-      "none": "ohne Berechnung"
+      "none": "ohne Berechnung",
+      "incomplete": "nicht beurteilbar"
     },
     "compliance_title": "Einhaltung Grenzwerte pro Empfangspunkt",
     "view": "Darstellung",
@@ -179,13 +180,15 @@
       "ok": "Eingehalten",
       "warn": "Zu prüfen (Reserve ≤ 5 dB)",
       "over": "Überschritten",
-      "none": "Keine Berechnung"
+      "none": "Keine Berechnung",
+      "incomplete": "Nicht beurteilbar (Nutzungen ohne Quelle im Zustand)"
     },
     "state": {
       "ok": "Eingehalten",
       "warn": "Zu prüfen",
       "over": "Überschritten",
-      "none": "Keine Berechnung"
+      "none": "Keine Berechnung",
+      "incomplete": "Nicht beurteilbar"
     },
     "list_meta": "Anhang 9 IGW {{limit}} dB · {{state}}",
     "receiver": {
@@ -219,6 +222,11 @@
     "no_calculation": {
       "title": "Keine Berechnungsgrundlage",
       "text": "Für diesen Schiessplatz ist noch keine Berechnung (sonARMS) importiert. Die Beurteilung der Empfangspunkte ist erst nach dem Import möglich (Datenverwaltung › Berechnungen)."
+    },
+    "incomplete": {
+      "title": "Beurteilung unvollständig.",
+      "hint": "Der Zustand «{{state}}» enthält für folgende Kombinationen keine Quelle bzw. keine Betriebsdaten – die Schüsse konnten nicht zugeordnet werden, der angezeigte Pegel ist nur eine Teilberechnung:",
+      "action": "Zustand ergänzen oder Ersatzregel durch das KOMZ Lärm freigeben lassen."
     }
   },
   "simulation": {

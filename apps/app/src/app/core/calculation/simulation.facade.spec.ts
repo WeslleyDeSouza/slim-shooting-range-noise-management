@@ -13,6 +13,8 @@ const BASE: SimulationBaseDto = {
   calculation: {
     id: 'c1',
     name: 'Initiale Aufnahme',
+    calculationId: 'delivery-1',
+    calculationName: 'Empa 2019',
     supplier: 'Empa',
     deliveredAt: '2019-05-08',
     referenceYear: 2019,
@@ -66,6 +68,7 @@ const BASE: SimulationBaseDto = {
       limit: 60,
       current: 60.8,
       currentState: 'over',
+      incomplete: false,
     },
   ],
 };
@@ -77,7 +80,7 @@ const RESULT: SimulationResultDto = {
   receivers: [
     { ...BASE.receivers[0], simulated: 63.8, simulatedState: 'over', delta: 3 },
   ],
-  counts: { total: 1, ok: 0, warn: 0, over: 1, none: 0 },
+  counts: { total: 1, ok: 0, warn: 0, over: 1, none: 0, incomplete: 0 },
   totals: { inside: 2000, outside: 200, baseInside: 1050, baseOutside: 100 },
   calculatedAt: '2026-09-11T10:00:00.000Z',
 };

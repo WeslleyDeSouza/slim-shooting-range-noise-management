@@ -166,7 +166,8 @@
       "over": "superati",
       "warn": "da verificare",
       "ok": "rispettati",
-      "none": "senza calcolo"
+      "none": "senza calcolo",
+      "incomplete": "non valutabile"
     },
     "compliance_title": "Rispetto dei valori limite per punto di ricezione",
     "view": "Visualizzazione",
@@ -179,13 +180,15 @@
       "ok": "Rispettato",
       "warn": "Da verificare (riserva ≤ 5 dB)",
       "over": "Superato",
-      "none": "Nessun calcolo"
+      "none": "Nessun calcolo",
+      "incomplete": "Non valutabile (utilizzi senza sorgente nello stato)"
     },
     "state": {
       "ok": "Rispettato",
       "warn": "Da verificare",
       "over": "Superato",
-      "none": "Nessun calcolo"
+      "none": "Nessun calcolo",
+      "incomplete": "Non valutabile"
     },
     "list_meta": "Allegato 9 VLI {{limit}} dB · {{state}}",
     "receiver": {
@@ -219,6 +222,11 @@
     "no_calculation": {
       "title": "Nessuna base di calcolo",
       "text": "Per questa piazza di tiro non è ancora stato importato alcun calcolo (sonARMS). La valutazione dei punti di ricezione è possibile solo dopo l’importazione (Gestione dati › Calcoli)."
+    },
+    "incomplete": {
+      "title": "Valutazione incompleta.",
+      "hint": "Lo stato «{{state}}» non contiene sorgenti o dati di esercizio per le seguenti combinazioni – i colpi non hanno potuto essere attribuiti, il livello mostrato è solo un calcolo parziale:",
+      "action": "Completare lo stato o far approvare la regola sostitutiva dal KOMZ Lärm."
     }
   },
   "simulation": {

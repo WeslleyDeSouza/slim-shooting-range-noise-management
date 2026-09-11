@@ -79,7 +79,7 @@ export class SimulationService {
 
     const result = receivers.map(({ entity, base }) => {
       const level = lr(entity, levels, simulated);
-      const simulatedState = noiseState(level, base.limit);
+      const simulatedState = noiseState(level, base.limit, undefined, undefined, { incomplete: base.incomplete });
       return {
         ...base,
         simulated: level,
@@ -158,12 +158,20 @@ function toSimulationReceiver(
   const limitKind = kinds.includes('igw') ? 'igw' : 'pw';
   const limit = limits(9, receiver.sensitivityLevel)[limitKind];
   const current = lr(receiver, levels, shots);
+  // O8: shots of a combination the Zustand does not cover for this receiver
+  // → the assessment is incomplete (no colour), the level a Teilberechnung.
+  const perSource = levels.get(receiver.id);
+  const incomplete =
+    receiver.type !== 'reserve' &&
+    !!perSource &&
+    [...shots.entries()].some(([weaponId, s]) => s.inside + s.outside > 0 && !perSource.has(weaponId));
   return {
     ...toReceiverDto(receiver),
     limitKind,
     limit,
     current,
-    currentState: noiseState(current, limit),
+    incomplete,
+    currentState: noiseState(current, limit, undefined, undefined, { incomplete }),
   };
 }
 

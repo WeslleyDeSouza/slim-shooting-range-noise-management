@@ -40,6 +40,15 @@ describe('noiseState (Ampel Lärmbelastung, B1 5.10)', () => {
     expect(noiseState(57, 60, 3)).toBe('ok');
   });
 
+  it('marks an incomplete assessment as nicht beurteilbar — never a colour (O8)', () => {
+    expect(noiseState(61.2, 60, 5, 'whole', { incomplete: true })).toBe('incomplete');
+    expect(noiseState(41.8, 60, 5, 'whole', { incomplete: true })).toBe('incomplete');
+    expect(noiseState(null, 60, 5, 'whole', { incomplete: true })).toBe('incomplete');
+    // Aggregation: an incomplete row makes the whole assessment incomplete.
+    expect(worstState(['ok', 'incomplete', 'warn'])).toBe('incomplete');
+    expect(worstState(['incomplete', 'over'])).toBe('incomplete');
+  });
+
   it('is none without a usable level', () => {
     expect(noiseState(null, 60)).toBe('none');
     expect(noiseState(undefined, 60)).toBe('none');

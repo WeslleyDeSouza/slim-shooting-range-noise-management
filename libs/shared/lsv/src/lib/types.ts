@@ -136,6 +136,13 @@ export type BuildYearClass = 'before1985' | 'after1985' | 'mixed';
 export type LimitKind = 'pw' | 'igw';
 
 /** Traffic light (B1 5.10): `none` = no level / no basis. */
-export type NoiseState = 'ok' | 'warn' | 'over' | 'none';
+/**
+ * Ampel: `ok` / `warn` / `over` (B1 5.10), `none` without data, and
+ * `incomplete` = «nicht beurteilbar» (Fachregel O8): shots of the period
+ * could not be attributed to every source of the Zustand, so the computed
+ * level is only a lower bound — a proven exceedance stays `over`, anything
+ * else gets no colour and a Prüfhinweis instead of a false green.
+ */
+export type NoiseState = 'ok' | 'warn' | 'over' | 'none' | 'incomplete';
 
 export type QuotaState = NoiseState;

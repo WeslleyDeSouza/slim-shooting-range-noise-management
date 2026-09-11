@@ -11,6 +11,8 @@ import { AreaDetailsComponent } from './area-details.component';
 const CALC_INITIAL = {
   id: 'calc-initial',
   name: 'Initiale Aufnahme',
+  calculationId: 'delivery-1',
+  calculationName: 'Empa 2019',
   supplier: 'Empa',
   deliveredAt: '2019-05-08',
   referenceYear: 2019,
@@ -46,6 +48,7 @@ function receiver(
     mapX: 30,
     mapY: 40,
     state,
+    missingSources: [],
     rows: kinds.map(([annex, limitKind, limit], i) => ({
       annex,
       limitKind,
@@ -72,7 +75,7 @@ function assessment(overrides: Partial<AssessmentDto> = {}): AssessmentDto {
     current: CALC_INITIAL,
     calculations: [CALC_INITIAL, CALC_SANITISED],
     period: { from: '2026-01-01', to: '2026-12-31', years: 1 },
-    counts: { total: 3, ok: 1, warn: 0, over: 1, none: 1 },
+    counts: { total: 3, ok: 1, warn: 0, over: 1, none: 1, incomplete: 0 },
     receivers: RECEIVERS,
     operatingData: [],
     calculatedAt: '2026-09-11T10:00:00.000Z',

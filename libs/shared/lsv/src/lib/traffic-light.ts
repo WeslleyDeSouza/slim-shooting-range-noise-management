@@ -7,7 +7,9 @@ export const NOISE_WARN_BAND_DB = 5;
 /** Default tolerance of the quota traffic light: orange up to 125 % (B1 5.10). */
 export const QUOTA_WARN_FACTOR = 1.25;
 
-const RANK: Record<NoiseState, number> = { none: 0, ok: 1, warn: 2, over: 3 };
+// «nicht beurteilbar» outranks every colour: an incomplete assessment is
+// never presented as a valid overall result (Fachregel O8).
+const RANK: Record<NoiseState, number> = { none: 0, ok: 1, warn: 2, over: 3, incomplete: 4 };
 
 /**
  * How the Beurteilungspegel is rounded before it meets the limit.
@@ -37,7 +39,13 @@ export function noiseState(
   limit: number,
   warnBand = NOISE_WARN_BAND_DB,
   rounding: NoiseRounding = NOISE_ROUNDING_DEFAULT,
+  options: { incomplete?: boolean } = {},
 ): NoiseState {
+  // Fachregel O8: shots that could not be attributed to a source make the
+  // overall assessment incomplete — no colour at all, the partial level is
+  // shown as a Teilberechnung only. (A «proven red» lower-bound rule needs a
+  // separate proof per procedure incl. rounding, categories, build years.)
+  if (options.incomplete) return 'incomplete';
   if (level == null || !Number.isFinite(level) || level <= LSV_EMPTY_LEVEL) {
     return 'none';
   }

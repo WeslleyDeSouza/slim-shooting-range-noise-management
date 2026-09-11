@@ -9,6 +9,7 @@ import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import { AssessmentService, resolvePeriod } from './assessment.service';
 import { CalculationModule } from './calculation.module';
 import { AssessmentDto, ReceiverAssessmentDto } from './dto';
+import { AreaWlrEntity } from './entities';
 
 /** The demo year the dataset was tuned for (weekday pattern of the usages). */
 const NOW = new Date(2026, 11, 31);
@@ -90,7 +91,8 @@ describe('AssessmentService (5.12 Details)', () => {
     expect(e3.state).toBe('warn');
     expect(row(e3, 9, 'pw').state).toBe('warn');
     expect(e2.state).toBe('ok');
-    expect(result.counts).toEqual({ total: 6, ok: 2, warn: 1, over: 2, none: 1 });
+    expect(result.counts).toEqual({ total: 6, ok: 2, warn: 1, over: 2, none: 1, incomplete: 0 });
+    expect(result.receivers.every((r) => r.missingSources.length === 0)).toBe(true);
   });
 
   it('assesses the Planungswert only for the rooms built after 1985 (mixed plant)', () => {
@@ -164,6 +166,31 @@ describe('AssessmentService (5.12 Details)', () => {
     expect(none.calculation).toBeNull();
     expect(none.receivers).toEqual([]);
     expect(none.counts.total).toBe(0);
+  });
+  it('marks a receiver as nicht beurteilbar when shots of a combination have no source in the Zustand (Fachregel O8)', async () => {
+    // Remove E4's WLR row of one shot combination from the current state: the
+    // shots of that combination can no longer be attributed at E4.
+    const wlr = dataSource.getRepository(AreaWlrEntity);
+    const e4 = result.receivers.find((r) => r.code === 'E4') as ReceiverAssessmentDto;
+    const rows = await wlr.find({ where: { tenantId: mockTenantId, receiverId: e4.id, calculationId: result.calculation?.id } });
+    const victim = rows.find((w) => (result.operatingData.find((op) => op.weaponId === w.weaponId)?.inside ?? 0) > 0) as AreaWlrEntity;
+    await wlr.remove(victim);
+    try {
+      const after = await service.assess(mockTenantId, geissalpId, PERIOD);
+      const e4After = after.receivers.find((r) => r.code === 'E4') as ReceiverAssessmentDto;
+      // Default is refusal: no colour, the partial level stays visible as Teilberechnung.
+      expect(e4After.state).toBe('incomplete');
+      expect(e4After.missingSources).toHaveLength(1);
+      expect(e4After.missingSources[0]).toMatch(/ · /);
+      for (const r of e4After.rows.filter((x) => x.applicable)) expect(r.state).toBe('incomplete');
+      expect(row(e4After, 9, 'igw').level).not.toBeNull();
+      // Other receivers are untouched, the counts carry the status to the UI/export.
+      expect(after.receivers.find((r) => r.code === 'E1')?.state).toBe('over');
+      expect(after.counts.incomplete).toBe(1);
+      expect(after.counts.ok).toBe(1);
+    } finally {
+      await wlr.save(wlr.create({ ...victim, id: undefined }));
+    }
   });
 });
 

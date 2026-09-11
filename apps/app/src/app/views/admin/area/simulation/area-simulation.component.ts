@@ -30,6 +30,7 @@ const BADGE: Record<LightState, string> = {
   warn: 'slim-badge--warning',
   over: 'slim-badge--danger',
   none: '',
+  incomplete: 'slim-badge--outline',
 };
 
 /**

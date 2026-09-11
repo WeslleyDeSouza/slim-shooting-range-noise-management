@@ -166,7 +166,8 @@
       "over": "dépassés",
       "warn": "à vérifier",
       "ok": "respectés",
-      "none": "sans calcul"
+      "none": "sans calcul",
+      "incomplete": "non évaluable"
     },
     "compliance_title": "Respect des valeurs limites par point de réception",
     "view": "Affichage",
@@ -179,13 +180,15 @@
       "ok": "Respecté",
       "warn": "À vérifier (réserve ≤ 5 dB)",
       "over": "Dépassé",
-      "none": "Pas de calcul"
+      "none": "Pas de calcul",
+      "incomplete": "Non évaluable (utilisations sans source dans l’état)"
     },
     "state": {
       "ok": "Respecté",
       "warn": "À vérifier",
       "over": "Dépassé",
-      "none": "Pas de calcul"
+      "none": "Pas de calcul",
+      "incomplete": "Non évaluable"
     },
     "list_meta": "Annexe 9 VLI {{limit}} dB · {{state}}",
     "receiver": {
@@ -219,6 +222,11 @@
     "no_calculation": {
       "title": "Pas de base de calcul",
       "text": "Aucun calcul (sonARMS) n’a encore été importé pour cette place de tir. L’évaluation des points de réception n’est possible qu’après l’import (Gestion des données › Calculs)."
+    },
+    "incomplete": {
+      "title": "Évaluation incomplète.",
+      "hint": "L’état «{{state}}» ne contient aucune source ou donnée d’exploitation pour les combinaisons suivantes – les coups n’ont pas pu être attribués, le niveau affiché n’est qu’un calcul partiel :",
+      "action": "Compléter l’état ou faire valider la règle de substitution par le KOMZ Lärm."
     }
   },
   "simulation": {

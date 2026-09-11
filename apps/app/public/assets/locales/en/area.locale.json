@@ -166,7 +166,8 @@
       "over": "exceeded",
       "warn": "to check",
       "ok": "complied",
-      "none": "no calculation"
+      "none": "no calculation",
+      "incomplete": "not assessable"
     },
     "compliance_title": "Compliance with limits per receiver point",
     "view": "View",
@@ -179,13 +180,15 @@
       "ok": "Complied",
       "warn": "To check (reserve ≤ 5 dB)",
       "over": "Exceeded",
-      "none": "No calculation"
+      "none": "No calculation",
+      "incomplete": "Not assessable (usages without a source in the state)"
     },
     "state": {
       "ok": "Complied",
       "warn": "To check",
       "over": "Exceeded",
-      "none": "No calculation"
+      "none": "No calculation",
+      "incomplete": "Not assessable"
     },
     "list_meta": "Annex 9 IGW {{limit}} dB · {{state}}",
     "receiver": {
@@ -219,6 +222,11 @@
     "no_calculation": {
       "title": "No calculation basis",
       "text": "No calculation (sonARMS) has been imported for this shooting range yet. The receiver points can only be assessed after the import (Data management › Calculations)."
+    },
+    "incomplete": {
+      "title": "Assessment incomplete.",
+      "hint": "State \"{{state}}\" has no source or operating data for the following combinations – the shots could not be attributed, the level shown is a partial result only:",
+      "action": "Complete the state or have the substitute rule released by KOMZ Lärm."
     }
   },
   "simulation": {

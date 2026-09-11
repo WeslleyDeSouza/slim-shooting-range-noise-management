@@ -28,10 +28,11 @@ type View = 'map' | 'list';
 
 /** Worst first, as the list view orders the receivers. */
 const STATE_ORDER: Record<ReceiverState, number> = {
-  over: 0,
-  warn: 1,
-  ok: 2,
-  none: 3,
+  incomplete: 0,
+  over: 1,
+  warn: 2,
+  ok: 3,
+  none: 4,
 };
 
 /** Headroom above the limit the meter shows (mock: limit + 8 dB = 100 %). */
@@ -66,7 +67,7 @@ export class AreaDetailsComponent extends ComponentBase {
     },
   );
 
-  protected readonly legendStates: ReceiverState[] = ['ok', 'warn', 'over', 'none'];
+  protected readonly legendStates: ReceiverState[] = ['ok', 'warn', 'over', 'incomplete', 'none'];
 
   // View state ---------------------------------------------------------------
   protected readonly view = signal<View>('map');

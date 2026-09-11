@@ -12,6 +12,8 @@ const MODIFIER: Record<AreaStatus, string> = {
   warn: 'slim-badge--warning',
   over: 'slim-badge--danger',
   none: '',
+  // «nicht beurteilbar» (O8): deliberately no traffic-light colour.
+  incomplete: 'slim-badge--outline',
 };
 
 /**
@@ -59,6 +61,12 @@ const MODIFIER: Record<AreaStatus, string> = {
               stroke-width="1.8"
               stroke-linecap="round"
             />
+          </svg>
+        }
+        @case ('incomplete') {
+          <svg class="slim-badge__icon" viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.5 2" />
+            <path d="M8 4.8v3.9M8 11.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
           </svg>
         }
         @default {

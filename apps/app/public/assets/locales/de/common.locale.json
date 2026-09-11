@@ -108,6 +108,7 @@
     "ok": "Eingehalten",
     "warn": "Zu prüfen",
     "over": "Überschritten",
-    "none": "Keine Daten"
+    "none": "Keine Daten",
+    "incomplete": "Nicht beurteilbar"
   }
 }

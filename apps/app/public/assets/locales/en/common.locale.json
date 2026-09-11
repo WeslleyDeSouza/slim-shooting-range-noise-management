@@ -108,6 +108,7 @@
     "ok": "Compliant",
     "warn": "To review",
     "over": "Exceeded",
-    "none": "No data"
+    "none": "No data",
+    "incomplete": "Not assessable"
   }
 }

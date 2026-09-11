@@ -1,5 +1,7 @@
 import { distributeShots } from './distribution';
 
+const RELEASE = { reference: 'Entscheidungslog O8, KOMZ Lärm', date: '2026-10-01' };
+
 const sum = (shares: { shots: number }[]) => shares.reduce((a, s) => a + s.shots, 0);
 
 describe('distributeShots (B1 7.5, Verteilung auf Quellen)', () => {
@@ -17,26 +19,32 @@ describe('distributeShots (B1 7.5, Verteilung auf Quellen)', () => {
 
   it('gives a single source everything (flagging a zero weight) and reports a missing source', () => {
     expect(distributeShots(123.456, [{ sourceId: 'a', weight: 40 }])).toEqual({ shares: [{ sourceId: 'a', shots: 123.456 }] });
-    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 0 }])).toEqual({ shares: [{ sourceId: 'a', shots: 123.456 }], warning: 'zero-weights' });
+    // A single source with weight 0 is still Σ = 0 → refused by default.
+    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 0 }])).toEqual({ shares: [{ sourceId: 'a', shots: 0 }], warning: 'zero-weights', refused: true });
+    expect(distributeShots(123.456, [{ sourceId: 'a', weight: 0 }], { onZeroWeights: 'equal', release: RELEASE })).toEqual({ shares: [{ sourceId: 'a', shots: 123.456 }], warning: 'zero-weights', substituteRule: true, release: RELEASE });
     // No source in the Zustand: nothing to distribute, but never silently dropped.
     expect(distributeShots(500, [])).toEqual({ shares: [], warning: 'no-source' });
     expect(distributeShots(0, [])).toEqual({ shares: [] });
   });
 
-  it('can refuse instead of guessing when every weight is zero (configurable, O8)', () => {
-    const d = distributeShots(100, [{ sourceId: 'a', weight: 0 }, { sourceId: 'b', weight: 0 }], { onZeroWeights: 'refuse' });
+  it('refuses by default when every weight is zero — no invented distribution (O8)', () => {
+    const d = distributeShots(100, [{ sourceId: 'a', weight: 0 }, { sourceId: 'b', weight: 0 }]);
     expect(d).toEqual({ shares: [{ sourceId: 'a', shots: 0 }, { sourceId: 'b', shots: 0 }], warning: 'zero-weights', refused: true });
     // Only Σ weights = 0 triggers the rule; partial zeros keep the defined ratio.
-    expect(distributeShots(10, [{ sourceId: 'a', weight: 5 }, { sourceId: 'b', weight: 0 }], { onZeroWeights: 'refuse' }).refused).toBeUndefined();
+    expect(distributeShots(10, [{ sourceId: 'a', weight: 5 }, { sourceId: 'b', weight: 0 }]).refused).toBeUndefined();
   });
 
-  it('spreads evenly and warns when every weight is zero (T02)', () => {
+  it('spreads evenly only as the released Ersatzregel and marks the result (O8)', () => {
     const d = distributeShots(100, [
       { sourceId: 'a', weight: 0 },
       { sourceId: 'b', weight: 0 },
       { sourceId: 'c', weight: 0 },
-    ]);
+    ], { onZeroWeights: 'equal', release: RELEASE });
     expect(d.warning).toBe('zero-weights');
+    expect(d.substituteRule).toBe(true);
+    expect(d.release).toEqual(RELEASE);
+    // The parameter alone proves no release: without the decision reference it is refused loudly.
+    expect(() => distributeShots(100, [{ sourceId: 'a', weight: 0 }], { onZeroWeights: 'equal' })).toThrow(/release/);
     expect(d.shares.map((s) => s.shots)).toEqual([33.334, 33.333, 33.333]);
     expect(sum(d.shares)).toBeCloseTo(100, 12);
   });

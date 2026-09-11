@@ -13,6 +13,8 @@ const BASE: SimulationBaseDto = {
   calculation: {
     id: 'c1',
     name: 'Initiale Aufnahme',
+    calculationId: 'delivery-1',
+    calculationName: 'Empa 2019',
     supplier: 'Empa',
     deliveredAt: '2019-05-08',
     referenceYear: 2019,
@@ -66,6 +68,7 @@ const BASE: SimulationBaseDto = {
       limit: 60,
       current: 56.4,
       currentState: 'warn',
+      incomplete: false,
     },
   ],
 };
@@ -233,7 +236,7 @@ describe('AreaSimulationComponent', () => {
         year: 2026,
         calculation: BASE.calculation,
         receivers: [{ ...BASE.receivers[0], simulated: 59.4, simulatedState: 'warn', delta: 3 }],
-        counts: { total: 1, ok: 0, warn: 1, over: 0, none: 0 },
+        counts: { total: 1, ok: 0, warn: 1, over: 0, none: 0, incomplete: 0 },
         totals: { inside: 518194, outside: 53554, baseInside: 259097, baseOutside: 26777 },
         calculatedAt: '2026-09-11T10:00:00.000Z',
       });

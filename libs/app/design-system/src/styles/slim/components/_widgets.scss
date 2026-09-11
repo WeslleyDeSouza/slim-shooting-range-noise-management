@@ -178,6 +178,12 @@
     @include mod('none') {
       background: color('text-4');
     }
+    // «nicht beurteilbar» (Fachregel O8): no traffic-light colour, striped.
+    @include mod('incomplete') {
+      background: repeating-linear-gradient(45deg, color('text-3') 0 4px, color('surface') 4px 7px);
+      color: color('ink');
+      text-shadow: 0 0 2px color('surface');
+    }
     @include mod('active') {
       transform: translate(-50%, -100%) scale(1.2);
       z-index: 1;
@@ -207,6 +213,9 @@
     }
     @include mod('none') {
       background: color('text-4');
+    }
+    @include mod('incomplete') {
+      background: repeating-linear-gradient(45deg, color('text-3') 0 2px, color('surface') 2px 4px);
     }
   }
 

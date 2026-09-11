@@ -134,6 +134,12 @@
           <div class="slim-stat__value">{{ a.counts.ok }}</div>
           <div class="slim-stat__label">{{ 'details.counts.ok' | translate }}</div>
         </div>
+        @if (a.counts.incomplete) {
+          <div class="slim-stat details__stat--none" data-testid="details-count-incomplete">
+            <div class="slim-stat__value">{{ a.counts.incomplete }}</div>
+            <div class="slim-stat__label">{{ 'details.counts.incomplete' | translate }}</div>
+          </div>
+        }
         @if (a.counts.none) {
           <div class="slim-stat details__stat--none">
             <div class="slim-stat__value">{{ a.counts.none }}</div>
@@ -292,6 +298,20 @@
               <app-status-pill [status]="r.state" />
             </div>
             <div class="details__aside-body">
+              @if (r.missingSources.length) {
+                <div class="slim-alert slim-alert--warning details__incomplete" data-testid="details-incomplete">
+                  <div class="slim-alert__body">
+                    <b>{{ 'details.incomplete.title' | translate }}</b>
+                    {{ 'details.incomplete.hint' | translate: { state: calculation()?.name ?? '' } }}
+                    <ul class="details__incomplete-list">
+                      @for (m of r.missingSources; track m) {
+                        <li>{{ m }}</li>
+                      }
+                    </ul>
+                    {{ 'details.incomplete.action' | translate }}
+                  </div>
+                </div>
+              }
               <dl class="slim-kv details__kv">
                 <dt class="slim-kv__key">{{ 'details.receiver.no' | translate }}</dt>
                 <dd class="slim-kv__value">{{ r.code }}</dd>

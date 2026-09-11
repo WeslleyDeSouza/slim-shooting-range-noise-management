@@ -52,6 +52,14 @@ interface ReceiverLevels {
   annex9New: number | null;
   annex7All: number | null;
   annex7New: number | null;
+  /**
+   * Combinations (Stellungsraum · Waffe) with shots in the period that the
+   * Zustand does not cover for this receiver (no WLR row = no source, or —
+   * once sources carry weights — Σ weights = 0 refused). Fachregel O8: the
+   * shots are never dropped silently; the assessment becomes «nicht
+   * beurteilbar» and the partial level is shown as Teilberechnung only.
+   */
+  missingSources: string[];
 }
 
 /**
@@ -126,6 +134,7 @@ export class AssessmentService {
 }
 
 export const EMPTY_LEVELS: ReceiverLevels = {
+  missingSources: [],
   annex9All: null,
   annex9New: null,
   annex7All: null,
@@ -211,6 +220,20 @@ export function computeLevels(
   const perSource = levels.get(receiver.id);
   if (!perSource || perSource.size === 0) return EMPTY_LEVELS;
 
+  // O8: every combination that was shot must have a source (WLR row) for
+  // this receiver; otherwise the shots cannot be attributed → incomplete.
+  const missingSources: string[] = [];
+  const shotWeaponIds = new Set<string>();
+  for (const [weaponId, shots] of context.annex9) if (shots.inside + shots.outside > 0) shotWeaponIds.add(weaponId);
+  for (const [weaponId, shots] of context.annex7Shots) if (shots > 0) shotWeaponIds.add(weaponId);
+  for (const weaponId of shotWeaponIds) {
+    if (perSource.has(weaponId)) continue;
+    const weapon = context.weaponById.get(weaponId);
+    const room = weapon ? context.roomById.get(weapon.roomId) : undefined;
+    missingSources.push(`${room?.name ?? '?'} · ${weapon?.weaponName ?? weaponId}`);
+  }
+  missingSources.sort();
+
   const isNew = (weaponId: string): boolean => {
     const weapon = context.weaponById.get(weaponId);
     const room = weapon ? context.roomById.get(weapon.roomId) : undefined;
@@ -248,6 +271,7 @@ export function computeLevels(
     annex9New: lr9(annex9Sources.filter((s) => isNew(s.sourceId))),
     annex7All: lr7(annex7Sources),
     annex7New: lr7(annex7Sources.filter((s) => isNew(s.sourceId))),
+    missingSources,
   };
 }
 
@@ -297,7 +321,8 @@ function toAssessment(
         limit: limitSet[kind],
         applicable,
         level: rounded,
-        state: noiseState(rounded, limitSet[kind]),
+        // O8: an applicable row of an incomplete receiver carries no colour.
+        state: noiseState(rounded, limitSet[kind], undefined, undefined, { incomplete: applicable && own.missingSources.length > 0 }),
         reserve: rounded === null ? null : roundDb(limitSet[kind] - rounded),
         deltaToCurrent:
           rounded !== null && referenceRounded !== null ? roundDb(rounded - referenceRounded) : null,
@@ -307,6 +332,7 @@ function toAssessment(
   return {
     ...toReceiverDto(receiver),
     state: worstState(rows.map((r) => r.state)),
+    missingSources: own.missingSources,
     rows,
   };
 }
@@ -326,7 +352,7 @@ function pick(
 }
 
 export function countStates(states: NoiseState[]): StateCountsDto {
-  const counts: StateCountsDto = { total: states.length, ok: 0, warn: 0, over: 0, none: 0 };
+  const counts: StateCountsDto = { total: states.length, ok: 0, warn: 0, over: 0, none: 0, incomplete: 0 };
   for (const state of states) counts[state]++;
   return counts;
 }

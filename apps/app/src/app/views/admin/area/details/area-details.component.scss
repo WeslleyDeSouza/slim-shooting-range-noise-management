@@ -186,6 +186,13 @@
     &--none {
       background: slim.color('text-4');
     }
+    &--incomplete {
+      background: repeating-linear-gradient(45deg, slim.color('text-3') 0 2px, slim.color('surface') 2px 4px);
+    }
+  }
+
+  &__incomplete {
+    margin: 0 0 slim.space(3);
   }
 
   &__list-item {

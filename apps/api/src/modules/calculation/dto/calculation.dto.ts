@@ -55,6 +55,7 @@ export class StateCountsDto {
   @ApiProperty() ok: number;
   @ApiProperty() warn: number;
   @ApiProperty() over: number;
+  @ApiProperty({ description: 'Nicht beurteilbar: Nutzungen ohne Quelle/Betriebsdaten im Zustand (O8)' }) incomplete: number;
   @ApiProperty() none: number;
 }
 
@@ -89,6 +90,8 @@ export class ReceiverDto {
 
 export class ReceiverAssessmentDto extends ReceiverDto {
   @ApiProperty({ enum: AREA_STATUS, description: 'Worst applicable row' }) state: AreaStatus;
+  @ApiProperty({ description: 'Kombinationen mit Nutzungen, die der Zustand für diesen Empfangspunkt nicht belegt (Stellungsraum · Waffe) – der Pegel ist dann nur eine Untergrenze (O8)', type: [String] })
+  missingSources: string[];
   @ApiProperty({ type: AssessmentRowDto, isArray: true }) rows: AssessmentRowDto[];
 }
 
@@ -134,6 +137,7 @@ export class SimulationReceiverDto extends ReceiverDto {
   @ApiProperty({ enum: LIMIT_KIND }) limitKind: LimitKindCode;
   @ApiProperty() limit: number;
   @ApiProperty({ nullable: true, type: Number, description: 'Ist-Pegel Lr Anhang 9 [dB]' }) current: number | null;
+  @ApiProperty({ description: 'Nutzungen ohne Quelle im Zustand → nicht beurteilbar (O8)' }) incomplete: boolean;
   @ApiProperty({ enum: AREA_STATUS }) currentState: AreaStatus;
 }
 

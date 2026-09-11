@@ -40,9 +40,9 @@ const WEAPONS: UsageWeaponDto[] = [
 ];
 
 const USAGES: UsageResultDto[] = [
-  { id: 'u1', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, weaponId: 'w1', weaponName: WEAPONS[0].weaponName, category: 'artillery', unit: 'K1', date: '2026-05-05', timeFrom: '11:00', timeTo: '15:00', usageType: 'military', shots: 500, recordedBy: 'Lt Meier Fiona', source: 'manual', note: null, updatedAt: '2026-05-05T15:00:00.000Z' },
-  { id: 'u2', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, weaponId: 'w2', weaponName: WEAPONS[1].weaponName, category: 'handguns', unit: 'Inf Bat 12', date: '2026-06-17', timeFrom: '08:00', timeTo: '11:30', usageType: 'military', shots: 1000, recordedBy: 'Hptm Roth Beat', source: 'manual', note: null, updatedAt: '2026-06-17T12:00:00.000Z' },
-  { id: 'u3', areaId: AREA_ID, roomId: 'r2', roomName: ROOMS[1].name, weaponId: 'w3', weaponName: WEAPONS[2].weaponName, category: 'handguns', unit: 'Schützenverein Geissalp', date: '2026-06-21', timeFrom: '13:30', timeTo: '17:00', usageType: 'civil', shots: 2400, recordedBy: 'ELO-Import', source: 'elo', note: null, updatedAt: '2026-06-21T17:00:00.000Z' },
+  { id: 'u1', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, weaponId: 'w1', weaponName: WEAPONS[0].weaponName, category: 'artillery', unit: 'K1', date: '2026-05-05', timeFrom: '11:00', timeTo: '15:00', usageType: 'military', shots: 500, quantityUnit: 'shots', recordedBy: 'Lt Meier Fiona', source: 'manual', note: null, updatedAt: '2026-05-05T15:00:00.000Z' },
+  { id: 'u2', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, weaponId: 'w2', weaponName: WEAPONS[1].weaponName, category: 'handguns', unit: 'Inf Bat 12', date: '2026-06-17', timeFrom: '08:00', timeTo: '11:30', usageType: 'military', shots: 1000, quantityUnit: 'shots', recordedBy: 'Hptm Roth Beat', source: 'manual', note: null, updatedAt: '2026-06-17T12:00:00.000Z' },
+  { id: 'u3', areaId: AREA_ID, roomId: 'r2', roomName: ROOMS[1].name, weaponId: 'w3', weaponName: WEAPONS[2].weaponName, category: 'handguns', unit: 'Schützenverein Geissalp', date: '2026-06-21', timeFrom: '13:30', timeTo: '17:00', usageType: 'civil', shots: 2400, quantityUnit: 'shots', recordedBy: 'ELO-Import', source: 'elo', note: null, updatedAt: '2026-06-21T17:00:00.000Z' },
 ];
 
 const KPI: UsageKpiDto = { year: 2026, totalShots: 3900, count: 3, civilSharePercent: 62, lastDate: '2026-06-21', years: [2026, 2025] };

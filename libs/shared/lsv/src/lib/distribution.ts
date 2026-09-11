@@ -35,18 +35,36 @@ export interface Distribution {
    * and at the affected receivers (Fachregel O8).
    */
   warning?: 'zero-weights' | 'no-source';
-  /** `true` when `onZeroWeights: 'refuse'` withheld the distribution. */
+  /** `true` when the distribution was withheld (default for Σ weights = 0). */
   refused?: boolean;
+  /** `true` when the released Ersatzregel (even split) was applied — shown in the result. */
+  substituteRule?: boolean;
+  /** The documented release the Ersatzregel was applied under (carried into the Berechnungsstand). */
+  release?: SubstituteRuleRelease;
+}
+
+/** Documented decision of the KOMZ Lärm that releases the Ersatzregel (Entscheidungslog). */
+export interface SubstituteRuleRelease {
+  /** Reference of the decision, e.g. «Entscheidungslog O8, KOMZ Lärm». */
+  reference: string;
+  /** Date of the decision, YYYY-MM-DD. */
+  date: string;
 }
 
 export interface DistributionOptions {
   /**
-   * Behaviour when every weight is 0 (Fachregel O8, to be confirmed by the
-   * KOMZ Lärm in the refinement): `equal` (default) spreads evenly and
-   * flags the assumption; `refuse` distributes nothing and flags it, so
-   * the combination is reported as «Betriebsdaten unvollständig».
+   * Behaviour when every weight is 0 (Fachregel O8): `refuse` (default) —
+   * no invented distribution, the combination is not computed and the
+   * affected receivers become «nicht beurteilbar»; `equal` is the
+   * Ersatzregel released by the KOMZ Lärm (decision log): even split, result
+   * flagged `substituteRule`.
    */
-  onZeroWeights?: 'equal' | 'refuse';
+  onZeroWeights?: 'refuse' | 'equal';
+  /**
+   * Required with `equal`: the parameter alone proves no release — the
+   * even split is only applied together with the reference to the decision.
+   */
+  release?: SubstituteRuleRelease;
 }
 
 const DECIMALS = 3;
@@ -70,12 +88,16 @@ export function distributeShots(
   }
   const total = sources.reduce((sum, s) => sum + s.weight, 0);
   const zero = total === 0;
-  if (zero && (options.onZeroWeights ?? 'equal') === 'refuse') {
+  const useSubstitute = options.onZeroWeights === 'equal';
+  if (useSubstitute && !(options.release?.reference && options.release?.date)) {
+    throw new Error('distributeShots: the Ersatzregel (equal split) needs the documented release of the KOMZ Lärm (options.release)');
+  }
+  if (zero && !useSubstitute) {
     return { shares: sources.map((s) => ({ sourceId: s.sourceId, shots: 0 })), warning: 'zero-weights', refused: true };
   }
   if (sources.length === 1) {
     const share = { shares: [{ sourceId: sources[0].sourceId, shots: quantity }] };
-    return zero ? { ...share, warning: 'zero-weights' } : share;
+    return zero ? { ...share, warning: 'zero-weights', substituteRule: true, release: options.release } : share;
   }
 
   const weights = zero ? sources.map(() => 1) : sources.map((s) => s.weight);
@@ -95,5 +117,5 @@ export function distributeShots(
     remainder -= 1;
   }
   const shares = sources.map((s, i) => ({ sourceId: s.sourceId, shots: floors[i] / SCALE }));
-  return zero ? { shares, warning: 'zero-weights' } : { shares };
+  return zero ? { shares, warning: 'zero-weights', substituteRule: true, release: options.release } : { shares };
 }

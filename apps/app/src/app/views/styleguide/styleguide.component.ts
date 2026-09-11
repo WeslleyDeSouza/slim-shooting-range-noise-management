@@ -344,7 +344,7 @@ interface SwatchDef {
       </nav>
 
       <div class="slim-sheet" [class.slim-sheet--open]="sheet()" role="dialog" aria-modal="true" aria-labelledby="sg-sheet-title">
-        <div class="slim-sheet__backdrop" (click)="sheet.set(false)"></div>
+        <button type="button" class="slim-sheet__backdrop" aria-label="Schliessen" (click)="sheet.set(false)"></button>
         <div class="slim-sheet__panel">
           <div class="slim-sheet__handle"></div>
           <header class="slim-sheet__header">

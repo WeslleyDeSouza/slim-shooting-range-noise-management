@@ -66,14 +66,13 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 
 - use icons from https://remixicon.com/
 
-# UI
+# UI / Styling
 
-Use `slim` as prefix for css classes (BEM, nested SCSS):
+Read  before writing any template or stylesheet.
 
-slim {
-&-form {
-&__back {
-}
-}
-}
-Component selectors use the `app` prefix (`app-*`).
+- Design system:  (), living styleguide at .
+- Mobile first, everything in SCSS, BEM (), tokens only via
+  , , … (they return ; light + dark + runtime colours).
+- In component stylesheets:  — never raw hex values or px spacing.
+- Design-system blocks use the  prefix; app/feature blocks get their own short prefix.
+- Component selectors use the  prefix (); design-system components use .

@@ -1,0 +1,70 @@
+{
+  "name": "api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/api/src",
+  "projectType": "application",
+  "tags": ["scope:api"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/api"],
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/libs/api/**/*",
+        "{workspaceRoot}/libs/shared/**/*"
+      ],
+      "options": {
+        "command": "webpack-cli build",
+        "cwd": "apps/api",
+        "env": {
+          "NODE_ENV": "production"
+        }
+      },
+      "configurations": {
+        "development": {
+          "env": {
+            "NODE_ENV": "development"
+          }
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "api:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "api:build:development"
+        },
+        "production": {
+          "buildTarget": "api:build:production"
+        }
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "default",
+        "^production",
+        "{workspaceRoot}/libs/api/**/*",
+        "{workspaceRoot}/libs/shared/**/*"
+      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/api"],
+      "options": {
+        "command": "vitest run --config apps/api/vitest.config.mts"
+      },
+      "configurations": {
+        "ci": {
+          "command": "vitest run --config apps/api/vitest.config.mts --coverage"
+        }
+      }
+    }
+  }
+}

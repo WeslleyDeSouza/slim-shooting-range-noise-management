@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "ms-playwright.playwright",
+    "nrwl.angular-console",
+    "angular.ng-template",
+    "esbenp.prettier-vscode"
+  ]
+}

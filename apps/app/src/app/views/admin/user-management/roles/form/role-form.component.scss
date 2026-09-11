@@ -1,0 +1,42 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.um-role-form {
+  &__form {
+    max-width: slim.size('container-narrow');
+  }
+
+  &__group {
+    margin-top: slim.space(4);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__apps {
+    margin-top: slim.space(2);
+  }
+
+  &__app {
+    &--on .slim-list__title {
+      font-weight: slim.font-weight('semibold');
+      color: slim.color('primary');
+    }
+  }
+
+  &__switch .slim-switch__label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__access {
+    min-width: 150px;
+    min-height: slim.size('control-h-sm');
+    padding-block: 0;
+  }
+}

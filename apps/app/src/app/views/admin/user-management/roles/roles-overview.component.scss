@@ -1,0 +1,31 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.um-roles {
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__flags {
+    gap: slim.space(1);
+  }
+
+  // The switch sits alone in its cell: no label text, no touch-height padding.
+  &__switch {
+    display: inline-flex;
+    min-height: 0;
+  }
+
+  &__actions {
+    flex-wrap: nowrap;
+  }
+
+  &__danger {
+    color: slim.color('danger');
+  }
+}

@@ -1,0 +1,89 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.um-users {
+  &__chips {
+    align-items: center;
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__sort {
+    cursor: pointer;
+    user-select: none;
+
+    @include slim.hover {
+      color: slim.color('ink');
+    }
+  }
+
+  &__group td {
+    padding: 0;
+    background: slim.color('surface-2');
+  }
+
+  &__group-btn {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    width: 100%;
+    min-height: slim.size('control-h-sm');
+    padding: slim.space(1) slim.space(4);
+    border: 0;
+    background: transparent;
+    color: slim.color('text-3');
+    font: inherit;
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('bold');
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__caret {
+    width: 10px;
+    height: 10px;
+    transition: transform slim.transition('fast');
+
+    &--open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__person {
+    display: flex;
+    align-items: center;
+    gap: slim.space(3);
+  }
+
+  &__avatar {
+    background: slim.color('primary');
+    color: slim.color('primary-contrast');
+  }
+
+  &__name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__roles {
+    gap: slim.space(1);
+  }
+
+  &__actions {
+    flex-wrap: nowrap;
+  }
+
+  &__danger {
+    color: slim.color('danger');
+  }
+}

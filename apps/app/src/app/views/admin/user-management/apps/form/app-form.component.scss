@@ -1,0 +1,16 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.um-app-form {
+  &__form {
+    max-width: slim.size('container-narrow');
+  }
+  &__switch .slim-switch__label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+}

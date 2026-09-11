@@ -1,0 +1,219 @@
+<div class="slim-page um-role-form">
+  <ol class="slim-breadcrumbs">
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.home">{{ 'shell.home' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.root">{{ 'menu.data_management' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.roles">{{ 'menu.roles' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">
+      {{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}
+    </li>
+  </ol>
+
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}</h1>
+      @if (current()?.title; as title) {
+        <p class="slim-page__subtitle">{{ title }}</p>
+      }
+    </div>
+    <div class="slim-page__actions">
+      <button type="button" class="slim-btn" (click)="cancel()">
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="slim-btn__label">{{ prefix + '.cancel' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (facade.error(); as message) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4" role="alert">
+      <div class="slim-alert__body">{{ message }}</div>
+    </div>
+  }
+
+  <nav class="slim-tabs slim-u-mb-4" role="tablist">
+    <button type="button" class="slim-tabs__tab" role="tab" [class.slim-tabs__tab--active]="tab() === 'general'" [attr.aria-selected]="tab() === 'general'" (click)="tab.set('general')">
+      {{ prefix + '.section_base' | translate }}
+    </button>
+    <button type="button" class="slim-tabs__tab" role="tab" [class.slim-tabs__tab--active]="tab() === 'apps'" [attr.aria-selected]="tab() === 'apps'" (click)="tab.set('apps')">
+      {{ prefix + '.section_apps' | translate }}
+      <span class="slim-badge">{{ grantedCount() }}</span>
+    </button>
+    @if (isEdit()) {
+      <button type="button" class="slim-tabs__tab" role="tab" [class.slim-tabs__tab--active]="tab() === 'users'" [attr.aria-selected]="tab() === 'users'" (click)="tab.set('users')">
+        {{ prefix + '.section_users' | translate }}
+        <span class="slim-badge">{{ assignedUsers().length }}</span>
+      </button>
+    }
+  </nav>
+
+  <form class="slim-form um-role-form__form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    @if (tab() === 'general') {
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_base' | translate }}</h2>
+      </header>
+      <div class="slim-card__body slim-form">
+        <div class="slim-field" [class.slim-field--invalid]="invalidTitle()">
+          <label class="slim-field__label" for="um-r-title">
+            {{ prefix + '.name' | translate }} <span class="slim-field__required">*</span>
+          </label>
+          <input class="slim-input" id="um-r-title" type="text" appAutofocus formControlName="title" />
+          <p class="slim-field__error">{{ prefix + '.name_error' | translate }}</p>
+        </div>
+        <label class="slim-switch um-role-form__switch">
+          <span class="slim-switch__label"><b>{{ prefix + '.state' | translate }}</b></span>
+          <input class="slim-switch__input" type="checkbox" formControlName="state" />
+        </label>
+        <label class="slim-switch um-role-form__switch">
+          <span class="slim-switch__label">
+            <b>{{ prefix + '.admin_rights' | translate }}</b>
+            <span class="slim-field__hint">{{ prefix + '.admin_rights_hint' | translate }}</span>
+          </span>
+          <input class="slim-switch__input" type="checkbox" formControlName="hasAdminRights" />
+        </label>
+        <label class="slim-switch um-role-form__switch">
+          <span class="slim-switch__label">
+            <b>{{ prefix + '.sensitive' | translate }}</b>
+            <span class="slim-field__hint">{{ prefix + '.sensitive_hint' | translate }}</span>
+          </span>
+          <input class="slim-switch__input" type="checkbox" formControlName="sensitiveDataDisplay" />
+        </label>
+      </div>
+    </section>
+
+    }
+
+    @if (tab() === 'apps') {
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <div>
+          <h2 class="slim-card__title">{{ prefix + '.section_apps' | translate }}</h2>
+          <p class="slim-card__subtitle">
+            {{ prefix + '.apps_hint' | translate: { granted: grantedCount(), total: facade.apps().length } }}
+          </p>
+        </div>
+        <div class="slim-card__actions">
+          <button type="button" class="slim-btn slim-btn--sm" data-action="roles.allRoot" (click)="setAll('root')">
+            {{ prefix + '.apps_all_root' | translate }}
+          </button>
+          <button type="button" class="slim-btn slim-btn--sm" data-action="roles.allOff" (click)="setAll('')">
+            {{ prefix + '.apps_all_off' | translate }}
+          </button>
+        </div>
+      </header>
+      <div class="slim-card__body">
+        @for (group of groupedApps(); track group.name) {
+          <div class="slim-eyebrow um-role-form__group">{{ group.name }}</div>
+          <ul class="slim-list slim-list--divided um-role-form__apps">
+            @for (app of group.apps; track app.appId) {
+              <li class="slim-list__item um-role-form__app" [class.um-role-form__app--on]="!!accessOf(app.appId)">
+                <span class="slim-list__content">
+                  <span class="slim-list__title">{{ app.title }}</span>
+                </span>
+                <span class="slim-list__trailing">
+                  <select
+                    class="slim-select um-role-form__access"
+                    [value]="accessOf(app.appId)"
+                    (change)="setAccess(app.appId, $event)"
+                    [attr.aria-label]="app.title"
+                  >
+                    @for (level of accessLevels; track level) {
+                      <option [value]="level" [selected]="accessOf(app.appId) === level">
+                        {{ prefix + '.access_' + (level || 'none') | translate }}
+                      </option>
+                    }
+                  </select>
+                </span>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+
+    }
+
+    @if (isEdit() && tab() === 'users') {
+      <section class="slim-card">
+        <header class="slim-card__header">
+          <div>
+            <h2 class="slim-card__title">{{ prefix + '.section_users' | translate }}</h2>
+            <p class="slim-card__subtitle">
+              {{ prefix + '.users_hint' | translate: { assigned: assignedUsers().length } }}
+            </p>
+          </div>
+        </header>
+        <div class="slim-card__body slim-form">
+          <div class="slim-search">
+            <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+              <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+            <input
+              class="slim-search__input"
+              type="search"
+              [value]="userQuery()"
+              (input)="onUserQuery($event)"
+              [attr.placeholder]="prefix + '.users_search' | translate"
+              [attr.aria-label]="prefix + '.users_search' | translate"
+            />
+          </div>
+
+          <div class="slim-eyebrow um-role-form__group">{{ prefix + '.users_assigned' | translate }}</div>
+          @if (assignedUsers().length) {
+            <ul class="slim-list slim-list--divided">
+              @for (user of assignedUsers(); track user.userId) {
+                <li class="slim-list__item">
+                  <span class="slim-list__content">
+                    <span class="slim-list__title">{{ userLabel(user) }}</span>
+                  </span>
+                  <span class="slim-list__trailing">
+                    <button type="button" class="slim-btn slim-btn--sm slim-btn--pill" [disabled]="userBusy()" (click)="unassign(user.userId)">
+                      {{ prefix + '.users_remove' | translate }}
+                    </button>
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="slim-text--muted slim-text--small">{{ prefix + '.users_none' | translate }}</p>
+          }
+
+          @if (candidates().length) {
+            <div class="slim-eyebrow um-role-form__group">{{ prefix + '.users_available' | translate }}</div>
+            <ul class="slim-list slim-list--divided">
+              @for (user of candidates(); track user.userId) {
+                <li class="slim-list__item">
+                  <span class="slim-list__content">
+                    <span class="slim-list__title">{{ userLabel(user) }}</span>
+                  </span>
+                  <span class="slim-list__trailing">
+                    <button type="button" class="slim-btn slim-btn--sm slim-btn--pill slim-btn--secondary" [disabled]="userBusy()" (click)="assign(user.userId)">
+                      {{ prefix + '.users_add' | translate }}
+                    </button>
+                  </span>
+                </li>
+              }
+            </ul>
+          } @else if (userQuery().trim()) {
+            <p class="slim-text--muted slim-text--small">{{ prefix + '.users_no_match' | translate }}</p>
+          }
+        </div>
+      </section>
+    }
+
+    <div class="slim-form__actions">
+      <button type="button" class="slim-btn" (click)="cancel()">{{ prefix + '.cancel' | translate }}</button>
+      <button type="submit" class="slim-btn slim-btn--primary" data-action="roles.save" [disabled]="saving()">
+        {{ prefix + '.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

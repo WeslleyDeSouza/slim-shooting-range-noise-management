@@ -1,0 +1,351 @@
+<div class="slim-page logs">
+  <ol class="slim-breadcrumbs">
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.home">{{ 'shell.home' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">{{ 'menu.data_management' | translate }}</li>
+    <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">
+      {{ 'menu.logs' | translate }}
+    </li>
+  </ol>
+
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ 'menu.logs' | translate }}</h1>
+      <p class="slim-page__subtitle" [attr.title]="prefix + '.integrity_title' | translate">
+        {{ prefix + '.integrity' | translate }}
+      </p>
+    </div>
+    <div class="slim-page__actions">
+      <button
+        type="button"
+        class="slim-btn"
+        data-testid="logs-export"
+        [disabled]="exporting()"
+        (click)="exportXlsx()"
+      >
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M8 2v8M5 7l3 3 3-3M3 13.5h10"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="slim-btn__label">{{ prefix + '.export' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (facade.error(); as error) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4">
+      <div class="slim-alert__body">{{ error | translate }}</div>
+    </div>
+  }
+  @if (exportError()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4">
+      <div class="slim-alert__body">{{ prefix + '.export_failed' | translate }}</div>
+    </div>
+  }
+
+  <div class="logs__stats" data-testid="logs-stats">
+    <div class="slim-stat">
+      <div class="slim-stat__label">{{ prefix + '.stat_entries' | translate }}</div>
+      <div class="slim-stat__value">{{ nf(facade.total()) }}</div>
+    </div>
+    <div class="slim-stat">
+      <div class="slim-stat__label">{{ prefix + '.stat_writes' | translate }}</div>
+      <div class="slim-stat__value">{{ nf(writeCount()) }}</div>
+    </div>
+    <div class="slim-stat">
+      <div class="slim-stat__label">{{ prefix + '.stat_users' | translate }}</div>
+      <div class="slim-stat__value">{{ nf(userCount()) }}</div>
+    </div>
+    <div class="slim-stat" [class.logs__stat--warn]="severityCount() > 0">
+      <div class="slim-stat__label">{{ prefix + '.stat_security' | translate }}</div>
+      <div class="slim-stat__value">{{ nf(severityCount()) }}</div>
+    </div>
+  </div>
+
+  <section class="slim-card slim-card--bleed">
+    <div class="slim-toolbar">
+      <div class="slim-search slim-toolbar__grow">
+        <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+          <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+        </svg>
+        <input
+          class="slim-search__input"
+          type="search"
+          data-testid="logs-search"
+          [placeholder]="prefix + '.search_placeholder' | translate"
+          [value]="query()"
+          (input)="onQuery($event)"
+        />
+      </div>
+      <select
+        class="slim-select logs__select"
+        data-testid="logs-section"
+        [attr.aria-label]="prefix + '.filter_section' | translate"
+        [value]="section()"
+        (change)="onSection($event)"
+      >
+        <option value="">{{ prefix + '.all_sections' | translate }}</option>
+        @for (entry of facade.facets()?.sections ?? []; track entry) {
+          <option [value]="entry">{{ entry }}</option>
+        }
+      </select>
+      <select
+        class="slim-select logs__select"
+        data-testid="logs-user"
+        [attr.aria-label]="prefix + '.filter_user' | translate"
+        [value]="user()"
+        (change)="onUser($event)"
+      >
+        <option value="">{{ prefix + '.all_users' | translate }}</option>
+        @for (entry of facade.facets()?.users ?? []; track entry.userId) {
+          @if (entry.userId) {
+            <option [value]="entry.userId">{{ entry.name }}</option>
+          }
+        }
+        <option [value]="systemUser">{{ prefix + '.system' | translate }}</option>
+      </select>
+      <select
+        class="slim-select logs__select"
+        data-testid="logs-range"
+        [attr.aria-label]="prefix + '.filter_range' | translate"
+        [value]="range()"
+        (change)="onRange($event)"
+      >
+        <option value="all">{{ prefix + '.range_all' | translate }}</option>
+        <option value="today">{{ prefix + '.range_today' | translate }}</option>
+        <option value="7">{{ prefix + '.range_7' | translate }}</option>
+        <option value="30">{{ prefix + '.range_30' | translate }}</option>
+      </select>
+    </div>
+
+    <div class="logs__chips">
+      <div class="slim-chips slim-chips--scroll">
+        @for (chip of actionChips(); track chip.action) {
+          <button
+            type="button"
+            class="slim-chip"
+            data-testid="logs-chip"
+            [attr.data-action]="chip.action"
+            [class.slim-chip--selected]="actionFilter().has(chip.action)"
+            [attr.aria-pressed]="actionFilter().has(chip.action)"
+            (click)="toggleAction(chip.action)"
+          >
+            {{ prefix + '.action_' + chip.action.toLowerCase() | translate }}
+            <span class="logs__chip-count">{{ nf(chip.count) }}</span>
+          </button>
+        }
+        @if (hasActiveFilters()) {
+          <button type="button" class="slim-btn slim-btn--sm slim-btn--pill" (click)="clearFilters()">
+            {{ prefix + '.clear_filters' | translate }}
+          </button>
+        }
+      </div>
+      <div class="logs__count">
+        {{
+          prefix + '.result_count'
+            | translate: { shown: nf(entries().length), total: nf(facade.total()) }
+        }}
+      </div>
+    </div>
+
+    <div class="slim-table-wrap logs__table-wrap">
+      <table class="slim-table slim-table--stack">
+        <thead>
+          <tr>
+            <th>{{ prefix + '.kv_time' | translate }}</th>
+            <th>{{ prefix + '.col_action' | translate }}</th>
+            <th>{{ prefix + '.col_entry' | translate }}</th>
+            <th>{{ prefix + '.kv_user' | translate }}</th>
+            <th>{{ prefix + '.kv_ip' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (group of dayGroups(); track group.day) {
+            <tr class="logs__day">
+              <td colspan="5">
+                {{ group.label }}
+                <span class="logs__day-count">
+                  · {{ prefix + '.day_entries' | translate: { n: group.entries.length } }}
+                </span>
+              </td>
+            </tr>
+            @for (entry of group.entries; track entry.item.logId) {
+              <tr
+                class="slim-table__row slim-table__row--clickable logs__row"
+                data-testid="logs-row"
+                [class.logs__row--warn]="entry.severity === 'warn'"
+                [class.logs__row--crit]="entry.severity === 'crit'"
+                [class.logs__row--selected]="entry.item.logId === selected()?.item?.logId"
+                (click)="openDrawer(entry)"
+              >
+                <td [attr.data-label]="prefix + '.kv_time' | translate" class="logs__time">
+                  {{ entry.time }}
+                </td>
+                <td [attr.data-label]="prefix + '.col_action' | translate">
+                  <span class="slim-badge" [class]="'slim-badge ' + badgeClass(entry.item.action)">
+                    {{ entry.item.action }}
+                  </span>
+                </td>
+                <td [attr.data-label]="prefix + '.col_entry' | translate" class="logs__main">
+                  <b>{{ entry.title }}</b>
+                  <span class="logs__sub">{{ entry.sub }}</span>
+                </td>
+                <td [attr.data-label]="prefix + '.kv_user' | translate">
+                  <span class="logs__user">
+                    <span class="slim-avatar slim-avatar--sm" [class.logs__avatar--sys]="entry.isSystem">
+                      {{ entry.initials }}
+                    </span>
+                    {{ entry.userName }}
+                  </span>
+                </td>
+                <td [attr.data-label]="prefix + '.kv_ip' | translate" class="logs__mono">
+                  {{ entry.item.ip || '—' }}
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="5" class="slim-table__cell--wrap">
+                <div class="slim-empty">
+                  @if (facade.loading()) {
+                    <span class="slim-spinner"></span>
+                  } @else {
+                    <div class="slim-empty__text">{{ prefix + '.no_entries' | translate }}</div>
+                    @if (hasActiveFilters()) {
+                      <button type="button" class="slim-btn slim-btn--sm" (click)="clearFilters()">
+                        {{ prefix + '.clear_filters' | translate }}
+                      </button>
+                    }
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="slim-table-foot">
+      <span class="logs__append">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M8 1.5l5.5 2v4c0 3.5-2.3 6-5.5 7-3.2-1-5.5-3.5-5.5-7v-4l5.5-2z"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linejoin="round"
+          />
+        </svg>
+        {{ prefix + '.append_only' | translate }}
+      </span>
+      <span class="slim-table-foot__grow"></span>
+      @if (facade.hasMore) {
+        <button
+          type="button"
+          class="slim-btn slim-btn--sm"
+          data-testid="logs-more"
+          [disabled]="facade.loading()"
+          (click)="facade.loadMore()"
+        >
+          {{ prefix + '.load_more' | translate }}
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (selected(); as sel) {
+    <div
+      class="slim-sheet slim-sheet--drawer slim-sheet--open"
+      role="dialog"
+      aria-modal="true"
+      data-testid="logs-drawer"
+      [attr.aria-label]="prefix + '.drawer_label' | translate"
+    >
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="prefix + '.close' | translate" (click)="closeDrawer()"></button>
+      <div class="slim-sheet__panel">
+        <div class="slim-sheet__handle"></div>
+        <header class="slim-sheet__header">
+          <div>
+            <span class="slim-badge" [class]="'slim-badge ' + badgeClass(sel.item.action)">{{ sel.item.action }}</span>
+            <div class="slim-sheet__title">{{ sel.title }}</div>
+            <div class="logs__drawer-sub">{{ sel.dayLabel }} · {{ sel.time }} · {{ sel.ref }}</div>
+          </div>
+          <button type="button" class="slim-sheet__close" [attr.aria-label]="prefix + '.close' | translate" (click)="closeDrawer()">✕</button>
+        </header>
+        <div class="slim-sheet__body">
+          <div class="logs__section">{{ prefix + '.who_when_where' | translate }}</div>
+          <dl class="slim-kv">
+            <dt>{{ prefix + '.kv_user' | translate }}</dt>
+            <dd>
+              {{ sel.userName }}
+              @if (sel.isSystem) {
+                ({{ prefix + '.system_service' | translate }})
+              }
+            </dd>
+            <dt>{{ prefix + '.kv_time' | translate }}</dt>
+            <dd>{{ sel.dayLabel }}, {{ sel.time }}</dd>
+            <dt>{{ prefix + '.kv_ip' | translate }}</dt>
+            <dd class="logs__mono">{{ sel.item.ip || '—' }}</dd>
+            <dt>{{ prefix + '.kv_device' | translate }}</dt>
+            <dd>{{ sel.item.device || '—' }}</dd>
+            <dt>{{ prefix + '.kv_ref' | translate }}</dt>
+            <dd class="logs__mono">{{ sel.ref }}</dd>
+            <dt>{{ prefix + '.kv_section' | translate }}</dt>
+            <dd>{{ sel.item.section }}</dd>
+          </dl>
+
+          @if (sel.diff.length) {
+            <div class="logs__section">{{ prefix + '.changes' | translate }}</div>
+            <table class="slim-table logs__diff">
+              <thead>
+                <tr>
+                  <th>{{ prefix + '.diff_field' | translate }}</th>
+                  <th>{{ prefix + '.diff_old' | translate }}</th>
+                  <th>{{ prefix + '.diff_new' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of sel.diff; track $index) {
+                  <tr>
+                    <td class="logs__mono">{{ row[0] }}</td>
+                    <td class="logs__diff-old">{{ row[1] }}</td>
+                    <td class="logs__diff-new">{{ row[2] }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          @if (sel.details.length) {
+            <div class="logs__section">{{ prefix + '.details' | translate }}</div>
+            <dl class="slim-kv">
+              @for (row of sel.details; track $index) {
+                <dt>{{ row[0] }}</dt>
+                <dd>{{ row[1] }}</dd>
+              }
+            </dl>
+          }
+
+          <div class="logs__section">{{ prefix + '.raw' | translate }}</div>
+          <pre class="logs__json">{{ sel.rawJson }}</pre>
+        </div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="copyJson()">
+            {{ prefix + '.copy_json' | translate }}
+          </button>
+          @if (sel.item.refId) {
+            <button type="button" class="slim-btn slim-btn--primary" data-testid="logs-related" (click)="showRelated(sel)">
+              {{ prefix + '.related' | translate }}
+            </button>
+          }
+        </footer>
+      </div>
+    </div>
+  }
+</div>

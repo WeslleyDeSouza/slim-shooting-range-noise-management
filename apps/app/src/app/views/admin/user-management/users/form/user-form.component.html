@@ -1,0 +1,199 @@
+<div class="slim-page um-user-form">
+  <ol class="slim-breadcrumbs">
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.home">{{ 'shell.home' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.root">{{ 'menu.data_management' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.users">{{ 'menu.users' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">
+      {{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}
+    </li>
+  </ol>
+
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}</h1>
+      @if (current()?.email; as email) {
+        <p class="slim-page__subtitle">{{ email }}</p>
+      }
+    </div>
+    <div class="slim-page__actions">
+      <button type="button" class="slim-btn" (click)="cancel()">
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="slim-btn__label">{{ prefix + '.cancel' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (facade.error(); as message) {
+    <div class="slim-alert slim-u-mb-4" [class.slim-alert--danger]="!facade.restorableUserId()" [class.slim-alert--warning]="!!facade.restorableUserId()" role="alert">
+      <div class="slim-alert__body">{{ message }}</div>
+    </div>
+  }
+  @if (facade.restorableUserId(); as restorableId) {
+    <div class="slim-alert slim-alert--warning slim-u-mb-4">
+      <div class="slim-alert__body um-user-form__restore">
+        <p>{{ prefix + '.restore_consequences' | translate }}</p>
+        <button type="button" class="slim-btn slim-btn--primary slim-btn--sm" [disabled]="saving()" (click)="restore(restorableId)">
+          {{ prefix + '.restore_action' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+  @if (notice(); as message) {
+    <div class="slim-alert slim-alert--success slim-u-mb-4" role="status">
+      <div class="slim-alert__body">{{ message }}</div>
+    </div>
+  }
+
+  <form class="slim-form um-user-form__form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_base' | translate }}</h2>
+      </header>
+      <div class="slim-card__body slim-form">
+        <div class="slim-form__row">
+          <div class="slim-field" [class.slim-field--invalid]="invalid('firstName')">
+            <label class="slim-field__label" for="um-u-first">
+              {{ prefix + '.first_name' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input class="slim-input" id="um-u-first" type="text" appAutofocus formControlName="firstName" />
+            <p class="slim-field__error">{{ 'forms.validation.required' | translate }}</p>
+          </div>
+          <div class="slim-field" [class.slim-field--invalid]="invalid('lastName')">
+            <label class="slim-field__label" for="um-u-last">
+              {{ prefix + '.last_name' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input class="slim-input" id="um-u-last" type="text" formControlName="lastName" />
+            <p class="slim-field__error">{{ 'forms.validation.required' | translate }}</p>
+          </div>
+        </div>
+        <div class="slim-form__row">
+          <div class="slim-field" [class.slim-field--invalid]="invalid('email')">
+            <label class="slim-field__label" for="um-u-email">
+              {{ prefix + '.email' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input class="slim-input" id="um-u-email" type="email" formControlName="email" />
+            <p class="slim-field__error">{{ prefix + '.email_error' | translate }}</p>
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="um-u-phone">{{ prefix + '.phone' | translate }}</label>
+            <input class="slim-input" id="um-u-phone" type="tel" formControlName="phone" />
+          </div>
+        </div>
+        @if (!isEdit()) {
+          <p class="slim-field__hint">{{ prefix + '.create_reset_hint' | translate }}</p>
+        }
+      </div>
+    </section>
+
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_roles' | translate }}</h2>
+      </header>
+      <div class="slim-card__body">
+        <ul class="slim-list slim-list--divided">
+          @for (role of facade.roles(); track role.roleId) {
+            <li class="slim-list__item">
+              <label class="slim-check um-user-form__role" [class.um-user-form__role--locked]="roleLocked(role)">
+                <input
+                  class="slim-check__input"
+                  type="checkbox"
+                  [checked]="draftRoles().has(role.roleId)"
+                  [disabled]="roleLocked(role)"
+                  (change)="toggleRole(role.roleId)"
+                />
+                <span class="slim-check__label">
+                  <b>{{ role.title }}</b>
+                  @if (roleLocked(role)) {
+                    <span class="slim-check__hint">{{ prefix + '.role_locked_hint' | translate }}</span>
+                  } @else if (role.hasAdminRights) {
+                    <span class="slim-check__hint">{{ prefix + '.role_admin_hint' | translate }}</span>
+                  }
+                </span>
+              </label>
+            </li>
+          } @empty {
+            <li class="slim-list__item">
+              <span class="slim-text--muted slim-text--small">{{ prefix + '.roles_empty' | translate }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    @if (isEdit()) {
+      <section class="slim-card">
+        <header class="slim-card__header">
+          <h2 class="slim-card__title">{{ prefix + '.section_security' | translate }}</h2>
+        </header>
+        <div class="slim-card__body slim-form">
+          @if (locked()) {
+            <div class="slim-alert slim-alert--danger" role="alert">
+              <div class="slim-alert__body um-user-form__lock">
+                <div>
+                  <div class="slim-alert__title">{{ prefix + '.locked_title' | translate }}</div>
+                  {{ prefix + '.locked_hint' | translate: { n: loginAttempt() } }}
+                </div>
+                @if (facade.canUnlock()) {
+                  <button
+                    type="button"
+                    class="slim-btn slim-btn--primary slim-btn--sm"
+                    data-action="users.unlock"
+                    [disabled]="saving()"
+                    (click)="unlock()"
+                  >
+                    {{ prefix + '.unlock' | translate }}
+                  </button>
+                } @else {
+                  <span class="slim-text--small">{{ prefix + '.unlock_forbidden' | translate }}</span>
+                }
+              </div>
+            </div>
+          }
+          <label class="slim-switch um-user-form__switch">
+            <span class="slim-switch__label">
+              <b>{{ prefix + '.force_reset' | translate }}</b>
+              <span class="slim-field__hint">{{ prefix + '.force_reset_hint' | translate }}</span>
+            </span>
+            <input
+              class="slim-switch__input"
+              type="checkbox"
+              data-action="users.forceReset"
+              [checked]="forceReset()"
+              (change)="forceReset.set($any($event.target).checked)"
+            />
+          </label>
+          <div class="um-user-form__reset">
+            <button
+              type="button"
+              class="slim-btn"
+              data-action="users.sendReset"
+              [disabled]="resetSent()"
+              (click)="sendReset()"
+            >
+              {{ prefix + '.send_reset' | translate }}
+            </button>
+            <p class="slim-field__hint">{{ prefix + '.send_reset_hint' | translate }}</p>
+          </div>
+        </div>
+      </section>
+    }
+
+    <div class="slim-form__actions">
+      @if (assignmentDirty()) {
+        <span class="slim-badge slim-badge--warning um-user-form__dirty">{{ prefix + '.unsaved_roles' | translate }}</span>
+      }
+      <button type="button" class="slim-btn" (click)="cancel()">{{ prefix + '.cancel' | translate }}</button>
+      <button type="submit" class="slim-btn slim-btn--primary" data-action="users.save" [disabled]="saving()">
+        {{ prefix + '.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

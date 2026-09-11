@@ -1,0 +1,116 @@
+<div class="slim-page um-app-form">
+  <ol class="slim-breadcrumbs">
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.home">{{ 'shell.home' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.root">{{ 'menu.data_management' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item">
+      <a [routerLink]="routes.admin.dataManagement.apps">{{ 'menu.apps' | translate }}</a>
+    </li>
+    <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">
+      {{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}
+    </li>
+  </ol>
+
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ prefix + (isEdit() ? '.title_edit' : '.title_create') | translate }}</h1>
+      @if (current()?.title; as title) {
+        <p class="slim-page__subtitle slim-text--mono">{{ title }}</p>
+      }
+    </div>
+    <div class="slim-page__actions">
+      <button type="button" class="slim-btn" (click)="cancel()">
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="slim-btn__label">{{ prefix + '.cancel' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (facade.error(); as message) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4" role="alert">
+      <div class="slim-alert__body">{{ message }}</div>
+    </div>
+  }
+
+  <form class="slim-form um-app-form__form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_base' | translate }}</h2>
+      </header>
+      <div class="slim-card__body slim-form">
+        <div class="slim-form__row">
+          <div class="slim-field" [class.slim-field--invalid]="invalid('title')">
+            <label class="slim-field__label" for="um-a-title">
+              {{ prefix + '.field_title' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input class="slim-input" id="um-a-title" type="text" appAutofocus formControlName="title" />
+            <p class="slim-field__hint">{{ prefix + '.field_title_hint' | translate }}</p>
+            <p class="slim-field__error">{{ 'forms.validation.required' | translate }}</p>
+          </div>
+          <div class="slim-field" [class.slim-field--invalid]="invalid('path')">
+            <label class="slim-field__label" for="um-a-path">
+              {{ prefix + '.field_path' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input class="slim-input" id="um-a-path" type="text" formControlName="path" />
+            <p class="slim-field__error">{{ 'forms.validation.required' | translate }}</p>
+          </div>
+        </div>
+        <div class="slim-form__row">
+          <div class="slim-field">
+            <label class="slim-field__label" for="um-a-rolekey">{{ prefix + '.field_role_key' | translate }}</label>
+            <input class="slim-input" id="um-a-rolekey" type="text" formControlName="roleKey" />
+            <p class="slim-field__hint">{{ prefix + '.field_role_key_hint' | translate }}</p>
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="um-a-category">{{ prefix + '.field_category' | translate }}</label>
+            <select class="slim-select" id="um-a-category" formControlName="categoryId">
+              @for (category of facade.categories(); track category.categoryId) {
+                <option [value]="category.categoryId">
+                  {{ facade.categoryTitle(category.categoryId) }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="slim-form__row">
+          <div class="slim-field">
+            <label class="slim-field__label" for="um-a-order">{{ prefix + '.field_order' | translate }}</label>
+            <input class="slim-input" id="um-a-order" type="number" formControlName="orderIdx" />
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="um-a-icon">{{ prefix + '.field_icon' | translate }}</label>
+            <input class="slim-input" id="um-a-icon" type="text" formControlName="icon" />
+            <p class="slim-field__hint">{{ prefix + '.field_icon_hint' | translate }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slim-card">
+      <header class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_visibility' | translate }}</h2>
+      </header>
+      <div class="slim-card__body">
+        <label class="slim-switch um-app-form__switch">
+          <span class="slim-switch__label">
+            <b>{{ prefix + '.visible' | translate }}</b>
+            <span class="slim-field__hint">{{ prefix + '.visible_hint' | translate }}</span>
+          </span>
+          <input class="slim-switch__input" type="checkbox" formControlName="visible" />
+        </label>
+      </div>
+    </section>
+
+    <div class="slim-form__actions">
+      <button type="button" class="slim-btn" (click)="cancel()">{{ prefix + '.cancel' | translate }}</button>
+      <button type="submit" class="slim-btn slim-btn--primary" data-action="apps.save" [disabled]="saving()">
+        {{ prefix + '.save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

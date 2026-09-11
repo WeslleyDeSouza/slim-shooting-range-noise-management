@@ -52,6 +52,7 @@ export class AreaService {
         tenantId,
         quotaStatus: 'none',
         noiseStatus: 'none',
+        annex7Overall: false,
         enabled: true,
         ...dto,
       }),
@@ -92,11 +93,18 @@ export class AreaService {
 
   async dashboard(tenantId: string): Promise<DashboardDto> {
     const areas = await this.repo.count({ where: { tenantId } });
-    // Users of this tenant (galaxy tables). No weapons module yet → null.
-    const [row] = await this.dataSource.query(
-      'select count(distinct userId) as n from tenant_user_role where tenantId = ?',
-      [tenantId],
-    );
-    return { areas, users: Number(row?.n ?? 0), weapons: null };
+    // Users of this tenant (galaxy tables); distinct weapons of the allowed
+    // room × weapon combinations (5.17).
+    const [[row], [weaponRow]] = await Promise.all([
+      this.dataSource.query(
+        'select count(distinct userId) as n from tenant_user_role where tenantId = ?',
+        [tenantId],
+      ),
+      this.dataSource.query(
+        'select count(distinct weapon) as n from area_weapon where tenantId = ? and deletedAt is null',
+        [tenantId],
+      ),
+    ]);
+    return { areas, users: Number(row?.n ?? 0), weapons: Number(weaponRow?.n ?? 0) };
   }
 }

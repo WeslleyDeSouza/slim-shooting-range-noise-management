@@ -29,6 +29,9 @@ export class AreaResultDto {
   @ApiProperty({ enum: AREA_STATUS })
   noiseStatus: AreaStatus;
 
+  @ApiProperty({ description: 'Gesamtbeurteilung nach Anhang 7 (5.16)' })
+  annex7Overall: boolean;
+
   @ApiProperty()
   enabled: boolean;
 }

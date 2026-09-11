@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Health report</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1c1e21;
+        --muted: #6b7280;
+        --line: #d9dce1;
+        --accent: #2563eb;
+        --soft: #f3f4f6;
+        --up: #16a34a;
+        --down: #dc2626;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1c1e21;
+          --fg: #e8eaed;
+          --muted: #9aa0a6;
+          --line: #3c4043;
+          --accent: #60a5fa;
+          --soft: #26282b;
+          --up: #4ade80;
+          --down: #f87171;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 17px;
+      }
+      p.lede {
+        margin: 0 0 18px;
+        color: var(--muted);
+        word-break: break-all;
+      }
+      code {
+        background: var(--soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12.5px;
+      }
+      ul {
+        list-style: none;
+        margin: 0 0 18px;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      li {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      li:last-child {
+        border-bottom: 0;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .dot.up {
+        background: var(--up);
+      }
+      .dot.down {
+        background: var(--down);
+      }
+      .name {
+        font-weight: 600;
+      }
+      .detail {
+        color: var(--muted);
+        font-size: 13px;
+        margin-left: auto;
+        text-align: right;
+      }
+      details {
+        margin-bottom: 8px;
+      }
+      summary {
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      pre {
+        margin: 8px 0 0;
+        padding: 12px;
+        background: var(--soft);
+        border-radius: 6px;
+        overflow: auto;
+        max-height: 240px;
+        font: 12px/1.5 ui-monospace, 'Cascadia Code', Consolas, monospace;
+      }
+      .empty {
+        padding: 14px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        color: var(--muted);
+        margin-bottom: 18px;
+      }
+      footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+      button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Health report</h1>
+    <p class="lede"><code id="url">/api/health/ready</code> answered <strong id="status">—</strong></p>
+
+    <ul id="indicators"></ul>
+    <div class="empty" id="empty" hidden>The API returned no indicator details.</div>
+
+    <details>
+      <summary>Raw response</summary>
+      <pre id="raw"></pre>
+    </details>
+
+    <footer>
+      <button type="button" id="close">Close</button>
+    </footer>
+
+    <script>
+      const view = window.galaxyView;
+      const data = view.data || {};
+      const body = data.body || {};
+
+      if (data.url) document.getElementById('url').textContent = data.url;
+      document.getElementById('status').textContent = data.status ? String(data.status) : 'nothing';
+      document.getElementById('raw').textContent =
+        typeof body === 'string' ? body : JSON.stringify(body, null, 2);
+
+      // Terminus reports { status, info: {...}, error: {...}, details: { name: { status } } }
+      const details = body.details || { ...(body.info || {}), ...(body.error || {}) };
+      const list = document.getElementById('indicators');
+      const names = Object.keys(details);
+
+      if (!names.length) {
+        list.hidden = true;
+        document.getElementById('empty').hidden = false;
+      }
+
+      for (const name of names) {
+        const entry = details[name] || {};
+        const up = entry.status === 'up';
+
+        const row = document.createElement('li');
+
+        const dot = document.createElement('span');
+        dot.className = `dot ${up ? 'up' : 'down'}`;
+        row.appendChild(dot);
+
+        const label = document.createElement('span');
+        label.className = 'name';
+        label.textContent = name;
+        row.appendChild(label);
+
+        const detail = document.createElement('span');
+        detail.className = 'detail';
+        // textContent, never innerHTML — this string comes off the wire.
+        detail.textContent = entry.message || entry.status || 'unknown';
+        row.appendChild(detail);
+
+        list.appendChild(row);
+      }
+
+      document.getElementById('close').addEventListener('click', () => view.resolve({ viewed: true }));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') view.cancel();
+      });
+    </script>
+  </body>
+</html>

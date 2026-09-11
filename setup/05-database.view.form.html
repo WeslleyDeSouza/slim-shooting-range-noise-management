@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Database credentials</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1c1e21;
+        --muted: #6b7280;
+        --line: #d9dce1;
+        --accent: #2563eb;
+        --soft: #f3f4f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1c1e21;
+          --fg: #e8eaed;
+          --muted: #9aa0a6;
+          --line: #3c4043;
+          --accent: #60a5fa;
+          --soft: #26282b;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 17px;
+      }
+      p.lede {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+      code {
+        background: var(--soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12.5px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .field.wide {
+        grid-column: 1 / -1;
+      }
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--fg);
+        font: inherit;
+      }
+      input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+      }
+      .error {
+        grid-column: 1 / -1;
+        margin: 0;
+        min-height: 18px;
+        color: #dc2626;
+        font-size: 13px;
+      }
+      footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 24px;
+      }
+      button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--fg);
+        font: inherit;
+        cursor: pointer;
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Database credentials</h1>
+    <p class="lede">
+      Saved to <code>.env</code>. The wizard retries the connection as soon as this closes.
+    </p>
+
+    <form id="form" class="grid" novalidate>
+      <div class="field">
+        <label for="DB_TYPE">Driver</label>
+        <select id="DB_TYPE">
+          <option value="mariadb">MariaDB (docker-compose.yml)</option>
+          <option value="mysql">MySQL</option>
+          <option value="postgres">PostgreSQL</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="DB_HOST">Host</label>
+        <input type="text" id="DB_HOST" autocomplete="off" />
+      </div>
+
+      <div class="field wide">
+        <label for="DB_DATABASE">Database name</label>
+        <input type="text" id="DB_DATABASE" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="DB_USERNAME">Username</label>
+        <input type="text" id="DB_USERNAME" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label for="DB_PORT">Port</label>
+        <input type="text" id="DB_PORT" inputmode="numeric" />
+      </div>
+
+      <div class="field wide">
+        <label for="DB_PASSWORD">Password</label>
+        <input type="password" id="DB_PASSWORD" autocomplete="off" />
+      </div>
+
+      <p class="error" id="error"></p>
+    </form>
+
+    <footer>
+      <button type="button" id="cancel">Cancel</button>
+      <button type="button" id="save" class="primary">Save &amp; retry</button>
+    </footer>
+
+    <script>
+      const view = window.galaxyView;
+      const data = view.data || {};
+      const fields = ['DB_TYPE', 'DB_HOST', 'DB_DATABASE', 'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD'];
+
+      for (const key of fields) {
+        if (data[key] != null) document.getElementById(key).value = data[key];
+      }
+
+      const errorEl = document.getElementById('error');
+
+      const DEFAULT_PORT = { mariadb: '3306', mysql: '3306', postgres: '5432' };
+      document.getElementById('DB_TYPE').addEventListener('change', (event) => {
+        const port = document.getElementById('DB_PORT');
+        if (!port.value || Object.values(DEFAULT_PORT).includes(port.value)) {
+          port.value = DEFAULT_PORT[event.target.value] || port.value;
+        }
+      });
+
+      function save() {
+        const values = {};
+        for (const key of fields) values[key] = document.getElementById(key).value.trim();
+
+        if (!values.DB_HOST) {
+          errorEl.textContent = 'A host is required.';
+          return;
+        }
+        if (!values.DB_DATABASE) {
+          errorEl.textContent = 'A database name is required.';
+          return;
+        }
+        if (!values.DB_USERNAME) {
+          errorEl.textContent = 'A username is required.';
+          return;
+        }
+        if (!/^\d+$/.test(values.DB_PORT)) {
+          errorEl.textContent = 'The port must be a number.';
+          return;
+        }
+
+        view.resolve(values);
+      }
+
+      document.getElementById('save').addEventListener('click', save);
+      document.getElementById('cancel').addEventListener('click', () => view.cancel());
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') view.cancel();
+        if (event.key === 'Enter') save();
+      });
+
+      document.getElementById('DB_PASSWORD').focus();
+    </script>
+  </body>
+</html>

@@ -26,6 +26,30 @@ the same way, e.g. `npx nx g @nx/nest:library libs/api/<name> --importPath=@api-
 
 ## Getting started
 
+### Guided setup (recommended)
+
+```bash
+npm run setup
+```
+
+Opens the setup wizard (`@app-galaxy/setup-api`), which walks the steps in
+[`setup/`](setup) and, where it can, fixes what it finds:
+
+| Step        | Checks                                                                                  |
+| ----------- | --------------------------------------------------------------------------------------- |
+| `01` – `03` | Toolchain (Node ≥ 22.12), `.env` from `.env.example`, `.npmrc` token for `@app-galaxy` |
+| `04` – `06` | Dependencies, database (SQLite / MariaDB / MySQL / PostgreSQL), Nx workspace          |
+| `07` – `08` | API health (`/api/health/alive`, `/api/health/ready`), frontend + `/api` proxy         |
+| `09` – `10` | Demo login (`slim@demo.ch`), seeded admin role behind the `/admin` guards               |
+| `11`        | Demo data seeded by the API (8 areas / Schiessplätze, home KPIs)                        |
+| `12`        | The Playwright e2e suite                                                                |
+
+`npm run setup:debug` docks the wizard as a sidebar and writes a report to
+`setup/reports/` (gitignored). `setup/SETUP_FOLDER.md` explains how steps are
+written. The manual route below does the same thing by hand.
+
+### Manual
+
 ```bash
 cp .env.example .env
 npm install --legacy-peer-deps

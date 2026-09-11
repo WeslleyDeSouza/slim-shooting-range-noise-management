@@ -8,6 +8,7 @@ You are an expert in TypeScript, Angular, NestJS and scalable web application de
 - Path aliases live in `tsconfig.base.json` (`@api-slim/*`, `@ui-slim/*`, `@slim/shared`).
 - Run: `npx nx serve api` (port 3333), `npx nx serve app` (port 4200, proxies `/api`), `npm run all` for both.
 - Test: `npx nx test api` (Vitest, globals `describe/it/expect/vi`; NestJS 12 is ESM-only so no Jest here), `npx nx test app` (Jest), `npx nx e2e app-e2e` (Playwright).
+- `setup/` holds the `@app-galaxy/setup-api` wizard steps (`npm run setup`, ELO pattern): plain CommonJS `NN-name.actions.js` with `check/heal/escalate/onChoice`, optional `NN-name.view.<name>.html`; `_browser.js` is a shared helper (no step suffix, so the runner ignores it). Steps 09–11 drive the running app with Playwright using the same selectors as `apps/app-e2e/src/support/selectors.ts` — keep them in sync when the login page or the area overview changes.
 - API service tests use the in-memory SQLite setup from `@api-slim/tests` (`testDbSetup([modules], entities)`); specs under `libs/api/**` run with the api project.
 
 ## TypeScript Best Practices

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Registry token</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1c1e21;
+        --muted: #6b7280;
+        --line: #d9dce1;
+        --accent: #2563eb;
+        --soft: #f3f4f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1c1e21;
+          --fg: #e8eaed;
+          --muted: #9aa0a6;
+          --line: #3c4043;
+          --accent: #60a5fa;
+          --soft: #26282b;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 17px;
+      }
+      p.lede {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+      code {
+        background: var(--soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12.5px;
+      }
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      input {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 13px/1.4 ui-monospace, 'Cascadia Code', Consolas, monospace;
+      }
+      input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+      }
+      .hint {
+        margin: 8px 0 0;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      .error {
+        margin: 10px 0 0;
+        min-height: 18px;
+        color: #dc2626;
+        font-size: 13px;
+      }
+      footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 22px;
+      }
+      button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--fg);
+        font: inherit;
+        cursor: pointer;
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Registry token</h1>
+    <p class="lede">
+      Authenticates <code id="scope">@app-galaxy</code> against <code id="registry">the private registry</code>.
+    </p>
+
+    <label for="token">Auth token</label>
+    <input type="text" id="token" spellcheck="false" autocomplete="off" placeholder="NpmToken.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+    <p class="hint">Written to <code>.npmrc</code> and <code>NPM_TOKEN</code> in <code>.env</code>. Neither belongs in a commit.</p>
+    <p class="error" id="error"></p>
+
+    <footer>
+      <button type="button" id="cancel">Cancel</button>
+      <button type="button" id="save" class="primary">Save</button>
+    </footer>
+
+    <script>
+      const view = window.galaxyView;
+      const data = view.data || {};
+
+      if (data.scope) document.getElementById('scope').textContent = data.scope;
+      if (data.registry) document.getElementById('registry').textContent = data.registry;
+
+      const input = document.getElementById('token');
+      const errorEl = document.getElementById('error');
+
+      function save() {
+        const token = input.value.trim();
+        if (!token) {
+          errorEl.textContent = 'Paste a token first.';
+          return;
+        }
+        if (/\s/.test(token)) {
+          errorEl.textContent = 'A token has no whitespace — check what you pasted.';
+          return;
+        }
+        view.resolve({ token });
+      }
+
+      document.getElementById('save').addEventListener('click', save);
+      document.getElementById('cancel').addEventListener('click', () => view.cancel());
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') view.cancel();
+        if (event.key === 'Enter') save();
+      });
+
+      input.focus();
+    </script>
+  </body>
+</html>

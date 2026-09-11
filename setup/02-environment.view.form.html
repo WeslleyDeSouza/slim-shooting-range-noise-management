@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Configure a database server</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #ffffff;
+        --fg: #1c1e21;
+        --muted: #6b7280;
+        --line: #d9dce1;
+        --accent: #2563eb;
+        --soft: #f3f4f6;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1c1e21;
+          --fg: #e8eaed;
+          --muted: #9aa0a6;
+          --line: #3c4043;
+          --accent: #60a5fa;
+          --soft: #26282b;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', sans-serif;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 17px;
+      }
+      p.lede {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .field.wide {
+        grid-column: 1 / -1;
+      }
+      label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+        font-size: 12px;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      input[type='text'],
+      input[type='password'],
+      select {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--fg);
+        font: inherit;
+      }
+      input:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
+      }
+      .check {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        padding: 10px 12px;
+        background: var(--soft);
+        border-radius: 6px;
+      }
+      .check label {
+        margin: 0;
+        font-size: 13px;
+        text-transform: none;
+        letter-spacing: 0;
+        color: var(--fg);
+        font-weight: 500;
+      }
+      .check small {
+        display: block;
+        font-weight: 400;
+        color: var(--muted);
+      }
+      footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 24px;
+      }
+      button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--fg);
+        font: inherit;
+        cursor: pointer;
+      }
+      button.primary {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+        font-weight: 600;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .error {
+        grid-column: 1 / -1;
+        margin: 0;
+        color: #dc2626;
+        font-size: 13px;
+        min-height: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Configure a database server</h1>
+    <p class="lede">These land in the root <code>.env</code>. The wizard verifies the connection in a later step.</p>
+
+    <form id="form" class="grid" novalidate>
+      <div class="field">
+        <label for="DB_TYPE">Driver</label>
+        <select id="DB_TYPE" name="DB_TYPE">
+          <option value="mariadb">MariaDB (docker-compose.yml)</option>
+          <option value="mysql">MySQL</option>
+          <option value="postgres">PostgreSQL</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="DB_HOST">Host</label>
+        <input type="text" id="DB_HOST" name="DB_HOST" autocomplete="off" required />
+      </div>
+
+      <div class="field wide">
+        <label for="DB_DATABASE">Database name</label>
+        <input type="text" id="DB_DATABASE" name="DB_DATABASE" autocomplete="off" required />
+      </div>
+
+      <div class="field">
+        <label for="DB_USERNAME">Username</label>
+        <input type="text" id="DB_USERNAME" name="DB_USERNAME" autocomplete="off" required />
+      </div>
+
+      <div class="field">
+        <label for="DB_PORT">Port</label>
+        <input type="text" id="DB_PORT" name="DB_PORT" inputmode="numeric" required />
+      </div>
+
+      <div class="field wide">
+        <label for="DB_PASSWORD">Password</label>
+        <input type="password" id="DB_PASSWORD" name="DB_PASSWORD" autocomplete="off" />
+      </div>
+
+      <div class="check">
+        <input type="checkbox" id="DB_SYNC" name="DB_SYNC" checked />
+        <label for="DB_SYNC">
+          Let TypeORM create the schema
+          <small>Sets <code>DB_SYNC=1</code>. Right for a fresh database, wrong for production.</small>
+        </label>
+      </div>
+
+      <p class="error" id="error"></p>
+    </form>
+
+    <footer>
+      <button type="button" id="cancel">Cancel</button>
+      <button type="button" id="save" class="primary">Save</button>
+    </footer>
+
+    <script>
+      const view = window.galaxyView;
+      const data = view.data || {};
+
+      for (const key of ['DB_TYPE', 'DB_HOST', 'DB_DATABASE', 'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD']) {
+        if (data[key] != null) document.getElementById(key).value = data[key];
+      }
+
+      // Each server has its own conventional port; only swap it while the port
+      // still holds the previous driver's default.
+      const DEFAULT_PORT = { mariadb: '3306', mysql: '3306', postgres: '5432' };
+      document.getElementById('DB_TYPE').addEventListener('change', (event) => {
+        const port = document.getElementById('DB_PORT');
+        if (!port.value || Object.values(DEFAULT_PORT).includes(port.value)) {
+          port.value = DEFAULT_PORT[event.target.value] || port.value;
+        }
+      });
+
+      const errorEl = document.getElementById('error');
+
+      function readForm() {
+        const values = {
+          DB_TYPE: document.getElementById('DB_TYPE').value,
+          DB_HOST: document.getElementById('DB_HOST').value.trim(),
+          DB_DATABASE: document.getElementById('DB_DATABASE').value.trim(),
+          DB_PORT: document.getElementById('DB_PORT').value.trim(),
+          DB_USERNAME: document.getElementById('DB_USERNAME').value.trim(),
+          DB_PASSWORD: document.getElementById('DB_PASSWORD').value,
+          DB_SYNC: document.getElementById('DB_SYNC').checked,
+        };
+
+        if (!values.DB_HOST) return { error: 'A host is required.' };
+        if (!values.DB_DATABASE) return { error: 'A database name is required.' };
+        if (!values.DB_USERNAME) return { error: 'A username is required.' };
+        if (!/^\d+$/.test(values.DB_PORT)) return { error: 'The port must be a number.' };
+
+        return { values };
+      }
+
+      document.getElementById('save').addEventListener('click', () => {
+        const { values, error } = readForm();
+        if (error) {
+          errorEl.textContent = error;
+          return;
+        }
+        view.resolve(values);
+      });
+
+      document.getElementById('cancel').addEventListener('click', () => view.cancel());
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') view.cancel();
+        if (event.key === 'Enter') document.getElementById('save').click();
+      });
+
+      document.getElementById('DB_DATABASE').focus();
+    </script>
+  </body>
+</html>

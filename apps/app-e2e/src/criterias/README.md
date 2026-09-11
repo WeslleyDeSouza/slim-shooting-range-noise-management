@@ -6,6 +6,11 @@
 Playwright-Annotation (`support/criteria.ts` → `slm()`, `acceptance()`), damit der
 HTML-Report nach Kriterium gefiltert werden kann.
 
+**Abnahme:** Beilage A1.2 (Abnahmevorschrift) verlangt je Sprint Testfälle aus den Akzeptanzkriterien,
+vorgängig geliefert, plus Testprotokolle auf dem Akzeptanzsystem; die Schlussabnahme ein vollständiges
+Abnahmetestprotokoll. Diese Sammlung ist dafür gedacht: ein Fall je Kriterium, der Playwright-HTML-Report
+ist das Protokoll (abgenommen / bedingt / nicht = passed / flaky / failed).
+
 **Stand:** Skelett. Jeder Fall ist `test.fixme` mit den Schritten als Kommentar;
 nichts davon läuft produktiv. Der Ordner ist temporär – sobald ein Fall echt ist,
 wandert er in die Seiten-Specs (`src/*.spec.ts`) oder bleibt hier, bis das Kriterium

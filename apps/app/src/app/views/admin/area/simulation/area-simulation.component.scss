@@ -1,0 +1,336 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.sim {
+  &__split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('xl') {
+      grid-template-columns: minmax(0, 1.1fr) minmax(360px, 1fr);
+    }
+  }
+
+  &__side {
+    display: grid;
+    gap: slim.space(4);
+    min-width: 0;
+  }
+
+  &__inputs {
+    min-width: 0;
+  }
+
+  // Card head with inline actions and a full-width sub line (mock .card__head).
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2);
+    padding: slim.space(3) slim.space(4);
+    border-bottom: 1px solid slim.color('line');
+  }
+
+  &__head-title {
+    margin: 0 auto 0 0;
+    font-size: slim.font-size('md');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__head-sub {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: slim.font-size('xs');
+    color: slim.color('text-3');
+  }
+
+  &__head-meta {
+    font-size: slim.font-size('xs');
+    color: slim.color('text-3');
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__th-sub {
+    display: block;
+    font-weight: slim.font-weight('regular');
+    color: slim.color('text-3');
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  &__info {
+    display: inline-grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    margin-left: slim.space(1);
+    border-radius: 50%;
+    background: slim.color('line');
+    color: slim.color('text-3');
+    font-size: 10px;
+    font-weight: slim.font-weight('bold');
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: help;
+    vertical-align: middle;
+  }
+
+  &__row {
+    &--muted {
+      color: slim.color('text-3');
+    }
+  }
+
+  &__room {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__small {
+    display: block;
+    font-size: slim.font-size('xs');
+    color: slim.color('text-3');
+    font-variant-numeric: tabular-nums;
+
+    &--inline {
+      display: inline;
+      margin-left: slim.space(1);
+    }
+  }
+
+  // Editable cell: input + delta label, right-aligned.
+  &__cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  &__value {
+    width: 120px;
+    text-align: right;
+    font-weight: slim.font-weight('semibold');
+    font-variant-numeric: tabular-nums;
+
+    &:disabled {
+      background: transparent;
+      border-color: transparent;
+      color: slim.color('ink');
+      opacity: 1;
+      padding-right: 0;
+    }
+  }
+
+  &__delta {
+    min-height: 14px;
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('bold');
+    font-variant-numeric: tabular-nums;
+    color: slim.color('warning');
+
+    &--down {
+      color: slim.color('success');
+    }
+  }
+
+  &__foot {
+    font-weight: slim.font-weight('semibold');
+    background: slim.color('surface-2');
+
+    .sim__delta {
+      display: inline;
+      margin-left: slim.space(1);
+    }
+  }
+
+  &__quick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2);
+    padding: slim.space(3) slim.space(4);
+    border-top: 1px solid slim.color('line');
+    font-size: slim.font-size('sm');
+    color: slim.color('text-3');
+  }
+
+  &__quick-hint {
+    flex-basis: 100%;
+    font-size: slim.font-size('xs');
+
+    @include slim.mq('md') {
+      flex-basis: auto;
+      margin-left: auto;
+    }
+  }
+
+  // Map ---------------------------------------------------------------------
+  &__map-body {
+    padding-top: 0;
+  }
+
+  &__map {
+    aspect-ratio: 600 / 480;
+  }
+
+  &__terrain {
+    fill: slim.color('surface-2');
+  }
+
+  &__contours {
+    fill: none;
+    stroke: slim.color('line');
+    stroke-width: 1;
+  }
+
+  &__hatch {
+    stroke: slim.color('line-strong');
+    stroke-width: 1;
+  }
+
+  &__wood {
+    stroke: slim.color('line-strong');
+  }
+
+  &__areal {
+    fill: slim.color('surface');
+    stroke: slim.color('text-4');
+    stroke-dasharray: 4 3;
+  }
+
+  &__buildings {
+    fill: slim.color('line-strong');
+    stroke: slim.color('text-4');
+  }
+
+  &__road {
+    fill: none;
+    stroke: slim.color('surface');
+    stroke-width: 4;
+  }
+
+  &__label {
+    font-size: 10px;
+    fill: slim.color('text-3');
+
+    &--areal {
+      font-size: 11px;
+      font-weight: slim.font-weight('bold');
+    }
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: slim.color('text-4');
+
+    &--ok {
+      background: slim.color('success');
+    }
+    &--warn {
+      background: slim.color('warning');
+    }
+    &--over {
+      background: slim.color('danger');
+    }
+  }
+
+  &__legend {
+    padding-inline: 0;
+  }
+
+  &__legend-mode {
+    margin-left: auto;
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__pop {
+    width: 240px;
+  }
+
+  &__pop-head {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    margin-bottom: slim.space(1);
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__pop-close {
+    @include slim.control-reset;
+    margin-left: auto;
+    font-size: slim.font-size('lg');
+    line-height: 1;
+    color: slim.color('text-4');
+    @include slim.focus-visible;
+  }
+
+  &__pop-row {
+    display: flex;
+    justify-content: space-between;
+    gap: slim.space(2);
+    padding: 3px 0;
+    border-top: 1px dashed slim.color('line');
+    font-variant-numeric: tabular-nums;
+
+    &--muted {
+      color: slim.color('text-3');
+    }
+  }
+
+  // Result -----------------------------------------------------------------
+  &__progress {
+    padding: slim.space(5) slim.space(4);
+    font-size: slim.font-size('sm');
+    color: slim.color('text-2');
+
+    p {
+      margin: 0 0 slim.space(3);
+    }
+  }
+
+  &__progress-bar {
+    height: 6px;
+    border-radius: slim.radius('pill');
+  }
+
+  &__result {
+    td {
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__d {
+    font-weight: slim.font-weight('semibold');
+
+    &--up {
+      color: slim.color('danger');
+    }
+    &--down {
+      color: slim.color('success');
+    }
+    &--flat {
+      color: slim.color('text-4');
+    }
+  }
+
+  &__arrow {
+    margin-inline: slim.space(1);
+    color: slim.color('text-4');
+  }
+
+  &__bar {
+    margin-top: slim.space(4);
+  }
+}

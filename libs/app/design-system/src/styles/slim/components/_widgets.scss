@@ -1,0 +1,380 @@
+// Widgets of the Schiessplatz pages (5.11–5.13): drawer, stepper, action bar,
+// schematic map with pins, level meter, room list. All BEM, tokens only.
+@use '../abstracts' as *;
+
+// Drawer: a `slim-sheet` that docks to the right edge from md (form panel).
+//   <div class="slim-sheet slim-sheet--drawer slim-sheet--open">…</div>
+.slim-sheet {
+  @include mod('drawer') {
+    .slim-sheet__panel {
+      @include mq('md') {
+        inset: 0 0 0 auto;
+        transform: none;
+        width: min(520px, calc(100vw - #{space(8)}));
+        max-height: none;
+        border-radius: 0;
+        animation: slim-slide-in-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+    }
+  }
+}
+
+@keyframes slim-slide-in-right {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+// Number stepper ------------------------------------------------------------
+//   <div class="slim-stepper"><button class="slim-stepper__btn">−</button>
+//   <input class="slim-stepper__input"><button class="slim-stepper__btn">+</button></div>
+.slim-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid color('line-strong');
+  border-radius: radius('md');
+  background: color('surface');
+  overflow: hidden;
+
+  @include elem('btn') {
+    @include control-reset;
+    width: size('control-h');
+    color: color('text-2');
+    font-size: font-size('lg');
+    @include focus-visible(true);
+    @include hover {
+      background: color('hover');
+    }
+    &:disabled {
+      color: color('disabled');
+    }
+  }
+  @include elem('input') {
+    @include control-reset;
+    width: 96px;
+    min-height: size('control-h');
+    text-align: center;
+    font-weight: font-weight('semibold');
+    font-variant-numeric: tabular-nums;
+    border-inline: 1px solid color('line');
+    background: transparent;
+    color: color('ink');
+    @include focus-visible(true);
+  }
+  @include mod('block') {
+    display: flex;
+    .slim-stepper__input {
+      flex: 1 1 auto;
+      width: auto;
+    }
+  }
+}
+
+// Sticky action bar (bottom of the page, above the tabbar on phones) ----------
+.slim-actionbar {
+  position: sticky;
+  bottom: calc(#{size('tabbar-h')} + env(safe-area-inset-bottom, 0px));
+  z-index: z('sticky');
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: space(2) space(3);
+  margin: space(4) calc(-1 * #{space(4)}) 0;
+  padding: space(3) space(4);
+  background: color('surface');
+  border-top: 1px solid color('line');
+  box-shadow: shadow('md');
+
+  @include mq('lg') {
+    bottom: 0;
+    margin-inline: 0;
+    border: 1px solid color('line');
+    border-radius: radius('lg');
+  }
+
+  @include elem('state') {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: space(2);
+    font-size: font-size('sm');
+    color: color('text-2');
+    b {
+      color: color('ink');
+    }
+  }
+  @include elem('grow') {
+    flex: 1 1 auto;
+  }
+}
+
+// Schematic map with receiver pins ------------------------------------------
+//   <div class="slim-map"><svg class="slim-map__canvas" viewBox="0 0 600 520">…</svg>
+//     <button class="slim-map__pin slim-map__pin--over" style="--x:37%;--y:49%">E1</button>
+//   </div>
+.slim-map {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 600 / 520;
+  border-radius: radius('md');
+  overflow: hidden;
+  background: color('surface-2');
+  border: 1px solid color('line');
+
+  @include elem('canvas') {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  // Pins are positioned with the `--x` / `--y` custom properties (percent).
+  @include elem('pin') {
+    @include control-reset;
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    transform: translate(-50%, -100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 space(2);
+    border-radius: radius('pill') radius('pill') radius('pill') 2px;
+    background: color('text-4');
+    color: #fff;
+    font-size: font-size('xs');
+    font-weight: font-weight('bold');
+    box-shadow: shadow('md');
+    border: 2px solid #fff;
+    transition: transform transition('fast');
+    @include focus-visible;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      width: 6px;
+      height: 6px;
+      margin-left: -3px;
+      background: inherit;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+    }
+
+    @include hover {
+      transform: translate(-50%, -100%) scale(1.08);
+    }
+    @include mod('ok') {
+      background: color('success');
+    }
+    @include mod('warn') {
+      background: color('warning');
+    }
+    @include mod('over') {
+      background: color('danger');
+    }
+    @include mod('none') {
+      background: color('text-4');
+    }
+    @include mod('active') {
+      transform: translate(-50%, -100%) scale(1.2);
+      z-index: 1;
+      box-shadow: 0 0 0 6px alpha('ink', 0.12), shadow('md');
+    }
+  }
+
+  // Ghost dot for the "before" state next to a pin (simulation).
+  @include elem('ghost') {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    width: 12px;
+    height: 12px;
+    transform: translate(6px, -34px);
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: shadow('sm');
+    @include mod('ok') {
+      background: color('success');
+    }
+    @include mod('warn') {
+      background: color('warning');
+    }
+    @include mod('over') {
+      background: color('danger');
+    }
+    @include mod('none') {
+      background: color('text-4');
+    }
+  }
+
+  // Popover anchored to a pin.
+  @include elem('pop') {
+    position: absolute;
+    left: var(--x, 50%);
+    top: var(--y, 50%);
+    transform: translate(-50%, 8px);
+    z-index: 2;
+    min-width: 220px;
+    max-width: calc(100% - #{space(4)});
+    padding: space(3);
+    border-radius: radius('md');
+    background: color('surface');
+    color: color('ink');
+    border: 1px solid color('line');
+    box-shadow: shadow('lg');
+    font-size: font-size('sm');
+  }
+}
+
+// Level meter: a bar with the limit marked ----------------------------------
+//   <div class="slim-meter"><span class="slim-meter__fill slim-meter__fill--warn" style="--w:80%"></span>
+//   <span class="slim-meter__limit" style="--at:88%"></span></div>
+.slim-meter {
+  position: relative;
+  height: 8px;
+  border-radius: radius('pill');
+  background: color('surface-2');
+  border: 1px solid color('line');
+  overflow: visible;
+
+  @include elem('fill') {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--w, 0%);
+    border-radius: radius('pill');
+    background: color('text-4');
+    transition: width transition('base');
+    @include mod('ok') {
+      background: color('success');
+    }
+    @include mod('warn') {
+      background: color('warning');
+    }
+    @include mod('over') {
+      background: color('danger');
+    }
+  }
+  @include elem('limit') {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: var(--at, 100%);
+    width: 2px;
+    margin-left: -1px;
+    background: color('ink');
+    border-radius: 1px;
+  }
+}
+
+// Room list (left column of the shots page) -----------------------------------
+.slim-roomlist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  @include elem('group') {
+    margin-top: space(3);
+    padding: 0 space(2);
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: color('text-3');
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  @include elem('item') {
+    @include control-reset;
+    display: flex;
+    align-items: center;
+    gap: space(2);
+    width: 100%;
+    min-height: size('control-h-sm');
+    padding: space(1) space(2);
+    border-radius: radius('md');
+    text-align: left;
+    font-size: font-size('sm');
+    color: color('text-2');
+    @include focus-visible(true);
+    @include hover {
+      background: color('hover');
+    }
+    @include mod('active') {
+      background: color('primary-subtle');
+      color: color('primary');
+      font-weight: font-weight('semibold');
+    }
+  }
+  @include elem('name') {
+    flex: 1 1 auto;
+    @include truncate;
+  }
+  @include elem('count') {
+    flex: none;
+    min-width: 24px;
+    padding: 0 space(1);
+    border-radius: radius('pill');
+    background: color('surface-2');
+    color: color('text-3');
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    @include mod('zero') {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Sub-navigation of an entity (context bar tabs with icons) -------------------
+.slim-subnav {
+  display: flex;
+  gap: space(1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include elem('tab') {
+    @include control-reset;
+    display: inline-flex;
+    align-items: center;
+    gap: space(2);
+    min-height: size('control-h-sm');
+    padding: 0 space(3);
+    border-radius: radius('pill');
+    color: color('text-3');
+    font-size: font-size('sm');
+    font-weight: font-weight('semibold');
+    white-space: nowrap;
+    text-decoration: none;
+    @include focus-visible;
+    @include hover {
+      background: color('hover');
+      color: color('ink');
+    }
+    @include mod('active') {
+      background: color('primary-subtle');
+      color: color('primary');
+    }
+    svg {
+      width: 14px;
+      height: 14px;
+      flex: none;
+    }
+  }
+}
+
+// Changed-value marker for inputs (simulation table) ---------------------------
+//   <input class="slim-input slim-input--changed">
+.slim-input {
+  @include mod('changed') {
+    border-color: color('warning');
+    background: color('warning-subtle');
+  }
+}

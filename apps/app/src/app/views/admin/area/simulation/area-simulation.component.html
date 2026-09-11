@@ -1,0 +1,468 @@
+<div class="slim-page sim">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ 'simulation.title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ 'simulation.subtitle' | translate }}</p>
+    </div>
+    <div class="slim-page__actions">
+      <label class="slim-filter">
+        {{ 'year' | translate }}
+        <select
+          class="slim-select"
+          data-testid="sim-year"
+          [value]="year()"
+          (change)="setYear($any($event.target).value)"
+        >
+          @for (y of years; track y) {
+            <option [value]="y">{{ y }}</option>
+          }
+        </select>
+      </label>
+      <button
+        type="button"
+        class="slim-btn"
+        [disabled]="!showSim()"
+        [attr.title]="'simulation.pdf_soon' | translate"
+      >
+        {{ 'simulation.pdf' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="slim-alert slim-alert--info slim-u-mb-4">
+    <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5" />
+      <path d="M8 7.2v4M8 5v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    </svg>
+    <div class="slim-alert__body">
+      <div class="slim-alert__title">{{ 'simulation.sandbox_title' | translate }}</div>
+      {{ 'simulation.sandbox_text' | translate }}
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4">
+      <div class="slim-alert__body">{{ error() | translate }}</div>
+    </div>
+  }
+
+  <div class="sim__split">
+    <!-- Inputs ------------------------------------------------------------ -->
+    <section class="slim-card slim-card--bleed sim__inputs">
+      <div class="sim__head">
+        <h2 class="sim__head-title">{{ 'simulation.inputs_title' | translate }}</h2>
+        <button
+          type="button"
+          class="slim-btn slim-btn--sm"
+          [class.slim-btn--primary]="editing()"
+          data-testid="sim-edit"
+          (click)="toggleEditing()"
+        >
+          @if (editing()) {
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M2.5 8.5l3.5 3.5L13.5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="slim-btn__label">{{ 'simulation.edit_done' | translate }}</span>
+          } @else {
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M11 2.5l2.5 2.5L5 13.5H2.5V11L11 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+            </svg>
+            <span class="slim-btn__label">{{ 'simulation.edit' | translate }}</span>
+          }
+        </button>
+        <button
+          type="button"
+          class="slim-btn slim-btn--sm"
+          data-testid="sim-reset"
+          [disabled]="!dirty()"
+          (click)="reset()"
+        >
+          {{ 'simulation.reset_values' | translate }}
+        </button>
+        <p class="sim__head-sub">{{ 'simulation.inputs_sub' | translate: { year: year() } }}</p>
+      </div>
+
+      <div class="slim-table-wrap sim__table-wrap">
+        <table class="slim-table slim-table--stack">
+          <thead>
+            <tr>
+              <th>
+                {{ 'simulation.columns.room' | translate }}
+                <span class="sim__th-sub">{{ 'simulation.columns.room_no' | translate }}</span>
+              </th>
+              <th>{{ 'simulation.columns.weapon' | translate }}</th>
+              <th class="slim-table__cell--num">
+                {{ 'simulation.columns.inside' | translate }}
+                <span class="sim__info" [title]="'simulation.columns.inside_info' | translate">i</span>
+              </th>
+              <th class="slim-table__cell--num">
+                {{ 'simulation.columns.outside' | translate }}
+                <span class="sim__info" [title]="'simulation.columns.outside_info' | translate">i</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.weaponId) {
+              <tr
+                class="slim-table__row sim__row"
+                [class.sim__row--muted]="!row.hasLevels"
+                [attr.title]="row.hasLevels ? null : ('simulation.no_levels' | translate)"
+                data-testid="sim-row"
+              >
+                <td [attr.data-label]="'simulation.columns.room' | translate">
+                  <span class="sim__room">{{ row.roomName }}</span>
+                  @if (row.roomNo) {
+                    <small class="sim__small">{{ row.roomNo }}</small>
+                  }
+                </td>
+                <td [attr.data-label]="'simulation.columns.weapon' | translate">
+                  <span>{{ row.weapon }}</span>
+                  <small class="sim__small">{{ row.caliber }}</small>
+                </td>
+                @for (key of ['inside', 'outside']; track key) {
+                  <td
+                    class="slim-table__cell--num"
+                    [attr.data-label]="'simulation.columns.' + key | translate"
+                  >
+                    <div class="sim__cell">
+                      <input
+                        class="slim-input slim-input--sm sim__value"
+                        [class.slim-input--changed]="changed(row, $any(key))"
+                        inputmode="numeric"
+                        [attr.data-testid]="'sim-' + key"
+                        [attr.aria-label]="'simulation.columns.' + key | translate"
+                        [value]="fmt(value(row, $any(key)))"
+                        [disabled]="!editing()"
+                        (change)="onInput(row, $any(key), $any($event.target).value)"
+                      />
+                      @if (deltaLabel(row, $any(key)); as delta) {
+                        <span
+                          class="sim__delta"
+                          [class.sim__delta--down]="value(row, $any(key)) < row[$any(key)]"
+                        >
+                          {{ delta === 'simulation.delta_new' ? (delta | translate) : delta }}
+                        </span>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ 'simulation.no_rows' | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+          @if (rows().length) {
+            <tfoot>
+              <tr class="sim__foot">
+                <td colspan="2">{{ 'simulation.total_rows' | translate: { n: rows().length } }}</td>
+                <td class="slim-table__cell--num">
+                  {{ fmt(totals().inside) }}
+                  @if (totals().inside !== totals().baseInside) {
+                    <span class="sim__delta" [class.sim__delta--down]="totals().inside < totals().baseInside">
+                      {{ signedInt(totals().inside - totals().baseInside) }}
+                    </span>
+                  }
+                </td>
+                <td class="slim-table__cell--num">
+                  {{ fmt(totals().outside) }}
+                  @if (totals().outside !== totals().baseOutside) {
+                    <span class="sim__delta" [class.sim__delta--down]="totals().outside < totals().baseOutside">
+                      {{ signedInt(totals().outside - totals().baseOutside) }}
+                    </span>
+                  }
+                </td>
+              </tr>
+            </tfoot>
+          }
+        </table>
+      </div>
+
+      @if (editing()) {
+        <div class="sim__quick">
+          <span class="sim__quick-label">{{ 'simulation.quick_label' | translate }}</span>
+          @for (f of scaleFactors; track f) {
+            <button
+              type="button"
+              class="slim-chip"
+              data-testid="sim-scale"
+              [attr.data-factor]="f"
+              (click)="scale(f)"
+            >
+              {{ f >= 1 ? '+' : '−' }}{{ fmt(f >= 1 ? (f - 1) * 100 : (1 - f) * 100) }} %
+            </button>
+          }
+          <span class="sim__quick-hint">{{ 'simulation.quick_hint' | translate }}</span>
+        </div>
+      }
+    </section>
+
+    <!-- Calculation, map, result --------------------------------------------- -->
+    <div class="sim__side">
+      <section class="slim-card">
+        <header class="slim-card__header">
+          <h2 class="slim-card__title">{{ 'simulation.calc_title' | translate }}</h2>
+        </header>
+        <div class="slim-card__body">
+          @if (calculation(); as calc) {
+            <dl class="slim-kv">
+              <dt class="slim-kv__key">{{ 'simulation.calc_basis' | translate }}</dt>
+              <dd class="slim-kv__value">
+                {{ calc.name }}
+                <span class="slim-badge">{{ deliveredAt(calc.deliveredAt) }}</span>
+              </dd>
+              <dt class="slim-kv__key">{{ 'simulation.calc_build_year' | translate }}</dt>
+              <dd class="slim-kv__value">{{ 'simulation.build_year.' + calc.buildYearClass | translate }}</dd>
+              <dt class="slim-kv__key">{{ 'simulation.calc_assessment' | translate }}</dt>
+              <dd class="slim-kv__value">{{ 'simulation.calc_assessment_value' | translate }}</dd>
+            </dl>
+          } @else {
+            <p class="slim-text--muted">{{ 'simulation.no_calculation' | translate }}</p>
+          }
+        </div>
+      </section>
+
+      <section class="slim-card">
+        <header class="slim-card__header">
+          <h2 class="slim-card__title">{{ 'simulation.map_title' | translate }}</h2>
+        </header>
+        <div class="slim-card__body sim__map-body">
+          <div class="slim-map sim__map">
+            <svg
+              class="slim-map__canvas sim__canvas"
+              viewBox="0 0 600 480"
+              role="img"
+              [attr.aria-label]="'simulation.map_alt' | translate"
+            >
+              <defs>
+                <pattern id="sim-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                  <line class="sim__hatch" x1="0" y1="0" x2="0" y2="6" />
+                </pattern>
+              </defs>
+              <rect class="sim__terrain" width="600" height="480" />
+              <g class="sim__contours">
+                <path d="M0 110 C120 70 200 150 320 100 S520 50 600 80" />
+                <path d="M0 190 C100 150 220 230 340 180 S540 130 600 160" />
+                <path d="M0 280 C90 240 230 320 360 260 S550 210 600 240" />
+                <path d="M0 380 C110 340 240 420 370 350 S560 300 600 330" />
+              </g>
+              <path class="sim__wood" d="M20 40 L140 30 L170 120 L60 150 Z" fill="url(#sim-hatch)" />
+              <path class="sim__wood" d="M420 360 L560 330 L590 450 L450 480 Z" fill="url(#sim-hatch)" />
+              <path class="sim__areal" d="M150 190 L330 160 L370 290 L300 330 L170 310 Z" />
+              <text class="sim__label sim__label--areal" x="260" y="250" text-anchor="middle">SPM</text>
+              <g class="sim__buildings">
+                <rect x="225" y="215" width="30" height="16" />
+                <rect x="265" y="235" width="18" height="12" />
+                <rect x="500" y="72" width="14" height="10" />
+                <rect x="520" y="87" width="12" height="9" />
+                <rect x="540" y="70" width="16" height="11" />
+                <rect x="120" y="415" width="18" height="12" />
+                <rect x="60" y="220" width="16" height="11" />
+              </g>
+              <text class="sim__label" x="528" y="120">Lattigen</text>
+              <text class="sim__label" x="140" y="455">Laberhus</text>
+              <path class="sim__road" d="M0 320 C120 290 250 350 380 310 S520 270 600 290" />
+            </svg>
+
+            @for (r of receivers(); track r.id) {
+              @if (showSim()) {
+                <span
+                  class="slim-map__ghost"
+                  [class]="'slim-map__ghost slim-map__ghost--' + r.currentState"
+                  [style.--x]="r.mapX + '%'"
+                  [style.--y]="r.mapY + '%'"
+                  [attr.title]="'simulation.ghost_title' | translate: { value: db(r.current) }"
+                ></span>
+              }
+              <button
+                type="button"
+                class="slim-map__pin"
+                [class]="'slim-map__pin slim-map__pin--' + pinState(r) + (activePin() === r.id ? ' slim-map__pin--active' : '')"
+                [style.--x]="r.mapX + '%'"
+                [style.--y]="r.mapY + '%'"
+                data-testid="sim-pin"
+                [attr.data-code]="r.code"
+                [attr.aria-label]="'simulation.pin_label' | translate: { code: r.code }"
+                (click)="selectPin(r.id)"
+              >
+                {{ r.code }}
+              </button>
+            }
+
+            @if (activeReceiver(); as r) {
+              <div class="slim-map__pop sim__pop" [style.--x]="r.mapX + '%'" [style.--y]="r.mapY + '%'">
+                <div class="sim__pop-head">
+                  <span class="sim__dot" [class]="'sim__dot sim__dot--' + pinState(r)"></span>
+                  <b>{{ r.code }}</b> · {{ r.address }}
+                  <button
+                    type="button"
+                    class="sim__pop-close"
+                    [attr.aria-label]="'common.close' | translate"
+                    (click)="closePop($event)"
+                  >
+                    ×
+                  </button>
+                </div>
+                <div class="sim__pop-row">
+                  <span>{{ 'simulation.pop_limit' | translate: { kind: r.limitKind.toUpperCase() } }}</span>
+                  <b>{{ r.limit }} dB</b>
+                </div>
+                <div class="sim__pop-row">
+                  <span>{{ 'simulation.pop_current' | translate: { year: year() } }}</span>
+                  <b>{{ db(r.current) }}</b>
+                </div>
+                @if (simulated(r); as sim) {
+                  <div class="sim__pop-row">
+                    <span>{{ 'simulation.pop_simulated' | translate }}</span>
+                    <b>{{ db(sim.simulated) }}</b>
+                  </div>
+                  <div class="sim__pop-row">
+                    <span>{{ 'simulation.pop_delta' | translate }}</span>
+                    <b [class]="deltaClass(sim.delta)">{{ signed(sim.delta) }}</b>
+                  </div>
+                } @else {
+                  <div class="sim__pop-row sim__pop-row--muted">
+                    <span>{{ 'simulation.pop_simulated' | translate }}</span>
+                    <span>{{ 'simulation.pop_not_run' | translate }}</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <div class="slim-legend sim__legend">
+            <span class="slim-legend__item"><span class="sim__dot sim__dot--ok"></span>{{ 'status_area.ok' | translate }}</span>
+            <span class="slim-legend__item"><span class="sim__dot sim__dot--warn"></span>{{ 'simulation.legend_warn' | translate }}</span>
+            <span class="slim-legend__item"><span class="sim__dot sim__dot--over"></span>{{ 'status_area.over' | translate }}</span>
+            <span class="slim-legend__item sim__legend-mode">
+              {{ (showSim() ? 'simulation.mode_sim' : 'simulation.mode_current') | translate: { year: year() } }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slim-card slim-card--bleed">
+        <div class="sim__head">
+          <h2 class="sim__head-title">{{ 'simulation.result_title' | translate }}</h2>
+          <span class="sim__head-meta">
+            @if (result() && stale()) {
+              {{ 'simulation.result_stale' | translate }}
+            } @else if (showSim()) {
+              {{ 'simulation.result_sub_over' | translate: { n: overCount() } }}
+            } @else {
+              {{ 'simulation.result_sub' | translate }}
+            }
+          </span>
+        </div>
+
+        @if (running()) {
+          <div class="sim__progress">
+            <p>{{ 'simulation.running' | translate }}</p>
+            <span class="slim-skeleton slim-skeleton--text sim__progress-bar"></span>
+          </div>
+        } @else if (!result()) {
+          <div class="slim-empty">
+            <div class="slim-empty__title">{{ 'simulation.result_empty_title' | translate }}</div>
+            <div class="slim-empty__text">
+              {{ (dirty() ? 'simulation.result_empty_dirty' : 'simulation.result_empty_clean') | translate }}
+            </div>
+          </div>
+        } @else {
+          <div class="slim-table-wrap sim__table-wrap">
+            <table class="slim-table slim-table--stack sim__result">
+              <thead>
+                <tr>
+                  <th>{{ 'simulation.result.point' | translate }}</th>
+                  <th class="slim-table__cell--num">{{ 'simulation.result.limit' | translate }}</th>
+                  <th class="slim-table__cell--num">{{ 'simulation.result.current' | translate }}</th>
+                  <th class="slim-table__cell--num">{{ 'simulation.result.simulated' | translate }}</th>
+                  <th class="slim-table__cell--num">{{ 'simulation.result.delta' | translate }}</th>
+                  <th>{{ 'simulation.result.assessment' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of result()!.receivers; track r.id) {
+                  <tr
+                    class="slim-table__row slim-table__row--clickable"
+                    [class.slim-table__row--selected]="activePin() === r.id"
+                    data-testid="sim-result-row"
+                    (click)="selectPin(r.id)"
+                  >
+                    <td [attr.data-label]="'simulation.result.point' | translate">
+                      <b>{{ r.code }}</b> <span class="sim__small sim__small--inline">{{ r.address }}</span>
+                    </td>
+                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.limit' | translate">{{ r.limit }} dB</td>
+                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.current' | translate">{{ db(r.current) }}</td>
+                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.simulated' | translate">
+                      <b>{{ stale() ? '–' : db(r.simulated) }}</b>
+                    </td>
+                    <td
+                      [class]="'slim-table__cell--num ' + deltaClass(stale() ? null : r.delta)"
+                      [attr.data-label]="'simulation.result.delta' | translate"
+                    >
+                      {{ stale() ? '–' : signed(r.delta) }}
+                    </td>
+                    <td [attr.data-label]="'simulation.result.assessment' | translate">
+                      @if (stale()) {
+                        <span class="slim-badge">{{ 'simulation.badge_stale' | translate }}</span>
+                      } @else if (r.simulatedState !== r.currentState) {
+                        <span [class]="badge(r.currentState)">{{ 'status_area.' + r.currentState | translate }}</span>
+                        <span class="sim__arrow" aria-hidden="true">→</span>
+                        <span [class]="badge(r.simulatedState)">{{ 'status_area.' + r.simulatedState | translate }}</span>
+                      } @else {
+                        <span [class]="badge(r.simulatedState)">{{ 'status_area.' + r.simulatedState | translate }}</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    </div>
+  </div>
+
+  <!-- Action bar ------------------------------------------------------------- -->
+  <div class="slim-actionbar sim__bar">
+    <span class="slim-actionbar__state" data-testid="sim-state">
+      <span
+        class="slim-badge"
+        [class.slim-badge--success]="!dirty() || showSim()"
+        [class.slim-badge--warning]="dirty() && !showSim()"
+      >
+        {{ stateKey() | translate }}
+      </span>
+      @if (dirty()) {
+        <span [innerHTML]="'simulation.state_changed' | translate: { n: changedCount(), total: fmt(totals().inside + totals().outside), pct: (totalPercent() > 0 ? '+' : '') + totalPercent() }"></span>
+      } @else {
+        <span>{{ 'simulation.state_hint' | translate }}</span>
+      }
+    </span>
+    <span class="slim-actionbar__grow"></span>
+    <button type="button" class="slim-btn" [disabled]="!dirty()" (click)="reset()">
+      {{ 'simulation.reset' | translate }}
+    </button>
+    <button
+      type="button"
+      class="slim-btn slim-btn--primary"
+      data-testid="sim-run"
+      [disabled]="!dirty() || running()"
+      (click)="run()"
+    >
+      <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M4.5 2.8l8 5.2-8 5.2V2.8z" fill="currentColor" />
+      </svg>
+      <span class="slim-btn__label">{{ 'simulation.run' | translate }}</span>
+    </button>
+  </div>
+</div>

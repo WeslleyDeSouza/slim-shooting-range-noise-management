@@ -1,0 +1,343 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.details {
+  &__calc {
+    margin-bottom: slim.space(4);
+  }
+
+  &__calc-grid {
+    display: grid;
+    gap: slim.space(5);
+
+    @include slim.mq('md') {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__calc-title {
+    margin: 0 0 slim.space(3);
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: slim.color('text-3');
+  }
+
+  &__select {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  &__dates {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2);
+    font-size: slim.font-size('sm');
+    color: slim.color('text-3');
+
+    .slim-input {
+      flex: 1 1 140px;
+      min-width: 0;
+    }
+  }
+
+  &__note {
+    margin: slim.space(3) 0 0;
+    padding: slim.space(2) slim.space(3);
+    border-radius: slim.radius('md');
+    background: slim.color('surface-2');
+    font-size: slim.font-size('sm');
+    color: slim.color('text-2');
+
+    &--other {
+      background: slim.color('info-subtle');
+      color: slim.color('ink');
+    }
+  }
+
+  &__info {
+    display: inline-grid;
+    place-items: center;
+    width: 15px;
+    height: 15px;
+    margin-left: slim.space(1);
+    border-radius: 50%;
+    background: slim.color('line');
+    color: slim.color('text-3');
+    font-size: 10px;
+    font-weight: slim.font-weight('bold');
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: help;
+    vertical-align: middle;
+  }
+
+  &__counts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: slim.space(3);
+    margin-bottom: slim.space(4);
+
+    @include slim.mq('md') {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  &__stat--over .slim-stat__value {
+    color: slim.color('danger');
+  }
+  &__stat--warn .slim-stat__value {
+    color: slim.color('warning');
+  }
+  &__stat--ok .slim-stat__value {
+    color: slim.color('success');
+  }
+  &__stat--none .slim-stat__value {
+    color: slim.color('text-3');
+  }
+
+  &__split {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
+    }
+  }
+
+  &__maphead {
+    flex-wrap: wrap;
+  }
+
+  &__fullscreen {
+    margin-left: auto;
+  }
+
+  &__mapbody {
+    padding-top: slim.space(3);
+  }
+
+  // Schematic terrain (colours from tokens so the map follows the theme)
+  &__map-ground {
+    fill: slim.color('surface-2');
+  }
+  &__map-contour {
+    stroke: slim.color('line');
+    stroke-width: 1;
+  }
+  &__map-hatch {
+    stroke: slim.color('line-strong');
+    stroke-width: 1;
+  }
+  &__map-forest {
+    stroke: slim.color('line-strong');
+  }
+  &__map-area {
+    fill: slim.alpha('success', 0.12);
+    stroke: slim.color('success');
+    stroke-dasharray: 4 3;
+  }
+  &__map-buildings {
+    fill: slim.color('line-strong');
+    stroke: slim.color('text-4');
+  }
+  &__map-road {
+    stroke: slim.color('surface');
+    stroke-width: 4;
+  }
+  &__map-stream {
+    stroke: slim.color('info');
+    stroke-width: 2.5;
+    opacity: 0.5;
+  }
+  &__map-label {
+    fill: slim.color('text-3');
+    font-size: 10px;
+
+    &--area {
+      font-size: 11px;
+      font-weight: slim.font-weight('bold');
+    }
+  }
+
+  &__dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: slim.color('text-4');
+    flex: none;
+
+    &--ok {
+      background: slim.color('success');
+    }
+    &--warn {
+      background: slim.color('warning');
+    }
+    &--over {
+      background: slim.color('danger');
+    }
+    &--none {
+      background: slim.color('text-4');
+    }
+  }
+
+  &__list-item {
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+
+    &--active {
+      background: slim.color('primary-subtle');
+    }
+  }
+
+  &__list-code {
+    flex: none;
+    min-width: 30px;
+    font-weight: slim.font-weight('bold');
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__list-value {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+
+    small {
+      font-size: slim.font-size('xs');
+      color: slim.color('text-3');
+    }
+  }
+
+  &__aside {
+    overflow: hidden;
+  }
+
+  &__aside-head {
+    display: flex;
+    align-items: center;
+    gap: slim.space(3);
+    padding: slim.space(4);
+    border-bottom: 1px solid slim.color('line');
+  }
+
+  &__aside-titles {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__aside-title {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__aside-sub {
+    font-size: slim.font-size('sm');
+    color: slim.color('text-3');
+    @include slim.truncate;
+  }
+
+  &__aside-body {
+    padding: slim.space(4);
+  }
+
+  &__pin {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: slim.color('text-4');
+    color: #fff;
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('bold');
+    flex: none;
+
+    &--ok {
+      background: slim.color('success');
+    }
+    &--warn {
+      background: slim.color('warning');
+    }
+    &--over {
+      background: slim.color('danger');
+    }
+  }
+
+  &__kv {
+    margin-bottom: slim.space(4);
+  }
+
+  &__section {
+    margin: 0 0 slim.space(2);
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: slim.color('text-3');
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__assess {
+    font-size: slim.font-size('sm');
+  }
+
+  &__reserve-col {
+    width: 34%;
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__sub {
+    font-size: slim.font-size('xs');
+    color: slim.color('text-3');
+    font-weight: slim.font-weight('regular');
+  }
+
+  &__delta {
+    white-space: nowrap;
+  }
+
+  &__reserve {
+    margin-top: slim.space(1);
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    color: slim.color('text-3');
+
+    &--ok {
+      color: slim.color('success');
+    }
+    &--warn {
+      color: slim.color('warning');
+    }
+    &--over {
+      color: slim.color('danger');
+    }
+  }
+
+  &__assess-note {
+    margin: slim.space(3) 0 0;
+    font-size: slim.font-size('xs');
+    color: slim.color('text-3');
+  }
+}

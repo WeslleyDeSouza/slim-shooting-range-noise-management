@@ -1,0 +1,380 @@
+<div class="slim-page details">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ 'details.title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ 'details.subtitle' | translate }}</p>
+    </div>
+    <div class="slim-page__actions">
+      <button
+        type="button"
+        class="slim-btn"
+        disabled
+        [attr.title]="'details.pdf_soon' | translate"
+      >
+        <span class="slim-btn__label">{{ 'details.pdf' | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4">
+      <div class="slim-alert__body">{{ error() | translate }}</div>
+    </div>
+  }
+
+  @if (assessment(); as a) {
+    <!-- Immissionsberechnung -->
+    <section class="slim-card details__calc">
+      <div class="slim-card__body details__calc-grid">
+        <div class="details__calc-col">
+          <h2 class="details__calc-title">{{ 'details.calc.current_title' | translate }}</h2>
+          @if (a.current; as current) {
+            <dl class="slim-kv">
+              <dt class="slim-kv__key">{{ 'details.calc.basis' | translate }}</dt>
+              <dd class="slim-kv__value">
+                {{ current.name }}
+                <span class="slim-badge">{{ current.deliveredAt | date: 'dd.MM.yyyy' }}</span>
+              </dd>
+              <dt class="slim-kv__key">{{ 'details.calc.build_year' | translate }}</dt>
+              <dd class="slim-kv__value">
+                {{ 'details.build_year.' + current.buildYearClass | translate }}
+                <span class="details__info" [attr.title]="'details.calc.build_year_info' | translate">i</span>
+              </dd>
+              <dt class="slim-kv__key">{{ 'details.calc.last_run' | translate }}</dt>
+              <dd class="slim-kv__value">
+                {{ a.calculatedAt | date: 'dd.MM.yyyy, HH:mm' }} · {{ 'details.calc.automatic' | translate }}
+              </dd>
+            </dl>
+          } @else {
+            <p class="slim-text--muted">{{ 'details.no_calculation.title' | translate }}</p>
+          }
+        </div>
+
+        <div class="details__calc-col">
+          <h2 class="details__calc-title">{{ 'details.calc.view_title' | translate }}</h2>
+          <dl class="slim-kv">
+            <dt class="slim-kv__key">
+              <label for="details-calc-select">{{ 'details.calc.basis' | translate }}</label>
+            </dt>
+            <dd class="slim-kv__value">
+              <select
+                id="details-calc-select"
+                class="slim-select details__select"
+                data-testid="details-calc-select"
+                [value]="a.calculation?.id ?? ''"
+                [disabled]="!a.calculations.length"
+                (change)="onCalculationChange($any($event.target).value)"
+              >
+                @for (c of a.calculations; track c.id) {
+                  <option [value]="c.id" [selected]="c.id === a.calculation?.id">
+                    {{ calculationLabel(c) }}
+                  </option>
+                }
+              </select>
+            </dd>
+            <dt class="slim-kv__key">{{ 'details.calc.period' | translate }}</dt>
+            <dd class="slim-kv__value details__dates">
+              <input
+                type="date"
+                class="slim-input"
+                [value]="a.period.from"
+                [attr.aria-label]="'details.calc.period_from' | translate"
+                (change)="onFromChange($any($event.target).value)"
+              />
+              <span>{{ 'details.calc.period_to' | translate }}</span>
+              <input
+                type="date"
+                class="slim-input"
+                [value]="a.period.to"
+                [attr.aria-label]="'details.calc.period_to_label' | translate"
+                (change)="onToChange($any($event.target).value)"
+              />
+            </dd>
+          </dl>
+          @if (a.calculation) {
+            <p class="details__note" [class.details__note--other]="isOtherState()">
+              @if (isOtherState()) {
+                {{ 'details.calc.note_other' | translate: { name: a.calculation.name, current: a.current?.name ?? '' } }}
+              } @else {
+                {{ 'details.calc.note_current' | translate: { name: a.calculation.name } }}
+              }
+            </p>
+          }
+        </div>
+      </div>
+    </section>
+
+    @if (!a.calculation) {
+      <section class="slim-card">
+        <div class="slim-empty">
+          <svg class="slim-empty__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M3 10h18M8 14h8" />
+          </svg>
+          <div class="slim-empty__title">{{ 'details.no_calculation.title' | translate }}</div>
+          <p class="slim-empty__text">{{ 'details.no_calculation.text' | translate }}</p>
+        </div>
+      </section>
+    } @else {
+      <!-- Counts -->
+      <div class="details__counts" data-testid="details-counts">
+        <div class="slim-stat">
+          <div class="slim-stat__value">{{ a.counts.total }}</div>
+          <div class="slim-stat__label">{{ 'details.counts.receivers' | translate }}</div>
+        </div>
+        <div class="slim-stat details__stat--over">
+          <div class="slim-stat__value">{{ a.counts.over }}</div>
+          <div class="slim-stat__label">{{ 'details.counts.over' | translate }}</div>
+        </div>
+        <div class="slim-stat details__stat--warn">
+          <div class="slim-stat__value">{{ a.counts.warn }}</div>
+          <div class="slim-stat__label">{{ 'details.counts.warn' | translate }}</div>
+        </div>
+        <div class="slim-stat details__stat--ok">
+          <div class="slim-stat__value">{{ a.counts.ok }}</div>
+          <div class="slim-stat__label">{{ 'details.counts.ok' | translate }}</div>
+        </div>
+        @if (a.counts.none) {
+          <div class="slim-stat details__stat--none">
+            <div class="slim-stat__value">{{ a.counts.none }}</div>
+            <div class="slim-stat__label">{{ 'details.counts.none' | translate }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="details__split">
+        <!-- Map / list -->
+        <section class="slim-card details__mapcard">
+          <header class="slim-card__header details__maphead">
+            <h2 class="slim-card__title">{{ 'details.compliance_title' | translate }}</h2>
+            <div class="slim-segmented" role="group" [attr.aria-label]="'details.view' | translate">
+              <button
+                type="button"
+                class="slim-segmented__item"
+                [class.slim-segmented__item--active]="view() === 'map'"
+                data-testid="details-map-toggle"
+                (click)="setView('map')"
+              >
+                {{ 'details.view_map' | translate }}
+              </button>
+              <button
+                type="button"
+                class="slim-segmented__item"
+                [class.slim-segmented__item--active]="view() === 'list'"
+                data-testid="details-list-toggle"
+                (click)="setView('list')"
+              >
+                {{ 'details.view_list' | translate }}
+              </button>
+            </div>
+            <button
+              type="button"
+              class="slim-btn slim-btn--sm slim-btn--pill details__fullscreen"
+              disabled
+              [attr.title]="'details.gis_soon' | translate"
+            >
+              <span class="slim-btn__label">{{ 'details.fullscreen' | translate }}</span>
+            </button>
+          </header>
+
+          <div class="slim-card__body details__mapbody">
+            @if (view() === 'map') {
+              <div class="slim-map details__map" data-testid="details-map">
+                <svg
+                  class="slim-map__canvas"
+                  viewBox="0 0 600 520"
+                  role="img"
+                  [attr.aria-label]="'details.map_label' | translate"
+                >
+                  <defs>
+                    <pattern id="details-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                      <line x1="0" y1="0" x2="0" y2="6" class="details__map-hatch" />
+                    </pattern>
+                  </defs>
+                  <rect width="600" height="520" class="details__map-ground" />
+                  <g fill="none" class="details__map-contour">
+                    <path d="M0 120 C120 80 200 160 320 110 S520 60 600 90" />
+                    <path d="M0 200 C100 160 220 240 340 190 S540 140 600 170" />
+                    <path d="M0 290 C90 250 230 330 360 270 S550 220 600 250" />
+                    <path d="M0 390 C110 350 240 430 370 360 S560 310 600 340" />
+                    <path d="M0 470 C130 440 250 510 390 450 S570 410 600 430" />
+                  </g>
+                  <path d="M20 40 L140 30 L170 120 L60 150 Z" fill="url(#details-hatch)" class="details__map-forest" />
+                  <path d="M420 380 L560 350 L590 470 L450 500 Z" fill="url(#details-hatch)" class="details__map-forest" />
+                  <path d="M150 200 L330 170 L370 300 L300 340 L170 320 Z" class="details__map-area" />
+                  <text x="260" y="262" text-anchor="middle" class="details__map-label details__map-label--area">SPM</text>
+                  <g class="details__map-buildings">
+                    <rect x="225" y="225" width="30" height="16" transform="rotate(-10 240 233)" />
+                    <rect x="265" y="245" width="18" height="12" />
+                    <rect x="500" y="80" width="14" height="10" />
+                    <rect x="520" y="95" width="12" height="9" />
+                    <rect x="540" y="78" width="16" height="11" />
+                    <rect x="120" y="440" width="18" height="12" />
+                    <rect x="145" y="450" width="14" height="10" />
+                    <rect x="60" y="230" width="16" height="11" />
+                  </g>
+                  <text x="528" y="128" class="details__map-label">Lattigen</text>
+                  <text x="140" y="480" class="details__map-label">Laberhus</text>
+                  <path d="M0 330 C120 300 250 360 380 320 S520 280 600 300" fill="none" class="details__map-road" />
+                  <path d="M60 0 C80 120 40 250 90 400 S60 500 80 520" fill="none" class="details__map-stream" />
+                </svg>
+                @for (r of receivers(); track r.id) {
+                  <button
+                    type="button"
+                    class="slim-map__pin"
+                    [class]="'slim-map__pin slim-map__pin--' + r.state + (r.id === selectedId() ? ' slim-map__pin--active' : '')"
+                    [style]="pinStyle(r)"
+                    data-testid="details-pin"
+                    [attr.data-code]="r.code"
+                    [attr.aria-pressed]="r.id === selectedId()"
+                    [attr.aria-label]="r.code + ', ' + ('details.state.' + r.state | translate)"
+                    (click)="select(r.id)"
+                  >
+                    {{ r.code }}
+                  </button>
+                }
+              </div>
+            } @else {
+              <ul class="slim-list slim-list--divided details__list">
+                @for (r of sorted(); track r.id) {
+                  <li>
+                    <button
+                      type="button"
+                      class="slim-list__item slim-list__item--interactive details__list-item"
+                      [class.details__list-item--active]="r.id === selectedId()"
+                      data-testid="details-list-item"
+                      [attr.data-code]="r.code"
+                      [attr.data-state]="r.state"
+                      (click)="select(r.id)"
+                    >
+                      <span class="slim-list__leading">
+                        <span class="details__dot" [class]="'details__dot details__dot--' + r.state"></span>
+                      </span>
+                      <span class="details__list-code">{{ r.code }}</span>
+                      <span class="slim-list__content">
+                        <span class="slim-list__title">{{ r.address }}</span>
+                        <span class="slim-list__meta">
+                          {{ 'details.receiver.type_' + r.type | translate }} · ES {{ r.sensitivityLevel }}
+                        </span>
+                      </span>
+                      <span class="slim-list__trailing details__list-value">
+                        @if (igwRow(r); as row) {
+                          <b>{{ row.level !== null ? (row.level | number: '1.1-1') + ' dB' : '–' }}</b>
+                          <small>{{ 'details.list_meta' | translate: { limit: row.limit, state: ('details.state.' + r.state | translate) } }}</small>
+                        }
+                      </span>
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+
+            <div class="slim-legend" [attr.aria-label]="'legend' | translate">
+              @for (s of legendStates; track s) {
+                <span class="slim-legend__item">
+                  <span class="details__dot" [class]="'details__dot details__dot--' + s"></span>
+                  {{ 'details.legend.' + s | translate }}
+                </span>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Detail aside -->
+        <aside class="slim-card details__aside" data-testid="details-aside">
+          @if (selected(); as r) {
+            <div class="details__aside-head">
+              <span class="details__pin" [class]="'details__pin details__pin--' + r.state">{{ r.code }}</span>
+              <div class="details__aside-titles">
+                <div class="details__aside-title">{{ 'details.receiver.title' | translate: { code: r.code } }}</div>
+                <div class="details__aside-sub">{{ r.address }}</div>
+              </div>
+              <app-status-pill [status]="r.state" />
+            </div>
+            <div class="details__aside-body">
+              <dl class="slim-kv details__kv">
+                <dt class="slim-kv__key">{{ 'details.receiver.no' | translate }}</dt>
+                <dd class="slim-kv__value">{{ r.code }}</dd>
+                <dt class="slim-kv__key">{{ 'details.receiver.egid' | translate }}</dt>
+                <dd class="slim-kv__value" [class.slim-text--muted]="!r.egid">
+                  {{ r.egid ?? ('details.receiver.egid_none' | translate) }}
+                </dd>
+                <dt class="slim-kv__key">{{ 'details.receiver.type' | translate }}</dt>
+                <dd class="slim-kv__value">{{ 'details.receiver.type_' + r.type | translate }}</dd>
+                <dt class="slim-kv__key">
+                  {{ 'details.receiver.es' | translate }}
+                  <span class="details__info" [attr.title]="'details.receiver.es_info' | translate">i</span>
+                </dt>
+                <dd class="slim-kv__value">ES {{ r.sensitivityLevel }}</dd>
+              </dl>
+
+              <h3 class="details__section">
+                {{ 'details.assess_title' | translate: { name: a.calculation.name } }}
+              </h3>
+              <div class="slim-table-wrap details__table-wrap">
+                <table class="slim-table details__assess">
+                  <thead>
+                    <tr>
+                      <th>{{ 'details.columns.basis' | translate }}</th>
+                      <th class="slim-table__cell--num">{{ 'details.columns.limit' | translate }}</th>
+                      <th class="slim-table__cell--num">{{ 'details.columns.level' | translate }}</th>
+                      <th class="details__reserve-col">{{ 'details.columns.reserve' | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (row of r.rows; track row.annex + row.limitKind) {
+                      <tr data-testid="details-row" [attr.data-annex]="row.annex" [attr.data-kind]="row.limitKind">
+                        <td>
+                          {{ 'details.annex_' + row.annex | translate }}
+                          <div class="details__sub">{{ 'details.' + row.limitKind | translate }}</div>
+                        </td>
+                        <td class="slim-table__cell--num details__num">{{ row.limit }} dB</td>
+                        <td class="slim-table__cell--num details__num">
+                          <b>{{ row.level !== null ? (row.level | number: '1.1-1') + ' dB' : '–' }}</b>
+                          @if (row.deltaToCurrent !== null) {
+                            <div class="details__sub details__delta" data-testid="details-delta">
+                              {{ (row.deltaToCurrent > 0 ? '+' : '') + (row.deltaToCurrent | number: '1.1-1') }} dB
+                              {{ 'details.delta_vs' | translate: { name: a.current?.name ?? '' } }}
+                            </div>
+                          }
+                        </td>
+                        <td>
+                          <div class="slim-meter">
+                            <span
+                              class="slim-meter__fill"
+                              [class]="'slim-meter__fill slim-meter__fill--' + row.state"
+                              [style.--w]="meterWidth(row) + '%'"
+                            ></span>
+                            <span class="slim-meter__limit" [style.--at]="meterLimit(row) + '%'"></span>
+                          </div>
+                          <div class="details__reserve" [class]="'details__reserve details__reserve--' + row.state">
+                            @if (!row.applicable || row.reserve === null) {
+                              {{ 'details.not_applicable' | translate }}
+                            } @else if (row.reserve >= 0) {
+                              {{ 'details.below' | translate: { db: (row.reserve | number: '1.1-1') } }}
+                            } @else {
+                              {{ 'details.above' | translate: { db: (-row.reserve | number: '1.1-1') } }}
+                            }
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <p class="details__assess-note">{{ 'details.assess_note' | translate }}</p>
+            </div>
+          } @else {
+            <div class="slim-empty">
+              <p class="slim-empty__text">{{ 'details.select_hint' | translate }}</p>
+            </div>
+          }
+        </aside>
+      </div>
+    }
+  } @else if (loading()) {
+    <div class="slim-empty">
+      <span class="slim-spinner"></span>
+    </div>
+  }
+</div>

@@ -1,0 +1,659 @@
+<div class="shots">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ 'shots.title' | translate }}</h1>
+      <p class="slim-page__subtitle">
+        {{ 'shots.subtitle' | translate: { area: areaLabel() } }}
+      </p>
+    </div>
+    <div class="slim-page__actions">
+      <label class="slim-filter">
+        {{ 'year' | translate }}
+        <select
+          class="slim-select"
+          data-testid="shots-year"
+          [value]="year()"
+          (change)="setYear($any($event.target).value)"
+        >
+          @for (y of years(); track y) {
+            <option [value]="y" [selected]="y === year()">{{ y }}</option>
+          }
+        </select>
+      </label>
+      <button
+        type="button"
+        class="slim-btn"
+        disabled
+        [attr.title]="'shots.export_soon' | translate"
+      >
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M8 2v8M8 10l-3-3M8 10l3-3M2.5 13.5h11"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span class="slim-btn__label">{{ 'export' | translate }}</span>
+      </button>
+      @if (!readonly()) {
+        <button
+          type="button"
+          class="slim-btn slim-btn--primary"
+          data-testid="shots-new"
+          (click)="openForm()"
+        >
+          <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          <span class="slim-btn__label">{{ 'shots.new' | translate }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (readonly()) {
+    <div class="slim-alert slim-alert--info shots__readonly">
+      <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4" />
+      </svg>
+      <div class="slim-alert__body">{{ 'shots.readonly_notice' | translate }}</div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4">
+      <div class="slim-alert__body">{{ error() | translate }}</div>
+    </div>
+  }
+
+  <div class="shots__kpis" data-testid="shots-kpis">
+    <div class="slim-stat">
+      <div class="slim-stat__value" data-testid="shots-kpi-total">
+        {{ kpi()?.totalShots ?? 0 | number: '1.0-0' }}
+      </div>
+      <div class="slim-stat__label">{{ 'shots.kpi.total' | translate: { year: year() } }}</div>
+    </div>
+    <div class="slim-stat">
+      <div class="slim-stat__value" data-testid="shots-kpi-count">{{ kpi()?.count ?? 0 }}</div>
+      <div class="slim-stat__label">{{ 'shots.kpi.count' | translate }}</div>
+    </div>
+    <div class="slim-stat">
+      <div class="slim-stat__value">{{ kpi()?.civilSharePercent ?? 0 }} %</div>
+      <div class="slim-stat__label">{{ 'shots.kpi.civil_share' | translate }}</div>
+    </div>
+    <div class="slim-stat">
+      <div class="slim-stat__value shots__kpi-date">
+        @if (kpi()?.lastDate; as last) {
+          {{ last | date: 'dd.MM.yyyy' }}
+        } @else {
+          –
+        }
+      </div>
+      <div class="slim-stat__label">{{ 'shots.kpi.last' | translate }}</div>
+    </div>
+  </div>
+
+  <div class="shots__layout">
+    <!-- Stellungsräume: select on phones, list on desktop -->
+    <label class="slim-field shots__rooms-select">
+      <span class="slim-field__label">{{ 'shots.rooms' | translate }}</span>
+      <select class="slim-select" [value]="room()" (change)="selectRoom($any($event.target).value)">
+        <option value="">{{ 'shots.all_rooms' | translate }} ({{ usages().length }})</option>
+        @for (group of roomGroups(); track group.name) {
+          <optgroup [label]="group.name">
+            @for (r of group.rooms; track r.id) {
+              <option [value]="r.id">{{ r.name }} ({{ r.usageCount }})</option>
+            }
+          </optgroup>
+        }
+      </select>
+    </label>
+
+    <aside class="slim-card shots__rooms" [attr.aria-label]="'shots.rooms' | translate">
+      <div class="shots__rooms-head">
+        {{ 'shots.rooms' | translate }} <span>{{ rooms().length }}</span>
+      </div>
+      <div class="slim-roomlist">
+        <button
+          type="button"
+          class="slim-roomlist__item"
+          data-testid="shots-room"
+          [class.slim-roomlist__item--active]="!room()"
+          (click)="selectRoom('')"
+        >
+          <span class="slim-roomlist__name">{{ 'shots.all_rooms' | translate }}</span>
+          <span class="slim-roomlist__count">{{ usages().length }}</span>
+        </button>
+        @for (group of roomGroups(); track group.name) {
+          <div class="slim-roomlist__group">{{ group.name }}</div>
+          @for (r of group.rooms; track r.id) {
+            <button
+              type="button"
+              class="slim-roomlist__item"
+              data-testid="shots-room"
+              [class.slim-roomlist__item--active]="room() === r.id"
+              [title]="r.name"
+              (click)="selectRoom(r.id)"
+            >
+              <span class="slim-roomlist__name">{{ r.name }}</span>
+              <span class="slim-roomlist__count" [class.slim-roomlist__count--zero]="!r.usageCount">
+                {{ r.usageCount }}
+              </span>
+            </button>
+          }
+        }
+      </div>
+    </aside>
+
+    <!-- Table -->
+    <section class="slim-card slim-card--bleed">
+      <div class="slim-toolbar">
+        <div class="slim-search slim-toolbar__grow">
+          <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <input
+            class="slim-search__input"
+            type="search"
+            data-testid="shots-search"
+            [placeholder]="'shots.search_placeholder' | translate"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+        </div>
+        <div class="shots__dates">
+          <input
+            class="slim-input"
+            type="date"
+            [value]="dateFrom()"
+            [attr.aria-label]="'shots.date_from' | translate"
+            (change)="dateFrom.set($any($event.target).value)"
+          />
+          <input
+            class="slim-input"
+            type="date"
+            [value]="dateTo()"
+            [attr.aria-label]="'shots.date_to' | translate"
+            (change)="dateTo.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+
+      <div class="shots__chips">
+        <span class="shots__chips-label">{{ 'shots.columns.type' | translate }}</span>
+        @for (t of types; track t) {
+          <button
+            type="button"
+            class="slim-chip"
+            [class.slim-chip--selected]="typeFilter().has(t)"
+            [attr.aria-pressed]="typeFilter().has(t)"
+            (click)="toggleType(t)"
+          >
+            {{ 'shots.type.' + t | translate }}
+          </button>
+        }
+        <span class="shots__chips-label">{{ 'shots.columns.category' | translate }}</span>
+        @for (c of categories; track c) {
+          <button
+            type="button"
+            class="slim-chip"
+            [class.slim-chip--selected]="categoryFilter().has(c)"
+            [attr.aria-pressed]="categoryFilter().has(c)"
+            (click)="toggleCategory(c)"
+          >
+            {{ 'shots.category.' + c | translate }}
+          </button>
+        }
+        <button type="button" class="shots__reset" (click)="resetFilters()">
+          {{ 'shots.reset_filters' | translate }}
+        </button>
+      </div>
+
+      @if (selected().size > 0) {
+        <div class="shots__bulk" data-testid="shots-bulk">
+          <span>
+            <b>{{ selected().size }}</b> {{ 'shots.selected' | translate }}
+          </span>
+          <span class="slim-u-grow"></span>
+          @if (!readonly()) {
+            <button type="button" class="slim-btn slim-btn--danger slim-btn--sm" (click)="askDelete([...selected()])">
+              {{ 'shots.delete_selected' | translate }}
+            </button>
+          }
+          <button type="button" class="slim-btn slim-btn--sm" (click)="clearSelection()">
+            {{ 'shots.clear_selection' | translate }}
+          </button>
+        </div>
+      }
+
+      <div class="slim-table-wrap shots__table-wrap">
+        <table class="slim-table slim-table--stack" data-testid="shots-table">
+          <thead>
+            <tr>
+              <th class="shots__check">
+                <input
+                  type="checkbox"
+                  class="slim-check__input"
+                  [checked]="allSelected()"
+                  [disabled]="readonly() || !filtered().length"
+                  [attr.aria-label]="'shots.select_all' | translate"
+                  (change)="toggleAll($any($event.target).checked)"
+                />
+              </th>
+              @for (col of columns; track col[0]) {
+                <th
+                  class="shots__th"
+                  [class.shots__th--sorted]="sort().key === col[0]"
+                  [class.shots__th--asc]="sort().key === col[0] && sort().asc"
+                  [class.slim-table__cell--num]="col[0] === 'shots'"
+                  (click)="sortBy(col[0])"
+                >
+                  {{ col[1] | translate }}
+                </th>
+              }
+              <th class="slim-table__cell--actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track rowId($index, row)) {
+              @if (row.kind === 'group') {
+                <tr class="shots__group">
+                  <td colspan="10">
+                    {{ row.roomName }}
+                    <b>{{ row.shots | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+                  </td>
+                </tr>
+              } @else {
+                <tr
+                  class="slim-table__row"
+                  data-testid="shots-row"
+                  [class.slim-table__row--selected]="selected().has(row.usage.id)"
+                  (dblclick)="!readonly() && openForm(row.usage)"
+                >
+                  <td class="shots__check">
+                    <input
+                      type="checkbox"
+                      class="slim-check__input"
+                      [checked]="selected().has(row.usage.id)"
+                      [disabled]="readonly()"
+                      [attr.aria-label]="'shots.select' | translate"
+                      (change)="toggleSelect(row.usage.id, $any($event.target).checked)"
+                    />
+                  </td>
+                  <td [attr.data-label]="'shots.columns.room' | translate">{{ row.usage.roomName }}</td>
+                  <td [attr.data-label]="'shots.columns.unit' | translate">{{ row.usage.unit }}</td>
+                  <td [attr.data-label]="'shots.columns.period' | translate" class="shots__when">
+                    {{ row.usage.date | date: 'dd.MM.yyyy' }}
+                    <small>{{ row.usage.timeFrom }} – {{ row.usage.timeTo }}</small>
+                  </td>
+                  <td [attr.data-label]="'shots.columns.type' | translate">
+                    <span
+                      class="slim-badge"
+                      [class.slim-badge--info]="row.usage.usageType === 'civil'"
+                      [class.slim-badge--primary]="row.usage.usageType === 'military'"
+                    >
+                      {{ 'shots.type.' + row.usage.usageType | translate }}
+                    </span>
+                  </td>
+                  <td [attr.data-label]="'shots.columns.category' | translate">
+                    {{ 'shots.category.' + row.usage.category | translate }}
+                  </td>
+                  <td [attr.data-label]="'shots.columns.weapon' | translate">{{ row.usage.weaponName }}</td>
+                  <td [attr.data-label]="'shots.columns.shots' | translate" class="slim-table__cell--num">
+                    <b>{{ row.usage.shots | number: '1.0-0' }}</b>
+                  </td>
+                  <td [attr.data-label]="'shots.columns.recorded_by' | translate">
+                    {{ row.usage.recordedBy }}
+                    @if (row.usage.source === 'elo') {
+                      <span
+                        class="slim-badge slim-badge--outline shots__src"
+                        data-testid="shots-src-elo"
+                        [attr.title]="'shots.source_elo' | translate"
+                        >ELO</span
+                      >
+                    }
+                  </td>
+                  <td class="slim-table__cell--actions">
+                    <div class="slim-row-actions">
+                      @if (!readonly()) {
+                        <button
+                          type="button"
+                          class="shots__icon-btn"
+                          data-testid="shots-edit"
+                          [attr.title]="'common.edit' | translate"
+                          [attr.aria-label]="'common.edit' | translate"
+                          (click)="openForm(row.usage)"
+                        >
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          class="shots__icon-btn shots__icon-btn--danger"
+                          data-testid="shots-delete"
+                          [attr.title]="'common.delete' | translate"
+                          [attr.aria-label]="'common.delete' | translate"
+                          (click)="askDelete([row.usage.id])"
+                        >
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.7 9h5.6l.7-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                          </svg>
+                        </button>
+                      } @else {
+                        <button
+                          type="button"
+                          class="shots__icon-btn"
+                          [attr.title]="'shots.details' | translate"
+                          [attr.aria-label]="'shots.details' | translate"
+                          (click)="openForm(row.usage)"
+                        >
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4" />
+                            <path d="M8 7v4M8 5v.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                          </svg>
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            } @empty {
+              <tr>
+                <td colspan="10" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ 'shots.empty' | translate }}</div>
+                      @if (!readonly()) {
+                        <button type="button" class="slim-btn slim-btn--sm slim-empty__action" (click)="openForm()">
+                          {{ 'shots.empty_action' | translate }}
+                        </button>
+                      }
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="slim-table-foot">
+        <span data-testid="shots-foot-count">
+          {{ 'shots.foot_count' | translate: { n: filtered().length, total: usages().length } }}
+          @if (roomName()) {
+            · {{ roomName() }}
+          }
+        </span>
+        <span class="slim-table-foot__grow"></span>
+        <span>
+          {{ 'shots.foot_sum' | translate }}
+          <b>{{ displayedShots() | number: '1.0-0' }}</b> {{ 'shots.unit_shots' | translate }}
+        </span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Drawer: create / edit -->
+  @if (drawerOpen()) {
+    <div
+      class="slim-sheet slim-sheet--drawer slim-sheet--open"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="shots-drawer-title"
+      data-testid="shots-drawer"
+    >
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="requestClose()"></button>
+      <div class="slim-sheet__panel">
+        <div class="slim-sheet__handle"></div>
+        <header class="slim-sheet__header">
+          <div>
+            <div class="slim-sheet__title" id="shots-drawer-title">
+              {{ (readonly() ? 'shots.details' : editId() ? 'shots.form.edit_title' : 'shots.form.create_title') | translate }}
+            </div>
+            <div class="slim-card__subtitle">{{ areaLabel() }}</div>
+          </div>
+          <button type="button" class="slim-sheet__close" [attr.aria-label]="'common.close' | translate" (click)="requestClose()">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+              <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+            </svg>
+          </button>
+        </header>
+
+        <form class="slim-sheet__body shots__form" [formGroup]="form" (ngSubmit)="save()" novalidate>
+          @if (error()) {
+            <div class="slim-alert slim-alert--danger">
+              <div class="slim-alert__body">{{ error() | translate }}</div>
+            </div>
+          }
+
+          <div class="slim-field" [class.slim-field--invalid]="invalid('roomId')">
+            <label class="slim-field__label" for="shots-room">
+              {{ 'shots.columns.room' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <select class="slim-select" id="shots-room" formControlName="roomId">
+              <option value="">{{ 'forms.select' | translate }}</option>
+              @for (group of roomGroups(); track group.name) {
+                <optgroup [label]="group.name">
+                  @for (r of group.rooms; track r.id) {
+                    <option [value]="r.id">{{ r.name }}</option>
+                  }
+                </optgroup>
+              }
+            </select>
+            <p class="slim-field__error">{{ 'shots.form.err_room' | translate }}</p>
+          </div>
+
+          <div class="slim-field" [class.slim-field--invalid]="invalid('unit')">
+            <label class="slim-field__label" for="shots-unit">
+              {{ 'shots.columns.unit' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <input
+              class="slim-input"
+              id="shots-unit"
+              formControlName="unit"
+              list="shots-units"
+              [placeholder]="'shots.form.unit_placeholder' | translate"
+            />
+            <datalist id="shots-units">
+              @for (u of units(); track u) {
+                <option [value]="u"></option>
+              }
+            </datalist>
+            <p class="slim-field__error">{{ 'shots.form.err_unit' | translate }}</p>
+          </div>
+
+          <div class="slim-field" [class.slim-field--invalid]="invalid('date')">
+            <label class="slim-field__label" for="shots-date">
+              {{ 'forms.date' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            @if (!readonly()) {
+              <div class="shots__quick">
+                <button type="button" class="shots__qchip" (click)="setDate(0)">{{ 'shots.form.today' | translate }}</button>
+                <button type="button" class="shots__qchip" (click)="setDate(-1)">{{ 'shots.form.yesterday' | translate }}</button>
+              </div>
+            }
+            <input class="slim-input" id="shots-date" type="date" formControlName="date" />
+            <p class="slim-field__error">{{ 'shots.form.err_date' | translate }}</p>
+          </div>
+
+          <div class="slim-field" [class.slim-field--invalid]="submitted() && (invalid('timeFrom') || invalid('timeTo') || form.hasError('timeRange'))">
+            <span class="slim-field__label">
+              {{ 'shots.columns.period' | translate }} <span class="slim-field__required">*</span>
+            </span>
+            @if (!readonly()) {
+              <div class="shots__quick">
+                <button type="button" class="shots__qchip" (click)="setTime('morning')">{{ 'shots.form.morning' | translate }}</button>
+                <button type="button" class="shots__qchip" (click)="setTime('afternoon')">{{ 'shots.form.afternoon' | translate }}</button>
+                <button type="button" class="shots__qchip" (click)="setTime('night')">{{ 'shots.form.night' | translate }}</button>
+              </div>
+            }
+            <div class="shots__f2">
+              <input class="slim-input" type="time" formControlName="timeFrom" [attr.aria-label]="'shots.form.from' | translate" data-testid="shots-time-from" />
+              <input class="slim-input" type="time" formControlName="timeTo" [attr.aria-label]="'shots.form.to' | translate" data-testid="shots-time-to" />
+            </div>
+            @if (duration(); as d) {
+              <p class="slim-field__hint">{{ 'shots.form.duration' | translate: { h: d.h, m: d.m } }}</p>
+            }
+            <p class="slim-field__error">{{ 'shots.form.err_time' | translate }}</p>
+          </div>
+
+          <div class="shots__f2">
+            <div class="slim-field">
+              <label class="slim-field__label" for="shots-type">
+                {{ 'shots.columns.type' | translate }} <span class="slim-field__required">*</span>
+              </label>
+              <select class="slim-select" id="shots-type" formControlName="usageType">
+                @for (t of types; track t) {
+                  <option [value]="t">{{ 'shots.type.' + t | translate }}</option>
+                }
+              </select>
+            </div>
+            <div class="slim-field" [class.slim-field--invalid]="invalid('category')">
+              <label class="slim-field__label" for="shots-category">
+                {{ 'shots.columns.category' | translate }} <span class="slim-field__required">*</span>
+              </label>
+              <select class="slim-select" id="shots-category" formControlName="category">
+                <option value="">{{ 'forms.select' | translate }}</option>
+                @for (c of formCategories(); track c) {
+                  <option [value]="c">{{ 'shots.category.' + c | translate }}</option>
+                }
+              </select>
+              <p class="slim-field__error">{{ 'shots.form.err_category' | translate }}</p>
+            </div>
+          </div>
+
+          <div class="slim-field" [class.slim-field--invalid]="invalid('weaponId')">
+            <label class="slim-field__label" for="shots-weapon">
+              {{ 'shots.columns.weapon' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <select class="slim-select" id="shots-weapon" formControlName="weaponId">
+              <option value="">
+                {{ (formValueRoom() ? 'forms.select' : 'shots.form.weapon_first_room') | translate }}
+              </option>
+              @for (w of formWeapons(); track w.id) {
+                <option [value]="w.id">{{ w.weaponName }}</option>
+              }
+            </select>
+            <p class="slim-field__hint">{{ 'shots.weapon_hint' | translate }}</p>
+            <p class="slim-field__error">{{ 'shots.form.err_weapon' | translate }}</p>
+          </div>
+
+          <div class="slim-field" [class.slim-field--invalid]="invalid('shots')">
+            <label class="slim-field__label" for="shots-shots">
+              {{ 'shots.columns.shots' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <div class="slim-stepper slim-stepper--block">
+              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.minus' | translate" (click)="step(-50)">−</button>
+              <input class="slim-stepper__input" id="shots-shots" type="number" inputmode="numeric" min="0" formControlName="shots" data-testid="shots-shots" />
+              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.plus' | translate" (click)="step(50)">+</button>
+            </div>
+            <p class="slim-field__error">{{ 'shots.form.err_shots' | translate }}</p>
+          </div>
+
+          <div class="slim-field">
+            <label class="slim-field__label" for="shots-note">{{ 'forms.remark' | translate }}</label>
+            <textarea class="slim-textarea" id="shots-note" formControlName="note" [placeholder]="'forms.optional' | translate"></textarea>
+          </div>
+
+          @if (editing(); as u) {
+            <p class="shots__meta">
+              {{ (u.source === 'elo' ? 'shots.form.meta_elo' : 'shots.form.meta') | translate: { by: u.recordedBy } }}
+            </p>
+          }
+        </form>
+
+        <footer class="slim-sheet__footer">
+          @if (dirty() && !readonly()) {
+            <span class="shots__dirty">● {{ 'shots.form.unsaved' | translate }}</span>
+          }
+          <button type="button" class="slim-btn" (click)="requestClose()">
+            {{ (readonly() ? 'common.close' : 'common.cancel') | translate }}
+          </button>
+          @if (!readonly()) {
+            <button
+              type="button"
+              class="slim-btn slim-btn--primary"
+              data-testid="shots-save"
+              [class.slim-btn--loading]="saving()"
+              [disabled]="saving()"
+              (click)="save()"
+            >
+              {{ 'common.save' | translate }}
+            </button>
+          }
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Discard changes? -->
+  @if (confirmDiscard()) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="shots-discard">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="confirmDiscard.set(false)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title">{{ 'shots.form.discard_title' | translate }}</div>
+        </header>
+        <div class="slim-sheet__body shots__modal-text">{{ 'shots.form.discard_text' | translate }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="confirmDiscard.set(false)">{{ 'shots.form.keep_editing' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" (click)="closeForm()">{{ 'shots.form.discard' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Delete confirmation -->
+  @if (pendingDelete().length) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="shots-delete-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="cancelDelete()"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title">
+            {{ (pendingDelete().length === 1 ? 'shots.delete.title_one' : 'shots.delete.title_many') | translate }}
+          </div>
+        </header>
+        <div class="slim-sheet__body shots__modal-text">
+          @if (pendingDelete().length === 1) {
+            <b>{{ pendingDelete()[0].unit }}</b>, {{ pendingDelete()[0].date | date: 'dd.MM.yyyy' }},
+            {{ pendingDelete()[0].weaponName }}, <b>{{ pendingDelete()[0].shots | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+            {{ 'shots.delete.text_one' | translate }}
+          } @else {
+            <b>{{ 'shots.delete.count' | translate: { n: pendingDelete().length } }}</b>
+            {{ 'shots.delete.with' | translate }}
+            <b>{{ pendingShots() | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+            {{ 'shots.delete.text_many' | translate }}
+          }
+          {{ 'shots.delete.logged' | translate }}
+        </div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" data-testid="shots-delete-confirm" (click)="confirmDelete()">
+            {{ 'common.delete' | translate }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Toast -->
+  @if (toast(); as t) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="shots-toast">
+        <div class="slim-toast__body">{{ t.key | translate: t.params }}</div>
+        @if (t.undo?.length) {
+          <button type="button" class="slim-toast__action" data-testid="shots-toast-undo" (click)="undo()">
+            {{ 'shots.toast.undo' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+</div>

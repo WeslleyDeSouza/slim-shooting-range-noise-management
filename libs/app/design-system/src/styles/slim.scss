@@ -1,0 +1,35 @@
+// ===========================================================================
+// SLIM design system — entry point (full CSS output).
+//
+//   apps/app/src/styles.scss:   @use 'slim';
+//   with build-time overrides:  @use 'slim' with ($font-size-base: 16px);
+//   in component stylesheets:   @use 'slim/abstracts' as slim;   (no output)
+//
+// Requires `stylePreprocessorOptions.includePaths` to contain
+// `libs/app/design-system/src/styles`.
+// ===========================================================================
+
+// Tokens, functions and mixins are forwarded so consumers of this entry can
+// use them (`slim.color('primary')`) and configure the tokens via `with`.
+@forward 'slim/abstracts';
+
+// Runtime contract: emits the `--slim-*` custom properties (light/dark).
+@use 'slim/base/css-vars';
+
+// Base
+@use 'slim/base/reset';
+@use 'slim/base/typography';
+@use 'slim/base/utilities';
+
+// Components (BEM, `.slim-<block>__<element>--<modifier>`)
+@use 'slim/components/layout';
+@use 'slim/components/navigation';
+@use 'slim/components/button';
+@use 'slim/components/card';
+@use 'slim/components/form';
+@use 'slim/components/feedback';
+@use 'slim/components/data';
+@use 'slim/components/overlay';
+
+// Bootstrap / ng-bootstrap variable bridge (no Bootstrap CSS included).
+@use 'slim/bridge/bootstrap';

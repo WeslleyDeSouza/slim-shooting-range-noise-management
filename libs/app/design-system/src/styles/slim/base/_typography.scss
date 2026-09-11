@@ -1,0 +1,80 @@
+// Type scale. Headings as classes so markup semantics stay free
+// (an h2 may look like `.slim-h4`).
+@use '../abstracts' as *;
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+.slim-h1,
+.slim-h2,
+.slim-h3,
+.slim-h4 {
+  font-weight: font-weight('semibold');
+  line-height: 1.25;
+  color: color('ink');
+  letter-spacing: -0.01em;
+}
+
+.slim-h1 {
+  font-size: font-size('2xl');
+  @include mq('md') {
+    font-size: font-size('3xl');
+  }
+}
+
+.slim-h2 {
+  font-size: font-size('xl');
+  @include mq('md') {
+    font-size: font-size('2xl');
+  }
+}
+
+.slim-h3 {
+  font-size: font-size('lg');
+}
+
+.slim-h4 {
+  font-size: font-size('md');
+}
+
+.slim-text {
+  @include mod('muted') {
+    color: color('text-3');
+  }
+  @include mod('secondary') {
+    color: color('text-2');
+  }
+  @include mod('small') {
+    font-size: font-size('sm');
+  }
+  @include mod('xs') {
+    font-size: font-size('xs');
+  }
+  @include mod('strong') {
+    font-weight: font-weight('semibold');
+  }
+  @include mod('mono') {
+    font-family: var(--slim-font-family-mono);
+  }
+  @include mod('danger') {
+    color: color('danger');
+  }
+  @include mod('success') {
+    color: color('success');
+  }
+}
+
+.slim-eyebrow {
+  font-size: font-size('xs');
+  font-weight: font-weight('semibold');
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color('text-3');
+}

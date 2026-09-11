@@ -1,0 +1,191 @@
+// Button. Full-width on phones by default via `--block`; touch-friendly height.
+//   <button class="slim-btn slim-btn--primary">
+//     <svg class="slim-btn__icon">…</svg><span class="slim-btn__label">Speichern</span>
+//   </button>
+@use '../abstracts' as *;
+
+.slim-btn {
+  @include control-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: space(2);
+  min-height: size('control-h');
+  padding: 0 space(4);
+  border: 1px solid color('line-strong');
+  border-radius: radius('md');
+  background: color('surface');
+  color: color('text-2');
+  font-size: font-size('sm');
+  font-weight: font-weight('semibold');
+  line-height: 1.2;
+  white-space: nowrap;
+  user-select: none;
+  transition:
+    background transition('fast'),
+    border-color transition('fast'),
+    color transition('fast'),
+    box-shadow transition('fast');
+  @include focus-visible;
+
+  @include hover {
+    border-color: color('text-4');
+    background: color('surface');
+  }
+  &:active {
+    background: color('active');
+  }
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  @include elem('icon') {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+  @include elem('label') {
+    @include truncate;
+  }
+
+  // Variants ---------------------------------------------------------------
+  @include mod('primary') {
+    background: color('primary');
+    border-color: color('primary');
+    color: color('primary-contrast');
+
+    @include hover {
+      background: color('primary-hover');
+      border-color: color('primary-hover');
+    }
+    &:active {
+      background: color('primary-hover');
+    }
+  }
+
+  @include mod('secondary') {
+    background: color('primary-subtle');
+    border-color: transparent;
+    color: color('primary');
+
+    @include hover {
+      background: color('primary-muted');
+      border-color: transparent;
+    }
+  }
+
+  @include mod('ghost') {
+    background: transparent;
+    border-color: transparent;
+
+    @include hover {
+      background: color('hover');
+      border-color: transparent;
+    }
+  }
+
+  @include mod('danger') {
+    background: color('danger');
+    border-color: color('danger');
+    color: #fff;
+
+    @include hover {
+      filter: brightness(0.92);
+    }
+  }
+
+  @include mod('link') {
+    background: none;
+    border-color: transparent;
+    color: color('link');
+    padding-inline: space(1);
+    min-height: 0;
+
+    @include hover {
+      text-decoration: underline;
+      border-color: transparent;
+    }
+  }
+
+  // Sizes ------------------------------------------------------------------
+  @include mod('sm') {
+    min-height: size('control-h-sm');
+    padding-inline: space(3);
+    font-size: font-size('xs');
+    .slim-btn__icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  @include mod('lg') {
+    min-height: size('control-h-lg');
+    padding-inline: space(6);
+    font-size: font-size('md');
+  }
+
+  // Shapes -----------------------------------------------------------------
+  @include mod('block') {
+    display: flex;
+    width: 100%;
+  }
+  @include mod('block-mobile') {
+    display: flex;
+    width: 100%;
+    @include mq('md') {
+      display: inline-flex;
+      width: auto;
+    }
+  }
+  @include mod('icon') {
+    width: size('control-h');
+    padding: 0;
+    .slim-btn__icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+  @include mod('pill') {
+    border-radius: radius('pill');
+  }
+  @include mod('loading') {
+    color: transparent !important;
+    pointer-events: none;
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      color: color('text-3');
+      animation: slim-spin 0.7s linear infinite;
+    }
+  }
+}
+
+// Button group (segment of related actions)
+.slim-btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: space(2);
+
+  @include mod('stretch') {
+    display: flex;
+    > .slim-btn {
+      flex: 1 1 0;
+    }
+  }
+}
+
+@keyframes slim-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

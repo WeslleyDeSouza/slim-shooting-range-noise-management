@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de" data-bs-theme="light">
+<html lang="de">
   <head>
     <meta charset="utf-8" />
     <title>SLIM – Schiesslärmimmissions-Management</title>
@@ -15,16 +15,28 @@
     <meta name="robots" content="noindex" />
 
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <meta name="theme-color" content="#1b3232" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1d2025" media="(prefers-color-scheme: dark)" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Apply the stored theme before the first paint (no light→dark flash).
+         Same key and attributes as SlimThemeService (@ui-slim/design-system). -->
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem('slim.theme');
+          var dark =
+            mode === 'dark' ||
+            (mode !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          if (mode === 'dark' || mode === 'light') root.setAttribute('data-theme', mode);
+          root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+        } catch (e) {
+          /* private mode: CSS falls back to prefers-color-scheme */
+        }
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

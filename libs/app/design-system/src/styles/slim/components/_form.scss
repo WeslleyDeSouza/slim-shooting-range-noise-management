@@ -1,0 +1,289 @@
+// Forms: field wrapper, text controls, checkbox / radio, switch.
+//   <div class="slim-field slim-field--invalid">
+//     <label class="slim-field__label" for="x">E-Mail</label>
+//     <input class="slim-input" id="x" type="email" />
+//     <p class="slim-field__hint">…</p>
+//     <p class="slim-field__error">…</p>
+//   </div>
+@use '../abstracts' as *;
+
+.slim-field {
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+  min-width: 0;
+
+  @include elem('label') {
+    font-size: font-size('sm');
+    font-weight: font-weight('semibold');
+    color: color('text-2');
+  }
+  @include elem('required') {
+    color: color('danger');
+    margin-left: 2px;
+  }
+  @include elem('hint') {
+    font-size: font-size('xs');
+    color: color('text-3');
+  }
+  @include elem('error') {
+    display: none;
+    font-size: font-size('xs');
+    color: color('danger');
+  }
+  @include elem('control') {
+    position: relative;
+  }
+  @include elem('addon') {
+    position: absolute;
+    top: 50%;
+    right: space(3);
+    transform: translateY(-50%);
+    color: color('text-4');
+    pointer-events: none;
+    display: flex;
+  }
+
+  @include mod('invalid') {
+    .slim-input,
+    .slim-select,
+    .slim-textarea {
+      border-color: color('danger');
+      &:focus {
+        box-shadow: 0 0 0 3px alpha('danger', 0.2);
+      }
+    }
+    .slim-field__error {
+      display: block;
+    }
+  }
+  @include mod('inline') {
+    @include mq('md') {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      align-items: center;
+      column-gap: space(4);
+      .slim-field__hint,
+      .slim-field__error {
+        grid-column: 2;
+      }
+    }
+  }
+}
+
+.slim-input,
+.slim-textarea {
+  @include control-base;
+}
+
+.slim-textarea {
+  min-height: calc(#{size('control-h')} * 2.5);
+  padding-block: space(2);
+  resize: vertical;
+}
+
+.slim-select {
+  @include control-base;
+  padding-right: space(8);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right space(3) center;
+  background-size: 14px;
+}
+
+.slim-input {
+  @include mod('sm') {
+    min-height: size('control-h-sm');
+    padding-inline: space(2);
+  }
+  @include mod('lg') {
+    min-height: size('control-h-lg');
+    font-size: font-size('lg');
+  }
+  &[type='search'] {
+    -webkit-appearance: none;
+  }
+  &[type='number'] {
+    -moz-appearance: textfield;
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+    }
+  }
+}
+
+// Checkbox / radio ----------------------------------------------------------
+.slim-check {
+  display: flex;
+  align-items: flex-start;
+  gap: space(2);
+  min-height: size('touch');
+  padding-block: space(2);
+  cursor: pointer;
+
+  @include elem('input') {
+    appearance: none;
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    border: 1.5px solid color('line-strong');
+    border-radius: radius('sm');
+    background: color('surface');
+    display: grid;
+    place-content: center;
+    transition:
+      background transition('fast'),
+      border-color transition('fast');
+    cursor: pointer;
+    @include focus-visible;
+
+    &::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      transform: scale(0);
+      transition: transform transition('fast');
+      background: color('primary-contrast');
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+    &:checked {
+      background: color('primary');
+      border-color: color('primary');
+      &::before {
+        transform: scale(1);
+      }
+    }
+    &[type='radio'] {
+      border-radius: 50%;
+      &::before {
+        clip-path: none;
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+      }
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  @include elem('label') {
+    font-size: font-size('md');
+    line-height: 1.4;
+    user-select: none;
+  }
+  @include elem('hint') {
+    display: block;
+    font-size: font-size('xs');
+    color: color('text-3');
+  }
+}
+
+// Switch ---------------------------------------------------------------------
+.slim-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: space(3);
+  min-height: size('touch');
+  cursor: pointer;
+
+  @include elem('label') {
+    font-size: font-size('md');
+  }
+  @include elem('input') {
+    appearance: none;
+    flex: none;
+    width: 44px;
+    height: 26px;
+    margin: 0;
+    border-radius: radius('pill');
+    background: color('line-strong');
+    position: relative;
+    transition: background transition('base');
+    cursor: pointer;
+    @include focus-visible;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      transition: transform transition('base');
+    }
+    &:checked {
+      background: color('primary');
+      &::before {
+        transform: translateX(18px);
+      }
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Form layout ---------------------------------------------------------------
+.slim-form {
+  display: flex;
+  flex-direction: column;
+  gap: space(4);
+
+  @include elem('row') {
+    display: grid;
+    gap: space(4);
+    grid-template-columns: 1fr;
+    @include mq('md') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @include elem('section') {
+    display: flex;
+    flex-direction: column;
+    gap: space(3);
+    padding-top: space(4);
+    border-top: 1px solid color('line');
+    &:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+  @include elem('legend') {
+    font-weight: font-weight('semibold');
+  }
+  // Sticky action bar at the bottom on phones, inline on desktop.
+  @include elem('actions') {
+    position: sticky;
+    bottom: 0;
+    z-index: z('sticky');
+    display: flex;
+    gap: space(2);
+    margin-inline: calc(-1 * #{space(4)});
+    padding: space(3) space(4);
+    @include safe-area('bottom', space(3));
+    background: color('surface');
+    border-top: 1px solid color('line');
+
+    > .slim-btn {
+      flex: 1 1 0;
+    }
+
+    @include mq('md') {
+      position: static;
+      margin-inline: 0;
+      padding: space(4) 0 0;
+      justify-content: flex-end;
+      background: none;
+      > .slim-btn {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}

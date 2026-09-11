@@ -4,7 +4,9 @@
   "sourceRoot": "libs/app/design-system/src",
   "prefix": "slim",
   "projectType": "library",
-  "tags": [],
+  "tags": [
+    "scope:app"
+  ],
   "targets": {
     "test": {
       "executor": "@nx/jest:jest",

@@ -17,6 +17,7 @@ import {
 import { DecimalPipe } from '@angular/common';
 import { provideServiceWorker } from '@angular/service-worker';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideDesignSystem } from '@ui-slim/design-system';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
@@ -37,6 +38,9 @@ export const appConfig: ApplicationConfig = {
       enabled: environment.sw,
       registrationStrategy: 'registerWhenStable',
     }),
+    // Design system runtime: theme mode + brand colours (see .claude/styleguide.md).
+    // Tenant colours can be passed here or later via SlimThemeService.setColors().
+    provideDesignSystem(),
     { provide: 'env', useValue: environment },
     { provide: LOCALE_ID, useValue: 'de-CH' },
   ],

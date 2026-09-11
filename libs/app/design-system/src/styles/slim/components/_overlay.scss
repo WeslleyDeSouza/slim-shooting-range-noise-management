@@ -1,0 +1,212 @@
+// Overlays: sheet (bottom sheet on phones, centered dialog from md), menu.
+//   <div class="slim-sheet slim-sheet--open" role="dialog" aria-modal="true">
+//     <div class="slim-sheet__backdrop"></div>
+//     <div class="slim-sheet__panel">
+//       <div class="slim-sheet__handle"></div>
+//       <header class="slim-sheet__header">…</header>
+//       <div class="slim-sheet__body">…</div>
+//       <footer class="slim-sheet__footer">…</footer>
+//     </div>
+//   </div>
+@use '../abstracts' as *;
+
+.slim-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: z('sheet');
+  display: none;
+
+  @include mod('open') {
+    display: block;
+  }
+
+  @include elem('backdrop') {
+    position: absolute;
+    inset: 0;
+    background: color('scrim');
+    animation: slim-fade-in 150ms ease-out;
+  }
+
+  @include elem('panel') {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: calc(100dvh - #{space(10)});
+    display: flex;
+    flex-direction: column;
+    background: color('surface');
+    border-radius: radius('xl') radius('xl') 0 0;
+    box-shadow: shadow('lg');
+    @include safe-area('bottom');
+    animation: slim-slide-up 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    @include mq('md') {
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      width: min(560px, calc(100vw - #{space(8)}));
+      max-height: calc(100vh - #{space(16)});
+      border-radius: radius('lg');
+      padding-bottom: 0;
+      animation: slim-pop-in 180ms ease-out;
+    }
+  }
+
+  @include elem('handle') {
+    width: 36px;
+    height: 4px;
+    margin: space(2) auto 0;
+    border-radius: radius('pill');
+    background: color('line-strong');
+    flex: none;
+    @include mq('md') {
+      display: none;
+    }
+  }
+
+  @include elem('header') {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: space(3);
+    padding: space(4) space(4) space(2);
+    flex: none;
+    @include mq('md') {
+      padding: space(5) space(5) space(3);
+    }
+  }
+  @include elem('title') {
+    font-size: font-size('lg');
+    font-weight: font-weight('semibold');
+  }
+  @include elem('close') {
+    @include control-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin: -6px -6px -6px 0;
+    border-radius: radius('md');
+    color: color('text-3');
+    @include focus-visible;
+    @include hover {
+      background: color('hover');
+      color: color('ink');
+    }
+  }
+  @include elem('body') {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: space(2) space(4) space(4);
+    -webkit-overflow-scrolling: touch;
+    @include mq('md') {
+      padding: space(2) space(5) space(5);
+    }
+  }
+  @include elem('footer') {
+    flex: none;
+    display: flex;
+    gap: space(2);
+    padding: space(3) space(4);
+    border-top: 1px solid color('line');
+    > .slim-btn {
+      flex: 1 1 0;
+    }
+    @include mq('md') {
+      justify-content: flex-end;
+      padding: space(3) space(5);
+      > .slim-btn {
+        flex: 0 0 auto;
+      }
+    }
+  }
+
+  @include mod('lg') {
+    .slim-sheet__panel {
+      @include mq('md') {
+        width: min(860px, calc(100vw - #{space(8)}));
+      }
+    }
+  }
+  @include mod('full') {
+    .slim-sheet__panel {
+      top: space(6);
+      max-height: none;
+      @include mq('md') {
+        top: 50%;
+      }
+    }
+  }
+}
+
+// Menu (dropdown / action sheet) --------------------------------------------
+.slim-menu {
+  min-width: 200px;
+  padding: space(1);
+  @include surface('md');
+  border-radius: radius('md');
+
+  @include elem('item') {
+    @include control-reset;
+    display: flex;
+    align-items: center;
+    gap: space(3);
+    width: 100%;
+    min-height: size('touch');
+    padding: 0 space(3);
+    border-radius: radius('sm');
+    color: color('ink');
+    font-size: font-size('sm');
+    text-align: left;
+    @include focus-visible(true);
+
+    @include hover {
+      background: color('hover');
+    }
+    @include mod('danger') {
+      color: color('danger');
+    }
+    @include mod('active') {
+      background: color('primary-subtle');
+      color: color('primary');
+    }
+  }
+  @include elem('icon') {
+    width: 18px;
+    height: 18px;
+    color: color('text-3');
+    flex: none;
+  }
+  @include elem('divider') {
+    height: 1px;
+    margin: space(1) 0;
+    background: color('line');
+  }
+  @include elem('heading') {
+    padding: space(2) space(3) space(1);
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: color('text-4');
+  }
+}
+
+@keyframes slim-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes slim-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes slim-pop-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+}

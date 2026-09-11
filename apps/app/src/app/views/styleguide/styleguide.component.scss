@@ -1,0 +1,52 @@
+// Component styles use the abstracts only (no CSS output from the import),
+// BEM with the app's `sg` block, tokens via functions – never raw values.
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.sg {
+  scroll-margin-top: slim.size('topbar-h');
+
+  &__color {
+    padding: 4px;
+    height: slim.size('control-h');
+    cursor: pointer;
+  }
+
+  &__swatches {
+    display: grid;
+    gap: slim.space(3);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    @include slim.mq('sm') {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @include slim.mq('lg') {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  &__swatch {
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(1);
+    min-width: 0;
+  }
+
+  &__swatch-chip {
+    height: 48px;
+    border-radius: slim.radius('md');
+    border: 1px solid slim.color('line');
+  }
+
+  &__swatch-name {
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__menu {
+    max-width: 260px;
+  }
+}

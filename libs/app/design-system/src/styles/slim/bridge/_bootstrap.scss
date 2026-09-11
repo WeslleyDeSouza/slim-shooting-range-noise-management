@@ -1,0 +1,62 @@
+// Optional bridge for Bootstrap / ng-bootstrap components (modals, dropdowns,
+// datepicker …): maps the `--bs-*` variables to the SLIM tokens so those
+// widgets follow theme and brand colours. Only variables — no Bootstrap CSS
+// is pulled in here. Load Bootstrap's own SCSS in the app if you need it.
+@use '../abstracts/tokens';
+
+$-p: tokens.$prefix;
+
+:root,
+[data-bs-theme='light'],
+[data-bs-theme='dark'] {
+  --bs-font-sans-serif: var(--#{$-p}-font-family);
+  --bs-body-font-size: var(--#{$-p}-font-size-base);
+  --bs-body-bg: var(--#{$-p}-color-bg);
+  --bs-body-color: var(--#{$-p}-color-ink);
+  --bs-body-color-rgb: var(--#{$-p}-color-ink-rgb);
+  --bs-secondary-color: var(--#{$-p}-color-text-3);
+  --bs-tertiary-color: var(--#{$-p}-color-text-4);
+  --bs-secondary-bg: var(--#{$-p}-color-surface);
+  --bs-tertiary-bg: var(--#{$-p}-color-surface-2);
+  --bs-emphasis-color: var(--#{$-p}-color-ink);
+  --bs-border-color: var(--#{$-p}-color-line);
+  --bs-border-color-translucent: var(--#{$-p}-color-line-strong);
+  --bs-border-radius: var(--#{$-p}-radius-md);
+  --bs-border-radius-lg: var(--#{$-p}-radius-lg);
+  --bs-link-color: var(--#{$-p}-color-link);
+  --bs-link-color-rgb: var(--#{$-p}-color-link-rgb);
+  --bs-link-hover-color: var(--#{$-p}-color-link);
+  --bs-primary: var(--#{$-p}-color-primary);
+  --bs-primary-rgb: var(--#{$-p}-color-primary-rgb);
+  --bs-success: var(--#{$-p}-color-success);
+  --bs-success-rgb: var(--#{$-p}-color-success-rgb);
+  --bs-warning: var(--#{$-p}-color-warning);
+  --bs-warning-rgb: var(--#{$-p}-color-warning-rgb);
+  --bs-danger: var(--#{$-p}-color-danger);
+  --bs-danger-rgb: var(--#{$-p}-color-danger-rgb);
+  --bs-info: var(--#{$-p}-color-info);
+  --bs-info-rgb: var(--#{$-p}-color-info-rgb);
+  --bs-box-shadow: var(--#{$-p}-shadow-md);
+  --bs-box-shadow-sm: var(--#{$-p}-shadow-sm);
+  --bs-box-shadow-lg: var(--#{$-p}-shadow-lg);
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--#{$-p}-color-primary);
+  --bs-btn-border-color: var(--#{$-p}-color-primary);
+  --bs-btn-color: var(--#{$-p}-color-primary-contrast);
+  --bs-btn-hover-bg: var(--#{$-p}-color-primary-hover);
+  --bs-btn-hover-border-color: var(--#{$-p}-color-primary-hover);
+  --bs-btn-active-bg: var(--#{$-p}-color-primary-hover);
+  --bs-btn-active-border-color: var(--#{$-p}-color-primary-hover);
+}
+
+.modal,
+.dropdown-menu,
+.popover,
+.offcanvas {
+  --bs-modal-bg: var(--#{$-p}-color-surface);
+  --bs-dropdown-bg: var(--#{$-p}-color-surface);
+  --bs-popover-bg: var(--#{$-p}-color-surface);
+  --bs-offcanvas-bg: var(--#{$-p}-color-surface);
+}

@@ -6,10 +6,14 @@ import { RouterLink } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink],
   template: `
-    <main class="slim-error container py-5 text-center">
-      <h1 class="slim-error__code display-4">404</h1>
-      <p class="slim-error__text text-muted">Seite nicht gefunden.</p>
-      <a routerLink="/" class="btn btn-primary">Zur Startseite</a>
+    <main class="slim-page slim-error">
+      <div class="slim-empty">
+        <div class="slim-empty__title slim-h1">404</div>
+        <p class="slim-empty__text">Seite nicht gefunden.</p>
+        <a class="slim-btn slim-btn--primary slim-empty__action" routerLink="/">
+          Zur Startseite
+        </a>
+      </div>
     </main>
   `,
 })

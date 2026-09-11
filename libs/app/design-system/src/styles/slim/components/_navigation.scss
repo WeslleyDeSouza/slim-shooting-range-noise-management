@@ -1,0 +1,204 @@
+// Navigation: topbar (all sizes), tabbar (mobile bottom nav), sidebar (desktop).
+@use '../abstracts' as *;
+
+// Topbar -------------------------------------------------------------------
+.slim-topbar {
+  position: sticky;
+  top: 0;
+  z-index: z('topbar');
+  display: flex;
+  align-items: center;
+  gap: space(2);
+  height: calc(size('topbar-h') + env(safe-area-inset-top, 0px));
+  padding-inline: space(3);
+  @include safe-area('top');
+  background: color('surface');
+  border-bottom: 1px solid color('line');
+
+  @include mq('md') {
+    padding-inline: space(6);
+  }
+
+  @include elem('brand') {
+    display: flex;
+    align-items: center;
+    gap: space(2);
+    font-weight: font-weight('bold');
+    color: color('ink');
+    text-decoration: none;
+    @include truncate;
+  }
+  @include elem('mark') {
+    width: 28px;
+    height: 28px;
+    border-radius: radius('sm');
+    background: color('primary');
+    flex: none;
+  }
+  @include elem('title') {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-weight: font-weight('semibold');
+    @include truncate;
+  }
+  @include elem('actions') {
+    display: flex;
+    align-items: center;
+    gap: space(1);
+    margin-left: auto;
+  }
+  @include elem('btn') {
+    @include control-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: size('touch');
+    height: size('touch');
+    border-radius: radius('md');
+    color: color('text-2');
+    transition: background transition('fast');
+    @include focus-visible;
+
+    @include hover {
+      background: color('hover');
+      color: color('ink');
+    }
+    &:active {
+      background: color('active');
+    }
+  }
+
+  @include mod('primary') {
+    background: color('primary');
+    border-bottom-color: transparent;
+    color: color('primary-contrast');
+
+    .slim-topbar__brand,
+    .slim-topbar__title,
+    .slim-topbar__btn {
+      color: inherit;
+    }
+    .slim-topbar__mark {
+      background: color('primary-contrast');
+    }
+  }
+}
+
+// Tabbar (mobile) ----------------------------------------------------------
+.slim-tabbar {
+  position: sticky;
+  bottom: 0;
+  z-index: z('topbar');
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  height: calc(size('tabbar-h') + env(safe-area-inset-bottom, 0px));
+  @include safe-area('bottom');
+  background: color('surface');
+  border-top: 1px solid color('line');
+
+  @include elem('item') {
+    @include control-reset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    color: color('text-3');
+    font-size: font-size('xs');
+    font-weight: font-weight('medium');
+    @include focus-visible(true);
+
+    &:active {
+      background: color('active');
+    }
+
+    @include mod('active') {
+      color: color('primary');
+    }
+  }
+  @include elem('icon') {
+    width: 24px;
+    height: 24px;
+  }
+  @include elem('label') {
+    @include truncate;
+    max-width: 100%;
+    padding-inline: space(1);
+  }
+  @include elem('badge') {
+    position: absolute;
+    top: 6px;
+    left: calc(50% + 6px);
+  }
+}
+
+// Sidebar (desktop) --------------------------------------------------------
+.slim-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  padding: space(4) space(3);
+  background: color('surface');
+  border-right: 1px solid color('line');
+  display: flex;
+  flex-direction: column;
+  gap: space(6);
+
+  @include elem('brand') {
+    display: flex;
+    align-items: center;
+    gap: space(2);
+    padding-inline: space(2);
+    font-weight: font-weight('bold');
+    font-size: font-size('lg');
+    color: color('ink');
+  }
+  @include elem('section') {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  @include elem('heading') {
+    padding: 0 space(2) space(2);
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color('text-4');
+  }
+  @include elem('link') {
+    @include control-reset;
+    display: flex;
+    align-items: center;
+    gap: space(3);
+    padding: space(2) space(3);
+    border-radius: radius('md');
+    color: color('text-2');
+    font-weight: font-weight('medium');
+    transition:
+      background transition('fast'),
+      color transition('fast');
+    @include focus-visible(true);
+
+    @include hover {
+      background: color('hover');
+      color: color('ink');
+    }
+
+    @include mod('active') {
+      background: color('primary-subtle');
+      color: color('primary');
+    }
+  }
+  @include elem('icon') {
+    width: 20px;
+    height: 20px;
+    flex: none;
+  }
+  @include elem('footer') {
+    margin-top: auto;
+  }
+}

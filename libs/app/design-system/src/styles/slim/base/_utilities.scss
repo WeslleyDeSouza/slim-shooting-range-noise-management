@@ -1,0 +1,59 @@
+// Small utility set (`.slim-u-*`). Layout belongs to components
+// (.slim-stack, .slim-grid); these only cover the cases that would otherwise
+// need a one-off class.
+@use 'sass:map';
+@use '../abstracts' as *;
+
+.slim-u-sr-only {
+  @include visually-hidden;
+}
+
+.slim-u-truncate {
+  @include truncate;
+}
+
+.slim-u-text-center {
+  text-align: center;
+}
+.slim-u-text-right {
+  text-align: right;
+}
+
+.slim-u-flex {
+  display: flex;
+  align-items: center;
+  gap: space(2);
+}
+.slim-u-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: space(2);
+}
+.slim-u-grow {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// Visibility per viewport (mobile first): hide on phones / hide on desktop.
+.slim-u-desktop-only {
+  display: none !important;
+  @include mq('lg') {
+    display: revert !important;
+  }
+}
+.slim-u-mobile-only {
+  @include mq('lg') {
+    display: none !important;
+  }
+}
+
+// Margin helpers on the spacing grid (top / bottom only — keep it small).
+@each $k, $v in $spacing {
+  .slim-u-mt-#{$k} {
+    margin-top: space($k) !important;
+  }
+  .slim-u-mb-#{$k} {
+    margin-bottom: space($k) !important;
+  }
+}

@@ -1,0 +1,336 @@
+// Feedback: badge, chip, alert, toast, spinner, skeleton, empty state.
+@use '../abstracts' as *;
+
+// Badge ---------------------------------------------------------------------
+.slim-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px space(2);
+  border-radius: radius('pill');
+  background: color('surface-2');
+  color: color('text-2');
+  font-size: font-size('xs');
+  font-weight: font-weight('semibold');
+  line-height: 1.5;
+  white-space: nowrap;
+
+  @include elem('dot') {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  @each $state in ('primary', 'success', 'warning', 'danger', 'info') {
+    @include mod($state) {
+      background: color('#{$state}-subtle');
+      color: color($state);
+    }
+  }
+  @include mod('solid') {
+    background: color('primary');
+    color: color('primary-contrast');
+  }
+  @include mod('outline') {
+    background: transparent;
+    border: 1px solid color('line-strong');
+  }
+}
+
+// Chip (filter / selectable) -------------------------------------------------
+.slim-chip {
+  @include control-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: space(1);
+  min-height: size('control-h-sm');
+  padding: 0 space(3);
+  border: 1px solid color('line-strong');
+  border-radius: radius('pill');
+  background: color('surface');
+  color: color('text-2');
+  font-size: font-size('sm');
+  font-weight: font-weight('medium');
+  transition:
+    background transition('fast'),
+    border-color transition('fast');
+  @include focus-visible;
+
+  @include hover {
+    border-color: color('text-4');
+  }
+  @include mod('selected') {
+    background: color('primary-subtle');
+    border-color: color('primary');
+    color: color('primary');
+  }
+  @include elem('remove') {
+    @include control-reset;
+    display: inline-flex;
+    margin-right: -4px;
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.slim-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+
+  // Horizontal scroll strip on phones
+  @include mod('scroll') {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin-inline: calc(-1 * #{space(4)});
+    padding-inline: space(4);
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    @include mq('md') {
+      flex-wrap: wrap;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+    }
+  }
+}
+
+// Alert ---------------------------------------------------------------------
+.slim-alert {
+  display: flex;
+  gap: space(3);
+  padding: space(3) space(4);
+  border: 1px solid color('line');
+  border-left-width: 4px;
+  border-radius: radius('md');
+  background: color('surface');
+  color: color('ink');
+  font-size: font-size('sm');
+
+  @include elem('icon') {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+  }
+  @include elem('body') {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  @include elem('title') {
+    font-weight: font-weight('semibold');
+    margin-bottom: 2px;
+  }
+  @include elem('close') {
+    @include control-reset;
+    flex: none;
+    opacity: 0.6;
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  @each $state in ('success', 'warning', 'danger', 'info') {
+    @include mod($state) {
+      background: color('#{$state}-subtle');
+      border-color: color('#{$state}-muted');
+      border-left-color: color($state);
+      .slim-alert__icon,
+      .slim-alert__title {
+        color: color($state);
+      }
+    }
+  }
+}
+
+// Toast ---------------------------------------------------------------------
+.slim-toasts {
+  position: fixed;
+  z-index: z('toast');
+  left: space(4);
+  right: space(4);
+  bottom: calc(#{size('tabbar-h')} + #{space(4)} + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: space(2);
+  pointer-events: none;
+
+  @include mq('md') {
+    left: auto;
+    bottom: space(6);
+    right: space(6);
+    width: 380px;
+  }
+}
+
+.slim-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: space(3);
+  padding: space(3) space(4);
+  border-radius: radius('lg');
+  background: color('ink');
+  color: color('bg');
+  box-shadow: shadow('lg');
+  font-size: font-size('sm');
+  animation: slim-toast-in 200ms ease-out;
+
+  @include elem('body') {
+    flex: 1 1 auto;
+  }
+  @include elem('title') {
+    font-weight: font-weight('semibold');
+  }
+  @include elem('action') {
+    @include control-reset;
+    font-weight: font-weight('semibold');
+    color: color('primary-strong');
+    flex: none;
+  }
+
+  @each $state in ('success', 'warning', 'danger', 'info') {
+    @include mod($state) {
+      border-left: 4px solid color($state);
+    }
+  }
+}
+
+@keyframes slim-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+// Spinner -------------------------------------------------------------------
+.slim-spinner {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid alpha('ink', 0.15);
+  border-top-color: color('primary');
+  border-radius: 50%;
+  animation: slim-spin 0.7s linear infinite;
+
+  @include mod('sm') {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+  }
+  @include mod('lg') {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
+}
+
+// Skeleton ------------------------------------------------------------------
+.slim-skeleton {
+  display: block;
+  height: 1em;
+  border-radius: radius('sm');
+  background: linear-gradient(
+    90deg,
+    color('surface-2') 25%,
+    color('line') 50%,
+    color('surface-2') 75%
+  );
+  background-size: 200% 100%;
+  animation: slim-shimmer 1.4s ease-in-out infinite;
+
+  @include mod('text') {
+    width: 100%;
+    height: 0.9em;
+    margin-block: 0.3em;
+  }
+  @include mod('title') {
+    width: 60%;
+    height: 1.2em;
+  }
+  @include mod('circle') {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  @include mod('block') {
+    height: 120px;
+    border-radius: radius('lg');
+  }
+}
+
+@keyframes slim-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+// Empty state ---------------------------------------------------------------
+.slim-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: space(2);
+  padding: space(10) space(4);
+  color: color('text-3');
+
+  @include elem('icon') {
+    width: 48px;
+    height: 48px;
+    color: color('text-4');
+    margin-bottom: space(2);
+  }
+  @include elem('title') {
+    font-size: font-size('lg');
+    font-weight: font-weight('semibold');
+    color: color('ink');
+  }
+  @include elem('text') {
+    max-width: 40ch;
+    font-size: font-size('sm');
+  }
+  @include elem('action') {
+    margin-top: space(3);
+  }
+}
+
+// Avatar --------------------------------------------------------------------
+.slim-avatar {
+  display: inline-grid;
+  place-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color('primary-subtle');
+  color: color('primary');
+  font-size: font-size('sm');
+  font-weight: font-weight('semibold');
+  overflow: hidden;
+  flex: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @include mod('sm') {
+    width: 28px;
+    height: 28px;
+    font-size: font-size('xs');
+  }
+  @include mod('lg') {
+    width: 56px;
+    height: 56px;
+    font-size: font-size('lg');
+  }
+}

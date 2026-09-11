@@ -1,0 +1,284 @@
+// Data display: list, table, segmented control, tabs.
+@use '../abstracts' as *;
+
+// List ----------------------------------------------------------------------
+//   <ul class="slim-list slim-list--divided">
+//     <li class="slim-list__item">
+//       <span class="slim-list__leading">…</span>
+//       <span class="slim-list__content">
+//         <span class="slim-list__title">…</span><span class="slim-list__meta">…</span>
+//       </span>
+//       <span class="slim-list__trailing">…</span>
+//     </li>
+//   </ul>
+.slim-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  @include elem('item') {
+    display: flex;
+    align-items: center;
+    gap: space(3);
+    min-height: size('touch');
+    padding: space(3) 0;
+    color: inherit;
+    text-decoration: none;
+
+    @include mod('interactive') {
+      cursor: pointer;
+      margin-inline: calc(-1 * #{space(2)});
+      padding-inline: space(2);
+      border-radius: radius('md');
+      transition: background transition('fast');
+      @include focus-visible(true);
+      @include hover {
+        background: color('hover');
+      }
+      &:active {
+        background: color('active');
+      }
+    }
+  }
+  @include elem('leading') {
+    flex: none;
+    display: flex;
+    color: color('text-3');
+  }
+  @include elem('content') {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  @include elem('title') {
+    font-weight: font-weight('medium');
+    @include truncate;
+  }
+  @include elem('meta') {
+    font-size: font-size('sm');
+    color: color('text-3');
+    @include truncate;
+  }
+  @include elem('trailing') {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: space(2);
+    color: color('text-4');
+    font-size: font-size('sm');
+  }
+
+  @include mod('divided') {
+    .slim-list__item + .slim-list__item {
+      border-top: 1px solid color('line');
+    }
+  }
+  @include mod('card') {
+    @include surface;
+    padding-inline: space(4);
+  }
+}
+
+// Table ---------------------------------------------------------------------
+// Wrap in .slim-table-wrap for horizontal scrolling on phones.
+.slim-table-wrap {
+  @include surface;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slim-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: font-size('sm');
+
+  th,
+  td {
+    padding: space(3) space(4);
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid color('line');
+    white-space: nowrap;
+  }
+  th {
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: color('text-3');
+    background: color('surface-2');
+    position: sticky;
+    top: 0;
+  }
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  @include elem('cell') {
+    @include mod('num') {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    @include mod('wrap') {
+      white-space: normal;
+    }
+    @include mod('actions') {
+      text-align: right;
+      width: 1%;
+    }
+  }
+  @include elem('row') {
+    @include mod('clickable') {
+      cursor: pointer;
+      @include hover {
+        background: color('hover');
+      }
+    }
+    @include mod('selected') {
+      background: color('primary-subtle');
+    }
+  }
+
+  @include mod('striped') {
+    tbody tr:nth-child(even) td {
+      background: color('surface-2');
+    }
+  }
+  @include mod('dense') {
+    th,
+    td {
+      padding: space(2) space(3);
+    }
+  }
+
+  // Card rows on phones: each <td> shows its `data-label` as a heading.
+  @include mod('stack') {
+    @include mq-down('md') {
+      thead {
+        display: none;
+      }
+      tr {
+        display: block;
+        padding: space(3) space(4);
+        border-bottom: 1px solid color('line');
+      }
+      td {
+        display: flex;
+        justify-content: space-between;
+        gap: space(3);
+        padding: space(1) 0;
+        border: 0;
+        white-space: normal;
+        &::before {
+          content: attr(data-label);
+          font-size: font-size('xs');
+          font-weight: font-weight('semibold');
+          color: color('text-3');
+        }
+      }
+    }
+  }
+}
+
+// Segmented control ---------------------------------------------------------
+.slim-segmented {
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 3px;
+  border-radius: radius('md');
+  background: color('surface-2');
+  border: 1px solid color('line');
+
+  @include elem('item') {
+    @include control-reset;
+    min-height: calc(#{size('control-h-sm')} - 6px);
+    padding: 0 space(3);
+    border-radius: calc(#{radius('md')} - 2px);
+    color: color('text-3');
+    font-size: font-size('sm');
+    font-weight: font-weight('semibold');
+    white-space: nowrap;
+    transition:
+      background transition('fast'),
+      color transition('fast');
+    @include focus-visible(true);
+
+    @include mod('active') {
+      background: color('surface');
+      color: color('ink');
+      box-shadow: shadow('sm');
+    }
+  }
+  @include mod('block') {
+    display: grid;
+    width: 100%;
+  }
+}
+
+// Tabs ----------------------------------------------------------------------
+.slim-tabs {
+  display: flex;
+  gap: space(1);
+  border-bottom: 1px solid color('line');
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include elem('tab') {
+    @include control-reset;
+    padding: space(3) space(3);
+    margin-bottom: -1px;
+    border-bottom: 2px solid transparent;
+    color: color('text-3');
+    font-size: font-size('sm');
+    font-weight: font-weight('semibold');
+    white-space: nowrap;
+    @include focus-visible(true);
+
+    @include hover {
+      color: color('ink');
+    }
+    @include mod('active') {
+      color: color('primary');
+      border-bottom-color: color('primary');
+    }
+  }
+}
+
+// Key/value description list ------------------------------------------------
+.slim-kv {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: space(2) space(4);
+  margin: 0;
+
+  @include mq('md') {
+    grid-template-columns: max-content 1fr;
+  }
+
+  @include elem('key') {
+    font-size: font-size('xs');
+    font-weight: font-weight('semibold');
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: color('text-3');
+    @include mq('md') {
+      font-size: font-size('sm');
+      text-transform: none;
+      letter-spacing: 0;
+    }
+  }
+  @include elem('value') {
+    margin: 0 0 space(2);
+    @include mq('md') {
+      margin: 0;
+    }
+  }
+}

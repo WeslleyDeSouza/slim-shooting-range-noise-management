@@ -1,0 +1,175 @@
+// Layout primitives: shell (topbar / sidebar / tabbar), page, container,
+// stack and grid. Mobile: topbar + bottom tabbar. Desktop (lg+): sidebar.
+@use '../abstracts' as *;
+
+// App shell ----------------------------------------------------------------
+.slim-shell {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'topbar'
+    'main'
+    'tabbar';
+
+  @include elem('topbar') {
+    grid-area: topbar;
+  }
+  @include elem('sidebar') {
+    grid-area: sidebar;
+    display: none;
+  }
+  @include elem('main') {
+    grid-area: main;
+    min-width: 0;
+  }
+  @include elem('tabbar') {
+    grid-area: tabbar;
+  }
+
+  @include mq('lg') {
+    grid-template-columns: size('sidebar-w') 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'sidebar topbar'
+      'sidebar main';
+
+    @include elem('sidebar') {
+      display: block;
+    }
+    @include elem('tabbar') {
+      display: none;
+    }
+  }
+}
+
+// Page ---------------------------------------------------------------------
+.slim-page {
+  padding: space(4);
+  @include safe-area('bottom', space(4));
+
+  @include mq('md') {
+    padding: space(6);
+  }
+  @include mq('lg') {
+    padding: space(8);
+  }
+
+  @include elem('header') {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: space(3);
+    margin-bottom: space(5);
+  }
+  @include elem('title') {
+    font-size: font-size('xl');
+    font-weight: font-weight('semibold');
+    line-height: 1.25;
+    @include mq('md') {
+      font-size: font-size('2xl');
+    }
+  }
+  @include elem('subtitle') {
+    margin-top: space(1);
+    color: color('text-3');
+    font-size: font-size('sm');
+  }
+  @include elem('actions') {
+    display: flex;
+    flex-wrap: wrap;
+    gap: space(2);
+  }
+  @include elem('body') {
+    display: flex;
+    flex-direction: column;
+    gap: space(4);
+  }
+}
+
+// Container ----------------------------------------------------------------
+.slim-container {
+  width: 100%;
+  max-width: size('container');
+  margin-inline: auto;
+  padding-inline: space(4);
+
+  @include mq('md') {
+    padding-inline: space(6);
+  }
+
+  @include mod('narrow') {
+    max-width: size('container-narrow');
+  }
+  @include mod('flush') {
+    padding-inline: 0;
+  }
+}
+
+// Stack: vertical rhythm ---------------------------------------------------
+.slim-stack {
+  display: flex;
+  flex-direction: column;
+  gap: space(4);
+
+  @include mod('xs') {
+    gap: space(1);
+  }
+  @include mod('sm') {
+    gap: space(2);
+  }
+  @include mod('lg') {
+    gap: space(6);
+  }
+  @include mod('row') {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  @include mod('row-md') {
+    @include mq('md') {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+}
+
+// Grid: 1 column on mobile, N columns from md ------------------------------
+.slim-grid {
+  display: grid;
+  gap: space(4);
+  grid-template-columns: 1fr;
+
+  @include mod('2') {
+    @include mq('md') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @include mod('3') {
+    @include mq('md') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @include mq('lg') {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @include mod('4') {
+    @include mq('sm') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @include mq('lg') {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @include mod('auto') {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+.slim-divider {
+  border: 0;
+  border-top: 1px solid color('line');
+  margin: 0;
+}

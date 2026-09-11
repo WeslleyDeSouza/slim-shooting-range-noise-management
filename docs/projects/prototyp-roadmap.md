@@ -153,6 +153,9 @@ Summe Sprints 1–5: **25 PT** (ohne M1).
 
 Status: ☑ M1 erledigt · S1–S5 = geplanter Sprint · LK = nur im Lösungskonzept beschrieben.
 
+Die Playwright-Nachweise je Kriterium werden in `apps/app-e2e/src/criterias/` gesammelt
+(Skelett, Annotation `slm` / `acceptance`; Projekt `criterias`, siehe dortiges README).
+
 | slm | Kurzinhalt | Nachweis |
 |---|---|---|
 | 1 | Auswahllisten durch Admin pflegbar | S1 (Lookup-Entities mit Aktiv) |

@@ -67,7 +67,12 @@
           @for (role of filtered(); track role.roleId) {
             <tr>
               <td [attr.data-label]="prefix + '.col_title' | translate">
-                <b>{{ role.title }}</b>
+                <div class="um-roles__title">
+                  <b>{{ role.title }}</b>
+                  @if (roleKey(role); as key) {
+                    <span class="slim-text--mono slim-text--xs slim-text--muted">{{ key }}</span>
+                  }
+                </div>
               </td>
               <td [attr.data-label]="prefix + '.col_flags' | translate" class="slim-table__cell--wrap">
                 <div class="slim-chips um-roles__flags">

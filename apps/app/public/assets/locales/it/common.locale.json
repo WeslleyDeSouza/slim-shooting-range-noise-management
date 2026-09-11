@@ -33,7 +33,13 @@
     "apps": "App",
     "area_calculation_run": "Calcolo delle immissioni",
     "user_management": "Gestione utenti",
-    "logs": "Registro"
+    "logs": "Registro",
+    "admin_user": "Gestione utenti (galaxy)",
+    "admin_role": "Gestione ruoli (galaxy)",
+    "admin_tenant": "Mandanti (galaxy)",
+    "app_config": "Configurazione app",
+    "ad": "Amministrazione",
+    "settings": "Impostazioni"
   },
   "common": {
     "save": "Salva",

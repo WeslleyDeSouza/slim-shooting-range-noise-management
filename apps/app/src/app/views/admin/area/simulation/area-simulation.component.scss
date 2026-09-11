@@ -318,6 +318,17 @@
     td {
       font-variant-numeric: tabular-nums;
     }
+    // Six columns in the narrow right column: numbers never break.
+    .slim-table__cell--num {
+      white-space: nowrap;
+    }
+  }
+
+  // The address is in the popover; on a desktop the code is enough.
+  &__result-addr {
+    @include slim.mq('md') {
+      display: none;
+    }
   }
 
   &__d {

@@ -86,7 +86,7 @@ export class LogItemDto {
   device?: string | null;
 
   @ApiProperty({ type: Object, nullable: true })
-  user: any | null;
+  user: Record<string, unknown> | null;
 }
 
 export class LogFacetUserDto {

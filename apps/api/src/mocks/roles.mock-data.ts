@@ -1,6 +1,6 @@
 import { API_APPS_MAPPING as GALAXY_APPS } from '@app-galaxy/auth-api';
 import { DataSource } from 'typeorm';
-import { SLIM_ROLE_KEY, SlimRoleSettings } from '@slim/shared';
+import { GALAXY_ROLE_KEY, SLIM_ROLE_KEY, SlimRoleSettings } from '@slim/shared';
 import { API_APPS_MAPPING } from './apps.mapping';
 
 /**
@@ -138,6 +138,28 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
  * a restricted view.
  */
 export async function fillSlimRoles(connection: DataSource, tenantId: string): Promise<void> {
+  // The galaxy roles (TestMockTenantMock: 1 = Admin, 2 = User) get a key too,
+  // so every row of the role overview identifies itself in code. Only set
+  // when missing – this runs with the mock seed, not as a sync on every boot.
+  for (const [roleId, key] of [[1, GALAXY_ROLE_KEY.admin], [2, GALAXY_ROLE_KEY.user]] as const) {
+    const [row]: { settings: string | null }[] = await connection.query(
+      'select settings from app_role where tenantId = ? and roleId = ?',
+      [tenantId, roleId],
+    );
+    if (!row) continue;
+    let settings: SlimRoleSettings = {};
+    try {
+      settings = row.settings ? JSON.parse(row.settings) : {};
+    } catch {
+      settings = {};
+    }
+    if (settings.key) continue;
+    await connection.query('update app_role set settings = ? where tenantId = ? and roleId = ?', [
+      JSON.stringify(<SlimRoleSettings>{ ...settings, key }),
+      tenantId,
+      roleId,
+    ]);
+  }
   for (const role of SLIM_ROLES) {
     const existing: { roleId: number }[] = await connection.query(
       'select roleId from app_role where tenantId = ? and roleId = ?',

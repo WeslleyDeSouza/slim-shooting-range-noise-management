@@ -12,7 +12,6 @@ import {
   UsageKpiDto,
   UsageOverviewDto,
   UsageResultDto,
-  UsageRoomDto,
   UsageUpdateDto,
   UsageWeaponDto,
 } from './dto';

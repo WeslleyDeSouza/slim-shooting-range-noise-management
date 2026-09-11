@@ -39,8 +39,8 @@ describe('the SLIM Demo dataset', () => {
   it('is what the demo promises', () => {
     expect(dataset.identifier).toBe('SLIM_DEMO');
     expect(dataset.users[0]).toMatchObject({ username: 'slim@demo.ch', password: '1234', role: 'admin' });
-    expect(dataset.users.map((u) => u.role)).toEqual(['admin', 'specialist', 'range_owner', 'interested', 'app_admin']);
-    expect(dataset.users.find((u) => u.role === 'range_owner')?.areas).toEqual(['Geissalp', 'Thun']);
+    expect(dataset.users.map((u) => u.role)).toEqual(['admin', 'slim_specialist', 'slim_range_owner', 'slim_interested', 'slim_admin']);
+    expect(dataset.users.find((u) => u.role === 'slim_range_owner')?.areas).toEqual(['Geissalp', 'Thun']);
     expect(dataset.areas).toHaveLength(9);
     expect(geissalp.coordinationSectionNo).toBe('1104.020');
     expect(geissalp.rooms).toHaveLength(14);

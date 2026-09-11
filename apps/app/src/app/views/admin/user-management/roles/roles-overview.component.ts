@@ -8,7 +8,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { APP_ROUTES } from '@slim/shared';
+import { APP_ROUTES, parseRoleSettings } from '@slim/shared';
 import type { RoleEntity } from '@ui-slim/apiClient';
 import { RolesFacade } from './_data/roles.facade';
 
@@ -75,8 +75,13 @@ export class EloRolesOverviewComponent extends ComponentBase {
    * rights matrix lives in code — they are not deletable, like the galaxy
    * admin and default roles. Everything else a tenant creates is.
    */
+  /** Technical key (`settings.key`) used by the backend rules and, later, CASL. */
+  roleKey(role: RoleEntity): string {
+    return parseRoleSettings(role.settings).key ?? '';
+  }
+
   isSystemRole(role: RoleEntity): boolean {
-    return !!(role.settings as { slim?: boolean } | undefined)?.slim;
+    return !!parseRoleSettings(role.settings).slim;
   }
 
   canDelete(role: RoleEntity): boolean {

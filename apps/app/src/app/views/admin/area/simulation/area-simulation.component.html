@@ -378,7 +378,7 @@
           </div>
         } @else {
           <div class="slim-table-wrap sim__table-wrap">
-            <table class="slim-table slim-table--stack sim__result">
+            <table class="slim-table slim-table--stack slim-table--compact sim__result">
               <thead>
                 <tr>
                   <th>{{ 'simulation.result.point' | translate }}</th>
@@ -398,7 +398,7 @@
                     (click)="selectPin(r.id)"
                   >
                     <td [attr.data-label]="'simulation.result.point' | translate">
-                      <b>{{ r.code }}</b> <span class="sim__small sim__small--inline">{{ r.address }}</span>
+                      <b>{{ r.code }}</b> <span class="sim__small sim__small--inline sim__result-addr">{{ r.address }}</span>
                     </td>
                     <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.limit' | translate">{{ r.limit }} dB</td>
                     <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.current' | translate">{{ db(r.current) }}</td>

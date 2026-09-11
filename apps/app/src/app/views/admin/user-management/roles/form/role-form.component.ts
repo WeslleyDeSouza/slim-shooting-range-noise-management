@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { APP_ROUTES, SLIM_ROLE_KEYS, SlimRoleSettings } from '@slim/shared';
+import { APP_ROUTES, parseRoleSettings, SLIM_ROLE_KEYS, SlimRoleSettings } from '@slim/shared';
 import {
   FormControl,
   FormGroup,
@@ -143,7 +143,7 @@ export class EloRoleFormComponent extends ComponentBase {
   readonly roleKeys = SLIM_ROLE_KEYS;
 
   /** Seeded system role: the key is fixed by the application. */
-  readonly isSystemRole = computed(() => !!(this.current()?.settings as SlimRoleSettings | undefined)?.slim);
+  readonly isSystemRole = computed(() => !!parseRoleSettings(this.current()?.settings).slim);
 
   /** ComponentBase ruft dies beim Init und bei jedem DATA_RELOAD-Emit auf. */
   getData(): void {
@@ -162,7 +162,7 @@ export class EloRoleFormComponent extends ComponentBase {
       return;
     }
     this.current.set(role);
-    const settings = (role.settings ?? {}) as SlimRoleSettings;
+    const settings = parseRoleSettings(role.settings);
     this.form.patchValue({
       title: role.title ?? '',
       state: !!role.state,
@@ -227,7 +227,7 @@ export class EloRoleFormComponent extends ComponentBase {
     }
     this.saving.set(true);
     const value = this.form.getRawValue();
-    const previous = (this.current()?.settings ?? {}) as SlimRoleSettings;
+    const previous = parseRoleSettings(this.current()?.settings);
     const settings: SlimRoleSettings = {
       ...previous,
       key: value.key.trim() || undefined,

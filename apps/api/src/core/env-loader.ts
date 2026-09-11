@@ -11,7 +11,6 @@ import * as path from 'path';
 
 const load = (fileName: string) => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('dotenv').config({
       path: path.resolve(process.cwd(), fileName),
       quiet: true,

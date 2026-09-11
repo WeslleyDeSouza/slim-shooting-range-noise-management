@@ -18,3 +18,15 @@ cd apps/app-e2e && npx playwright test src/admin.spec.ts --project=chromium
 
 Credentials: `E2E_USER` / `E2E_PASSWORD`, else `APP_DEFAULT_USER` / `APP_DEFAULT_PASSWORD`
 from `.env`, else `slim@demo.ch` / `1234`. The 2FA resend test needs SMTP (`MAIL_HOST`).
+
+## Kriterien-Nachweise (`src/criterias/`)
+
+Temporäre Sammlung der Playwright-Fälle je Ausschreibungskriterium (`slm`, K1–K7),
+eigenes Projekt `criterias` (nicht Teil von `nx e2e`):
+
+```bash
+npx playwright test --config=apps/app-e2e/playwright.config.ts --project=criterias
+```
+
+Skelett: alle Fälle `test.fixme` mit den Schritten als Kommentar. Details im
+[README des Ordners](src/criterias/README.md).

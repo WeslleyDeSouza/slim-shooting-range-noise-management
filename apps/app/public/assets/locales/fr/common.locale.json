@@ -33,7 +33,13 @@
     "apps": "Apps",
     "area_calculation_run": "Calcul des immissions",
     "user_management": "Gestion des utilisateurs",
-    "logs": "Journal"
+    "logs": "Journal",
+    "admin_user": "Gestion des utilisateurs (galaxy)",
+    "admin_role": "Gestion des rôles (galaxy)",
+    "admin_tenant": "Mandants (galaxy)",
+    "app_config": "Configuration des apps",
+    "ad": "Administration",
+    "settings": "Paramètres"
   },
   "common": {
     "save": "Enregistrer",

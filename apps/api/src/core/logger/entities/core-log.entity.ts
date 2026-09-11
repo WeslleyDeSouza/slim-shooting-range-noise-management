@@ -67,5 +67,7 @@ export class CoreLogEntity extends TenantBaseEntity {
   user: UserEntity;
 
   @BeforeInsert()
-  async beforeInsert() {}
+  async beforeInsert(): Promise<void> {
+    // TenantBaseEntity contract; nothing to derive for log rows.
+  }
 }

@@ -72,5 +72,15 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
       dependencies: ['setup'],
     },
+    // Acceptance criteria of the tender (docs/anforderungskatalog, `slm` ids),
+    // kept apart from the page suite: `npx playwright test --project=criterias`.
+    // Skeleton only for now (every case is `test.fixme`); the folder goes away
+    // once the cases moved into the page specs or the criteria are proven.
+    {
+      name: 'criterias',
+      testMatch: ['**/src/criterias/*.spec.ts'],
+      use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
+      dependencies: ['setup'],
+    },
   ],
 });

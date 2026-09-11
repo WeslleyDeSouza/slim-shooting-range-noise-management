@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { parseRoleSettings } from '@slim/shared';
 import { AreaUserEntity } from '../entities/area-user.entity';
 
 /** Role setting that turns a role into a «W/R-O» role (B1 8.1.2), see `SlimRoleSettings` (@slim/shared). */
@@ -56,11 +57,5 @@ export class AreaScopeService {
 }
 
 function ownAreasOnly(settings: string | null | Record<string, unknown>): boolean {
-  if (!settings) return false;
-  try {
-    const parsed = typeof settings === 'string' ? JSON.parse(settings) : settings;
-    return Boolean(parsed?.[OWN_AREAS_ONLY]);
-  } catch {
-    return false;
-  }
+  return Boolean(parseRoleSettings(settings)[OWN_AREAS_ONLY]);
 }

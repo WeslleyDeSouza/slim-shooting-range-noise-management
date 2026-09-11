@@ -3,6 +3,13 @@ import {
   provideAfterAppCreated,
   provideAfterAppDeleted,
   provideAfterAppUpdated,
+  provideAfterEmailVerified,
+  provideAfterLogin,
+  provideAfterLoginFailed,
+  provideAfterLogout,
+  provideAfterPasswordChanged,
+  provideAfterPasswordResetRequested,
+  provideAfterTokenReuseDetected,
   provideAfterRoleCreated,
   provideAfterRoleDeleted,
   provideAfterRoleUpdated,
@@ -17,6 +24,7 @@ import {
   AuditRoleLifecycleHook,
   AuditUserLifecycleHook,
 } from './auth-audit.hooks';
+import { AuditAuthLifecycleHook } from './auth-lifecycle.hooks';
 
 /**
  * Registers the audit-log lifecycle hooks (see auth-audit.hooks.ts). The
@@ -37,6 +45,14 @@ import {
     provideAfterAppCreated(AuditAppLifecycleHook),
     provideAfterAppUpdated(AuditAppLifecycleHook),
     provideAfterAppDeleted(AuditAppLifecycleHook),
+    // Authentication events (auth-api ≥ 0.1.218, see auth-lifecycle.hooks.ts)
+    provideAfterLogin(AuditAuthLifecycleHook),
+    provideAfterLoginFailed(AuditAuthLifecycleHook),
+    provideAfterLogout(AuditAuthLifecycleHook),
+    provideAfterTokenReuseDetected(AuditAuthLifecycleHook),
+    provideAfterPasswordResetRequested(AuditAuthLifecycleHook),
+    provideAfterPasswordChanged(AuditAuthLifecycleHook),
+    provideAfterEmailVerified(AuditAuthLifecycleHook),
   ],
 })
 export class AuthAuditModule {}

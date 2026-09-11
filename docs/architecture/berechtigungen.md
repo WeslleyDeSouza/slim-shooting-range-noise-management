@@ -17,7 +17,7 @@ kopierten Facades aufrufen.
 
 | Tabelle (galaxy) | Inhalt | Für 8.1 |
 |---|---|---|
-| `app_role` | Rolle pro Mandant: `title`, `state`, `isDefault`, `permissionMode`, `settings` (JSON: `key`, `ownAreasOnly`, `slim` — Typ `SlimRoleSettings` in `@slim/shared`) | die vier Rollen; der **Schlüssel** (`specialist`, `range_owner`, `interested`, `app_admin`) identifiziert die Rolle im Code und später in CASL, unabhängig vom Titel |
+| `app_role` | Rolle pro Mandant: `title`, `state`, `isDefault`, `permissionMode`, `settings` (JSON: `key`, `ownAreasOnly`, `slim` — Typ `SlimRoleSettings` in `@slim/shared`) | die vier Rollen; der **Schlüssel** (`slim_specialist`, `slim_range_owner`, `slim_interested`, `slim_admin`) identifiziert die Rolle im Code und später in CASL, unabhängig vom Titel |
 | `app_role_right` | Rolle × App: `access` = `read` \| `write` \| `delete` \| `root` | R / W / X pro Bereich |
 | `app_user_right` | Benutzer ↔ Rolle | Zuweisung |
 | `app_app` | App-Katalog = «Bereiche» (`API_APPS_MAPPING`) | Zeilen der Matrix |
@@ -97,7 +97,7 @@ noch nicht im Design System; Umbau ist ein reiner Template-Job.
 | Session-Claim `areaIds` | Komfort | – | in `me/session` liefern, damit der Wechsler nur eigene Plätze zeigt |
 | «Berechnung speichern» (App 47) | 5.10, 5.18–5.21 | Recht vorhanden, kein Endpunkt | mit dem Berechnungs-Import (5.19) |
 | AGOV | 8.1 «MFA **oder** AGOV» | 2FA erfüllt die Anforderung; AGOV nicht vorhanden | optional: OIDC-Strategie (passport), Provisionierung per E-Mail, Rolle aus SLIM |
-| Login-Logging-Auswertung | `slm 56` | **umgesetzt** (aus ELO): Logbuch `core_log_user` in `apps/api/src/core/logger` (`LoggerService`, `AUTH_API_LOGGER`-Brücke → Logins, Sign-ups, Passwort-Reset, Admin-Benutzerschreibungen der galaxy auth-api; `RequestOriginMiddleware` liefert IP + Gerät), `apps/api/src/modules/auth-audit` (Hooks für Rollen, Apps, Self-Service), Endpunkte `admin/logs/{list,facets,export}` (App `ADMIN_LOGS` 49: Administrator root, Fachspezialist read), Maske `apps/app/src/app/views/admin/logs` unter `/admin/data-management/logs` (Suche, Bereich/Benutzer/Zeitraum, Aktions-Chips, Detail-Drawer, XLSX-Export) | Fachliche Schreibvorgänge (Nutzungen, Stammdaten) über `LoggerService.createLog` anbinden |
+| Login-Logging-Auswertung | `slm 56` | **umgesetzt**: Logbuch `core_log_user` (`core/logger`, Maske «Logbuch»), Audit-Hooks Benutzer/Rollen/Apps (`modules/auth-audit/auth-audit.hooks.ts`) und – mit `@app-galaxy/auth-api` ≥ 0.1.218 – die Auth-Lifecycle-Hooks (`auth-lifecycle.hooks.ts`): `AUTH_LOGIN` (Methode Passwort/PIN/2FA), `AUTH_LOGIN_FAILED` (Grund: invalid-credentials, account-locked, invalid-pin, invalid-code, too-many-attempts, auth-id-mismatch), `AUTH_LOGOUT`, `AUTH_TOKEN_REUSE`, `AUTH_PASSWORD_RESET_REQUESTED`, `AUTH_PASSWORD_CHANGED` (Operation reset/update, Akteur), `AUTH_EMAIL_VERIFIED`; IP und User-Agent aus dem Hook-Kontext, Reset-Token und Hash werden nie geschrieben | Rollen-e2e in `apps/app-e2e/src/criterias/c09-logging-security.spec.ts` (Skelett) |
 | Break-Glass-Konto | `slm 56` | organisatorisch; in ELO als Prozess dokumentiert (`docs/compliance/prozess-zugriffsrechte-und-anmeldemittel.md`, Si001) | Prozess übernehmen: versiegeltes Notfallkonto mit galaxy-Admin-Rolle, Verwendung im Logbuch nachweisbar |
 | Rollen-e2e | Nachweis | nur API-Tests | Playwright-Fall je Rolle (Interessent → 403 auf Simulation/Erfassen, Verantwortlicher sieht nur Geissalp/Thun) |
 | Masken im Design System | UX | ELO-Style-Strings | Templates auf `slim-*` umstellen |

@@ -39,13 +39,17 @@
 // Page ---------------------------------------------------------------------
 .slim-page {
   padding: space(4);
+  // Compact top edge: the topbar / context bar already separate the page.
+  padding-block-start: space(3);
   @include safe-area('bottom', space(4));
 
   @include mq('md') {
     padding: space(6);
+    padding-block-start: space(3);
   }
   @include mq('lg') {
     padding: space(8);
+    padding-block-start: space(3);
   }
 
   @include elem('header') {

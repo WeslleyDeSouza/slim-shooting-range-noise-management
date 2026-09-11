@@ -342,10 +342,10 @@ const dataset = {
     // galaxy admin the e2e suite and the setup wizard sign in with.
     users: [
       { username: 'slim@demo.ch', password: '1234', firstName: 'Hans', lastName: 'Muster', role: 'admin' },
-      { username: 'fachspezialist@demo.ch', password: '1234', firstName: 'Fiona', lastName: 'Meier', role: 'specialist' },
-      { username: 'schiessplatz@demo.ch', password: '1234', firstName: 'Beat', lastName: 'Roth', role: 'range_owner', areas: ['Geissalp', 'Thun'] },
-      { username: 'interessent@demo.ch', password: '1234', firstName: 'Nina', lastName: 'Huber', role: 'interested' },
-      { username: 'appadmin@demo.ch', password: '1234', firstName: 'Sven', lastName: 'Keller', role: 'app_admin' },
+      { username: 'fachspezialist@demo.ch', password: '1234', firstName: 'Fiona', lastName: 'Meier', role: 'slim_specialist' },
+      { username: 'schiessplatz@demo.ch', password: '1234', firstName: 'Beat', lastName: 'Roth', role: 'slim_range_owner', areas: ['Geissalp', 'Thun'] },
+      { username: 'interessent@demo.ch', password: '1234', firstName: 'Nina', lastName: 'Huber', role: 'slim_interested' },
+      { username: 'appadmin@demo.ch', password: '1234', firstName: 'Sven', lastName: 'Keller', role: 'slim_admin' },
     ],
     areas: [geissalp, ...OTHER_AREAS.map(lightArea)],
   },

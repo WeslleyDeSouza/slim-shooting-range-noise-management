@@ -33,7 +33,13 @@
     "apps": "Apps",
     "area_calculation_run": "Immission calculation",
     "user_management": "User management",
-    "logs": "Log book"
+    "logs": "Log book",
+    "admin_user": "User administration (galaxy)",
+    "admin_role": "Role administration (galaxy)",
+    "admin_tenant": "Tenants (galaxy)",
+    "app_config": "App configuration",
+    "ad": "Administration",
+    "settings": "Settings"
   },
   "common": {
     "save": "Save",

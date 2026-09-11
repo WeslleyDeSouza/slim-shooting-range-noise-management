@@ -35,12 +35,13 @@ mobile first, hinter dem galaxy-Login (MFA-fähig) und per Setup-Wizard installi
 | Demo-Datensatz | `tenant.mock.json` (llumi-Muster): 9 Schiessplätze, Geissalp mit 14 Stellungsräumen, 16 Quellen, 6 Empfangspunkten, 2 Berechnungszuständen (initial 2019 = gültig, saniert 2025), 72 Nutzungen; jährlich rollend, Regenerierung per Generator | `tenant-dataset.spec` (7 Tests) |
 | API-Client, Doku | Angular-Client und Modelle werden bei jedem API-Start aus Swagger generiert; Swagger UI `/api/docs` | `libs/app/generated` |
 | Benutzerverwaltung (5.26, 8.1) | Benutzer/Rollen/Apps-Masken aus ELO über die galaxy-Admin-API; vier SLIM-Rollen mit der Rechte-Matrix 8.1.2 als Seed (ein Demo-Konto je Rolle); Guards prüfen R/W/X pro Bereich; «W/R-O» über galaxy Rules (`area-scope`) + `area_user`; 2FA vorhanden (erfüllt «MFA oder AGOV») | API `area-scope.spec` (6 Tests); [berechtigungen.md](../architecture/berechtigungen.md) |
-| Login-Logging / Logbuch (`slm 56`) | **in Arbeit**: ELO-Logger (`core_log_user`), Audit-Hooks für Benutzer/Rollen/Apps und die Maske «Logbuch» werden übernommen | `core/logger`, `modules/auth-audit`, `views/admin/logs` |
+| Login-Logging / Logbuch (`slm 56`) | Logbuch `core_log_user` aus ELO übernommen, Maske «Logbuch» unter Datenverwaltung mit Filtern und XLSX-Export; mit `@app-galaxy/auth-api` 0.1.218 alle Auth-Ereignisse über Hooks: Login (Methode), fehlgeschlagener Login (Grund), Logout, Token-Wiederverwendung, Passwort-Reset/-Änderung, E-Mail-Verifikation | API `client-ip.spec`, `auth-audit.hooks.spec`; `views/admin/logs` |
 | Setup-Wizard | `npm run setup`: 12 Schritte (Toolchain, .env, Registry, Abhängigkeiten, DB SQLite/MariaDB/MySQL/PostgreSQL, Workspace, API, Frontend, Login, Rechte, Demo-Daten, e2e) | live durchgespielt, 12/12 grün |
 | Architektur-Doku (A2) | Gesamtarchitektur, Deployment/Sicherheit, UI-Ansichten – nur Ist-Zustand | [gesamtarchitektur.md](../architecture/gesamtarchitektur.md), [deployment-sicherheit.md](../architecture/deployment-sicherheit.md), [ui-ansichten.md](../architecture/ui-ansichten.md) |
+| Lösungskonzept (C2) v0.2 | Entwurf v0.1 auf den Prototyp-Stand gebracht: Ist-Skizzen (Gesamtarchitektur, Datenmodell, Berechtigungskette, Deployment, Berechnungsfluss) und Screenshots eingebettet, Zielzustand verbindlich, Prototyp-Belege je Kapitel, Matrix mit Status P/Z/O; Seitenbudget A2 (15 + 2, Summary ½ Seite) eingehalten | [C2-Loesungskonzept-SLIM.md](C2-Loesungskonzept-SLIM.md) → `npm run docs:docx -- docs/anforderungskatalog/C2-Loesungskonzept-SLIM.md --pages` erzeugt die `.docx` und meldet die Seitenzahl je Kapitel |
 
-Testbilanz: API 161 Vitest-Tests (inkl. 95 Berechnung, 6 Berechtigungen), 53 Angular Jest-Tests
-(Seiten, Facades), Playwright-Suite 35 Fälle (Auth, Admin, drei Schiessplatz-Seiten) grün.
+Testbilanz: API 180 Vitest-Tests (inkl. 95 Berechnung, 6 Berechtigungen, Logbuch), 63 Angular Jest-Tests
+(Seiten, Facades), Playwright-Suite 32 Fälle (Auth, Admin, drei Schiessplatz-Seiten) grün.
 
 ### Screenshots
 
@@ -61,7 +62,7 @@ eingebunden.
 | Schiessplatz – Übersicht (5.10) | Ampeln in Kontextleiste (aus Seed), Seite selbst Platzhalter | Kontingent-Tabelle Soll/Ist/Ø 3 Jahre, Karte |
 | Grenzwerte | LSV-Tabellen als Konstante (`ANNEX9_LIMITS`, `ANNEX7_LIMITS`) | Konfigurierbar (5.28) |
 | Export | Buttons vorhanden, deaktiviert | Excel/PDF (`slm 3`, `slm 39`–`41`) |
-| Benutzerverwaltung | Masken aus ELO (Funktion vollständig), Umstellung auf das Design System läuft | `slim-*`-Blöcke, CASL im Frontend |
+| Benutzerverwaltung | Masken aus ELO, auf das Design System umgestellt; Rollen tragen Schlüssel (`settings.key`) + Flag «nur eigene Schiessplätze», Systemrollen nicht löschbar, Benutzerzahl je Rolle | CASL im Frontend, Zuordnung Schiessplätze im Benutzerformular |
 
 ## 4. Offen / nächste Schritte (Vorschlag)
 
@@ -83,6 +84,12 @@ eingebunden.
    ([berechtigungen.md](../architecture/berechtigungen.md), Abschnitt 5).
 8. Entscheidungen des Auftraggebers (index.md, Abschnitt 10): Feiertagskalender, drei Referenzjahre,
    Grenzwert-Konfiguration, Rollen-Zuschnitt, GIS-Format.
+
+### Kriterien-Nachweise
+
+`apps/app-e2e/src/criterias/` (Playwright-Projekt `criterias`) sammelt je kritischem Kriterium
+(`slm`, Abnahmekriterien K1–K7) einen Testfall – heute als Skelett mit den Schritten, die
+noch zu automatisieren sind (46 Fälle in 11 Dateien, siehe README dort).
 
 ## 5. Demo-Pfad für die Sitzung
 

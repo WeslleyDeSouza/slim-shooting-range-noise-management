@@ -17,14 +17,14 @@
         "password": "1234",
         "firstName": "Fiona",
         "lastName": "Meier",
-        "role": "specialist"
+        "role": "slim_specialist"
       },
       {
         "username": "schiessplatz@demo.ch",
         "password": "1234",
         "firstName": "Beat",
         "lastName": "Roth",
-        "role": "range_owner",
+        "role": "slim_range_owner",
         "areas": [
           "Geissalp",
           "Thun"
@@ -35,14 +35,14 @@
         "password": "1234",
         "firstName": "Nina",
         "lastName": "Huber",
-        "role": "interested"
+        "role": "slim_interested"
       },
       {
         "username": "appadmin@demo.ch",
         "password": "1234",
         "firstName": "Sven",
         "lastName": "Keller",
-        "role": "app_admin"
+        "role": "slim_admin"
       }
     ],
     "areas": [

@@ -3,11 +3,15 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/api/src",
   "projectType": "application",
-  "tags": ["scope:api"],
+  "tags": [
+    "scope:api"
+  ],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/dist/apps/api"],
+      "outputs": [
+        "{workspaceRoot}/dist/apps/api"
+      ],
       "inputs": [
         "default",
         "^default",
@@ -33,7 +37,6 @@
       "continuous": true,
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": ["build"],
       "options": {
         "buildTarget": "api:build",
         "runBuildTargetDependencies": false
@@ -45,7 +48,8 @@
         "production": {
           "buildTarget": "api:build:production"
         }
-      }
+      },
+      "//": "@nx/js:node builds api:build itself (watch mode); a dependsOn build on top made Nx report «Recursive task invocation» and kill the server after a few rebuilds."
     },
     "test": {
       "executor": "nx:run-commands",
@@ -56,7 +60,9 @@
         "{workspaceRoot}/libs/api/**/*",
         "{workspaceRoot}/libs/shared/**/*"
       ],
-      "outputs": ["{workspaceRoot}/coverage/apps/api"],
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/api"
+      ],
       "options": {
         "command": "vitest run --config apps/api/vitest.config.mts"
       },

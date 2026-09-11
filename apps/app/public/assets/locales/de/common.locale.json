@@ -33,7 +33,13 @@
     "apps": "Apps",
     "area_calculation_run": "Immissionsberechnung",
     "user_management": "Benutzerverwaltung",
-    "logs": "Logbuch"
+    "logs": "Logbuch",
+    "admin_user": "Benutzerverwaltung (galaxy)",
+    "admin_role": "Rollenverwaltung (galaxy)",
+    "admin_tenant": "Mandanten (galaxy)",
+    "app_config": "App-Konfiguration",
+    "ad": "Administration",
+    "settings": "Einstellungen"
   },
   "common": {
     "save": "Speichern",

@@ -20,7 +20,8 @@
     "ngsw": "node_modules/.bin/ngsw-config dist/apps/app/browser ./apps/app/ngsw-config.json && cp node_modules/@angular/service-worker/ngsw-worker.js dist/apps/app/browser/ngsw-worker.js",
     "stats:app": "npx webpack-bundle-analyzer dist/apps/app/stats.json",
     "translate": "npx transmart",
-    "translate:tool": "node tools/transmart.js"
+    "translate:tool": "node tools/transmart.js",
+    "docs:docx": "node tools/docx.build.js"
   },
   "dependencies": {
     "@angular/animations": "22.1.6",
@@ -34,7 +35,7 @@
     "@angular/platform-browser-dynamic": "22.1.6",
     "@angular/router": "22.1.6",
     "@angular/service-worker": "22.1.6",
-    "@app-galaxy/auth-api": "^0.1.217",
+    "@app-galaxy/auth-api": "^0.1.218",
     "@app-galaxy/auth-ui": "^0.0.222",
     "@app-galaxy/core-api": "^0.1.194",
     "@app-galaxy/email": "^0.0.3",
@@ -129,6 +130,7 @@
     "@vitest/coverage-v8": "^4.1.11",
     "angular-eslint": "22.5.0",
     "concurrently": "^9.2.1",
+    "docx": "^9.7.1",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-playwright": "^1.6.2",

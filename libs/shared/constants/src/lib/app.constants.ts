@@ -14,15 +14,21 @@ export type AppLanguage = (typeof APP_LANGUAGES)[number];
  */
 export const SLIM_ROLE_KEY = {
   /** Fachspezialist KOMZ Lärm */
-  specialist: 'specialist',
+  specialist: 'slim_specialist',
   /** Schiessplatz-Verantwortlicher (W/R-O: only assigned areas) */
-  rangeOwner: 'range_owner',
+  rangeOwner: 'slim_range_owner',
   /** Interessent Schiessplatznutzung */
-  interested: 'interested',
+  interested: 'slim_interested',
   /** Applikationsadministrator*in */
-  appAdmin: 'app_admin',
+  appAdmin: 'slim_admin',
 } as const;
 export type SlimRoleKey = (typeof SLIM_ROLE_KEY)[keyof typeof SLIM_ROLE_KEY];
+
+/** Keys of the two galaxy roles every tenant gets (roleId 1 = admin, 2 = default). */
+export const GALAXY_ROLE_KEY = {
+  admin: 'galaxy_admin',
+  user: 'galaxy_user',
+} as const;
 export const SLIM_ROLE_KEYS: readonly SlimRoleKey[] = Object.values(SLIM_ROLE_KEY);
 
 /** Settings of a galaxy role as SLIM uses them (`app_role.settings`, JSON). */
@@ -33,4 +39,21 @@ export interface SlimRoleSettings {
   ownAreasOnly?: boolean;
   /** Seeded system role: not deletable, rights matrix lives in code. */
   slim?: boolean;
+}
+
+/**
+ * `app_role.settings` as SLIM reads it: TypeORM hands the JSON column back as
+ * an object on MariaDB/PostgreSQL but as a string on SQLite — accept both.
+ */
+export function parseRoleSettings(value: unknown): SlimRoleSettings {
+  if (!value) return {};
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return parsed && typeof parsed === 'object' ? (parsed as SlimRoleSettings) : {};
+    } catch {
+      return {};
+    }
+  }
+  return typeof value === 'object' ? (value as SlimRoleSettings) : {};
 }

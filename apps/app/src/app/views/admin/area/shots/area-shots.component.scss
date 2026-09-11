@@ -27,7 +27,7 @@
     align-items: start;
 
     @include slim.mq('lg') {
-      grid-template-columns: 232px minmax(0, 1fr);
+      grid-template-columns: 200px minmax(0, 1fr);
     }
   }
 
@@ -151,9 +151,22 @@
     box-shadow: none;
   }
 
+  // Secondary column: the stacked phone rows show it; on a desktop the
+  // weapon implies the category and the chips filter by it, so the table
+  // keeps its width for the ten remaining columns.
+  &__col--xl {
+    @include slim.mq('md') {
+      display: none;
+    }
+  }
+
   &__th {
     cursor: pointer;
     user-select: none;
+    // Long single-word headings (soft hyphens in the labels) may break, so
+    // the ten columns fit the card without a horizontal scroll.
+    hyphens: manual;
+    letter-spacing: 0.02em;
 
     &::after {
       content: '';

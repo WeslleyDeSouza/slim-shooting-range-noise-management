@@ -1,4 +1,4 @@
-<div class="shots">
+<div class="slim-page shots">
   <div class="slim-page__header">
     <div>
       <h1 class="slim-page__title">{{ 'shots.title' | translate }}</h1>
@@ -231,7 +231,7 @@
       }
 
       <div class="slim-table-wrap shots__table-wrap">
-        <table class="slim-table slim-table--stack" data-testid="shots-table">
+        <table class="slim-table slim-table--stack slim-table--compact" data-testid="shots-table">
           <thead>
             <tr>
               <th class="shots__check">
@@ -250,6 +250,7 @@
                   [class.shots__th--sorted]="sort().key === col[0]"
                   [class.shots__th--asc]="sort().key === col[0] && sort().asc"
                   [class.slim-table__cell--num]="col[0] === 'shots'"
+                  [class.shots__col--xl]="col[0] === 'category'"
                   (click)="sortBy(col[0])"
                 >
                   {{ col[1] | translate }}
@@ -299,7 +300,7 @@
                       {{ 'shots.type.' + row.usage.usageType | translate }}
                     </span>
                   </td>
-                  <td [attr.data-label]="'shots.columns.category' | translate">
+                  <td [attr.data-label]="'shots.columns.category' | translate" class="shots__col--xl">
                     {{ 'shots.category.' + row.usage.category | translate }}
                   </td>
                   <td [attr.data-label]="'shots.columns.weapon' | translate">{{ row.usage.weaponName }}</td>

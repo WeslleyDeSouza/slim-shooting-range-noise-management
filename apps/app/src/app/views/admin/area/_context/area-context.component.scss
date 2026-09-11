@@ -5,12 +5,21 @@
 }
 
 .area-ctx {
+  // The bar and the tabs sit above the routed page (which is a `slim-page`)
+  // and take the same horizontal padding, so everything lines up.
   &__bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: slim.space(2) slim.space(3);
-    padding-block: slim.space(2) slim.space(3);
+    padding: slim.space(3) slim.space(4) 0;
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
   }
 
   &__back {
@@ -85,8 +94,14 @@
   }
 
   &__nav {
-    margin-bottom: slim.space(4);
-    padding-bottom: slim.space(2);
+    padding: slim.space(2) slim.space(4);
     border-bottom: 1px solid slim.color('line');
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
   }
 }

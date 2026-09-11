@@ -1,0 +1,376 @@
+erDiagram
+  tenant {
+    varchar tenantId PK
+    text identifier
+    text workspaceName
+    text workspaceLocationCode
+    text tenantName
+    text tenantDescription
+    text tenantDomain
+    integer enabled
+    integer createdYear
+    datetime deletedAt
+    datetime createdAt
+  }
+  tenant_email {
+    text tenantId
+    integer id PK
+    integer emailId
+    text email
+    text password
+    integer hash
+    integer isDefaultOut
+    integer isDefaultIn
+    text hostOut
+    integer portOut
+    integer tlsOut
+    text hostIn
+    integer portIn
+    integer tlsIn
+    integer createdAt
+  }
+  auth_login {
+    varchar id PK
+    integer authCreatedAt
+    datetime createdAt
+    text uuId
+    varchar userId FK
+    text info
+    text tenantId
+    text sourceType
+    text type
+    text deviceInfo
+    text value
+    text updatedAt
+    text expiresAt
+    text ipAddress
+    text userAgent
+    text lastUsedAt
+  }
+  auth_user {
+    varchar userId PK
+    text iamId
+    text iamSource
+    varchar email
+    varchar username
+    text host
+    text password
+    text salt
+    integer authCreatedAt
+    text permissionsUpdatedAt
+    integer isIntern "Internal User, User is owned by Organisation"
+    text deleted
+    text loginLast
+    text loginFirst
+    text passwordResetLink
+    text emailVerificationToken
+    integer emailVerificationAttempts
+    text emailVerifiedAt
+    text avatar
+    text gender
+    text firstName
+    text lastName
+    text phone
+    text birthDay
+    text preferredLanguage
+    datetime createdAt
+    text pin
+    integer pinAttempt
+    integer loginAttempt
+    integer lockedUntil
+  }
+  auth_password_history {
+    varchar id PK
+    text userId
+    text passwordHash
+    datetime createdAt
+  }
+  app_category {
+    integer categoryId PK
+    text domain
+    integer parentCategoryId
+    real orderIdx
+    text tenantId
+    text title
+  }
+  app_user_setting {
+    integer id PK
+    integer settingId
+    text domain
+    text tenantId FK
+    text userId
+    integer appId FK
+    text section
+    text platform
+    text settings
+  }
+  app_feature_definition {
+    varchar id PK
+    integer appId FK
+    text featureKey
+    text title
+    text description
+    text category
+    integer isActive
+    real orderIdx
+    text config
+    integer actionRead
+    integer actionModify
+    integer actionDelete
+    integer actionDownload
+    integer actionOthers
+  }
+  app_role_feature {
+    varchar id PK
+    text tenantId FK
+    integer roleId FK
+    integer appId FK
+    varchar featureDefinitionId FK
+    text feature
+    integer enabled
+  }
+  app_app {
+    integer appId PK
+    text domain
+    text tenantId
+    integer categoryId FK
+    text title
+    text roleKey
+    text path
+    text pathMobile
+    text img
+    text icon
+    real orderIdx
+    text imgDashboard
+    integer hiddenInMenu
+    integer supportsGranularPermissions
+  }
+  app_role_right {
+    varchar id PK
+    text tenantId FK
+    integer roleId FK
+    integer appId FK
+    text access
+  }
+  app_role {
+    integer roleId PK
+    text tenantId
+    text type
+    text domain
+    text title
+    integer state
+    integer isDefault
+    integer hasAdminRights
+    integer hasOnBoardingRights
+    integer hasPaymentRights
+    integer sensitiveDataDisplay
+    text permissionMode
+    text settings
+  }
+  app_user_right {
+    integer id PK
+    varchar userId FK
+    text tenantId FK
+    integer roleId FK
+  }
+  auth_template {
+    integer id PK
+    integer tenantId
+    text lang
+    text name "KEY identifier"
+    text title
+    text subject
+    text template
+    text settings
+  }
+  tenant_user_role {
+    varchar tenantId FK
+    integer id PK
+    varchar userId FK
+    text roles "user,admin,contributor,ect"
+    integer userCreatedAt
+  }
+  tenant_structure_user_role {
+    varchar id PK
+    varchar userId FK
+    text tenantId
+    text structureItemId
+    text type "DIVISIONS: Part of a tenant that operates within the entire organization.
+DEPARTMENTS: Independent structural unit of the organization.
+TEAMS: Method of organizing employees based on their qualities.
+LOCATIONS: Physical locations where the tenant operates.
+OPERATIONS: Broad range of activities related to business operations."
+    text role "Possible values: manager, member, admin, observer"
+    integer createdYear
+  }
+  tenant_app_config {
+    varchar configId PK
+    text tenantId
+    text domainName
+    text domainTopLevel
+    text configKey
+    text config
+    integer enabled
+    integer createdYear
+  }
+  user_config {
+    integer configId PK
+    text ownerId
+    text metaSection
+    text metaKey
+    text metaValue
+  }
+  tenant_config {
+    integer configId PK
+    text tenantId
+    text ownerId
+    text metaSection
+    text metaKey
+    text metaValue
+    datetime createdAt
+  }
+  area_room {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    text coordinationSectionNo
+    varchar name
+    text groupName
+    integer builtAfter1985
+    integer sortOrder
+    integer enabled
+  }
+  area_weapon {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    varchar roomId FK
+    varchar weaponName
+    varchar weapon
+    varchar caliber
+    text category
+    text annex7Category
+    varchar sourceId
+    integer quota
+    integer enabled
+  }
+  area {
+    text tenantId
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar name
+    varchar coordinationSectionNo
+    text sectoralPlanNo
+    text quotaStatus
+    text noiseStatus
+    integer annex7Overall
+    integer enabled
+  }
+  area_receiver {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    varchar code
+    text egid
+    varchar address
+    text municipality
+    text type
+    text sensitivityLevel
+    real east
+    real north
+    real mapX
+    real mapY
+    integer sortOrder
+    integer enabled
+  }
+  area_wlr {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar calculationId FK
+    varchar receiverId FK
+    varchar weaponId FK
+    real laeDay
+    real laeEve
+    real lafmaxDay
+  }
+  area_calculation {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    varchar name
+    varchar supplier
+    text deliveredAt
+    integer referenceYear
+    text buildYearClass
+    integer isCurrent
+    integer isMgdm
+    integer enabled
+  }
+  area_usage {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
+    varchar roomId FK
+    varchar weaponId FK
+    varchar unit
+    text date
+    text timeFrom
+    text timeTo
+    text usageType
+    integer shots
+    varchar recordedBy
+    text source
+    text note
+  }
+  slim_demo_seed {
+    varchar tenantId PK
+    varchar datasetKey
+    integer version
+    integer year
+    datetime seededAt
+  }
+  auth_login }|--|| auth_user: user
+  app_user_setting }|--|| app_app: app
+  app_feature_definition }|--|| app_app: app
+  app_role_feature }|--|| app_app: app
+  app_role_feature }|--|| app_role: role
+  app_role_feature }|--|| app_feature_definition: featureDefinition
+  app_app }|--|| app_category: category
+  app_role_right }|--|| app_app: app
+  app_role_right }|--|| app_role: role
+  app_user_right }|--|| app_role: role
+  app_user_right }|--|| auth_user: user
+  tenant_user_role }|--|| auth_user: user
+  tenant_user_role }|--|| tenant: tenant
+  tenant_structure_user_role }|--|| auth_user: user
+  area_room }|--|| area: area
+  area_weapon }|--|| area: area
+  area_weapon }|--|| area_room: room
+  area_receiver }|--|| area: area
+  area_wlr }|--|| area_calculation: calculation
+  area_wlr }|--|| area_receiver: receiver
+  area_wlr }|--|| area_weapon: weapon
+  area_calculation }|--|| area: area
+  area_usage }|--|| area: area
+  area_usage }|--|| area_room: room
+  area_usage }|--|| area_weapon: weapon

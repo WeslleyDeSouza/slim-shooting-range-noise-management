@@ -76,7 +76,7 @@ export class UsageService {
         coordinationSectionNo: room.coordinationSectionNo,
         name: room.name,
         groupName: room.groupName,
-        builtAfter1985: room.builtAfter1985,
+        builtAfter1985: Boolean(room.builtAfter1985),
         usageCount: byRoom.get(room.id)?.count ?? 0,
         shots: byRoom.get(room.id)?.shots ?? 0,
       })),

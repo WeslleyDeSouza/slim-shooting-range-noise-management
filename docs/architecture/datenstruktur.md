@@ -14,25 +14,35 @@ apps/api/src/
 │   ├── env-loader.ts        # lädt .env VOR allen Imports
 │   ├── guards/              # AuthThrottlerGuard (/api/auth, /api/public)
 │   └── health-check/        # /api/health, /alive, /ready (Terminus)
-├── common/docs/             # Swagger (/docs) + Generierung von @ui-slim/apiClient
+├── common/docs/             # Swagger (/api/docs) + Generierung von @ui-slim/apiClient, ERD (/erd → docs/architecture/uml.mmd)
 ├── mocks/                   # API_APPS_MAPPING, API_CATEGORY_MAPPING, API_MOCK_DATA (Seed), E-Mail-Parser
+│   └── tenant/              # «SLIM Demo»-Datensatz: tenant.mock.json, tenant-dataset.ts, demo-dataset.seed.ts, Marker-Entity
 └── modules/                 # Geschäftslogik-Module (siehe sitemap.md)
-    └── area/                # Schiessplätze: entities/, dto/, controllers/, db/, service, mock-data, spec
+    ├── area/                # Schiessplätze, Stellungsräume, Zuordnung Waffen (= Quellen): entities/, dto/, controllers/, db/, service, spec
+    ├── usage/               # Schiessplatz-Nutzungen (5.11): overview / create / update / delete / restore
+    └── calculation/         # Berechnungsgrundlagen, Empfangspunkte, WLR-Pegel; AssessmentService (5.12), SimulationService (5.13)
 ```
 
 #### Modul-Muster (wie ELO)
 
 Jedes Modul unter `modules/<name>/` mit `controllers/`, `entities/`, `dto/`, `db/<name>.database.ts`,
-`<name>.service.ts`, `<name>.module.ts`, `<name>.mock-data.ts`. Das Modul exportiert
+`<name>.service.ts`, `<name>.module.ts`. Das Modul exportiert
 `static DBOptions = { entities: [...] }`, das in `app.module.ts` in die TypeORM-Entity-Liste
-gespreadet wird. Entities erben von `TenantBaseEntity` (`@app-galaxy/core-api`, mandantenbezogen).
+gespreadet wird. Entities erben von `SlimBaseEntity` (`@api-slim/common`, `base.entity.ts`: uuid `id`,
+Audit-Spalten, Soft-Delete), das seinerseits die galaxy `TenantBaseEntity` (`tenantId`, `self`,
+`setLastEntryId*`) erweitert.
 Admin-Controller sind mit `AuthGuard('jwt')`, `TenantGuard`, `AppsRolesGuard(API_APPS_MAPPING.X)`
 und `ReplayGuard` geschützt; `@GetTenantId()` liefert den Mandanten. DTOs mit
 `class-validator`, Controller mit `@nestjs/swagger` dokumentiert → daraus entsteht der
 Angular-Client (`npm run ng-swagger`).
 
 Demo-Daten liegen **nur im Backend**: `API_MOCK_DATA.initMockData()` (nicht in Produktion)
-seedet Mandant, Demo-User, App-Katalog + Rollen und ruft die `<modul>.mock-data.ts` auf.
+seedet Mandant, Demo-User, App-Katalog + Rollen und schreibt danach den Datensatz
+`mocks/tenant/tenant.mock.json` («SLIM Demo», llumi-Muster): Schiessplätze mit Stellungsräumen,
+zulässigen Waffen (= Quellen), Empfangspunkten, Berechnungszuständen (WLR-Pegel) und den
+Nutzungen des laufenden Jahres (`{{year}}`-Platzhalter). Ein Marker (`slim_demo_seed`) merkt sich
+Version und Jahr; Jahreswechsel, Versionssprung oder `DEMO_RESEED=1` schreiben den Mandanten neu,
+`DEMO_SEED=0` lässt ihn in Ruhe. Generator: `tools/tenant-dataset.generator.ts`.
 
 ### Frontend (apps/app) – Angular 22
 
@@ -69,7 +79,8 @@ Client. Kein NgRx im App-Code, keine Mocks, keine handgeschriebenen API-Modelle.
 | Lib                      | Alias                    | Inhalt                                                                      |
 | ------------------------ | ------------------------ | --------------------------------------------------------------------------- |
 | `libs/api/common`        | `@api-slim/common`       | Nest-Helfer (Proxy-Prefix, Trust-Proxy, env-Flags)                          |
-| `libs/api/models`        | `@api-slim/models`       | Gemeinsame Entities / DTOs (`BaseEntity` mit Audit-Spalten)                 |
+| `libs/api/models`        | `@api-slim/models`       | Gemeinsame DTOs                                                             |
+| `libs/shared/lsv`        | `@slim/lsv`              | Lärmberechnung LSV Anhang 7/9 (B1 Kap. 7, B1.4): GEMW/ESM, Betriebsdaten, Grenzwerte, Ampel — dependency-frei, Tests = Kontrollwerte |
 | `libs/api/tests`         | `@api-slim/tests`        | In-Memory-SQLite mit galaxy Tenant/User-Tabellen für Service-Tests (Vitest) |
 | `libs/shared/constants`  | `@slim/shared`           | `APP_ROUTES` / `ROUTE_SEGMENT`, Sprachen, App-Konstanten (API + App)        |
 | `libs/app/design-system` | `@ui-slim/design-system` | SCSS-Design-System + ThemeService                                           |
@@ -80,10 +91,22 @@ Client. Kein NgRx im App-Code, keine Mocks, keine handgeschriebenen API-Modelle.
 - **Area (Schiessplatz)** `area`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr.),
   `sectoralPlanNo` (Sachplan-Nr.), `quotaStatus` / `noiseStatus` (`ok | warn | over | none`),
   `enabled`, `tenantId`. Endpunkte `admin/area` (Liste, Summary, Dashboard, CRUD).
-- **Schusszahlen** (`shots`): pro Schiessplatz und Jahr, pro Waffe/Kaliber — folgt.
-- **Berechnung** (`calculation`): Import/Export der Lärmberechnung, Ergebnis je Schiessplatz
-  (liefert künftig die Ampel) — folgt.
-- **Waffe / Kaliber / Waffenkategorie** (`weapon`): Stammdaten — folgt.
+- **Stellungsraum** `area_room`: `areaId`, `coordinationSectionNo` (optional), `name`, `groupName`,
+  `builtAfter1985` (Planungswert gilt), `sortOrder`, `enabled`.
+- **Zuordnung Waffen / Quelle** `area_weapon` (5.17): `areaId`, `roomId`, `weaponName` (Erfassung), `weapon`,
+  `caliber`, `category` (`artillery | air_defence | handguns | mortar`), `annex7Category` (`a`–`f`, zivil),
+  `sourceId` (sonARMS QuellenID), `quota` (Kontingent Plangenehmigung).
+- **Schiessplatz-Nutzung** `area_usage` (5.11): `roomId`, `weaponId` (zulässige Kombination), `unit`, `date`,
+  `timeFrom`/`timeTo`, `usageType` (`military | civil`), `shots`, `recordedBy`, `source` (`manual | elo | import`),
+  `note`; Soft-Delete für «Rückgängig». Endpunkte `admin/area/:areaId/usage/{overview,restore}`, CRUD.
+- **Berechnungsgrundlage / Zustand** `area_calculation` (5.18): `name`, `supplier`, `deliveredAt`, `referenceYear`,
+  `buildYearClass` (`before1985 | after1985 | mixed`), `isCurrent`, `isMgdm`.
+- **Empfangspunkt** `area_receiver` (5.12): `code`, `egid`, `address`, `municipality`, `type` (`facade | reserve`),
+  `sensitivityLevel` (ES I–IV), `east`/`north` (LV95), `mapX`/`mapY` (schematische Karte).
+- **WLR-Pegel** `area_wlr`: je Zustand × Empfangspunkt × Quelle `laeDay`, `laeEve` (Anhang 9), `lafmaxDay` (Anhang 7).
+- **Beurteilung / Simulation**: nicht persistiert, `AssessmentService` und `SimulationService` rechnen mit
+  `@slim/lsv` aus Nutzungen + WLR (`admin/area/:areaId/calculation/{assessment,simulation}`).
+- **Waffe / Kaliber / Waffenkategorie** (Datenverwaltung, 5.22–5.25): Stammdaten-Masken — folgt (heute über `area_weapon`).
 - **Benutzer / Rollen / Mandanten**: galaxy (`@app-galaxy/auth-api`, `core-api`); App-Katalog
   und Rollen-Rechte über `API_APPS_MAPPING`.
 - **MGDM Export**: Export nach dem minimalen Geodatenmodell — folgt.

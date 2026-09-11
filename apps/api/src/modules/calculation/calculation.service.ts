@@ -89,8 +89,9 @@ export class CalculationService {
       deliveredAt: calc.deliveredAt,
       referenceYear: calc.referenceYear,
       buildYearClass: calc.buildYearClass,
-      isCurrent: calc.isCurrent,
-      isMgdm: calc.isMgdm,
+      // SQLite hands booleans back as 0/1.
+      isCurrent: Boolean(calc.isCurrent),
+      isMgdm: Boolean(calc.isMgdm),
       sourceCount,
     };
   }

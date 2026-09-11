@@ -5,10 +5,15 @@ import {
   testDbSeedBeforeEach,
   testDbSetup,
 } from '@api-slim/tests';
+import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
+import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
+import { CalculationModule } from '../calculation/calculation.module';
+import { UsageModule } from '../usage/usage.module';
 import { AreaModule } from './area.module';
-import { AREA_DEMO, AREA_MOCK_DATA } from './area.mock-data';
 import { AreaService, needsAttention, worstStatus } from './area.service';
 import { AreaEntity } from './entities';
+
+const NOW = new Date(2026, 11, 31);
 
 describe('AreaService', () => {
   let module: TestingModule;
@@ -18,8 +23,13 @@ describe('AreaService', () => {
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: testDbSetup(
-        [AreaModule],
-        AreaModule.DBOptions.entities as never[],
+        [AreaModule, UsageModule, CalculationModule],
+        [
+          ...AreaModule.DBOptions.entities,
+          ...UsageModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities,
+          DemoSeedMarkerEntity,
+        ] as never[],
       ),
     }).compile();
     dataSource = module.get(DataSource);
@@ -35,25 +45,26 @@ describe('AreaService', () => {
   });
 
   it('seeds the demo areas once and lists them per tenant', async () => {
-    await AREA_MOCK_DATA.fill(dataSource, mockTenantId);
-    await AREA_MOCK_DATA.fill(dataSource, mockTenantId);
+    await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
+    await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
 
     const areas = await service.list(mockTenantId);
-    expect(areas.length).toBe(AREA_DEMO.length);
-    expect(areas[0].coordinationSectionNo).toBe('1202.230');
+    expect(areas.length).toBe(9);
+    expect(areas[0].coordinationSectionNo).toBe('1104.020');
+    expect(areas[0].name).toBe('Geissalp');
     expect(await service.list('other-tenant')).toEqual([]);
   });
 
   it('summarises the traffic-light status', async () => {
-    await AREA_MOCK_DATA.fill(dataSource, mockTenantId);
+    await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
     const summary = await service.summary(mockTenantId);
     expect(summary).toEqual({
-      total: 8,
+      total: 9,
       ok: 3,
       warn: 2,
-      over: 2,
+      over: 3,
       none: 1,
-      attention: 4,
+      attention: 5,
     });
   });
 

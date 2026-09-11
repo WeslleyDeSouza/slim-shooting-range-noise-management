@@ -1,3 +1,5 @@
+const { datasetUser } = require('./_browser');
+
 const REQUIRED_PROJECTS = ['api', 'app'];
 
 function clean(value) {
@@ -45,7 +47,7 @@ module.exports = {
     ctx.log('info', 'app      http://localhost:4200');
     ctx.log(
       'info',
-      `demo     ${clean(env['APP_DEFAULT_USER']) || 'slim@demo.ch'} / ${clean(env['APP_DEFAULT_PASSWORD']) || '1234'}`,
+      `demo     ${clean(env['APP_DEFAULT_USER']) || datasetUser(ctx)?.user || 'slim@demo.ch'} / ${clean(env['APP_DEFAULT_PASSWORD']) || datasetUser(ctx)?.password || '1234'}`,
     );
     ctx.log('info', 'the API regenerates the client (libs/app/generated -> @ui-slim/apiClient) on every start');
     ctx.log('ok', 'run `npm run all` to serve both.');

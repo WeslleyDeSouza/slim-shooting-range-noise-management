@@ -2,6 +2,15 @@ import type { Route, Routes } from '@angular/router';
 import { LocaleResolver } from '@app-galaxy/translate-ui';
 import { ROUTE_SEGMENT as S } from '@slim/shared';
 import { PlaceholderData } from './_placeholder/placeholder.component';
+import { AppsFacade } from './user-management/apps/_data/apps.facade';
+import { EloAppsOverviewComponent } from './user-management/apps/apps-overview.component';
+import { EloAppFormComponent } from './user-management/apps/form/app-form.component';
+import { RolesFacade } from './user-management/roles/_data/roles.facade';
+import { EloRolesOverviewComponent } from './user-management/roles/roles-overview.component';
+import { EloRoleFormComponent } from './user-management/roles/form/role-form.component';
+import { UsersFacade } from './user-management/users/_data/users.facade';
+import { EloUsersOverviewComponent } from './user-management/users/users-overview.component';
+import { EloUserFormComponent } from './user-management/users/form/user-form.component';
 
 const placeholder = (path: string, data: PlaceholderData): Route => ({
   path,
@@ -56,22 +65,43 @@ export const ADMIN_ROUTES: Routes = [
                 (c) => c.AreaOverviewComponent,
               ),
           },
-          placeholder(`:id/${S.overview}`, {
-            title: 'menu.area_overview',
-            crumbs: ['menu.areas'],
-          }),
-          placeholder(`:id/${S.shots}`, {
-            title: 'menu.area_shots',
-            crumbs: ['menu.areas'],
-          }),
-          placeholder(`:id/${S.details}`, {
-            title: 'menu.area_details',
-            crumbs: ['menu.areas'],
-          }),
-          placeholder(`:id/${S.simulation}`, {
-            title: 'menu.area_simulation',
-            crumbs: ['menu.areas'],
-          }),
+          // One Schiessplatz: context bar (switcher, traffic lights, tabs)
+          // around the pages of the mocks _mocks/area/*.
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./area/_context/area-context.component').then(
+                (c) => c.AreaContextComponent,
+              ),
+            children: [
+              { path: '', pathMatch: 'full', redirectTo: S.overview },
+              placeholder(S.overview, {
+                title: 'menu.area_overview',
+                crumbs: ['menu.areas'],
+              }),
+              {
+                path: S.shots,
+                loadComponent: () =>
+                  import('./area/shots/area-shots.component').then(
+                    (c) => c.AreaShotsComponent,
+                  ),
+              },
+              {
+                path: S.details,
+                loadComponent: () =>
+                  import('./area/details/area-details.component').then(
+                    (c) => c.AreaDetailsComponent,
+                  ),
+              },
+              {
+                path: S.simulation,
+                loadComponent: () =>
+                  import('./area/simulation/area-simulation.component').then(
+                    (c) => c.AreaSimulationComponent,
+                  ),
+              },
+            ],
+          },
         ],
       },
 
@@ -139,7 +169,41 @@ export const ADMIN_ROUTES: Routes = [
             crumbs: DM_WEAPONS,
           }),
           // Benutzer, MGDM, System
-          placeholder(S.users, { title: 'menu.users', crumbs: DM }),
+          // Benutzerverwaltung (5.26): users, roles and the app catalogue —
+          // ELO's native screens over the galaxy admin API (views/admin/user-management).
+          {
+            path: S.users,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            providers: [UsersFacade],
+            children: [
+              { path: '', component: EloUsersOverviewComponent },
+              { path: S.create, component: EloUserFormComponent },
+              { path: `${S.edit}/:id`, component: EloUserFormComponent },
+            ],
+          },
+          {
+            path: S.roles,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            providers: [RolesFacade],
+            children: [
+              { path: '', component: EloRolesOverviewComponent },
+              { path: S.create, component: EloRoleFormComponent },
+              { path: `${S.edit}/:id`, component: EloRoleFormComponent },
+            ],
+          },
+          {
+            path: S.apps,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            providers: [AppsFacade],
+            children: [
+              { path: '', component: EloAppsOverviewComponent },
+              { path: S.create, component: EloAppFormComponent },
+              { path: `${S.edit}/:id`, component: EloAppFormComponent },
+            ],
+          },
           placeholder(S.mgdmExport, { title: 'menu.mgdm_export', crumbs: DM }),
           placeholder(S.system, { title: 'menu.system_settings', crumbs: DM }),
         ],

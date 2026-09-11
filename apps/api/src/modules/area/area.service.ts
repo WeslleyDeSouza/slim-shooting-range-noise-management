@@ -25,6 +25,13 @@ export function needsAttention(
   );
 }
 
+/** SQLite hands booleans back as 0/1; the DTO promises real booleans. */
+function normalise(area: AreaEntity): AreaEntity {
+  area.enabled = Boolean(area.enabled);
+  area.annex7Overall = Boolean(area.annex7Overall);
+  return area;
+}
+
 @Injectable()
 export class AreaService {
   constructor(
@@ -33,17 +40,18 @@ export class AreaService {
     protected readonly dataSource: DataSource,
   ) {}
 
-  list(tenantId: string): Promise<AreaEntity[]> {
-    return this.repo.find({
+  async list(tenantId: string): Promise<AreaEntity[]> {
+    const areas = await this.repo.find({
       where: { tenantId },
       order: { coordinationSectionNo: 'ASC' },
     });
+    return areas.map(normalise);
   }
 
   async get(tenantId: string, id: string): Promise<AreaEntity> {
     const area = await this.repo.findOne({ where: { tenantId, id } });
     if (!area) throw new NotFoundException(`Area ${id} not found`);
-    return area;
+    return normalise(area);
   }
 
   create(tenantId: string, dto: AreaCreateDto): Promise<AreaEntity> {

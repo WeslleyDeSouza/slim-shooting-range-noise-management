@@ -7,8 +7,8 @@ test('serves the entry page with the area KPIs from the API', async ({ page }) =
 
   await expect(page).toHaveTitle(/SLIM/i);
   await expect(page.locator('.slim-hello__name')).toBeVisible();
-  // Tile KPIs come from GET admin/area/summary (8 seeded areas).
-  await expect(page.locator('.slim-tile__kpi').first()).toContainText('8');
+  // Tile KPIs come from GET admin/area/summary (9 areas of the demo dataset).
+  await expect(page.locator('.slim-tile__kpi').first()).toContainText('9');
 });
 
 test('switches the theme and keeps it', async ({ page }) => {
@@ -28,7 +28,7 @@ test('navigates to the area overview and filters it', async ({ page }) => {
   await page.locator('.slim-tile').first().click();
 
   await expect(page).toHaveURL(/\/admin\/area$/);
-  await expect(page.locator('.slim-table tbody tr')).toHaveCount(8);
+  await expect(page.locator('.slim-table tbody tr')).toHaveCount(9);
 
   await page.locator('.slim-search__input').fill('Thun');
   await expect(page.locator('.slim-table tbody tr')).toHaveCount(1);

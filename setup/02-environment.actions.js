@@ -1,6 +1,7 @@
 const { randomBytes } = require('node:crypto');
 const { copyFileSync, readFileSync } = require('node:fs');
 const { join } = require('node:path');
+const { datasetUser } = require('./_browser');
 
 // apps/api/src/app.module.ts hands DB_TYPE straight to TypeORM; the drivers
 // (sqlite3, mysql2 for mysql/mariadb, pg) are all in package.json.
@@ -112,8 +113,9 @@ module.exports = {
 
     // The demo user the API seeds in non-production (apps/api/src/mocks).
     const demo = {};
-    if (!clean(env['APP_DEFAULT_USER'])) demo.APP_DEFAULT_USER = 'slim@demo.ch';
-    if (!clean(env['APP_DEFAULT_PASSWORD'])) demo.APP_DEFAULT_PASSWORD = '1234';
+    const fallback = datasetUser(ctx) || { user: 'slim@demo.ch', password: '1234' };
+    if (!clean(env['APP_DEFAULT_USER'])) demo.APP_DEFAULT_USER = fallback.user;
+    if (!clean(env['APP_DEFAULT_PASSWORD'])) demo.APP_DEFAULT_PASSWORD = fallback.password;
     if (Object.keys(demo).length) {
       await writeAndReport(ctx, demo);
       ctx.log('heal', `set the demo account (${Object.keys(demo).join(', ')})`);

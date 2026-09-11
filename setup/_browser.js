@@ -44,9 +44,25 @@ function appPort(ctx) {
   return FALLBACK_PORT;
 }
 
+/** The demo user as tenant.mock.json declares it (the seed names it, the login uses it). */
+function datasetUser(ctx) {
+  try {
+    const json = JSON.parse(readFileSync(join(ctx.projectDir, 'apps/api/src/mocks/tenant/tenant.mock.json'), 'utf8'));
+    const user = json['SLIM Demo']?.users?.[0];
+    return user ? { user: user.username, password: user.password } : null;
+  } catch {
+    return null;
+  }
+}
+
+/** .env wins (the API seeds APP_DEFAULT_USER); the dataset is the fallback. */
 async function credentials(ctx) {
   const env = await ctx.readEnv();
-  return { user: clean(env['APP_DEFAULT_USER']), password: clean(env['APP_DEFAULT_PASSWORD']) };
+  const fallback = datasetUser(ctx) || { user: '', password: '' };
+  return {
+    user: clean(env['APP_DEFAULT_USER']) || fallback.user,
+    password: clean(env['APP_DEFAULT_PASSWORD']) || fallback.password,
+  };
 }
 
 function loadChromium() {
@@ -148,6 +164,7 @@ module.exports = {
   clean,
   appPort,
   credentials,
+  datasetUser,
   loadChromium,
   signIn,
   openAndSettle,

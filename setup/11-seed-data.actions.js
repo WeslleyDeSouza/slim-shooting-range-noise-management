@@ -1,12 +1,13 @@
+const { readFileSync } = require('node:fs');
+const { join } = require('node:path');
 const { appPort, loadChromium, signIn, openAndSettle } = require('./_browser');
 
 /**
- * Demo data lives in the API, not in the frontend: `AREA_MOCK_DATA.fill`
- * (apps/api/src/modules/area/area.mock-data.ts) writes the demo areas
- * (Schiessplätze) for the seeded tenant on every non-production boot, and only
- * when the tenant has none yet. The generated client (`@ui-slim/apiClient`)
- * then serves them to the app — so the wizard checks what the app shows, and
- * expects exactly what the e2e suite expects.
+ * Demo data lives in the API, not in the frontend: the «SLIM Demo» dataset
+ * (apps/api/src/mocks/tenant/tenant.mock.json) is written for the demo
+ * tenant on every non-production boot and rolled to the current year. The
+ * generated client (`@ui-slim/apiClient`) then serves it to the app — so the
+ * wizard checks what the app shows, and expects what the dataset promises.
  */
 const AREA_PATH = '/admin/area';
 const HOME_PATH = '/admin';
@@ -24,8 +25,26 @@ const HOME_STATES = {
   error: '.slim-alert--danger',
 };
 
-/** apps/api/src/modules/area/area.mock-data.ts seeds this many demo areas. */
-const SEEDED_AREAS = 8;
+/**
+ * The demo dataset the API seeds on boot (llumi pattern): areas, rooms,
+ * weapons, receivers, calculation states and usages of the demo tenant.
+ * Read here so the expectation follows the file, not a number in this step.
+ */
+const DATASET = 'apps/api/src/mocks/tenant/tenant.mock.json';
+const DATASET_KEY = 'SLIM Demo';
+
+function dataset(ctx) {
+  try {
+    return JSON.parse(readFileSync(join(ctx.projectDir, DATASET), 'utf8'))[DATASET_KEY] || null;
+  } catch {
+    return null;
+  }
+}
+
+/** How many areas the dataset promises (fallback when the file is unreadable). */
+function seededAreas(ctx) {
+  return dataset(ctx)?.areas?.length ?? 9;
+}
 
 const RENDER_TIMEOUT_MS = 45_000;
 
@@ -35,8 +54,8 @@ module.exports = {
   // the e2e step (12) does the same on the same database — they must run in order.
   title: 'Check the demo data',
   description:
-    'Walk the admin screens and make sure the API seeded its demo areas (Schiessplätze) ' +
-    'and the home tiles show their KPIs.',
+    'Walk the admin screens and make sure the API seeded the demo dataset (<code>apps/api/src/mocks/tenant/tenant.mock.json</code>: ' +
+    'Schiessplätze with rooms, weapons, receivers and usages) and the home tiles show their KPIs.',
 
   async check(ctx) {
     const chromium = loadChromium();
@@ -74,10 +93,11 @@ module.exports = {
         module.exports._last = { reason: 'missing-data', areas, kpis };
         return { ok: false, note: `no areas — ${summary}` };
       }
-      if (areas < SEEDED_AREAS) {
+      const expected = seededAreas(ctx);
+      if (areas < expected) {
         // Not a failure: someone may have deleted demo rows on purpose. But the
         // e2e suite asserts on the seeded count, so say so.
-        ctx.log('warn', `only ${areas} of the ${SEEDED_AREAS} seeded demo areas are left — the e2e step expects ${SEEDED_AREAS}`);
+        ctx.log('warn', `only ${areas} of the ${expected} seeded demo areas are left — the e2e step expects ${expected}; DEMO_RESEED=1 in .env rewrites the demo on the next API start`);
       }
 
       module.exports._last = { reason: null, areas, kpis };
@@ -110,10 +130,9 @@ module.exports = {
       'no-admin-ui': `The admin screens never settled on port <code>${port}</code>. Is the frontend still running?`,
       'api-error': 'The area overview shows an API error — the permission step covers the guards, the health step the database.',
       'missing-data':
-        'The tenant has no areas. <code>AREA_MOCK_DATA.fill</code> runs a couple of seconds after the API boots, ' +
-        'in every environment except <code>APP_ENV=production</code>, and only when the tenant has no areas yet. ' +
-        'Check <code>.env</code>, restart the API, wait a few seconds and check again. ' +
-        'With SQLite, deleting the <code>.sqlite</code> file and restarting reseeds everything.',
+        'The tenant has no areas. The demo dataset is written a couple of seconds after the API boots, ' +
+        'in every environment except <code>APP_ENV=production</code>, unless <code>DEMO_SEED=0</code>. ' +
+        'Check <code>.env</code>, set <code>DEMO_RESEED=1</code> for one start, restart the API, wait a few seconds and check again.',
     };
 
     return {

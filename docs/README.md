@@ -4,8 +4,8 @@ Stand der Ablage: 2026-09-11
 
 | Ordner                                        | Inhalt                                                                                                                                                   |
 | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`anforderungskatalog/`](anforderungskatalog) | Ausschreibungsbeilagen (A2, B1, B1.4–B1.7); [index.md](anforderungskatalog/index.md) = Lesehilfe, Ampel-Regeln, Berechnungsformeln, Prototyp-Prioritäten |
-| [`architecture/`](architecture)               | Sitemap / Modulstruktur, Datenstruktur, i18n                                                                                                             |
+| [`anforderungskatalog/`](anforderungskatalog) | Ausschreibungsbeilagen (A2, B1, B1.4–B1.7); [index.md](anforderungskatalog/index.md) = Lesehilfe, Ampel-Regeln, Berechnungsformeln, Prototyp-Prioritäten; [umsetzungsstand.md](anforderungskatalog/umsetzungsstand.md) = **Stand für die nächste Sitzung** (umgesetzt / vereinfacht / offen, Demo-Pfad) |
+| [`architecture/`](architecture)               | Gesamtarchitektur, Deployment/Sicherheit, UI-Ansichten, Sitemap / Modulstruktur, Datenstruktur, i18n, Lärmberechnung, ERD                                |
 | [`projects/`](projects)                       | Laufende Vorhaben mit eigenem Plan                                                                                                                       |
 | [`userstories/`](userstories)                 | Fachliche Beschreibung der Abläufe                                                                                                                       |
 
@@ -17,6 +17,10 @@ Stand der Ablage: 2026-09-11
 | [datenstruktur.md](architecture/datenstruktur.md)     | Ordnerstruktur von API und App, Modul-Muster (galaxy Auth/Tenant + eigene Module), Facade/SignalStore, Libs             |
 | [i18n.md](architecture/i18n.md)                       | Mehrsprachigkeit (de/fr/it/en) nach dem ELO-Muster: Locale-Sektionen, Resolver, Transmart                               |
 | [laermberechnung.md](architecture/laermberechnung.md) | **Lärmberechnung** `@slim/lsv`: GEMW/ESM, Anhang 9 / 7, Betriebsdaten, Grenzwerte, Ampeln; Kontrollwerte B1.4 als Tests |
+| [gesamtarchitektur.md](architecture/gesamtarchitektur.md) | **Gesamtarchitektur (Ist)**: Schichten Angular · NestJS · TypeORM, Datenfluss Lärmberechnung, Buildkette; Geplantes separat (ELO, GIS, Import/Export, Worker) |
+| [deployment-sicherheit.md](architecture/deployment-sicherheit.md) | **Deployment und Sicherheit (Ist)**: Docker-Image, pm2, docker-compose, `.env`, umgesetzte Sicherheitsmassnahmen; offene Punkte für die Produktion |
+| [ui-ansichten.md](architecture/ui-ansichten.md) | **UI-Ansichten** für das Usability-Konzept: Übersicht mit Ampeln, Details mit Empfangspunkten, Schusszahlen, Simulation (Skizzen, Screenshots folgen) |
+| [uml.mmd](architecture/uml.mmd) | ERD, generiert beim API-Start (`/erd`, `/erd/mermaid.mmd`) |
 
 ## projects
 

@@ -30,6 +30,7 @@
 @use 'slim/components/feedback';
 @use 'slim/components/data';
 @use 'slim/components/overlay';
+@use 'slim/components/widgets';
 
 // Bootstrap / ng-bootstrap variable bridge (no Bootstrap CSS included).
 @use 'slim/bridge/bootstrap';

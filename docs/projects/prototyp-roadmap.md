@@ -34,7 +34,8 @@ Kapazität verschieben sich M2–M6 proportional; M1 ist erreicht.
 
 | Meilenstein | Termin | Inhalt | Ergebnis |
 |---|---|---|---|
-| **M1** Fundament | **erreicht 11.09.2026** | Nx-Workspace, galaxy Auth (MFA-fähig), Design System, i18n, Admin-Layout, Sitemap-Routen, Area-Modul mit Seed, generierter API-Client, E2E-Suite | Login → Startseite → Übersicht Schiessplätze mit Ampeln läuft |
+| **M1** Fundament | **erreicht 11.09.2026** | Nx-Workspace, galaxy Auth (MFA-fähig), Design System, i18n, Admin-Layout, Sitemap-Routen, Area-Modul mit Seed, generierter API-Client, E2E-Suite, Setup-Wizard | Login → Startseite → Übersicht Schiessplätze mit Ampeln läuft |
+| **M1b** Kernablauf vorgezogen | **erreicht 11.09.2026** | Berechnungsengine `@slim/lsv` (Kontrollwerte B1.4), Datenmodell Stellungsräume/Quellen/Nutzungen/Empfangspunkte/WLR, Demo-Datensatz `tenant.mock.json`, Masken Schusszahlen 5.11, Details 5.12, Simulation 5.13 (schematische Karte) | «Nutzungen erfassen → Pegel → Ampel → Simulation» läuft für Geissalp; Stand: `docs/anforderungskatalog/umsetzungsstand.md` |
 | **M2** Stammdaten und Nutzungen | **Fr 25.09.2026** | Sprint 1: Datenmodell komplett, Seed aus B1.6/B1.7, Datenverwaltung Schiessplatz + Waffen, Schusszahlen-Maske, Excel-Import | Echte 126 Schiessplätze, Nutzungen erfassbar |
 | **M3** ELO-Schnittstelle | **Fr 02.10.2026** | Sprint 2 (1 Woche): `GET`/`POST` nach B1 Kapitel 6 in SLIM, Client in ELO, Validierungen, Vertragstest | Nutzung aus ELO erscheint in SLIM |
 | **M4** Berechnungsengine | **Fr 16.10.2026** | Sprint 3: Parser WLR/Betriebsdaten, Betriebsdaten-Ableitung (7.4), Verteilung (7.5), Lr nach Anh. 7/9 (7.6), Grenzwerte (7.7), Berechnungen verwalten (5.18–5.21) | Kontrollwerte B1.4 reproduziert, Lärm-Ampel echt |
@@ -157,18 +158,18 @@ Status: ☑ M1 erledigt · S1–S5 = geplanter Sprint · LK = nur im Lösungskon
 | 1 | Auswahllisten durch Admin pflegbar | S1 (Lookup-Entities mit Aktiv) |
 | 2 | GIS-Viewer (Massstab, Zoom, LV95, Hintergrundkarten, PDF) | S4 |
 | 3 | Tabellenfunktionen inkl. Export | S5 |
-| 4 | Ansichten ohne Berechnungsgrundlage | ☑ (`none`-Status) + S4 |
+| 4 | Ansichten ohne Berechnungsgrundlage | ☑ (`none`-Status; Details/Simulation zeigen Leerzustand ohne Zustand) |
 | 5, 6 | Deep Links mit Berechtigungsprüfung | ☑ (`APP_ROUTES`, `adminGuard`) + S5 Rollen |
 | 7 | Startseite | ☑ + S4 (echte Zahlen) |
 | 8 | Übersicht Schiessplätze mit Ampeln, nur berechtigte | ☑ (Seed-Status) → S4 (berechnet), S5 (Rechte) |
 | 9 | Schiessplatz-Übersicht (Lärm, Kontingent, Karte) | S4 |
-| 10 | Schusszahlen anzeigen/erfassen/bearbeiten | S1 |
-| 11 | Details Empfangspunkte | S4 |
-| 12 | Simulation | S4 |
+| 10 | Schusszahlen anzeigen/erfassen/bearbeiten | ☑ Maske 5.11 (Erfassen/Bearbeiten/Löschen mit Rückgängig) · S1 Excel-Import |
+| 11 | Details Empfangspunkte | ☑ Maske 5.12 (schematische Karte) · S4 GIS |
+| 12 | Simulation | ☑ Maske 5.13 |
 | 13–15 | Datenverwaltung Schiessplatz Übersicht/Allgemein/Stellungsräume | S1 |
 | 16 | Stammdaten + Kontingente | S1 |
-| 17 | Zuordnung Waffen | S1 |
-| 18 | Berechnungen und Zustände, aktueller Stand / MGDM | S3 |
+| 17 | Zuordnung Waffen | ☑ Datenmodell `area_weapon` (Seed) · S1 Maske |
+| 18 | Berechnungen und Zustände, aktueller Stand / MGDM | ☑ Datenmodell `area_calculation` (isCurrent/isMgdm) · S3 Maske |
 | 19 | Import GDB + WLR + Betriebsdaten | S3 (WLR/Betriebsdaten), GDB = LK |
 | 20 | Export GeoDB + CSV | S3 (CSV), GeoDB = LK |
 | 21 | Berechnungsdetails je Stellungsraum | S3 |
@@ -176,16 +177,16 @@ Status: ☑ M1 erledigt · S1–S5 = geplanter Sprint · LK = nur im Lösungskon
 | 26 | Benutzerverwaltung rollenbasiert | S5 |
 | 27 | Erweiterte Konfiguration | S1 (Sperrdatum) + S4 |
 | 28–30 | ELO-Schnittstelle | S2 |
-| 31 | Betriebsdaten aus Nutzungen | S3 |
-| 32 | Verteilung auf Quellen | S3 |
-| 33 | Beurteilungspegel Anh. 7/9 | S3 |
-| 34 | Grenzwertvergleich und Einfärbung | S3 |
+| 31 | Betriebsdaten aus Nutzungen | ☑ `@slim/lsv` (Werktag-Split, Halbtage) |
+| 32 | Verteilung auf Quellen | ☑ 1:1 (Quelle = Stellungsraum × Waffe) · S3 Schusslinien |
+| 33 | Beurteilungspegel Anh. 7/9 | ☑ Kontrollwerte B1.4 (95 Tests) |
+| 34 | Grenzwertvergleich und Einfärbung | ☑ ES/Baujahr-Regel, Ampel |
 | 35 | Vier Rollen, MFA/AGOV | ☑ MFA (galaxy) + S5 Rollen; AGOV = LK |
-| 36 | Initialer Stammdatenimport | S1 (Seed-Skript) |
+| 36 | Initialer Stammdatenimport | ☑ Demo-Datensatz `tenant.mock.json` · S1 B1.6/B1.7 |
 | 37 | Excel-Import Schusszahlen | S1 |
 | 38 | Relationale DB mit Geometrie, Views | S5 (PostGIS, Views) |
 | 39–41 | Exporte CSV, Nutzungen, Gesamtstatistik | S5 |
-| 42–44 | Datenmodell entkoppelt | S1 + S3 |
+| 42–44 | Datenmodell entkoppelt | ☑ Entities + ERD (`uml.mmd`) · S1 Rest |
 | 45 | Import bricht bei unbekanntem Stellungsraum ab | S3 |
 | 46–49 | ELO-Ablösung QR (KANN) | LK (ELO-Wizard) |
 | 50 | UI-Konzept, persistente Einstellungen, Rollen-GUI | ☑ Design System + S5 |

@@ -68,6 +68,21 @@ npx nx lint app
 ```
 
 Swagger UI: http://localhost:3333/api/docs (when `API_SWAGGER_ENABLED=1`).
+ERD of the live schema: http://localhost:3333/erd (Mermaid, also written to
+`docs/architecture/uml.mmd`; dev only).
+
+## Demo dataset
+
+`apps/api/src/mocks/tenant/tenant.mock.json` («SLIM Demo», llumi pattern) holds the
+demo tenant: nine areas, Geissalp with rooms, allowed weapons (= noise sources),
+receivers, two calculation states and a year of usages. The API writes it on
+every non-production start, rolled to the current year (`DEMO_RESEED=1` forces a
+rewrite, `DEMO_SEED=0` skips it). Regenerate the file with the generator, which
+tunes the sonARMS levels to the UI mock targets:
+
+```bash
+npx ts-node -T -O '{"module":"commonjs","moduleResolution":"node10","esModuleInterop":true,"ignoreDeprecations":"6.0"}' tools/tenant-dataset.generator.ts
+```
 
 ## API client & models (generated)
 

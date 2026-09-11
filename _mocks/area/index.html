@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLIM · Schusszahlen · 1104.020 Geissalp</title>
+  <style>
+    :root{
+      --red:#DC0018;--red-dark:#B00013;--red-soft:#FBE9EB;--ink:#17181C;
+      --gray-700:#3E434C;--gray-500:#6B7280;--gray-400:#9AA1AB;
+      --line:#E2E4E9;--line-strong:#C9CDD4;--bg:#F4F5F7;
+      --green:#1E7A3C;--green-bg:#EAF5EE;--amber:#8A6100;--amber-bg:#FFF6DE;
+      --blue:#006699;--blue-bg:#E8F1F7;--danger:#C71624;--danger-bg:#FCECEE;
+      --radius:6px;--radius-lg:10px;
+      --shadow:0 1px 2px rgba(23,24,28,.05),0 4px 16px rgba(23,24,28,.06);
+      --font:"Helvetica Now","Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;color:inherit;background:none;border:0}
+    input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+    a{color:var(--blue)}
+    :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+    [hidden]{display:none!important}
+
+    /* ============ Kopfzeile ============ */
+    .topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+    .topbar__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:62px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .cross{position:relative;width:30px;height:30px;background:var(--red);border-radius:3px;flex:none}
+    .cross::before{content:"";position:absolute;inset:0;margin:auto;width:15px;height:4px;background:#fff}
+    .cross::after{content:"";position:absolute;inset:0;margin:auto;width:4px;height:15px;background:#fff}
+    .brand__text b{display:block;font-size:16px;letter-spacing:.02em;line-height:1.2}
+    .brand__text span{font-size:11.5px;color:var(--gray-500)}
+    .brand__org{font-size:11px;color:var(--gray-500);border-left:1px solid var(--line);padding-left:12px;line-height:1.35}
+    .brand__org b{display:block;color:var(--gray-700);font-weight:600}
+    .topbar__spacer{flex:1}
+    .demo{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray-500)}
+    .seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:2px;gap:2px}
+    .seg__opt{padding:5px 10px;border-radius:4px;font-size:12px;font-weight:700;color:var(--gray-500)}
+    .seg__opt--active{background:var(--ink);color:#fff}
+    .iconbtn{width:38px;height:38px;border:1px solid var(--line-strong);border-radius:var(--radius);display:grid;place-items:center;color:var(--gray-700);background:#fff}
+    .user{display:flex;align-items:center;gap:9px;height:38px;padding:0 10px 0 4px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff}
+    .user__avatar{width:30px;height:30px;border-radius:50%;background:#5B3E76;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+    .user__name{font-size:13.5px;font-weight:600}
+
+    /* ============ Schiessplatz-Kontextleiste ============ */
+    .ctx{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:30}
+    .ctx__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:54px}
+    .ctx__back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--gray-700);text-decoration:none;white-space:nowrap}
+    .ctx__back:hover{color:var(--ink)}
+    .ctx__platz{display:flex;align-items:center;gap:9px;height:38px;padding:0 12px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;font-size:13.5px;font-weight:700;white-space:nowrap}
+    .ctx__platz small{font-weight:500;color:var(--gray-500)}
+    .ctx__nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto}
+    .ctx__tab{padding:0 14px;height:54px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--gray-500);border-bottom:2.5px solid transparent;white-space:nowrap}
+    .ctx__tab:hover{color:var(--ink)}
+    .ctx__tab--active{color:var(--red);border-bottom-color:var(--red)}
+    .ctx__status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--amber);background:var(--amber-bg);border-radius:12px;padding:4px 10px;white-space:nowrap}
+    @media(max-width:900px){.ctx__status,.brand__org{display:none}}
+
+    /* ============ Seite ============ */
+    .page{padding:20px 20px 80px;max-width:1500px;margin:0 auto}
+    .pagehead{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .pagehead__titles{margin-right:auto}
+    .pagehead h1{font-size:24px;letter-spacing:-.01em;line-height:1.2}
+    .pagehead p{font-size:13px;color:var(--gray-500)}
+    .btn{height:40px;padding:0 15px;border-radius:var(--radius);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;white-space:nowrap;transition:all .15s}
+    .btn--primary{background:var(--red);color:#fff}
+    .btn--primary:hover{background:var(--red-dark)}
+    .btn--ghost{background:#fff;border-color:var(--line-strong);color:var(--gray-700)}
+    .btn--ghost:hover{border-color:var(--gray-400)}
+    .btn--danger{background:#fff;border-color:var(--line-strong);color:var(--danger)}
+    .btn--danger:hover{background:var(--danger-bg);border-color:var(--danger)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .readonly{display:none;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:9px 13px;font-size:12.5px;color:var(--gray-700);margin-bottom:14px}
+    .readonly.on{display:flex}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+    @media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:11px 14px}
+    .kpi__value{font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.2}
+    .kpi__label{font-size:11.5px;color:var(--gray-500)}
+
+    .layout{display:grid;grid-template-columns:270px 1fr;gap:16px;align-items:start}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+    /* Stellungsräume */
+    .rooms{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);position:sticky;top:130px;max-height:calc(100vh - 150px);overflow:auto}
+    @media(max-width:900px){.rooms{position:static;max-height:none}}
+    .rooms__head{padding:12px 14px 8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-500);display:flex;align-items:center}
+    .rooms__head span{margin-left:auto;font-weight:600;letter-spacing:0;text-transform:none;color:var(--gray-400)}
+    .rooms__group{padding:8px 14px 3px;font-size:10.5px;font-weight:700;color:var(--gray-400);letter-spacing:.06em;text-transform:uppercase;border-top:1px solid var(--line);margin-top:4px}
+    .room{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;text-align:left;font-size:13.5px;color:var(--gray-700);border-left:3px solid transparent}
+    .room:hover{background:var(--bg)}
+    .room--active{background:var(--red-soft);color:var(--red);border-left-color:var(--red);font-weight:600}
+    .room__name{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .room__count{font-size:11.5px;font-weight:700;color:var(--gray-500);background:var(--bg);border-radius:9px;padding:1px 8px;font-variant-numeric:tabular-nums}
+    .room--active .room__count{background:#fff;color:var(--red)}
+    .room__count--zero{opacity:.5}
+
+    /* Tabelle */
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow);min-width:0}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+    .search{position:relative;flex:1;min-width:200px}
+    .search__input{width:100%;height:38px;padding:0 12px 0 34px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;font-size:13.5px}
+    .search__input:focus{border-color:var(--ink);outline:none}
+    .search__icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--gray-400)}
+    .select,.date{height:38px;padding:0 11px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;font-size:13px;font-weight:600;color:var(--ink)}
+    .select{padding-right:30px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .date{font-variant-numeric:tabular-nums;font-weight:500}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-size:12.5px}
+    .chips__label{color:var(--gray-500);margin-right:2px}
+    .chip{height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--line-strong);font-size:12.5px;font-weight:500;background:#fff}
+    .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+    .chips__reset{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--blue)}
+    .tblwrap{overflow-x:auto}
+    .tbl{width:100%;border-collapse:collapse;min-width:860px}
+    .tbl th{text-align:left;font-size:11.5px;font-weight:700;color:var(--gray-700);padding:9px 12px;background:#FAFAFB;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+    .tbl th.sorted::after{content:" ▾";color:var(--gray-400)}
+    .tbl th.sorted.asc::after{content:" ▴"}
+    .tbl th.num,.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+    .tbl td{padding:10px 12px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+    .tbl tbody tr:hover td{background:#FAFAFB}
+    .tbl tbody tr.sel td{background:var(--blue-bg)}
+    .tbl__group td{background:var(--bg)!important;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-500);padding:7px 12px}
+    .tbl__group td b{float:right;font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;color:var(--ink)}
+    .chk{width:16px;height:16px;accent-color:var(--ink)}
+    .t-when{font-variant-numeric:tabular-nums;white-space:nowrap}
+    .t-when small{display:block;color:var(--gray-500);font-size:11.5px}
+    .t-weapon small{display:block;color:var(--gray-500);font-size:11.5px}
+    .tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:9px;white-space:nowrap}
+    .tag--mil{background:var(--blue-bg);color:var(--blue)}
+    .tag--civ{background:var(--green-bg);color:var(--green)}
+    .tag--src{background:var(--bg);color:var(--gray-500);font-weight:600}
+    .rowact{display:flex;gap:4px;justify-content:flex-end;opacity:0;transition:opacity .12s}
+    tr:hover .rowact,tr.sel .rowact{opacity:1}
+    .rowbtn{width:30px;height:30px;border:1px solid var(--line-strong);border-radius:var(--radius);display:grid;place-items:center;color:var(--gray-500);background:#fff}
+    .rowbtn:hover{border-color:var(--gray-400);color:var(--ink)}
+    .rowbtn--del:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-bg)}
+    .tbl__foot{display:flex;align-items:center;gap:12px;padding:11px 16px;font-size:12.5px;color:var(--gray-500)}
+    .tbl__foot .grow{flex:1}
+    .tbl__foot b{color:var(--ink);font-variant-numeric:tabular-nums}
+    .empty{padding:40px 20px;text-align:center;color:var(--gray-500);font-size:13.5px}
+    .bulk{display:none;align-items:center;gap:10px;padding:10px 16px;background:var(--blue-bg);border-bottom:1px solid var(--line);font-size:13px}
+    .bulk.on{display:flex}
+    .bulk b{font-variant-numeric:tabular-nums}
+    .bulk .grow{flex:1}
+
+    /* Drawer (Neu / Bearbeiten) */
+    .dim{position:fixed;inset:0;background:rgba(23,24,28,.4);z-index:60}
+    .drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);background:#fff;z-index:61;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(23,24,28,.2)}
+    .drawer__head{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+    .drawer__title{font-size:17px;font-weight:700;flex:1}
+    .drawer__sub{font-size:12.5px;color:var(--gray-500)}
+    .drawer__body{flex:1;overflow:auto;padding:18px 22px}
+    .drawer__foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;align-items:center}
+    .f{margin-bottom:14px}
+    .f label{display:block;font-size:12.5px;font-weight:600;color:var(--gray-700);margin-bottom:5px}
+    .f .req{color:var(--red)}
+    .f input,.f select,.f textarea{width:100%;height:42px;padding:0 11px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;font-size:14px}
+    .f textarea{height:auto;min-height:60px;padding:9px 11px;resize:vertical}
+    .f select{appearance:none;-webkit-appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .f input:focus,.f select:focus,.f textarea:focus{border-color:var(--ink);outline:none}
+    .f.err input,.f.err select{border-color:var(--danger)}
+    .f .msg{display:none;font-size:12px;color:var(--danger);font-weight:600;margin-top:4px}
+    .f.err .msg{display:block}
+    .f2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .hint{font-size:12px;color:var(--gray-500);margin-top:4px}
+    .quick{display:flex;gap:6px;margin-bottom:8px}
+    .qchip{height:30px;padding:0 11px;border-radius:15px;border:1px solid var(--line-strong);font-size:12px;background:#fff}
+    .qchip:hover{border-color:var(--ink)}
+    .stepper{display:flex;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;height:42px}
+    .stepper button{width:44px;background:var(--bg);font-size:18px;font-weight:700;color:var(--gray-700)}
+    .stepper input{border:0!important;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+    .dirty{font-size:12px;color:var(--amber);font-weight:600;margin-right:auto;display:none;align-items:center;gap:5px}
+    .dirty.on{display:inline-flex}
+
+    /* Dialog + Toast */
+    .modal{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(23,24,28,.45);padding:16px}
+    .modal__box{background:#fff;border-radius:var(--radius-lg);width:100%;max-width:440px;padding:22px;box-shadow:0 20px 60px rgba(23,24,28,.3)}
+    .modal__title{font-size:17px;font-weight:700;margin-bottom:8px}
+    .modal__text{font-size:14px;color:var(--gray-700);line-height:1.6;margin-bottom:16px}
+    .modal__text b{color:var(--ink)}
+    .modal__actions{display:flex;gap:10px;justify-content:flex-end}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:var(--radius-lg);padding:12px 16px;display:flex;align-items:center;gap:14px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:80}
+    .toast button{color:#FF8A96;font-weight:700}
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="slim-prototyp.html"><span class="cross"></span><span class="brand__text"><b>SLIM</b><span>Schiesslärmimmissions-Management</span></span></a>
+    <div class="brand__org"><b>armasuisse</b>Bundesamt für Rüstung</div>
+    <span class="topbar__spacer"></span>
+    <div class="demo">Demo: Berechtigung
+      <div class="seg"><button class="seg__opt seg__opt--active" id="roleW" onclick="setRole('write')">Schreiben</button><button class="seg__opt" id="roleR" onclick="setRole('read')">Lesen</button></div>
+    </div>
+    <button class="iconbtn" aria-label="Startseite" onclick="location.href='slim-prototyp.html'"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+    <button class="iconbtn" aria-label="Menü"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    <button class="user"><span class="user__avatar">HM</span><span class="user__name">Hans Muster</span></button>
+  </div>
+</header>
+
+<!-- Schiessplatz-Kontext: welcher Platz, welche Ansicht -->
+<div class="ctx">
+  <div class="ctx__inner">
+    <a class="ctx__back" href="slim-prototyp.html">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Alle Schiessplätze
+    </a>
+    <button class="ctx__platz" onclick="alert('Schiessplatz wechseln (Suche nach Bezeichnung oder Koordinationsabschnitt-Nr.)')">
+      1104.020 Geissalp <small>· Schiessplatz wechseln</small>
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+    <span class="ctx__status">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L15 14H1L8 1.5z" fill="currentColor"/><path d="M8 6v4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Kontingent 2026: zu prüfen
+    </span>
+    <nav class="ctx__nav">
+      <a class="ctx__tab" href="#">Übersicht</a>
+      <a class="ctx__tab ctx__tab--active" href="#" aria-current="page">Schusszahlen</a>
+      <a class="ctx__tab" href="#">Details</a>
+      <a class="ctx__tab" href="#">Simulation</a>
+    </nav>
+  </div>
+</div>
+
+<main class="page">
+  <div class="pagehead">
+    <div class="pagehead__titles">
+      <h1>Schusszahlen</h1>
+      <p>Schiessplatz-Nutzungen des Platzes 1104.020 Geissalp, Grundlage für die Lärmberechnung.</p>
+    </div>
+    <label style="font-size:13px;color:var(--gray-500);display:flex;align-items:center;gap:8px">Jahr
+      <select class="select" id="year" onchange="render()"><option>2026</option><option>2025</option><option>2024</option></select>
+    </label>
+    <button class="btn btn--ghost" onclick="alert('Export (Excel) der gefilterten Nutzungen')">Exportieren</button>
+    <button class="btn btn--primary" id="btnNew" onclick="openForm()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Nutzung erfassen
+    </button>
+  </div>
+
+  <div class="readonly" id="readonly">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4"/></svg>
+    Sie haben Leseberechtigung für diesen Schiessplatz. Erfassen, Bearbeiten und Löschen sind nicht möglich.
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="layout">
+
+    <!-- Stellungsräume -->
+    <aside class="rooms" id="rooms"></aside>
+
+    <!-- Tabelle -->
+    <div class="card">
+      <div class="toolbar">
+        <div class="search">
+          <svg class="search__icon" width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6"/></svg>
+          <input class="search__input" id="q" type="text" placeholder="Nutzungseinheit, Waffe, Kaliber oder Erfasser suchen …" oninput="render()">
+        </div>
+        <input class="date" type="date" id="dFrom" value="2026-01-01" onchange="render()" aria-label="Datum von">
+        <input class="date" type="date" id="dTo" value="2026-12-31" onchange="render()" aria-label="Datum bis">
+      </div>
+      <div class="chips">
+        <span class="chips__label">Nutzung</span>
+        <button class="chip" data-f="nutzung" data-v="Militärisch" aria-pressed="false" onclick="toggleChip(this)">Militärisch</button>
+        <button class="chip" data-f="nutzung" data-v="Zivil" aria-pressed="false" onclick="toggleChip(this)">Zivil</button>
+        <span class="chips__label" style="margin-left:10px">Kategorie</span>
+        <button class="chip" data-f="kat" data-v="Artillerie" aria-pressed="false" onclick="toggleChip(this)">Artillerie</button>
+        <button class="chip" data-f="kat" data-v="Flab" aria-pressed="false" onclick="toggleChip(this)">Flab</button>
+        <button class="chip" data-f="kat" data-v="Handfeuerwaffen" aria-pressed="false" onclick="toggleChip(this)">Handfeuerwaffen</button>
+        <button class="chip" data-f="kat" data-v="Minenwerfer" aria-pressed="false" onclick="toggleChip(this)">Minenwerfer</button>
+        <button class="chips__reset" onclick="resetFilters()">Filter zurücksetzen</button>
+      </div>
+      <div class="bulk" id="bulk">
+        <b id="bulkCount">0</b> ausgewählt
+        <span class="grow"></span>
+        <button class="btn btn--danger" style="height:32px" onclick="askDelete(selected())">Ausgewählte löschen</button>
+        <button class="btn btn--ghost" style="height:32px" onclick="clearSel()">Auswahl aufheben</button>
+      </div>
+      <div class="tblwrap">
+        <table class="tbl">
+          <thead>
+          <tr>
+            <th style="width:36px"><input type="checkbox" class="chk" id="chkAll" onchange="toggleAll(this)" aria-label="Alle auswählen"></th>
+            <th onclick="sortBy('raum')" id="th-raum">Stellungsraum</th>
+            <th onclick="sortBy('einheit')" id="th-einheit">Nutzungseinheit</th>
+            <th onclick="sortBy('date')" id="th-date" class="sorted">Zeitraum</th>
+            <th onclick="sortBy('nutzung')" id="th-nutzung">Nutzung</th>
+            <th onclick="sortBy('kat')" id="th-kat">Kategorie</th>
+            <th onclick="sortBy('waffe')" id="th-waffe">Waffe / Kaliber</th>
+            <th onclick="sortBy('schuss')" id="th-schuss" class="num">Anzahl Schuss</th>
+            <th onclick="sortBy('erfasser')" id="th-erfasser">Erfasser</th>
+            <th style="width:80px"></th>
+          </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="tbl__foot">
+        <span id="footCount"></span>
+        <span class="grow"></span>
+        <span>Summe Anzeige: <b id="footSum"></b> Schuss</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Drawer -->
+<div id="drawerWrap" hidden>
+  <div class="dim" onclick="closeForm()"></div>
+  <div class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer__head">
+      <div><div class="drawer__title" id="drawerTitle">Nutzung erfassen</div><div class="drawer__sub">1104.020 Geissalp</div></div>
+      <button class="iconbtn" aria-label="Schliessen" onclick="closeForm()"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="drawer__body">
+      <div class="f" id="f-raum"><label>Stellungsraum <span class="req">*</span></label>
+        <select id="inRaum" onchange="markDirty()"></select><div class="msg">Bitte Stellungsraum wählen.</div></div>
+      <div class="f" id="f-einheit"><label>Nutzungseinheit <span class="req">*</span></label>
+        <input id="inEinheit" list="einheiten" placeholder="z. B. K1, Art Abt 10, Schützenverein Geissalp" oninput="markDirty()">
+        <datalist id="einheiten"><option>K1</option><option>Art Abt 10</option><option>Flab Abt 32</option><option>Schützenverein Geissalp</option></datalist>
+        <div class="msg">Bitte Nutzungseinheit angeben.</div></div>
+      <div class="f" id="f-date"><label>Datum <span class="req">*</span></label>
+        <div class="quick"><button class="qchip" onclick="setDate('2026-09-11')">Heute</button><button class="qchip" onclick="setDate('2026-09-10')">Gestern</button></div>
+        <input type="date" id="inDate" onchange="markDirty()"><div class="msg">Bitte Datum angeben.</div></div>
+      <div class="f" id="f-time"><label>Zeitraum <span class="req">*</span></label>
+        <div class="quick"><button class="qchip" onclick="setTime('08:00','11:30')">Vormittag</button><button class="qchip" onclick="setTime('13:30','17:00')">Nachmittag</button><button class="qchip" onclick="setTime('19:00','22:00')">Nachtschiessen</button></div>
+        <div class="f2"><input type="time" id="inVon" onchange="markDirty();durHint()"><input type="time" id="inBis" onchange="markDirty();durHint()"></div>
+        <div class="hint" id="durHint"></div><div class="msg">Bis-Zeit muss nach der Von-Zeit liegen.</div></div>
+      <div class="f2">
+        <div class="f"><label>Nutzung <span class="req">*</span></label>
+          <select id="inNutzung" onchange="markDirty()"><option>Militärisch</option><option>Zivil</option></select></div>
+        <div class="f" id="f-kat"><label>Kategorie <span class="req">*</span></label>
+          <select id="inKat" onchange="markDirty();fillWeapons()"><option value="">Wählen …</option><option>Artillerie</option><option>Flab</option><option>Handfeuerwaffen</option><option>Minenwerfer</option></select><div class="msg">Bitte Kategorie wählen.</div></div>
+      </div>
+      <div class="f" id="f-waffe"><label>Waffe / Kaliber <span class="req">*</span></label>
+        <select id="inWaffe" onchange="markDirty()"><option value="">Zuerst Kategorie wählen</option></select>
+        <div class="hint">Nur Waffen, die diesem Schiessplatz zugeordnet sind (Datenverwaltung · Zuordnung Waffen).</div>
+        <div class="msg">Bitte Waffe wählen.</div></div>
+      <div class="f" id="f-schuss"><label>Anzahl Schuss <span class="req">*</span></label>
+        <div class="stepper"><button onclick="step(-50)">−</button><input id="inSchuss" inputmode="numeric" value="0" oninput="markDirty()"><button onclick="step(50)">＋</button></div>
+        <div class="msg">Bitte eine Anzahl grösser als 0 angeben.</div></div>
+      <div class="f"><label>Bemerkung</label><textarea id="inBem" placeholder="optional" oninput="markDirty()"></textarea></div>
+      <div class="hint" id="editMeta" hidden></div>
+    </div>
+    <div class="drawer__foot">
+      <span class="dirty" id="dirty">Ungespeicherte Änderungen</span>
+      <button class="btn btn--ghost" onclick="closeForm()">Abbrechen</button>
+      <button class="btn btn--primary" id="saveBtn" onclick="save()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Löschen-Dialog -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__box">
+    <div class="modal__title">Nutzung löschen?</div>
+    <div class="modal__text" id="modalText"></div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" onclick="document.getElementById('modal').hidden=true">Abbrechen</button>
+      <button class="btn btn--primary" style="background:var(--danger)" onclick="doDelete()">Löschen</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden><span id="toastText"></span><button onclick="undo()">Rückgängig</button></div>
+
+<script>
+  /* ================= Stammdaten ================= */
+  const ROOMS = [
+    {g:"Zielräume / Stellungsräume", items:["Zielrm / Stellungsrm Fendershuus, A 1 links","Zielrm / Stellungsrm Fendershuus, A 2 rechts","Zielrm / Stellungsrm Seelihuus, B 1","Zielraum Seeli, C 1"]},
+    {g:"Stellungsräume", items:["Stellungsraum A 3 auch Mw","Stellungsrm B 2","Stellungsrm C 2","Stellungsrm Mw Neuhaus, B 3","Stellungsrm Mw Salzmatt, C 3","Stellungsrm Mw Schönenboden, D"]},
+    {g:"NGST", items:["NGST Seeli C rechts","NGST Seeli C links","NGST Schönenboden D unten","NGST Schönenboden D oben"]}
+  ];
+  const WEAPONS = {
+    "Artillerie":["Pz Hb 74 · 15.5 cm","Pz Hb 79 · 15.5 cm"],
+    "Flab":["Flz Kan 92 (Upat 92)","Flab Kan 63/90 · 35 mm"],
+    "Handfeuerwaffen":["Stgw 90 · 5.6 mm","Pist 75 · 9 mm","Mg 51 · 7.5 mm"],
+    "Minenwerfer":["12 cm Mw 74","8.1 cm Mw 72"]
+  };
+  let DATA = [
+    {id:1,raum:"Stellungsrm Mw Neuhaus, B 3",einheit:"K1",date:"2026-05-05",von:"11:00",bis:"15:00",nutzung:"Militärisch",kat:"Artillerie",waffe:"Pz Hb 74 · 15.5 cm",schuss:500,erfasser:"Lt Meier Fiona",src:"manuell"},
+    {id:2,raum:"Stellungsrm Mw Neuhaus, B 3",einheit:"K1",date:"2026-05-05",von:"11:00",bis:"15:00",nutzung:"Militärisch",kat:"Flab",waffe:"Flz Kan 92 (Upat 92)",schuss:1000,erfasser:"Lt Meier Fiona",src:"manuell"},
+    {id:3,raum:"Stellungsrm Mw Neuhaus, B 3",einheit:"Art Abt 10",date:"2026-06-17",von:"08:00",bis:"11:30",nutzung:"Militärisch",kat:"Minenwerfer",waffe:"12 cm Mw 74",schuss:180,erfasser:"Hptm Roth Beat",src:"manuell"},
+    {id:4,raum:"Stellungsrm B 2",einheit:"Schützenverein Geissalp",date:"2026-06-21",von:"13:30",bis:"17:00",nutzung:"Zivil",kat:"Handfeuerwaffen",waffe:"Stgw 90 · 5.6 mm",schuss:2400,erfasser:"ELO-Import",src:"ELO"},
+    {id:5,raum:"Stellungsrm B 2",einheit:"Schützenverein Geissalp",date:"2026-07-12",von:"08:00",bis:"11:30",nutzung:"Zivil",kat:"Handfeuerwaffen",waffe:"Pist 75 · 9 mm",schuss:850,erfasser:"ELO-Import",src:"ELO"},
+    {id:6,raum:"NGST Seeli C rechts",einheit:"Flab Abt 32",date:"2026-08-03",von:"09:00",bis:"16:00",nutzung:"Militärisch",kat:"Flab",waffe:"Flab Kan 63/90 · 35 mm",schuss:640,erfasser:"Oblt Keller Sven",src:"manuell"},
+    {id:7,raum:"Stellungsraum A 3 auch Mw",einheit:"Art Abt 10",date:"2026-08-19",von:"19:00",bis:"22:00",nutzung:"Militärisch",kat:"Minenwerfer",waffe:"8.1 cm Mw 72",schuss:96,erfasser:"Hptm Roth Beat",src:"manuell"},
+    {id:8,raum:"Zielraum Seeli, C 1",einheit:"K1",date:"2026-09-02",von:"13:30",bis:"17:00",nutzung:"Militärisch",kat:"Handfeuerwaffen",waffe:"Mg 51 · 7.5 mm",schuss:1200,erfasser:"Lt Meier Fiona",src:"manuell"},
+    {id:9,raum:"Stellungsrm Mw Salzmatt, C 3",einheit:"Art Abt 10",date:"2025-10-14",von:"08:00",bis:"11:30",nutzung:"Militärisch",kat:"Artillerie",waffe:"Pz Hb 79 · 15.5 cm",schuss:320,erfasser:"Hptm Roth Beat",src:"manuell"}
+  ];
+  let role="write", room="", sort={key:"date",asc:false}, selIds=new Set(), editId=null, dirty=false, pendingDel=[], lastDel=[];
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const nf=n=>n.toLocaleString("de-CH");
+  const fmtD=iso=>{const [y,m,d]=iso.split("-").map(Number);return `${d}.${m}.${y}`};
+
+  /* ================= Rolle ================= */
+  function setRole(r){
+    role=r;
+    document.getElementById("roleW").classList.toggle("seg__opt--active",r==="write");
+    document.getElementById("roleR").classList.toggle("seg__opt--active",r==="read");
+    document.getElementById("readonly").classList.toggle("on",r==="read");
+    document.getElementById("btnNew").disabled = r==="read";
+    clearSel(); render();
+  }
+
+  /* ================= Filter ================= */
+  function yearList(){ return DATA.filter(d=>d.date.startsWith(document.getElementById("year").value)); }
+  function filtered(){
+    const q=document.getElementById("q").value.trim().toLowerCase();
+    const from=document.getElementById("dFrom").value, to=document.getElementById("dTo").value;
+    const act=f=>[...document.querySelectorAll(`.chip[data-f="${f}"][aria-pressed="true"]`)].map(c=>c.dataset.v);
+    const nz=act("nutzung"), kt=act("kat");
+    let l=yearList().filter(d=>(!room||d.raum===room)&&(!from||d.date>=from)&&(!to||d.date<=to)
+      &&(!nz.length||nz.includes(d.nutzung))&&(!kt.length||kt.includes(d.kat))
+      &&(!q||[d.einheit,d.waffe,d.erfasser,d.raum,d.kat].join(" ").toLowerCase().includes(q)));
+    l.sort((a,b)=>{let x=a[sort.key],y=b[sort.key];if(typeof x==="string"){x=x.toLowerCase();y=y.toLowerCase()}return (x<y?-1:x>y?1:0)*(sort.asc?1:-1)});
+    return l;
+  }
+  function toggleChip(b){ b.setAttribute("aria-pressed", b.getAttribute("aria-pressed")!=="true"); render(); }
+  function resetFilters(){
+    document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false"));
+    document.getElementById("q").value=""; room="";
+    const y=document.getElementById("year").value; document.getElementById("dFrom").value=y+"-01-01"; document.getElementById("dTo").value=y+"-12-31";
+    render();
+  }
+  function sortBy(k){ if(sort.key===k) sort.asc=!sort.asc; else sort={key:k,asc:true}; render(); }
+
+  /* ================= Rendern ================= */
+  function render(){
+    const yl=yearList(), l=filtered();
+    /* KPI */
+    const total=yl.reduce((a,d)=>a+d.schuss,0), civ=yl.filter(d=>d.nutzung==="Zivil").reduce((a,d)=>a+d.schuss,0);
+    const last=yl.length?yl.map(d=>d.date).sort().pop():null;
+    document.getElementById("kpis").innerHTML=`
+    <div class="kpi"><div class="kpi__value">${nf(total)}</div><div class="kpi__label">Schuss ${document.getElementById("year").value} gesamt</div></div>
+    <div class="kpi"><div class="kpi__value">${yl.length}</div><div class="kpi__label">Nutzungen erfasst</div></div>
+    <div class="kpi"><div class="kpi__value">${total?Math.round(civ/total*100):0} %</div><div class="kpi__label">Anteil zivile Nutzung</div></div>
+    <div class="kpi"><div class="kpi__value" style="font-size:17px">${last?fmtD(last):"–"}</div><div class="kpi__label">Letzte Nutzung</div></div>`;
+    /* Stellungsräume mit Zählern */
+    const cnt=r=>yl.filter(d=>d.raum===r).length;
+    document.getElementById("rooms").innerHTML=`<div class="rooms__head">Stellungsräume <span>${ROOMS.reduce((a,g)=>a+g.items.length,0)}</span></div>
+    <button class="room ${!room?"room--active":""}" onclick="room='';render()"><span class="room__name">Alle Stellungsräume</span><span class="room__count">${yl.length}</span></button>`+
+      ROOMS.map(g=>`<div class="rooms__group">${esc(g.g)}</div>`+g.items.map(r=>{const c=cnt(r);return `<button class="room ${room===r?"room--active":""}" onclick="room='${esc(r).replace(/'/g,"\\'")}';render()" title="${esc(r)}"><span class="room__name">${esc(r)}</span><span class="room__count ${c?"":"room__count--zero"}">${c}</span></button>`}).join("")).join("");
+    /* Tabelle */
+    document.querySelectorAll(".tbl th[id]").forEach(th=>{th.classList.toggle("sorted",th.id==="th-"+sort.key);th.classList.toggle("asc",th.id==="th-"+sort.key&&sort.asc)});
+    const tb=document.getElementById("rows");
+    if(!l.length){ tb.innerHTML=`<tr><td colspan="10"><div class="empty">Keine Nutzungen für diese Auswahl.${role==="write"?' <a href="#" onclick="openForm();return false">Erste Nutzung erfassen</a>':""}</div></td></tr>`; }
+    else {
+      let html="", lastRaum=null;
+      l.forEach(d=>{
+        if(!room && sort.key==="raum" && d.raum!==lastRaum){ lastRaum=d.raum; const s=l.filter(x=>x.raum===d.raum).reduce((a,x)=>a+x.schuss,0); html+=`<tr class="tbl__group"><td colspan="10">${esc(d.raum)}<b>${nf(s)} Schuss</b></td></tr>`; }
+        html+=`<tr class="${selIds.has(d.id)?"sel":""}" ondblclick="${role==="write"?`openForm(${d.id})`:""}">
+        <td><input type="checkbox" class="chk" ${selIds.has(d.id)?"checked":""} ${role==="read"?"disabled":""} onchange="toggleSel(${d.id},this.checked)"></td>
+        <td>${esc(d.raum)}</td>
+        <td>${esc(d.einheit)}</td>
+        <td class="t-when">${fmtD(d.date)}<small>${d.von} bis ${d.bis}</small></td>
+        <td><span class="tag ${d.nutzung==="Zivil"?"tag--civ":"tag--mil"}">${d.nutzung}</span></td>
+        <td>${esc(d.kat)}</td>
+        <td class="t-weapon">${esc(d.waffe)}</td>
+        <td class="num"><b>${nf(d.schuss)}</b></td>
+        <td>${esc(d.erfasser)} ${d.src==="ELO"?'<span class="tag tag--src" title="Automatisch aus ELO Schusszahlmeldung übernommen">ELO</span>':""}</td>
+        <td><div class="rowact">${role==="write"?`
+          <button class="rowbtn" title="Bearbeiten" onclick="openForm(${d.id})"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button>
+          <button class="rowbtn rowbtn--del" title="Löschen" onclick="askDelete([${d.id}])"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6.5 4V2.5h3V4M4.5 4l.7 9h5.6l.7-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`:
+          `<button class="rowbtn" title="Details" onclick="alert('Nur Lesen: Details der Nutzung')"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 7v4M8 5v.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`}</div></td>
+      </tr>`;
+      });
+      tb.innerHTML=html;
+    }
+    document.getElementById("footCount").textContent=`${l.length} von ${yl.length} Nutzungen${room?" · "+room:""}`;
+    document.getElementById("footSum").textContent=nf(l.reduce((a,d)=>a+d.schuss,0));
+    const b=document.getElementById("bulk"); b.classList.toggle("on",selIds.size>0); document.getElementById("bulkCount").textContent=selIds.size;
+    document.getElementById("chkAll").checked = l.length>0 && l.every(d=>selIds.has(d.id));
+  }
+
+  /* ================= Auswahl ================= */
+  function toggleSel(id,on){ on?selIds.add(id):selIds.delete(id); render(); }
+  function toggleAll(cb){ filtered().forEach(d=>cb.checked?selIds.add(d.id):selIds.delete(d.id)); render(); }
+  function clearSel(){ selIds.clear(); render(); }
+  function selected(){ return [...selIds]; }
+
+  /* ================= Formular ================= */
+  function fillRooms(){ document.getElementById("inRaum").innerHTML='<option value="">Wählen …</option>'+ROOMS.map(g=>`<optgroup label="${esc(g.g)}">${g.items.map(r=>`<option>${esc(r)}</option>`).join("")}</optgroup>`).join(""); }
+  function fillWeapons(keep){ const k=document.getElementById("inKat").value; const s=document.getElementById("inWaffe"); s.innerHTML=k?'<option value="">Wählen …</option>'+WEAPONS[k].map(w=>`<option ${keep===w?"selected":""}>${esc(w)}</option>`).join(""):'<option value="">Zuerst Kategorie wählen</option>'; }
+  function openForm(id){
+    if(role==="read") return;
+    editId=id||null; dirty=false; document.getElementById("dirty").classList.remove("on");
+    document.querySelectorAll(".f.err").forEach(f=>f.classList.remove("err"));
+    fillRooms();
+    const d=id?DATA.find(x=>x.id===id):null;
+    document.getElementById("drawerTitle").textContent=d?"Nutzung bearbeiten":"Nutzung erfassen";
+    document.getElementById("inRaum").value=d?d.raum:(room||"");
+    document.getElementById("inEinheit").value=d?d.einheit:"";
+    document.getElementById("inDate").value=d?d.date:"";
+    document.getElementById("inVon").value=d?d.von:""; document.getElementById("inBis").value=d?d.bis:"";
+    document.getElementById("inNutzung").value=d?d.nutzung:"Militärisch";
+    document.getElementById("inKat").value=d?d.kat:""; fillWeapons(d?d.waffe:null);
+    document.getElementById("inSchuss").value=d?d.schuss:0;
+    document.getElementById("inBem").value="";
+    const m=document.getElementById("editMeta"); m.hidden=!d; if(d) m.textContent=`Erfasst von ${d.erfasser}${d.src==="ELO"?" (Import aus ELO). Eine Änderung überschreibt den importierten Wert und wird protokolliert.":". Änderungen werden protokolliert."}`;
+    durHint();
+    document.getElementById("drawerWrap").hidden=false;
+  }
+  function closeForm(){ if(dirty && !confirm("Ungespeicherte Änderungen verwerfen?")) return; document.getElementById("drawerWrap").hidden=true; }
+  function markDirty(){ dirty=true; document.getElementById("dirty").classList.add("on"); }
+  function setDate(v){ document.getElementById("inDate").value=v; markDirty(); }
+  function setTime(a,b){ document.getElementById("inVon").value=a; document.getElementById("inBis").value=b; markDirty(); durHint(); }
+  function step(n){ const i=document.getElementById("inSchuss"); i.value=Math.max(0,(parseInt(i.value,10)||0)+n); markDirty(); }
+  function durHint(){ const v=document.getElementById("inVon").value,b=document.getElementById("inBis").value,h=document.getElementById("durHint"); if(!v||!b){h.textContent="";return} const [a1,a2]=v.split(":").map(Number),[b1,b2]=b.split(":").map(Number),m=(b1*60+b2)-(a1*60+a2); h.textContent=m>0?`Dauer: ${Math.floor(m/60)} Std. ${String(m%60).padStart(2,"0")} Min.`:""; }
+  function mark(id,bad){ document.getElementById(id).classList.toggle("err",bad); return !bad; }
+  function save(){
+    const g=id=>document.getElementById(id).value;
+    let ok=true;
+    ok=mark("f-raum",!g("inRaum"))&&ok; ok=mark("f-einheit",!g("inEinheit").trim())&&ok; ok=mark("f-date",!g("inDate"))&&ok;
+    ok=mark("f-time",!g("inVon")||!g("inBis")||g("inBis")<=g("inVon"))&&ok; ok=mark("f-kat",!g("inKat"))&&ok; ok=mark("f-waffe",!g("inWaffe"))&&ok;
+    ok=mark("f-schuss",!(parseInt(g("inSchuss"),10)>0))&&ok;
+    if(!ok){ document.querySelector(".f.err").scrollIntoView({block:"center",behavior:"smooth"}); return; }
+    const rec={raum:g("inRaum"),einheit:g("inEinheit").trim(),date:g("inDate"),von:g("inVon"),bis:g("inBis"),nutzung:g("inNutzung"),kat:g("inKat"),waffe:g("inWaffe"),schuss:parseInt(g("inSchuss"),10),erfasser:"Hans Muster",src:"manuell"};
+    if(editId){ Object.assign(DATA.find(x=>x.id===editId),rec); toast("Nutzung gespeichert."); }
+    else { rec.id=Math.max(...DATA.map(x=>x.id))+1; DATA.push(rec); toast("Nutzung erfasst."); }
+    dirty=false; document.getElementById("drawerWrap").hidden=true; render();
+  }
+
+  /* ================= Löschen ================= */
+  function askDelete(ids){
+    if(role==="read"||!ids.length) return;
+    pendingDel=ids; const items=DATA.filter(d=>ids.includes(d.id)); const sum=items.reduce((a,d)=>a+d.schuss,0);
+    document.getElementById("modalText").innerHTML = ids.length===1
+      ? `<b>${esc(items[0].einheit)}</b>, ${fmtD(items[0].date)}, ${esc(items[0].waffe)}, <b>${nf(items[0].schuss)} Schuss</b> wird gelöscht. Die Lärmberechnung dieses Jahres ändert sich entsprechend. Der Vorgang wird protokolliert.`
+      : `<b>${ids.length} Nutzungen</b> mit insgesamt <b>${nf(sum)} Schuss</b> werden gelöscht. Die Lärmberechnung dieses Jahres ändert sich entsprechend. Der Vorgang wird protokolliert.`;
+    document.getElementById("modal").hidden=false;
+  }
+  function doDelete(){
+    lastDel=DATA.filter(d=>pendingDel.includes(d.id)); DATA=DATA.filter(d=>!pendingDel.includes(d.id));
+    pendingDel.forEach(id=>selIds.delete(id)); document.getElementById("modal").hidden=true;
+    toast(`${lastDel.length} Nutzung${lastDel.length>1?"en":""} gelöscht.`, true); render();
+  }
+  let toastTimer;
+  function toast(msg,undoable){ document.getElementById("toastText").textContent=msg; const t=document.getElementById("toast"); t.querySelector("button").hidden=!undoable; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.hidden=true,6000); }
+  function undo(){ DATA.push(...lastDel); lastDel=[]; document.getElementById("toast").hidden=true; render(); }
+
+  render();
+</script>
+</body>
+</html>

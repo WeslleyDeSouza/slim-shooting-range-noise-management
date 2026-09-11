@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLIM · Details · 1104.020 Geissalp</title>
+  <style>
+    :root{
+      --red:#DC0018;--red-dark:#B00013;--red-soft:#FBE9EB;--ink:#17181C;
+      --gray-700:#3E434C;--gray-500:#6B7280;--gray-400:#9AA1AB;
+      --line:#E2E4E9;--line-strong:#C9CDD4;--bg:#F4F5F7;
+      --green:#1E7A3C;--green-bg:#EAF5EE;--amber:#C9880A;--amber-txt:#8A6100;--amber-bg:#FFF6DE;
+      --blue:#006699;--blue-bg:#E8F1F7;--danger:#C71624;--danger-bg:#FCECEE;
+      --radius:6px;--radius-lg:10px;
+      --shadow:0 1px 2px rgba(23,24,28,.05),0 4px 16px rgba(23,24,28,.06);
+      --font:"Helvetica Now","Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;color:inherit;background:none;border:0}
+    input,select{font-family:inherit;font-size:inherit;color:inherit}
+    a{color:var(--blue)}
+    :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+    [hidden]{display:none!important}
+
+    /* Kopfzeile + Kontext (wie Schusszahlen-Seite) */
+    .topbar{background:#fff;border-bottom:1px solid var(--line)}
+    .topbar__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:62px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .cross{position:relative;width:30px;height:30px;background:var(--red);border-radius:3px;flex:none}
+    .cross::before{content:"";position:absolute;inset:0;margin:auto;width:15px;height:4px;background:#fff}
+    .cross::after{content:"";position:absolute;inset:0;margin:auto;width:4px;height:15px;background:#fff}
+    .brand__text b{display:block;font-size:16px;line-height:1.2}
+    .brand__text span{font-size:11.5px;color:var(--gray-500)}
+    .brand__org{font-size:11px;color:var(--gray-500);border-left:1px solid var(--line);padding-left:12px;line-height:1.35}
+    .brand__org b{display:block;color:var(--gray-700);font-weight:600}
+    .topbar__spacer{flex:1}
+    .iconbtn{width:38px;height:38px;border:1px solid var(--line-strong);border-radius:var(--radius);display:grid;place-items:center;color:var(--gray-700);background:#fff}
+    .user{display:flex;align-items:center;gap:9px;height:38px;padding:0 10px 0 4px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff}
+    .user__avatar{width:30px;height:30px;border-radius:50%;background:#5B3E76;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+    .user__name{font-size:13.5px;font-weight:600}
+    .ctx{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+    .ctx__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:56px}
+    .ctx__back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--gray-700);text-decoration:none;white-space:nowrap}
+    .platz{display:flex;align-items:center;gap:10px;height:40px;padding:0 12px 0 10px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;min-width:260px}
+    .platz__num{font-size:12px;color:var(--gray-500);font-variant-numeric:tabular-nums}
+    .platz__name{font-size:14px;font-weight:700}
+    .platz__status{display:flex;gap:5px;margin-left:auto}
+    .dot{width:9px;height:9px;border-radius:50%}
+    .dot--ok{background:var(--green)}.dot--warn{background:var(--amber)}.dot--over{background:var(--danger)}
+    .subnav{display:flex;gap:2px;margin-left:auto}
+    .subnav__tab{padding:0 14px;height:56px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--gray-500);border-bottom:2.5px solid transparent;text-decoration:none}
+    .subnav__tab--active{color:var(--red);border-bottom-color:var(--red)}
+    @media(max-width:860px){.subnav__tab span{display:none}}
+
+    .page{padding:20px 20px 80px;max-width:1500px;margin:0 auto}
+    .pagehead{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+    .pagehead__titles{margin-right:auto}
+    .pagehead h1{font-size:24px;letter-spacing:-.01em;line-height:1.2}
+    .pagehead p{font-size:13.5px;color:var(--gray-500)}
+    .btn{height:40px;padding:0 15px;border-radius:var(--radius);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;white-space:nowrap}
+    .btn--ghost{background:#fff;border-color:var(--line-strong);color:var(--gray-700)}
+    .btn--ghost:hover{border-color:var(--gray-400)}
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+
+    /* Berechnungs-Kopf */
+    .calc{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:16px}
+    @media(max-width:900px){.calc{grid-template-columns:1fr}}
+    .calc__col{padding:16px 20px}
+    .calc__col+.calc__col{border-left:1px solid var(--line)}
+    @media(max-width:900px){.calc__col+.calc__col{border-left:0;border-top:1px solid var(--line)}}
+    .calc__title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px}
+    .kv{display:grid;grid-template-columns:200px 1fr;gap:8px 14px;font-size:13.5px;align-items:center}
+    .kv dt{color:var(--gray-500)}
+    .kv dd{font-weight:600}
+    .kv .sel,.kv input[type=date]{height:38px;padding:0 30px 0 11px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;font-size:13px;font-weight:600;width:100%;appearance:none;-webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.6' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+    .kv input[type=date]{background-image:none;padding-right:11px;font-variant-numeric:tabular-nums}
+    .dates{display:flex;align-items:center;gap:8px}
+    .dates span{font-size:12px;color:var(--gray-400)}
+    .badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:9px;background:var(--blue-bg);color:var(--blue);margin-left:8px;vertical-align:middle}
+    .calc__note{font-size:12px;color:var(--gray-500);margin-top:10px;line-height:1.5}
+
+    /* KPI-Zeile */
+    .kpis{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:9px 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray-500)}
+    .kpi b{font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+    .kpi--over b{color:var(--danger)}.kpi--warn b{color:var(--amber-txt)}.kpi--ok b{color:var(--green)}
+
+    /* Karte + Detail */
+    .split{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,1fr);gap:16px;align-items:start}
+    @media(max-width:1000px){.split{grid-template-columns:1fr}}
+    .mapcard__head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+    .mapcard__title{font-size:14px;font-weight:700;margin-right:auto}
+    .seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:2px;gap:2px}
+    .seg__opt{padding:6px 11px;border-radius:4px;font-size:12.5px;font-weight:600;color:var(--gray-500)}
+    .seg__opt--active{background:var(--ink);color:#fff}
+    .mapcard__link{font-size:12.5px;font-weight:600;color:var(--blue);display:inline-flex;align-items:center;gap:5px}
+    .map{position:relative;background:#EEF0EC;aspect-ratio:1.15}
+    .map svg{width:100%;height:100%;display:block}
+    .pin{cursor:pointer}
+    .pin circle.halo{opacity:0;transition:opacity .15s}
+    .pin:hover circle.halo,.pin--active circle.halo{opacity:.25}
+    .pin text{font-size:10px;font-weight:800;fill:#fff;text-anchor:middle;pointer-events:none}
+    .legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--gray-500)}
+    .legend span{display:inline-flex;align-items:center;gap:6px}
+    .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+    /* Listenansicht der Empfangspunkte */
+    .plist{list-style:none}
+    .plist__item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+    .plist__item:hover{background:#FAFAFB}
+    .plist__item--active{background:var(--red-soft)}
+    .plist__id{font-weight:800;font-variant-numeric:tabular-nums;min-width:30px}
+    .plist__addr{flex:1;min-width:0;font-size:13.5px}
+    .plist__addr small{display:block;color:var(--gray-500);font-size:12px}
+    .plist__val{font-variant-numeric:tabular-nums;font-size:13px;text-align:right;min-width:120px}
+    .plist__val b{display:block;font-size:14px}
+    .plist__val small{color:var(--gray-500);font-size:11.5px}
+
+    /* Detailpanel */
+    .det{position:sticky;top:72px}
+    .det__head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+    .det__pin{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800}
+    .det__title{font-size:18px;font-weight:700;line-height:1.2}
+    .det__sub{font-size:12.5px;color:var(--gray-500)}
+    .det__status{margin-left:auto;font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:11px;white-space:nowrap}
+    .st--ok{background:var(--green-bg);color:var(--green)}.st--warn{background:var(--amber-bg);color:var(--amber-txt)}.st--over{background:var(--danger-bg);color:var(--danger)}
+    .det__body{padding:16px 20px}
+    .det__kv{display:grid;grid-template-columns:150px 1fr;gap:7px 12px;font-size:13.5px;margin-bottom:18px}
+    .det__kv dt{color:var(--gray-500)}
+    .det__kv dd{font-weight:600}
+    .det__kv .i{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--line);color:var(--gray-500);font-size:9.5px;font-weight:800;margin-left:5px;cursor:help;vertical-align:middle}
+    .det__section{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:10px}
+
+    /* Beurteilungstabelle mit Pegelbalken */
+    .assess{width:100%;border-collapse:collapse;font-size:13px}
+    .assess th{text-align:left;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-400);padding:6px 8px;border-bottom:1px solid var(--line)}
+    .assess td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+    .assess tr:last-child td{border-bottom:0}
+    .assess .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+    .assess .gl{color:var(--gray-500);font-size:12px}
+    .bar{position:relative;height:8px;background:var(--line);border-radius:4px;min-width:120px}
+    .bar__fill{position:absolute;left:0;top:0;bottom:0;border-radius:4px}
+    .bar__lim{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+    .bar__fill--ok{background:var(--green)}.bar__fill--warn{background:var(--amber)}.bar__fill--over{background:var(--danger)}
+    .reserve{font-size:12px;font-weight:700;white-space:nowrap}
+    .reserve--ok{color:var(--green)}.reserve--warn{color:var(--amber-txt)}.reserve--over{color:var(--danger)}
+    .reserve--none{color:var(--gray-400);font-weight:500}
+    .assess-note{font-size:12px;color:var(--gray-500);margin-top:10px;line-height:1.5}
+    .det__empty{padding:40px 20px;text-align:center;color:var(--gray-500);font-size:13.5px}
+  </style>
+</head>
+<body>
+
+<header class="topbar"><div class="topbar__inner">
+  <a class="brand" href="slim-prototyp.html"><span class="cross"></span><span class="brand__text"><b>SLIM</b><span>Schiesslärmimmissions-Management</span></span></a>
+  <div class="brand__org"><b>armasuisse</b>Bundesamt für Rüstung</div>
+  <span class="topbar__spacer"></span>
+  <a class="iconbtn" href="slim-prototyp.html" title="Startseite"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a>
+  <button class="iconbtn" title="Menü"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <button class="user"><span class="user__avatar">HM</span><span class="user__name">Hans Muster</span></button>
+</div></header>
+
+<nav class="ctx"><div class="ctx__inner">
+  <a class="ctx__back" href="slim-prototyp.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Übersicht</a>
+  <button class="platz" title="Schiessplatz wechseln"><span class="platz__num">1104.020</span><span class="platz__name">Geissalp</span><span class="platz__status"><span class="dot dot--ok"></span><span class="dot dot--warn"></span></span><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+  <div class="subnav">
+    <a class="subnav__tab" href="#"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Übersicht</span></a>
+    <a class="subnav__tab" href="slim-schusszahlen.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg><span>Schusszahlen</span></a>
+    <a class="subnav__tab subnav__tab--active" href="#"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.2v4M8 5v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Details</span></a>
+    <a class="subnav__tab" href="#"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 12l4-5 3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Simulation</span></a>
+  </div>
+</div></nav>
+
+<main class="page">
+  <div class="pagehead">
+    <div class="pagehead__titles"><h1>Details · Empfangspunkte</h1><p>Beurteilungspegel im Vergleich zu den Grenzwerten der Lärmschutz-Verordnung (LSV)</p></div>
+    <button class="btn btn--ghost" onclick="alert('Bericht als PDF (Prototyp)')">Bericht PDF</button>
+  </div>
+
+  <!-- Immissionsberechnung -->
+  <section class="card calc">
+    <div class="calc__col">
+      <div class="calc__title">Aktuell gültige Berechnung</div>
+      <dl class="kv">
+        <dt>Berechnungsgrundlage</dt><dd>Initiale Aufnahme Areal Geissalp <span class="badge">08.05.2019</span></dd>
+        <dt>Baujahr Anlageteile</dt><dd>Vor / nach 1985 (gemischt) <span class="i" style="display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--line);color:var(--gray-500);font-size:9.5px;font-weight:800;margin-left:5px;cursor:help;vertical-align:middle" title="Für Anlagen vor 1985 gelten die Sanierungsvorgaben, für neuere die Planungswerte">i</span></dd>
+        <dt>Letzte Berechnung</dt><dd>09.09.2026, 03:10 · automatisch</dd>
+      </dl>
+    </div>
+    <div class="calc__col">
+      <div class="calc__title">Ansicht</div>
+      <dl class="kv">
+        <dt><label for="basis">Berechnungsgrundlage</label></dt>
+        <dd><select class="sel" id="basis" onchange="setBasis(this.value)">
+          <option value="initial">Initiale Aufnahme Areal Geissalp (08.05.2019)</option>
+          <option value="saniert" selected>Sanierter Zustand SPM Geissalp (25.03.2025)</option>
+        </select></dd>
+        <dt>Betrachtungszeitraum</dt>
+        <dd><div class="dates"><input type="date" value="2026-01-01"><span>bis</span><input type="date" value="2026-09-11"></div></dd>
+      </dl>
+      <div class="calc__note" id="basisNote">Sie sehen die Pegel auf Basis des sanierten Zustands. Die aktuell gültige Grundlage ist die initiale Aufnahme von 2019; Abweichungen sind unten pro Empfangspunkt markiert.</div>
+    </div>
+  </section>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="split">
+    <!-- Karte / Liste -->
+    <section class="card">
+      <div class="mapcard__head">
+        <span class="mapcard__title">Einhaltung Grenzwerte pro Empfangspunkt</span>
+        <div class="seg" role="group" aria-label="Darstellung">
+          <button class="seg__opt seg__opt--active" id="segMap" onclick="setView('map')">Karte</button>
+          <button class="seg__opt" id="segList" onclick="setView('list')">Liste</button>
+        </div>
+        <a class="mapcard__link" href="#" onclick="alert('Öffnet die Karte als Vollansicht in einem neuen Tab (GIS-Viewer).');return false">
+          Vollansicht
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M9 2.5h4.5V7M13.5 2.5L7 9M6 3.5H3.5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="map" id="mapView">
+        <svg viewBox="0 0 600 520" role="img" aria-label="Schematische Karte Schiessplatz Geissalp mit Empfangspunkten">
+          <!-- Hintergrund, Hangschraffur -->
+          <defs>
+            <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#D5D9CF" stroke-width="1"/></pattern>
+          </defs>
+          <rect width="600" height="520" fill="#EEF0EC"/>
+          <!-- Höhenlinien -->
+          <g fill="none" stroke="#D3D7CC" stroke-width="1">
+            <path d="M0 120 C120 80 200 160 320 110 S520 60 600 90"/>
+            <path d="M0 200 C100 160 220 240 340 190 S540 140 600 170"/>
+            <path d="M0 290 C90 250 230 330 360 270 S550 220 600 250"/>
+            <path d="M0 390 C110 350 240 430 370 360 S560 310 600 340"/>
+            <path d="M0 470 C130 440 250 510 390 450 S570 410 600 430"/>
+          </g>
+          <!-- Wald -->
+          <path d="M20 40 L140 30 L170 120 L60 150 Z" fill="url(#hatch)" stroke="#C9CFC0"/>
+          <path d="M420 380 L560 350 L590 470 L450 500 Z" fill="url(#hatch)" stroke="#C9CFC0"/>
+          <!-- Areal Schiessplatz -->
+          <path d="M150 200 L330 170 L370 300 L300 340 L170 320 Z" fill="#E4E6DF" stroke="#B9BFB0" stroke-dasharray="4 3"/>
+          <text x="260" y="262" font-size="11" fill="#7C8272" text-anchor="middle" font-weight="700">SPM Geissalp</text>
+          <!-- Gebäude -->
+          <g fill="#C4C8BC" stroke="#A9AFA0">
+            <rect x="225" y="225" width="30" height="16" transform="rotate(-10 240 233)"/>
+            <rect x="265" y="245" width="18" height="12"/>
+            <rect x="500" y="80" width="14" height="10"/><rect x="520" y="95" width="12" height="9"/><rect x="540" y="78" width="16" height="11"/>
+            <rect x="120" y="440" width="18" height="12"/><rect x="145" y="450" width="14" height="10"/>
+            <rect x="60" y="230" width="16" height="11"/>
+          </g>
+          <text x="528" y="128" font-size="10" fill="#7C8272">Lattigen</text>
+          <text x="140" y="480" font-size="10" fill="#7C8272">Laberhus</text>
+          <!-- Strasse / Bach -->
+          <path d="M0 330 C120 300 250 360 380 320 S520 280 600 300" fill="none" stroke="#fff" stroke-width="4"/>
+          <path d="M60 0 C80 120 40 250 90 400 S60 500 80 520" fill="none" stroke="#B9D3E3" stroke-width="2.5"/>
+          <!-- Empfangspunkte -->
+          <g id="pins"></g>
+        </svg>
+      </div>
+
+      <ul class="plist" id="listView" hidden></ul>
+
+      <div class="legend">
+        <span><i style="background:var(--green)"></i>Eingehalten</span>
+        <span><i style="background:var(--amber)"></i>Zu prüfen (Reserve ≤ 5 dB)</span>
+        <span><i style="background:var(--danger)"></i>Überschritten</span>
+        <span><i style="background:var(--gray-400)"></i>Keine Berechnung</span>
+      </div>
+    </section>
+
+    <!-- Detailbereich -->
+    <aside class="card det" id="det"></aside>
+  </div>
+</main>
+
+<script>
+  /* ================= Daten ================= */
+  /* Beurteilungen: g = Grenzwert, p = Pegel (null = nicht anwendbar) */
+  const POINTS = [
+    {id:"E1", x:225, y:255, egid:"2'314'077", addr:"Laberhusstrasse 4, 3654 Gunten", typ:"Fassadenpunkt", es:"II",
+      basis:{ initial:[60.8,null,49.1,null], saniert:[56.4,null,46.6,null] }},
+    {id:"E2", x:430, y:262, egid:"2'314'102", addr:"Lattigenweg 12, 3654 Gunten", typ:"Fassadenpunkt", es:"II",
+      basis:{ initial:[54.2,null,44.0,null], saniert:[51.9,null,42.3,null] }},
+    {id:"E3", x:522, y:92, egid:"2'314'118", addr:"Lattigen 3, 3654 Gunten", typ:"Fassadenpunkt", es:"III",
+      basis:{ initial:[58.6,null,47.5,null], saniert:[57.2,null,45.9,null] }},
+    {id:"E4", x:555, y:70, egid:"2'314'121", addr:"Lattigen 7, 3654 Gunten", typ:"Fassadenpunkt", es:"III",
+      basis:{ initial:[52.3,null,41.8,null], saniert:[50.1,null,40.2,null] }},
+    {id:"E5", x:130, y:455, egid:"2'314'060", addr:"Laberhus 1, 3654 Gunten", typ:"Fassadenpunkt", es:"II",
+      basis:{ initial:[61.9,null,50.4,null], saniert:[60.7,null,49.2,null] }},
+    {id:"E6", x:66, y:225, egid:null, addr:"Unbebaute Parzelle 1187", typ:"Reservepunkt", es:"II",
+      basis:{ initial:[null,null,null,null], saniert:[null,null,null,null] }}
+  ];
+  const ROWS = [
+    {g:"Gesamtbeurteilung nach Anhang 9",  sub:"Immissionsgrenzwert (IGW)", lim:60},
+    {g:"Gesamtbeurteilung nach Anhang 9",  sub:"Planungswert (PW)",         lim:55},
+    {g:"Beurteilung Schiessen Zivile nach Anhang 7", sub:"Immissionsgrenzwert (IGW)", lim:60},
+    {g:"Beurteilung Schiessen Zivile nach Anhang 7", sub:"Planungswert (PW)",         lim:55}
+  ];
+  const COL = {ok:"#1E7A3C", warn:"#C9880A", over:"#C71624", none:"#9AA1AB"};
+  let basis = "saniert", active = "E1", view = "map";
+
+  /* ================= Helfer ================= */
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const fmt = v => v==null ? "–" : v.toLocaleString("de-CH",{minimumFractionDigits:1,maximumFractionDigits:1}) + " dB";
+  function rowState(p, lim){ if(p==null) return "none"; if(p>lim) return "over"; if(lim-p<=5) return "warn"; return "ok"; }
+  /* Ampel des Empfangspunkts = schlechteste Beurteilung; PW-Zeilen ohne Pegel zählen nicht */
+  function pointState(pt){
+    const vals = pt.basis[basis];
+    const states = ROWS.map((r,i)=>rowState(vals[i], r.lim)).filter(s=>s!=="none");
+    if(!states.length) return "none";
+    if(states.includes("over")) return "over";
+    if(states.includes("warn")) return "warn";
+    return "ok";
+  }
+  const LABEL = {ok:"Eingehalten", warn:"Zu prüfen", over:"Überschritten", none:"Keine Berechnung"};
+
+  /* ================= Rendern ================= */
+  function renderKpis(){
+    const c = {ok:0,warn:0,over:0,none:0};
+    POINTS.forEach(p=>c[pointState(p)]++);
+    document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><b>${POINTS.length}</b> Empfangspunkte</div>
+    <div class="kpi kpi--over"><b>${c.over}</b> überschritten</div>
+    <div class="kpi kpi--warn"><b>${c.warn}</b> zu prüfen</div>
+    <div class="kpi kpi--ok"><b>${c.ok}</b> eingehalten</div>
+    ${c.none?`<div class="kpi"><b>${c.none}</b> ohne Berechnung</div>`:""}`;
+  }
+  function renderPins(){
+    document.getElementById("pins").innerHTML = POINTS.map(p=>{
+      const s = pointState(p), col = COL[s], on = p.id===active;
+      return `<g class="pin ${on?"pin--active":""}" transform="translate(${p.x},${p.y})" onclick="select('${p.id}')" tabindex="0" role="button" aria-label="Empfangspunkt ${p.id}, ${LABEL[s]}">
+      <circle class="halo" r="${on?22:18}" fill="${col}"/>
+      <path d="M0 6 C-9 -4 -11 -8 -11 -14 a11 11 0 0 1 22 0 c0 6 -2 10 -11 20z" fill="${col}" stroke="#fff" stroke-width="2" transform="translate(0,-2) scale(${on?1.25:1})"/>
+      <text y="${on?-11:-9}">${p.id}</text>
+    </g>`;
+    }).join("");
+  }
+  function renderList(){
+    const order = {over:0,warn:1,ok:2,none:3};
+    const list = [...POINTS].sort((a,b)=>order[pointState(a)]-order[pointState(b)]);
+    document.getElementById("listView").innerHTML = list.map(p=>{
+      const s = pointState(p), v = p.basis[basis][0];
+      return `<li><button class="plist__item ${p.id===active?"plist__item--active":""}" onclick="select('${p.id}')">
+      <span class="dot" style="background:${COL[s]};width:11px;height:11px"></span>
+      <span class="plist__id">${p.id}</span>
+      <span class="plist__addr">${esc(p.addr)}<small>${esc(p.typ)} · ES ${p.es}</small></span>
+      <span class="plist__val"><b>${fmt(v)}</b><small>Anhang 9 IGW 60 dB · ${LABEL[s]}</small></span>
+    </button></li>`;
+    }).join("");
+  }
+  function renderDetail(){
+    const p = POINTS.find(x=>x.id===active);
+    const el = document.getElementById("det");
+    if(!p){ el.innerHTML = `<div class="det__empty">Wählen Sie einen Empfangspunkt auf der Karte oder in der Liste.</div>`; return; }
+    const s = pointState(p), vals = p.basis[basis], other = p.basis[basis==="saniert"?"initial":"saniert"];
+    el.innerHTML = `
+    <div class="det__head">
+      <span class="det__pin" style="background:${COL[s]}">${p.id}</span>
+      <div><div class="det__title">Empfangspunkt ${p.id}</div><div class="det__sub">${esc(p.addr)}</div></div>
+      <span class="det__status st--${s==="none"?"ok":s}" style="${s==="none"?"background:var(--bg);color:var(--gray-500)":""}">${LABEL[s]}</span>
+    </div>
+    <div class="det__body">
+      <dl class="det__kv">
+        <dt>Empfangspunkt-Nr.</dt><dd>${p.id}</dd>
+        <dt>EGID</dt><dd>${p.egid?esc(p.egid):'<span style="color:var(--gray-400);font-weight:400">keine (unbebaut)</span>'}</dd>
+        <dt>Typ</dt><dd>${esc(p.typ)}</dd>
+        <dt>Empfindlichkeitsstufe<span class="i" title="ES II: Wohnzonen · ES III: Mischzonen · ES IV: Industriezonen">i</span></dt><dd>ES ${p.es}</dd>
+      </dl>
+      <div class="det__section">Beurteilung · ${basis==="saniert"?"Sanierter Zustand 2025":"Initiale Aufnahme 2019"}</div>
+      <table class="assess">
+        <thead><tr><th>Grundlage</th><th>Grenzwert</th><th>Pegel</th><th style="width:34%">Reserve</th></tr></thead>
+        <tbody>
+        ${ROWS.map((r,i)=>{
+      const v = vals[i], st = rowState(v, r.lim);
+      const pct = v==null?0:Math.min(100, v/(r.lim+8)*100), limPct = r.lim/(r.lim+8)*100;
+      const res = v==null?null:(r.lim-v);
+      const delta = (v!=null && other[i]!=null) ? (v-other[i]) : null;
+      return `<tr>
+            <td>${esc(r.g)}<div class="gl">${esc(r.sub)}</div></td>
+            <td class="num">${r.lim} dB</td>
+            <td class="num"><b>${fmt(v)}</b>${delta!=null?`<div class="gl">${delta>0?"+":""}${delta.toFixed(1)} dB ggü. ${basis==="saniert"?"2019":"2025"}</div>`:""}</td>
+            <td>
+              <div class="bar"><span class="bar__fill bar__fill--${st==="none"?"ok":st}" style="width:${pct}%;${st==="none"?"opacity:0":""}"></span><span class="bar__lim" style="left:${limPct}%"></span></div>
+              <div class="reserve reserve--${st}" style="margin-top:4px">${res==null?"nicht anwendbar":(res>=0?`${res.toFixed(1)} dB unter Grenzwert`:`${Math.abs(res).toFixed(1)} dB über Grenzwert`)}</div>
+            </td>
+          </tr>`;
+    }).join("")}
+        </tbody>
+      </table>
+      <div class="assess-note">Der schwarze Strich markiert den Grenzwert. Die Ampel des Empfangspunkts entspricht der schlechtesten anwendbaren Beurteilung. Planungswerte gelten nur für neue Anlageteile und sind hier nicht anwendbar.</div>
+    </div>`;
+  }
+  function renderAll(){ renderKpis(); renderPins(); renderList(); renderDetail(); }
+  function select(id){ active = id; renderPins(); renderList(); renderDetail(); }
+  function setBasis(b){
+    basis = b;
+    document.getElementById("basisNote").textContent = b==="saniert"
+      ? "Sie sehen die Pegel auf Basis des sanierten Zustands. Die aktuell gültige Grundlage ist die initiale Aufnahme von 2019; Abweichungen sind unten pro Empfangspunkt markiert."
+      : "Sie sehen die Pegel der aktuell gültigen Grundlage (initiale Aufnahme 2019).";
+    renderAll();
+  }
+  function setView(v){
+    view = v;
+    document.getElementById("mapView").hidden = v!=="map";
+    document.getElementById("listView").hidden = v!=="list";
+    document.getElementById("segMap").classList.toggle("seg__opt--active", v==="map");
+    document.getElementById("segList").classList.toggle("seg__opt--active", v==="list");
+  }
+  renderAll();
+</script>
+</body>
+</html>

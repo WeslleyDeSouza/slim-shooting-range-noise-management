@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SLIM · Simulation · 1104.020 Geissalp</title>
+  <style>
+    :root{
+      --red:#DC0018;--red-dark:#B00013;--red-soft:#FBE9EB;--ink:#17181C;
+      --gray-700:#3E434C;--gray-500:#6B7280;--gray-400:#9AA1AB;
+      --line:#E2E4E9;--line-strong:#C9CDD4;--bg:#F4F5F7;
+      --green:#1E7A3C;--green-bg:#EAF5EE;--amber:#C9880A;--amber-txt:#8A6100;--amber-bg:#FFF6DE;
+      --blue:#006699;--blue-bg:#E8F1F7;--danger:#C71624;--danger-bg:#FCECEE;--violet:#5B3E76;--violet-bg:#EFE9F5;
+      --radius:6px;--radius-lg:10px;
+      --shadow:0 1px 2px rgba(23,24,28,.05),0 4px 16px rgba(23,24,28,.06);
+      --font:"Helvetica Now","Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+    button{font-family:inherit;font-size:inherit;cursor:pointer;color:inherit;background:none;border:0}
+    input,select{font-family:inherit;font-size:inherit;color:inherit}
+    a{color:var(--blue)}
+    :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:3px}
+    [hidden]{display:none!important}
+
+    /* Kopf + Kontext */
+    .topbar{background:#fff;border-bottom:1px solid var(--line)}
+    .topbar__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:62px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .cross{position:relative;width:30px;height:30px;background:var(--red);border-radius:3px;flex:none}
+    .cross::before{content:"";position:absolute;inset:0;margin:auto;width:15px;height:4px;background:#fff}
+    .cross::after{content:"";position:absolute;inset:0;margin:auto;width:4px;height:15px;background:#fff}
+    .brand__text b{display:block;font-size:16px;line-height:1.2}
+    .brand__text span{font-size:11.5px;color:var(--gray-500)}
+    .brand__org{font-size:11px;color:var(--gray-500);border-left:1px solid var(--line);padding-left:12px;line-height:1.35}
+    .brand__org b{display:block;color:var(--gray-700);font-weight:600}
+    .topbar__spacer{flex:1}
+    .iconbtn{width:38px;height:38px;border:1px solid var(--line-strong);border-radius:var(--radius);display:grid;place-items:center;color:var(--gray-700);background:#fff}
+    .user{display:flex;align-items:center;gap:9px;height:38px;padding:0 10px 0 4px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff}
+    .user__avatar{width:30px;height:30px;border-radius:50%;background:#5B3E76;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+    .user__name{font-size:13.5px;font-weight:600}
+    .ctx{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+    .ctx__inner{display:flex;align-items:center;gap:14px;padding:0 20px;height:56px}
+    .ctx__back{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--gray-700);text-decoration:none;white-space:nowrap}
+    .platz{display:flex;align-items:center;gap:10px;height:40px;padding:0 12px 0 10px;border:1px solid var(--line-strong);border-radius:var(--radius);background:#fff;min-width:260px}
+    .platz__num{font-size:12px;color:var(--gray-500);font-variant-numeric:tabular-nums}
+    .platz__name{font-size:14px;font-weight:700}
+    .platz__status{display:flex;gap:5px;margin-left:auto}
+    .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+    .dot--ok{background:var(--green)}.dot--warn{background:var(--amber)}.dot--over{background:var(--danger)}
+    .subnav{display:flex;gap:2px;margin-left:auto}
+    .subnav__tab{padding:0 14px;height:56px;display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--gray-500);border-bottom:2.5px solid transparent;text-decoration:none}
+    .subnav__tab--active{color:var(--red);border-bottom-color:var(--red)}
+    @media(max-width:860px){.subnav__tab span{display:none}}
+
+    .page{padding:20px 20px 110px;max-width:1500px;margin:0 auto}
+    .pagehead{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+    .pagehead__titles{margin-right:auto}
+    .pagehead h1{font-size:24px;letter-spacing:-.01em;line-height:1.2}
+    .pagehead p{font-size:13.5px;color:var(--gray-500)}
+    .btn{height:40px;padding:0 15px;border-radius:var(--radius);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;border:1px solid transparent;white-space:nowrap;transition:all .15s}
+    .btn--primary{background:var(--red);color:#fff}
+    .btn--primary:hover{background:var(--red-dark)}
+    .btn--ghost{background:#fff;border-color:var(--line-strong);color:var(--gray-700)}
+    .btn--ghost:hover{border-color:var(--gray-400)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+
+    /* Szenario-Hinweis */
+    .notice{display:flex;gap:10px;align-items:flex-start;border-radius:var(--radius-lg);padding:11px 15px;font-size:13.5px;line-height:1.55;margin-bottom:16px;border:1px solid transparent}
+    .notice--info{background:var(--violet-bg);color:#3D2A52;border-color:#D9CDE6}
+    .notice--warn{background:var(--amber-bg);color:#6B4E00;border-color:#F0DCA8}
+    .notice b{display:block}
+
+    .split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(380px,1fr);gap:16px;align-items:start}
+    @media(max-width:1000px){.split{grid-template-columns:1fr}}
+    .card__head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+    .card__title{font-size:14px;font-weight:700;margin-right:auto}
+    .card__sub{font-size:12px;color:var(--gray-500);flex-basis:100%}
+    .smallbtn{height:32px;padding:0 11px;border:1px solid var(--line-strong);border-radius:var(--radius);font-size:12.5px;font-weight:600;color:var(--gray-700);background:#fff;display:inline-flex;align-items:center;gap:5px}
+    .smallbtn:hover{border-color:var(--gray-400)}
+    .smallbtn--active{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .smallbtn:disabled{opacity:.45;cursor:not-allowed}
+
+    /* Simulationstabelle */
+    .tbl{width:100%;border-collapse:collapse}
+    .tbl th{text-align:left;font-size:11.5px;font-weight:700;color:var(--gray-700);padding:9px 12px;background:#FAFAFB;border-bottom:1px solid var(--line);line-height:1.3}
+    .tbl th .i{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--line);color:var(--gray-500);font-size:9.5px;font-weight:800;margin-left:4px;cursor:help;vertical-align:middle}
+    .tbl th.r,.tbl td.r{text-align:right}
+    .tbl td{padding:8px 12px;border-bottom:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+    .tbl tbody tr:hover td{background:#FAFAFB}
+    .tbl .room{font-weight:700}
+    .tbl .room small{display:block;font-weight:400;color:var(--gray-500);font-size:11.5px;font-variant-numeric:tabular-nums}
+    .tbl .w small{display:block;color:var(--gray-500);font-size:11.5px}
+    .num{font-variant-numeric:tabular-nums}
+    .cell{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+    .cell input{width:110px;height:34px;padding:0 9px;border:1px solid var(--line-strong);border-radius:5px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px;background:#fff}
+    .cell input:focus{border-color:var(--ink);outline:none}
+    .cell input:disabled{background:transparent;border-color:transparent;color:var(--ink);padding-right:0}
+    .cell input.changed{border-color:var(--violet);background:var(--violet-bg)}
+    .delta{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--violet);min-height:14px}
+    .delta--down{color:var(--green)}
+    .tbl tfoot td{background:#FAFAFB;font-weight:700;border-top:2px solid var(--line);border-bottom:0}
+    .tbl tfoot .delta{display:inline;margin-left:6px}
+    .quick{display:flex;gap:6px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--gray-500);flex-wrap:wrap}
+    .quick__lbl{margin-right:4px}
+    .quick .smallbtn{height:28px;padding:0 9px;font-size:12px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--line);align-items:center}
+    .actions .grow{flex:1}
+    .actions__sum{font-size:12.5px;color:var(--gray-500)}
+    .actions__sum b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+    /* Berechnungs-Info */
+    .kv{display:grid;grid-template-columns:190px 1fr;gap:6px 12px;font-size:13px;padding:14px 16px}
+    .kv dt{color:var(--gray-500)}
+    .kv dd{font-weight:600}
+    .badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:2px 8px;border-radius:9px;background:var(--blue-bg);color:var(--blue);margin-left:6px}
+
+    /* Karte */
+    .map{position:relative;background:#EEF0EC;aspect-ratio:1.25}
+    .map svg{width:100%;height:100%;display:block}
+    .pin{cursor:pointer}
+    .pin circle.halo{opacity:0;transition:opacity .15s}
+    .pin:hover circle.halo,.pin--active circle.halo{opacity:.25}
+    .pin text{font-size:10px;font-weight:800;fill:#fff;text-anchor:middle;pointer-events:none}
+    .pin .ghost{opacity:.35}
+    .pop{position:absolute;transform:translate(-50%,calc(-100% - 34px));background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:0 12px 32px rgba(23,24,28,.2);padding:10px 12px;width:240px;font-size:12.5px;z-index:5}
+    .pop::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+    .pop__head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:6px}
+    .pop__close{margin-left:auto;color:var(--gray-400);font-size:16px;line-height:1}
+    .pop__row{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-top:1px dashed var(--line);font-variant-numeric:tabular-nums}
+    .pop__row b{font-weight:700}
+    .pop__d{font-weight:700}
+    .legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--line);font-size:12px;color:var(--gray-500)}
+    .legend span{display:inline-flex;align-items:center;gap:6px}
+
+    /* Resultat-Tabelle */
+    .res{width:100%;border-collapse:collapse;font-size:13px}
+    .res th{text-align:left;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-400);padding:8px 12px;border-bottom:1px solid var(--line)}
+    .res th.r,.res td.r{text-align:right}
+    .res td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle;font-variant-numeric:tabular-nums}
+    .res tbody tr{cursor:pointer}
+    .res tbody tr:hover td{background:#FAFAFB}
+    .res tr.active td{background:var(--red-soft)}
+    .res tr:last-child td{border-bottom:0}
+    .st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:9px;white-space:nowrap}
+    .st--ok{background:var(--green-bg);color:var(--green)}.st--warn{background:var(--amber-bg);color:var(--amber-txt)}.st--over{background:var(--danger-bg);color:var(--danger)}
+    .st--none{background:var(--bg);color:var(--gray-500)}
+    .arrow{color:var(--gray-400);padding:0 4px}
+    .res .d{font-weight:700}
+    .d--up{color:var(--danger)}.d--down{color:var(--green)}.d--flat{color:var(--gray-400)}
+    .res__empty{padding:28px 16px;text-align:center;color:var(--gray-500);font-size:13px;line-height:1.5}
+    .res__empty b{display:block;color:var(--ink)}
+
+    /* Fortschritt */
+    .progress{padding:24px 16px;text-align:center;color:var(--gray-700);font-size:13.5px}
+    .progress__bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:12px auto 0;max-width:320px}
+    .progress__bar span{display:block;height:100%;background:var(--red);animation:load 1.6s ease forwards}
+    @keyframes load{from{width:0}to{width:100%}}
+
+    /* Sticky Aktionsleiste */
+    .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:35}
+    .bar__inner{max-width:1500px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 20px;flex-wrap:wrap}
+    .bar__state{font-size:13px;color:var(--gray-700);display:flex;align-items:center;gap:8px}
+    .bar__state b{font-variant-numeric:tabular-nums}
+    .bar .grow{flex:1}
+    .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 10px;border-radius:10px}
+    .pill--dirty{background:var(--violet-bg);color:var(--violet)}
+    .pill--ok{background:var(--green-bg);color:var(--green)}
+    .pill--stale{background:var(--amber-bg);color:var(--amber-txt)}
+  </style>
+</head>
+<body>
+
+<header class="topbar"><div class="topbar__inner">
+  <a class="brand" href="slim-prototyp.html"><span class="cross"></span><span class="brand__text"><b>SLIM</b><span>Schiesslärmimmissions-Management</span></span></a>
+  <div class="brand__org"><b>armasuisse</b>Bundesamt für Rüstung</div>
+  <span class="topbar__spacer"></span>
+  <a class="iconbtn" href="slim-prototyp.html" title="Startseite"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></a>
+  <button class="iconbtn" title="Menü"><svg width="17" height="17" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  <button class="user"><span class="user__avatar">HM</span><span class="user__name">Hans Muster</span></button>
+</div></header>
+
+<nav class="ctx"><div class="ctx__inner">
+  <a class="ctx__back" href="slim-prototyp.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 2.5L4.5 8l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Übersicht</a>
+  <button class="platz" title="Schiessplatz wechseln"><span class="platz__num">1104.020</span><span class="platz__name">Geissalp</span><span class="platz__status"><span class="dot dot--ok"></span><span class="dot dot--warn"></span></span><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+  <div class="subnav">
+    <a class="subnav__tab" href="#"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Übersicht</span></a>
+    <a class="subnav__tab" href="slim-schusszahlen.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg><span>Schusszahlen</span></a>
+    <a class="subnav__tab" href="slim-details.html"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.2v4M8 5v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Details</span></a>
+    <a class="subnav__tab subnav__tab--active" href="#"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 12l4-5 3 3 5-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Simulation</span></a>
+  </div>
+</div></nav>
+
+<main class="page">
+  <div class="pagehead">
+    <div class="pagehead__titles"><h1>Simulation</h1><p>Hypothetische Schusszahlen erfassen und die Lärmbelastung nach Anhang 9 LSV neu berechnen</p></div>
+    <button class="btn btn--ghost" id="btnExport" onclick="alert('Simulationsbericht als PDF: Eingaben, Berechnungsgrundlage, Resultate pro Empfangspunkt (Prototyp)')" disabled>Bericht PDF</button>
+  </div>
+
+  <div class="notice notice--info">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:2px"><circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.5"/><path d="M8 7.2v4M8 5v.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <div><b>Sandkasten: Die Simulation verändert keine echten Daten.</b> Erfasste Schusszahlen und die gültige Beurteilung bleiben unberührt. Sie ändern Werte in der Tabelle, lösen die Berechnung aus und vergleichen das Resultat mit dem Ist-Zustand.</div>
+  </div>
+
+  <div class="split">
+    <!-- Eingaben -->
+    <section class="card">
+      <div class="card__head">
+        <span class="card__title">Jährliche Anzahl Schuss, militärisch</span>
+        <button class="smallbtn" id="btnEdit" onclick="toggleEdit()">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M11 2.5l2.5 2.5L5 13.5H2.5V11L11 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Werte überschreiben
+        </button>
+        <button class="smallbtn" id="btnReset" onclick="resetValues()" disabled>Zurücksetzen auf aktuelle Werte</button>
+        <span class="card__sub">Initial: aufsummierte Schusszahlen des Kalenderjahres 2026 pro Stellungsraum und Waffe/Munitionstyp (Ermittlung militärische Quelldaten, Kap. 7.4.5).</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr>
+            <th>Stellungsraum<br><span style="font-weight:400;color:var(--gray-500)">Koordinationsabschnitt-Nr.</span></th>
+            <th>Waffe / Munitionstyp</th>
+            <th class="r">Innerhalb Werktag <span class="i" title="Montag bis Freitag, 07:00 bis 19:00 Uhr">i</span></th>
+            <th class="r">Ausserhalb Werktag <span class="i" title="Abend, Nacht, Wochenende und Feiertage; höher gewichtet in der Beurteilung">i</span></th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+          <tfoot id="tfoot"></tfoot>
+        </table>
+      </div>
+      <div class="quick" id="quick" hidden>
+        <span class="quick__lbl">Alle Werte:</span>
+        <button class="smallbtn" onclick="scaleAll(0.8)">−20 %</button>
+        <button class="smallbtn" onclick="scaleAll(0.9)">−10 %</button>
+        <button class="smallbtn" onclick="scaleAll(1.1)">+10 %</button>
+        <button class="smallbtn" onclick="scaleAll(1.2)">+20 %</button>
+        <button class="smallbtn" onclick="scaleAll(1.5)">+50 %</button>
+        <span style="margin-left:auto">Einzelwerte direkt in der Tabelle anpassen</span>
+      </div>
+    </section>
+
+    <!-- Berechnung + Karte + Resultat -->
+    <div style="display:grid;gap:16px">
+      <section class="card">
+        <div class="card__head"><span class="card__title">Immissionsberechnung</span></div>
+        <dl class="kv">
+          <dt>Berechnungsgrundlage</dt><dd>Initiale Aufnahme Areal Geissalp <span class="badge">08.05.2019</span></dd>
+          <dt>Baujahr Anlageteile</dt><dd>Vor / nach 1985 (gemischt)</dd>
+          <dt>Beurteilung</dt><dd>Militärisches Schiessen nach Anhang 9 LSV</dd>
+        </dl>
+      </section>
+
+      <section class="card">
+        <div class="card__head">
+          <span class="card__title">Grenzwerte pro Empfangspunkt</span>
+          <a class="smallbtn" href="#" onclick="alert('Vollansicht im GIS-Viewer, neuer Tab');return false">Vollansicht
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M9 2.5h4.5V7M13.5 2.5L7 9M6 3.5H3.5a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+        <div class="map" id="map">
+          <svg viewBox="0 0 600 480" role="img" aria-label="Karte Schiessplatz Geissalp mit Empfangspunkten">
+            <defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#D5D9CF" stroke-width="1"/></pattern></defs>
+            <rect width="600" height="480" fill="#EEF0EC"/>
+            <g fill="none" stroke="#D3D7CC" stroke-width="1">
+              <path d="M0 110 C120 70 200 150 320 100 S520 50 600 80"/><path d="M0 190 C100 150 220 230 340 180 S540 130 600 160"/>
+              <path d="M0 280 C90 240 230 320 360 260 S550 210 600 240"/><path d="M0 380 C110 340 240 420 370 350 S560 300 600 330"/>
+            </g>
+            <path d="M20 40 L140 30 L170 120 L60 150 Z" fill="url(#hatch)" stroke="#C9CFC0"/>
+            <path d="M420 360 L560 330 L590 450 L450 480 Z" fill="url(#hatch)" stroke="#C9CFC0"/>
+            <path d="M150 190 L330 160 L370 290 L300 330 L170 310 Z" fill="#E4E6DF" stroke="#B9BFB0" stroke-dasharray="4 3"/>
+            <text x="260" y="250" font-size="11" fill="#7C8272" text-anchor="middle" font-weight="700">SPM Geissalp</text>
+            <g fill="#C4C8BC" stroke="#A9AFA0"><rect x="225" y="215" width="30" height="16"/><rect x="265" y="235" width="18" height="12"/><rect x="500" y="72" width="14" height="10"/><rect x="520" y="87" width="12" height="9"/><rect x="540" y="70" width="16" height="11"/><rect x="120" y="415" width="18" height="12"/><rect x="60" y="220" width="16" height="11"/></g>
+            <text x="528" y="120" font-size="10" fill="#7C8272">Lattigen</text><text x="140" y="455" font-size="10" fill="#7C8272">Laberhus</text>
+            <path d="M0 320 C120 290 250 350 380 310 S520 270 600 290" fill="none" stroke="#fff" stroke-width="4"/>
+            <g id="pins"></g>
+          </svg>
+          <div class="pop" id="pop" hidden></div>
+        </div>
+        <div class="legend">
+          <span><span class="dot dot--ok"></span>Eingehalten</span>
+          <span><span class="dot dot--warn"></span>Zu prüfen (Reserve ≤ 5 dB)</span>
+          <span><span class="dot dot--over"></span>Überschritten</span>
+          <span style="margin-left:auto" id="legendMode">Ist-Zustand 2026</span>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__head"><span class="card__title">Resultat pro Empfangspunkt</span><span id="resSub" style="font-size:12px;color:var(--gray-500)">Anhang 9 LSV · IGW</span></div>
+        <div id="resBody"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<div class="bar"><div class="bar__inner">
+  <span class="bar__state" id="barState"></span>
+  <span class="grow"></span>
+  <button class="btn btn--ghost" onclick="resetValues()" id="barReset" disabled>Zurücksetzen</button>
+  <button class="btn btn--primary" id="btnRun" onclick="runSim()" disabled>
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4.5 2.8l8 5.2-8 5.2V2.8z" fill="currentColor"/></svg>
+    Simulation ausführen
+  </button>
+</div></div>
+
+<script>
+  /* ================= Daten ================= */
+  /* Zulässige Kombinationen Stellungsraum × Waffe (Kap. 5.17), Ist-Werte 2026 */
+  const BASE = [
+    {ka:"1104.020.05", room:"Stellungsrm Mw Neuhaus, B 3", w:"Stgw 90", mun:"5.6 mm GP 90", inW:257857, outW:26777},
+    {ka:"1104.020.05", room:"Stellungsrm Mw Neuhaus, B 3", w:"Pz Hb 74", mun:"15.5 cm Spr Gr", inW:1240, outW:0},
+    {ka:"1104.020.06", room:"Stellungsrm Mw Salzmatt, C 3", w:"Stgw 90", mun:"5.6 mm GP 90", inW:14154, outW:1253},
+    {ka:"1104.020.06", room:"Stellungsrm Mw Salzmatt, C 3", w:"Mw 87", mun:"8.1 cm Spr Gr", inW:2180, outW:160},
+    {ka:"1104.020.07", room:"Stellungsrm B 2", w:"Mg 51", mun:"7.5 mm GP 11", inW:38400, outW:2100},
+    {ka:"1104.020.07", room:"Stellungsrm B 2", w:"Stgw 90", mun:"5.6 mm GP 90", inW:91200, outW:8800},
+    {ka:"1104.020.08", room:"Zielraum Seeli, C 1", w:"Mw 12 cm", mun:"12 cm Spr Gr", inW:940, outW:0}
+  ];
+  /* Energiegewicht pro Waffe (Prototyp-Heuristik, produktiv aus sonARMS) */
+  const E = {"Stgw 90":1, "Mg 51":1.3, "Mw 87":140, "Mw 12 cm":420, "Pz Hb 74":900};
+  const OUT_W = 1.8; /* Zuschlag ausserhalb Werktag */
+  /* Empfangspunkte mit Ist-Pegel und Empfindlichkeit gegenüber Stellungsräumen (0..1) */
+  const POINTS = [
+    {id:"E1", x:225, y:245, addr:"Laberhusstrasse 4", lim:60, ist:56.4, sens:{"1104.020.05":1,"1104.020.06":.7,"1104.020.07":.5,"1104.020.08":.3}},
+    {id:"E2", x:430, y:252, addr:"Lattigenweg 12",    lim:60, ist:51.9, sens:{"1104.020.05":.4,"1104.020.06":.6,"1104.020.07":1,"1104.020.08":.8}},
+    {id:"E3", x:522, y:84,  addr:"Lattigen 3",        lim:60, ist:57.2, sens:{"1104.020.05":.3,"1104.020.06":.5,"1104.020.07":1,"1104.020.08":1}},
+    {id:"E4", x:555, y:62,  addr:"Lattigen 7",        lim:60, ist:50.1, sens:{"1104.020.05":.2,"1104.020.06":.4,"1104.020.07":.9,"1104.020.08":.9}},
+    {id:"E5", x:130, y:430, addr:"Laberhus 1",        lim:60, ist:60.7, sens:{"1104.020.05":1,"1104.020.06":.9,"1104.020.07":.3,"1104.020.08":.2}}
+  ];
+  const COL = {ok:"#1E7A3C", warn:"#C9880A", over:"#C71624"};
+  const LABEL = {ok:"Eingehalten", warn:"Zu prüfen", over:"Überschritten"};
+
+  let vals = BASE.map(b=>({inW:b.inW, outW:b.outW}));
+  let editing = false, result = null, stale = false, activePin = null;
+
+  /* ================= Helfer ================= */
+  const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const nf = n => Math.round(n).toLocaleString("de-CH");
+  const db = v => v.toLocaleString("de-CH",{minimumFractionDigits:1,maximumFractionDigits:1}) + " dB";
+  const state = (p,lim) => p>lim ? "over" : (lim-p<=5 ? "warn" : "ok");
+  const isDirty = () => vals.some((v,i)=>v.inW!==BASE[i].inW || v.outW!==BASE[i].outW);
+  const changedCount = () => vals.reduce((a,v,i)=>a+(v.inW!==BASE[i].inW)+(v.outW!==BASE[i].outW),0);
+  const total = arr => arr.reduce((a,v)=>a+v.inW+v.outW,0);
+
+  /* Energiesumme pro Empfangspunkt */
+  function energy(p, source){
+    return BASE.reduce((a,b,i)=>{
+      const v = source[i], s = p.sens[b.ka]||0;
+      return a + s * E[b.w] * (v.inW + OUT_W*v.outW);
+    },0);
+  }
+  function simPegel(p){
+    const e0 = energy(p, BASE), e1 = energy(p, vals);
+    if(e1<=0) return null;
+    return Math.round((p.ist + 10*Math.log10(e1/e0))*10)/10;
+  }
+
+  /* ================= Tabelle ================= */
+  function renderTable(){
+    const dirty = isDirty();
+    document.getElementById("rows").innerHTML = BASE.map((b,i)=>{
+      const cell = (k) => {
+        const v = vals[i][k], o = b[k], ch = v!==o;
+        const d = ch ? (o>0 ? Math.round((v-o)/o*100) : null) : null;
+        return `<td class="r"><div class="cell">
+        <input inputmode="numeric" value="${nf(v)}" ${editing?"":"disabled"} class="${ch?"changed":""}" onchange="setVal(${i},'${k}',this.value)" aria-label="${k==="inW"?"innerhalb":"ausserhalb"} Werktag">
+        <span class="delta ${v<o?"delta--down":""}">${ch ? (d==null ? "neu" : (d>0?"+":"")+d+" %") : ""}</span>
+      </div></td>`;
+      };
+      return `<tr>
+      <td class="room">${esc(b.room)}<small>${esc(b.ka)}</small></td>
+      <td class="w">${esc(b.w)}<small>${esc(b.mun)}</small></td>
+      ${cell("inW")}${cell("outW")}
+    </tr>`;
+    }).join("");
+    const tIn = vals.reduce((a,v)=>a+v.inW,0), tOut = vals.reduce((a,v)=>a+v.outW,0);
+    const bIn = BASE.reduce((a,v)=>a+v.inW,0), bOut = BASE.reduce((a,v)=>a+v.outW,0);
+    const dl = (t,b) => t===b ? "" : `<span class="delta ${t<b?"delta--down":""}">${t>b?"+":""}${nf(t-b)}</span>`;
+    document.getElementById("tfoot").innerHTML = `<tr><td colspan="2">Total ${BASE.length} Kombinationen</td><td class="r num">${nf(tIn)}${dl(tIn,bIn)}</td><td class="r num">${nf(tOut)}${dl(tOut,bOut)}</td></tr>`;
+    document.getElementById("btnReset").disabled = !dirty;
+    document.getElementById("barReset").disabled = !dirty;
+    document.getElementById("btnRun").disabled = !dirty || !editing && !dirty;
+    document.getElementById("quick").hidden = !editing;
+    renderBar();
+  }
+  function setVal(i,k,raw){
+    const n = parseInt(String(raw).replace(/[^\d]/g,""),10);
+    vals[i][k] = isNaN(n) ? 0 : Math.max(0,n);
+    if(result) stale = true;
+    renderTable(); renderPins(); renderResult();
+  }
+  function scaleAll(f){
+    vals = vals.map(v=>({inW:Math.round(v.inW*f), outW:Math.round(v.outW*f)}));
+    if(result) stale = true;
+    renderTable(); renderPins(); renderResult();
+  }
+  function toggleEdit(){
+    editing = !editing;
+    document.getElementById("btnEdit").classList.toggle("smallbtn--active", editing);
+    document.getElementById("btnEdit").innerHTML = editing
+      ? '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3.5 3.5L13.5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Bearbeitung beenden'
+      : '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M11 2.5l2.5 2.5L5 13.5H2.5V11L11 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Werte überschreiben';
+    renderTable();
+  }
+  function resetValues(){
+    vals = BASE.map(b=>({inW:b.inW, outW:b.outW}));
+    result = null; stale = false; activePin = null;
+    document.getElementById("btnExport").disabled = true;
+    renderTable(); renderPins(); renderResult();
+  }
+
+  /* ================= Simulation ================= */
+  function runSim(){
+    document.getElementById("btnRun").disabled = true;
+    document.getElementById("resBody").innerHTML = `<div class="progress">Berechnung läuft: Quelldaten übernehmen, Ausbreitung rechnen, Beurteilung nach Anhang 9 …<div class="progress__bar"><span></span></div></div>`;
+    setTimeout(()=>{
+      result = POINTS.map(p=>({id:p.id, sim:simPegel(p)}));
+      stale = false;
+      document.getElementById("btnExport").disabled = false;
+      renderTable(); renderPins(); renderResult();
+    }, 1700);
+  }
+  function resOf(id){ return result && !stale ? result.find(r=>r.id===id)?.sim : null; }
+
+  /* ================= Karte ================= */
+  function renderPins(){
+    const showSim = result && !stale;
+    document.getElementById("legendMode").textContent = showSim ? "Simulation (Ist-Zustand als Schatten)" : "Ist-Zustand 2026";
+    document.getElementById("pins").innerHTML = POINTS.map(p=>{
+      const sim = resOf(p.id);
+      const stIst = state(p.ist,p.lim), stSim = sim!=null ? state(sim,p.lim) : null;
+      const col = COL[showSim ? stSim : stIst], on = p.id===activePin;
+      return `<g class="pin ${on?"pin--active":""}" transform="translate(${p.x},${p.y})" onclick="openPop('${p.id}')" tabindex="0" role="button" aria-label="Empfangspunkt ${p.id}">
+      ${showSim?`<circle class="ghost" r="7" cx="9" cy="-3" fill="${COL[stIst]}" stroke="#fff" stroke-width="1.5"><title>Ist: ${db(p.ist)}</title></circle>`:""}
+      <circle class="halo" r="${on?22:18}" fill="${col}"/>
+      <path d="M0 6 C-9 -4 -11 -8 -11 -14 a11 11 0 0 1 22 0 c0 6 -2 10 -11 20z" fill="${col}" stroke="#fff" stroke-width="2" transform="translate(0,-2) scale(${on?1.25:1})"/>
+      <text y="${on?-11:-9}">${p.id}</text>
+    </g>`;
+    }).join("");
+  }
+  function openPop(id){
+    activePin = id;
+    const p = POINTS.find(x=>x.id===id), sim = resOf(id);
+    const pop = document.getElementById("pop");
+    pop.style.left = (p.x/600*100)+"%"; pop.style.top = (p.y/480*100)+"%";
+    const stIst = state(p.ist,p.lim), stSim = sim!=null?state(sim,p.lim):null;
+    pop.innerHTML = `
+    <div class="pop__head"><span class="dot" style="background:${COL[stSim||stIst]}"></span>${p.id} · ${esc(p.addr)}<button class="pop__close" onclick="closePop(event)" aria-label="Schliessen">×</button></div>
+    <div class="pop__row"><span>Grenzwert IGW</span><b>${p.lim} dB</b></div>
+    <div class="pop__row"><span>Ist 2026</span><b>${db(p.ist)}</b></div>
+    ${sim!=null ? `<div class="pop__row"><span>Simulation</span><b style="color:${COL[stSim]}">${db(sim)}</b></div>
+    <div class="pop__row"><span>Differenz</span><span class="pop__d ${sim>p.ist?"d--up":sim<p.ist?"d--down":"d--flat"}" style="color:${sim>p.ist?"var(--danger)":sim<p.ist?"var(--green)":"var(--gray-400)"}">${sim>p.ist?"+":""}${(sim-p.ist).toFixed(1)} dB</span></div>`
+      : `<div class="pop__row" style="color:var(--gray-500)"><span>Simulation</span><span>noch nicht berechnet</span></div>`}`;
+    pop.hidden = false;
+    renderPins(); renderResult();
+  }
+  function closePop(e){ e&&e.stopPropagation(); document.getElementById("pop").hidden = true; activePin=null; renderPins(); renderResult(); }
+
+  /* ================= Resultat ================= */
+  function renderResult(){
+    const el = document.getElementById("resBody");
+    if(!result){
+      el.innerHTML = `<div class="res__empty"><b>Noch keine Simulation berechnet</b>${isDirty()?"Werte sind geändert. Klicken Sie auf «Simulation ausführen».":"Überschreiben Sie zuerst Werte in der Tabelle."}</div>`;
+      return;
+    }
+    const worse = POINTS.filter(p=>{const s=resOf(p.id); return s!=null && state(s,p.lim)==="over";}).length;
+    document.getElementById("resSub").textContent = stale ? "Resultat veraltet: Werte wurden geändert" : `Anhang 9 LSV · IGW · ${worse} überschritten`;
+    el.innerHTML = `<table class="res">
+    <thead><tr><th>Punkt</th><th class="r">Grenzwert</th><th class="r">Ist</th><th class="r">Simuliert</th><th class="r">Differenz</th><th>Beurteilung</th></tr></thead>
+    <tbody>${POINTS.map(p=>{
+      const sim = stale ? null : resOf(p.id);
+      const stIst = state(p.ist,p.lim), stSim = sim!=null?state(sim,p.lim):null;
+      const d = sim!=null ? sim-p.ist : null;
+      return `<tr class="${p.id===activePin?"active":""}" onclick="openPop('${p.id}')">
+        <td><b>${p.id}</b> <span style="color:var(--gray-500);font-size:12px">${esc(p.addr)}</span></td>
+        <td class="r">${p.lim} dB</td>
+        <td class="r">${db(p.ist)}</td>
+        <td class="r"><b>${sim!=null?db(sim):"–"}</b></td>
+        <td class="r d ${d==null?"d--flat":d>0.05?"d--up":d<-0.05?"d--down":"d--flat"}">${d==null?"–":(d>0?"+":"")+d.toFixed(1)+" dB"}</td>
+        <td>${sim!=null
+        ? (stSim!==stIst ? `<span class="st st--${stIst}">${LABEL[stIst]}</span><span class="arrow">→</span><span class="st st--${stSim}">${LABEL[stSim]}</span>` : `<span class="st st--${stSim}">${LABEL[stSim]}</span>`)
+        : `<span class="st st--none">veraltet</span>`}</td>
+      </tr>`;}).join("")}
+    </tbody></table>`;
+  }
+
+  /* ================= Aktionsleiste ================= */
+  function renderBar(){
+    const el = document.getElementById("barState");
+    const n = changedCount(), t = total(vals), b = total(BASE), pct = b? Math.round((t-b)/b*100):0;
+    if(!isDirty()){ el.innerHTML = `<span class="pill pill--ok">Aktuelle Werte</span> Keine Änderungen. Überschreiben Sie Werte, um eine Simulation zu starten.`; return; }
+    const pill = result && !stale ? `<span class="pill pill--ok">Simulation aktuell</span>` : (result ? `<span class="pill pill--stale">Resultat veraltet</span>` : `<span class="pill pill--dirty">Nicht berechnet</span>`);
+    el.innerHTML = `${pill} <b>${n}</b> Wert${n===1?"":"e"} geändert · Total <b>${nf(t)}</b> Schuss (${pct>0?"+":""}${pct} % gegenüber Ist)`;
+  }
+
+  renderTable(); renderPins(); renderResult();
+</script>
+</body>
+</html>

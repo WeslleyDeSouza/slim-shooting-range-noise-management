@@ -2,3 +2,5 @@
 // docs/architecture/sitemap.md). Each exports a module with a static
 // `DBOptions = { entities: [...] }` that app.module.ts spreads into TypeORM.
 export * from './area';
+export * from './usage';
+export * from './calculation';

@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  BeforeInsert,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
-import { DbPlatformColumn, TenantBaseEntity } from '@app-galaxy/core-api';
+import { Entity, OneToMany, Unique } from 'typeorm';
+import { DbPlatformColumn } from '@app-galaxy/core-api';
+import { SlimBaseEntity } from '@api-slim/common';
+import { AreaRoomEntity } from './area-room.entity';
+import { AreaWeaponEntity } from './area-weapon.entity';
 
 /** Traffic-light status of an area (quota / noise), see sitemap.md. */
 export const AREA_STATUS = ['ok', 'warn', 'over', 'none'] as const;
@@ -17,17 +12,14 @@ export type AreaStatus = (typeof AREA_STATUS)[number];
 /**
  * Area (Schiessplatz) — ELO naming. Tenant-scoped like every galaxy entity.
  * Status columns are the evaluated result of the latest calculation; they
- * will be derived from the calculation module once it exists.
+ * are refreshed by the calculation module (assessment) and seeded for the
+ * demo tenant.
  */
 @Entity('area')
 @Unique(['tenantId', 'id'])
 @Unique(['tenantId', 'coordinationSectionNo'])
-export class AreaEntity extends TenantBaseEntity {
+export class AreaEntity extends SlimBaseEntity {
   protected self = AreaEntity;
-
-  @ApiProperty()
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
 
   @ApiProperty({ description: 'Bezeichnung' })
   @DbPlatformColumn({ length: 120, nullable: false })
@@ -59,21 +51,21 @@ export class AreaEntity extends TenantBaseEntity {
   })
   noiseStatus: AreaStatus;
 
+  /**
+   * B1 5.16 flag «Gesamtbeurteilung nach Anhang 7»: assess every usage
+   * (not only the civil ones) under Annex 7 as well.
+   */
+  @ApiProperty({ description: 'Gesamtbeurteilung nach Anhang 7' })
+  @DbPlatformColumn({ type: 'boolean', nullable: false, default: false })
+  annex7Overall: boolean;
+
   @ApiProperty()
   @DbPlatformColumn({ type: 'boolean', nullable: false, default: true })
   enabled: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @OneToMany(() => AreaRoomEntity, (room) => room.area)
+  rooms: AreaRoomEntity[];
 
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt: Date | null;
-
-  @BeforeInsert()
-  protected async beforeInsert(): Promise<void> {
-    // nothing yet (TenantBaseEntity contract)
-  }
+  @OneToMany(() => AreaWeaponEntity, (weapon) => weapon.area)
+  weapons: AreaWeaponEntity[];
 }

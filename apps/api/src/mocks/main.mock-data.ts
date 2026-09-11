@@ -2,7 +2,8 @@ import { TestMockUserMock } from '@app-galaxy/auth-api';
 import { TestMockTenantMock } from '@app-galaxy/core-api';
 import { DataSource } from 'typeorm';
 import { APP_ROUTES } from '@slim/shared';
-import { AREA_MOCK_DATA } from '../modules/area/area.mock-data';
+import { demoSeedEnabled, seedDemoDataset } from './tenant/demo-dataset.seed';
+import { loadRawDatasets, DEFAULT_DATASET_KEY } from './tenant/tenant-dataset';
 
 /**
  * App ids of this installation (galaxy `app_app.appId` rows). They are
@@ -133,15 +134,6 @@ export namespace API_MOCK_DATA {
 
     await fill('tenant', TestMockTenantMock.fill.All(connection));
     await fill('user', TestMockUserMock.fill.User(connection));
-    // The galaxy seed only sets the e-mail; give the demo account a name so
-    // the greeting and the avatar have something to show (mock: Hans Muster).
-    await fill(
-      'user name',
-      connection.query(
-        "update auth_user set firstName = ?, lastName = ? where email = ? and (firstName is null or firstName = '')",
-        ['Hans', 'Muster', process.env['APP_DEFAULT_USER'] || 'user@mail.com'],
-      ),
-    );
     await fill(
       'apps',
       TestMockUserMock.fill.Apps(connection, customApps, customCategories),
@@ -157,10 +149,30 @@ export namespace API_MOCK_DATA {
       TestMockTenantMock.fill.RoleUserCom(connection),
     );
 
-    // Feature demo data
-    await fill(
-      'area demo data',
-      AREA_MOCK_DATA.fill(connection, TestMockTenantMock.tenantId),
-    );
+    // The «SLIM Demo» dataset (mocks/tenant/tenant.mock.json): areas with
+    // rooms, weapons, receivers, calculation states and this year's usages,
+    // plus the demo user's name. Rolled to the current year and rewritten
+    // when the year turns, the dataset version changes, or DEMO_RESEED=1
+    // asks for a fresh copy. DEMO_SEED=0 leaves the tenant alone.
+    if (demoSeedEnabled()) {
+      await seedDemoDataset(connection, TestMockTenantMock.tenantId, {
+        force: process.env['DEMO_RESEED'] === '1',
+      })
+        .then((r) => {
+          if (!r.skipped) {
+            console.log(
+              `[seed] SLIM Demo ${r.year}: ${r.areas} areas, ${r.rooms} rooms, ${r.weapons} sources, ${r.receivers} receivers, ${r.calculations} calculation states (${r.wlr} WLR rows), ${r.usages} usages`,
+            );
+          }
+        })
+        .catch((error) =>
+          console.warn(`[seed] demo dataset failed: ${error?.message ?? error}`),
+        );
+    } else {
+      console.log('[seed] demo dataset skipped (DEMO_SEED=0)');
+    }
   };
+
+  /** Demo credentials as the dataset declares them (setup wizard, e2e). */
+  export const demoUser = () => loadRawDatasets()[DEFAULT_DATASET_KEY].users[0];
 }

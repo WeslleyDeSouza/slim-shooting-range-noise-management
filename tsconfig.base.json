@@ -21,7 +21,8 @@
       "@api-slim/tests": ["./libs/api/tests/src/index.ts"],
       "@slim/shared": ["./libs/shared/constants/src/index.ts"],
       "@ui-slim/apiClient": ["./libs/app/generated/src/index.ts"],
-      "@ui-slim/design-system": ["./libs/app/design-system/src/index.ts"]
+      "@ui-slim/design-system": ["./libs/app/design-system/src/index.ts"],
+      "@slim/lsv": ["./libs/shared/lsv/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp", "libs/app/generated/**/*"]

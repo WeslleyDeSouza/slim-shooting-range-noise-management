@@ -1,0 +1,3028 @@
+{
+  "SLIM Demo": {
+    "name": "SLIM Demo",
+    "identifier": "SLIM_DEMO",
+    "description": "Demo-Mandant des Prototyps: neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Waffen, Empfangspunkten, zwei Berechnungszuständen und den Nutzungen des laufenden Jahres.",
+    "version": 1,
+    "users": [
+      {
+        "username": "slim@demo.ch",
+        "password": "1234",
+        "firstName": "Hans",
+        "lastName": "Muster"
+      }
+    ],
+    "areas": [
+      {
+        "name": "Geissalp",
+        "coordinationSectionNo": "1104.020",
+        "sectoralPlanNo": "SP-BE-11",
+        "quotaStatus": "warn",
+        "noiseStatus": "over",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "1104.020.01",
+            "name": "Zielrm / Stellungsrm Fendershuus, A 1 links",
+            "groupName": "Zielräume / Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 0
+          },
+          {
+            "coordinationSectionNo": "1104.020.02",
+            "name": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "groupName": "Zielräume / Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 1
+          },
+          {
+            "coordinationSectionNo": "1104.020.03",
+            "name": "Zielrm / Stellungsrm Seelihuus, B 1",
+            "groupName": "Zielräume / Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 2
+          },
+          {
+            "coordinationSectionNo": "1104.020.08",
+            "name": "Zielraum Seeli, C 1",
+            "groupName": "Zielräume / Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 3
+          },
+          {
+            "coordinationSectionNo": "1104.020.04",
+            "name": "Stellungsraum A 3 auch Mw",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 4
+          },
+          {
+            "coordinationSectionNo": "1104.020.07",
+            "name": "Stellungsrm B 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 5
+          },
+          {
+            "coordinationSectionNo": "1104.020.09",
+            "name": "Stellungsrm C 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 6
+          },
+          {
+            "coordinationSectionNo": "1104.020.05",
+            "name": "Stellungsrm Mw Neuhaus, B 3",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true,
+            "sortOrder": 7
+          },
+          {
+            "coordinationSectionNo": "1104.020.06",
+            "name": "Stellungsrm Mw Salzmatt, C 3",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true,
+            "sortOrder": 8
+          },
+          {
+            "coordinationSectionNo": "1104.020.10",
+            "name": "Stellungsrm Mw Schönenboden, D",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false,
+            "sortOrder": 9
+          },
+          {
+            "coordinationSectionNo": "1104.020.11",
+            "name": "NGST Seeli C rechts",
+            "groupName": "NGST",
+            "builtAfter1985": false,
+            "sortOrder": 10
+          },
+          {
+            "coordinationSectionNo": "1104.020.12",
+            "name": "NGST Seeli C links",
+            "groupName": "NGST",
+            "builtAfter1985": false,
+            "sortOrder": 11
+          },
+          {
+            "coordinationSectionNo": "1104.020.13",
+            "name": "NGST Schönenboden D unten",
+            "groupName": "NGST",
+            "builtAfter1985": false,
+            "sortOrder": 12
+          },
+          {
+            "coordinationSectionNo": "1104.020.14",
+            "name": "NGST Schönenboden D oben",
+            "groupName": "NGST",
+            "builtAfter1985": false,
+            "sortOrder": 13
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "B3_Stgw90"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "weaponName": "Pz Hb 74 · 15.5 cm",
+            "weapon": "Pz Hb 74",
+            "caliber": "15.5 cm Spr Gr",
+            "category": "artillery",
+            "annex7Category": null,
+            "quota": 1500,
+            "sourceId": "B3_PzHb74"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "weaponName": "Flz Kan 92 (Upat 92)",
+            "weapon": "Flz Kan 92",
+            "caliber": "Upat 92",
+            "category": "air_defence",
+            "annex7Category": null,
+            "quota": 4000,
+            "sourceId": "B3_FlzKan92"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "C3_Stgw90"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "C3_Mw87"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "weaponName": "Pz Hb 79 · 15.5 cm",
+            "weapon": "Pz Hb 79",
+            "caliber": "15.5 cm Spr Gr",
+            "category": "artillery",
+            "annex7Category": null,
+            "quota": 800,
+            "sourceId": "C3_PzHb79"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "B2_Mg51"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "B2_Stgw90"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "weaponName": "Pist 75 · 9 mm",
+            "weapon": "Pist 75",
+            "caliber": "9 mm Pist Pat 41",
+            "category": "handguns",
+            "annex7Category": "b",
+            "quota": 20000,
+            "sourceId": "B2_Pist75"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "weaponName": "12 cm Mw 74",
+            "weapon": "Mw 12 cm",
+            "caliber": "12 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 1000,
+            "sourceId": "C1_Mw12cm"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "C1_Mg51"
+          },
+          {
+            "room": "Stellungsraum A 3 auch Mw",
+            "weaponName": "8.1 cm Mw 72",
+            "weapon": "Mw 72",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 1200,
+            "sourceId": "A3_Mw72"
+          },
+          {
+            "room": "NGST Seeli C rechts",
+            "weaponName": "Flab Kan 63/90 · 35 mm",
+            "weapon": "Flab Kan 63/90",
+            "caliber": "35 mm",
+            "category": "air_defence",
+            "annex7Category": null,
+            "quota": 6000,
+            "sourceId": "NGST-CR_FlabKan6390"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 1 links",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "A1L_Stgw90"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "A2R_Stgw90"
+          },
+          {
+            "room": "Stellungsrm Mw Schönenboden, D",
+            "weaponName": "8.1 cm Mw 72",
+            "weapon": "Mw 72",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 1200,
+            "sourceId": "D_Mw72"
+          }
+        ],
+        "receivers": [
+          {
+            "code": "E1",
+            "egid": "2314077",
+            "address": "Laberhusstrasse 4, 3654 Gunten",
+            "municipality": "Sigriswil",
+            "type": "facade",
+            "sensitivityLevel": "II",
+            "east": 2618180,
+            "north": 1176916,
+            "mapX": 37.5,
+            "mapY": 49,
+            "sortOrder": 0
+          },
+          {
+            "code": "E2",
+            "egid": "2314102",
+            "address": "Lattigenweg 12, 3654 Gunten",
+            "municipality": "Sigriswil",
+            "type": "facade",
+            "sensitivityLevel": "II",
+            "east": 2618836,
+            "north": 1176894,
+            "mapX": 71.7,
+            "mapY": 50.4,
+            "sortOrder": 1
+          },
+          {
+            "code": "E3",
+            "egid": "2314118",
+            "address": "Lattigen 3, 3654 Gunten",
+            "municipality": "Sigriswil",
+            "type": "facade",
+            "sensitivityLevel": "II",
+            "east": 2619130,
+            "north": 1177438,
+            "mapX": 87,
+            "mapY": 17.7,
+            "sortOrder": 2
+          },
+          {
+            "code": "E4",
+            "egid": "2314121",
+            "address": "Lattigen 7, 3654 Gunten",
+            "municipality": "Sigriswil",
+            "type": "facade",
+            "sensitivityLevel": "III",
+            "east": 2619236,
+            "north": 1177508,
+            "mapX": 92.5,
+            "mapY": 13.5,
+            "sortOrder": 3
+          },
+          {
+            "code": "E5",
+            "egid": "2314060",
+            "address": "Laberhus 1, 3654 Gunten",
+            "municipality": "Sigriswil",
+            "type": "facade",
+            "sensitivityLevel": "II",
+            "east": 2617876,
+            "north": 1176276,
+            "mapX": 21.7,
+            "mapY": 87.5,
+            "sortOrder": 4
+          },
+          {
+            "code": "E6",
+            "egid": null,
+            "address": "Unbebaute Parzelle 1187",
+            "municipality": "Sigriswil",
+            "type": "reserve",
+            "sensitivityLevel": "II",
+            "east": 2617671,
+            "north": 1177012,
+            "mapX": 11,
+            "mapY": 43.3,
+            "sortOrder": 5
+          }
+        ],
+        "calculations": [
+          {
+            "name": "Initiale Aufnahme Areal Geissalp",
+            "supplier": "Empa",
+            "deliveredAt": "2019-05-08",
+            "referenceYear": 2019,
+            "buildYearClass": "mixed",
+            "isCurrent": true,
+            "isMgdm": true,
+            "wlr": [
+              {
+                "receiver": "E1",
+                "source": "B3_Stgw90",
+                "laeDay": 62.3,
+                "laeEve": 62.5,
+                "lafmaxDay": 71.2
+              },
+              {
+                "receiver": "E1",
+                "source": "B3_PzHb74",
+                "laeDay": 90.3,
+                "laeEve": 90.5,
+                "lafmaxDay": 99.2
+              },
+              {
+                "receiver": "E1",
+                "source": "B3_FlzKan92",
+                "laeDay": 71.3,
+                "laeEve": 71.5,
+                "lafmaxDay": 80.2
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_Stgw90",
+                "laeDay": 60.3,
+                "laeEve": 60.5,
+                "lafmaxDay": 69.2
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_Mw87",
+                "laeDay": 77.3,
+                "laeEve": 77.5,
+                "lafmaxDay": 86.2
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_PzHb79",
+                "laeDay": 88.3,
+                "laeEve": 88.5,
+                "lafmaxDay": 97.2
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Mg51",
+                "laeDay": 60.8,
+                "laeEve": 61,
+                "lafmaxDay": 69.7
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Stgw90",
+                "laeDay": 58.3,
+                "laeEve": 58.5,
+                "lafmaxDay": 67.2
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Pist75",
+                "laeDay": 52.3,
+                "laeEve": 52.5,
+                "lafmaxDay": 61.2
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mw12cm",
+                "laeDay": 77.3,
+                "laeEve": 77.5,
+                "lafmaxDay": 86.2
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mg51",
+                "laeDay": 57.8,
+                "laeEve": 58,
+                "lafmaxDay": 66.7
+              },
+              {
+                "receiver": "E1",
+                "source": "A3_Mw72",
+                "laeDay": 75.3,
+                "laeEve": 75.5,
+                "lafmaxDay": 84.2
+              },
+              {
+                "receiver": "E1",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 70.3,
+                "laeEve": 70.5,
+                "lafmaxDay": 79.2
+              },
+              {
+                "receiver": "E1",
+                "source": "A1L_Stgw90",
+                "laeDay": 57.3,
+                "laeEve": 57.5,
+                "lafmaxDay": 66.2
+              },
+              {
+                "receiver": "E1",
+                "source": "A2R_Stgw90",
+                "laeDay": 57.3,
+                "laeEve": 57.5,
+                "lafmaxDay": 66.2
+              },
+              {
+                "receiver": "E1",
+                "source": "D_Mw72",
+                "laeDay": 70.3,
+                "laeEve": 70.5,
+                "lafmaxDay": 79.2
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_Stgw90",
+                "laeDay": 52.5,
+                "laeEve": 52.7,
+                "lafmaxDay": 57.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_PzHb74",
+                "laeDay": 80.5,
+                "laeEve": 80.7,
+                "lafmaxDay": 85.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_FlzKan92",
+                "laeDay": 61.5,
+                "laeEve": 61.7,
+                "lafmaxDay": 66.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Stgw90",
+                "laeDay": 54.5,
+                "laeEve": 54.7,
+                "lafmaxDay": 59.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Mw87",
+                "laeDay": 71.5,
+                "laeEve": 71.7,
+                "lafmaxDay": 76.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_PzHb79",
+                "laeDay": 82.5,
+                "laeEve": 82.7,
+                "lafmaxDay": 87.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Mg51",
+                "laeDay": 60,
+                "laeEve": 60.2,
+                "lafmaxDay": 64.6
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Stgw90",
+                "laeDay": 57.5,
+                "laeEve": 57.7,
+                "lafmaxDay": 62.1
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Pist75",
+                "laeDay": 51.5,
+                "laeEve": 51.7,
+                "lafmaxDay": 56.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mw12cm",
+                "laeDay": 77.5,
+                "laeEve": 77.7,
+                "lafmaxDay": 82.1
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mg51",
+                "laeDay": 58,
+                "laeEve": 58.2,
+                "lafmaxDay": 62.6
+              },
+              {
+                "receiver": "E2",
+                "source": "A3_Mw72",
+                "laeDay": 67.5,
+                "laeEve": 67.7,
+                "lafmaxDay": 72.1
+              },
+              {
+                "receiver": "E2",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 68.5,
+                "laeEve": 68.7,
+                "lafmaxDay": 73.1
+              },
+              {
+                "receiver": "E2",
+                "source": "A1L_Stgw90",
+                "laeDay": 50.5,
+                "laeEve": 50.7,
+                "lafmaxDay": 55.1
+              },
+              {
+                "receiver": "E2",
+                "source": "A2R_Stgw90",
+                "laeDay": 51.5,
+                "laeEve": 51.7,
+                "lafmaxDay": 56.1
+              },
+              {
+                "receiver": "E2",
+                "source": "D_Mw72",
+                "laeDay": 69.5,
+                "laeEve": 69.7,
+                "lafmaxDay": 74.1
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_Stgw90",
+                "laeDay": 55.6,
+                "laeEve": 55.8,
+                "lafmaxDay": 59.6
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_PzHb74",
+                "laeDay": 83.6,
+                "laeEve": 83.8,
+                "lafmaxDay": 87.6
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_FlzKan92",
+                "laeDay": 64.6,
+                "laeEve": 64.8,
+                "lafmaxDay": 68.6
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Stgw90",
+                "laeDay": 57.6,
+                "laeEve": 57.8,
+                "lafmaxDay": 61.6
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Mw87",
+                "laeDay": 74.6,
+                "laeEve": 74.8,
+                "lafmaxDay": 78.6
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_PzHb79",
+                "laeDay": 85.6,
+                "laeEve": 85.8,
+                "lafmaxDay": 89.6
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Mg51",
+                "laeDay": 64.1,
+                "laeEve": 64.3,
+                "lafmaxDay": 68.1
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Stgw90",
+                "laeDay": 61.6,
+                "laeEve": 61.8,
+                "lafmaxDay": 65.6
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Pist75",
+                "laeDay": 55.6,
+                "laeEve": 55.8,
+                "lafmaxDay": 59.6
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mw12cm",
+                "laeDay": 83.6,
+                "laeEve": 83.8,
+                "lafmaxDay": 87.6
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mg51",
+                "laeDay": 64.1,
+                "laeEve": 64.3,
+                "lafmaxDay": 68.1
+              },
+              {
+                "receiver": "E3",
+                "source": "A3_Mw72",
+                "laeDay": 69.6,
+                "laeEve": 69.8,
+                "lafmaxDay": 73.6
+              },
+              {
+                "receiver": "E3",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 74.6,
+                "laeEve": 74.8,
+                "lafmaxDay": 78.6
+              },
+              {
+                "receiver": "E3",
+                "source": "A1L_Stgw90",
+                "laeDay": 52.6,
+                "laeEve": 52.8,
+                "lafmaxDay": 56.6
+              },
+              {
+                "receiver": "E3",
+                "source": "A2R_Stgw90",
+                "laeDay": 53.6,
+                "laeEve": 53.8,
+                "lafmaxDay": 57.6
+              },
+              {
+                "receiver": "E3",
+                "source": "D_Mw72",
+                "laeDay": 75.6,
+                "laeEve": 75.8,
+                "lafmaxDay": 79.6
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_Stgw90",
+                "laeDay": 48.6,
+                "laeEve": 48.8,
+                "lafmaxDay": 52.9
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_PzHb74",
+                "laeDay": 76.6,
+                "laeEve": 76.8,
+                "lafmaxDay": 80.9
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_FlzKan92",
+                "laeDay": 57.6,
+                "laeEve": 57.8,
+                "lafmaxDay": 61.9
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Stgw90",
+                "laeDay": 50.6,
+                "laeEve": 50.8,
+                "lafmaxDay": 54.9
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Mw87",
+                "laeDay": 67.6,
+                "laeEve": 67.8,
+                "lafmaxDay": 71.9
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_PzHb79",
+                "laeDay": 78.6,
+                "laeEve": 78.8,
+                "lafmaxDay": 82.9
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Mg51",
+                "laeDay": 58.1,
+                "laeEve": 58.3,
+                "lafmaxDay": 62.4
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Stgw90",
+                "laeDay": 55.6,
+                "laeEve": 55.8,
+                "lafmaxDay": 59.9
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Pist75",
+                "laeDay": 49.6,
+                "laeEve": 49.8,
+                "lafmaxDay": 53.9
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mw12cm",
+                "laeDay": 77.6,
+                "laeEve": 77.8,
+                "lafmaxDay": 81.9
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mg51",
+                "laeDay": 58.1,
+                "laeEve": 58.3,
+                "lafmaxDay": 62.4
+              },
+              {
+                "receiver": "E4",
+                "source": "A3_Mw72",
+                "laeDay": 63.6,
+                "laeEve": 63.8,
+                "lafmaxDay": 67.9
+              },
+              {
+                "receiver": "E4",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 68.6,
+                "laeEve": 68.8,
+                "lafmaxDay": 72.9
+              },
+              {
+                "receiver": "E4",
+                "source": "A1L_Stgw90",
+                "laeDay": 46.6,
+                "laeEve": 46.8,
+                "lafmaxDay": 50.9
+              },
+              {
+                "receiver": "E4",
+                "source": "A2R_Stgw90",
+                "laeDay": 47.6,
+                "laeEve": 47.8,
+                "lafmaxDay": 51.9
+              },
+              {
+                "receiver": "E4",
+                "source": "D_Mw72",
+                "laeDay": 70.6,
+                "laeEve": 70.8,
+                "lafmaxDay": 74.9
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_Stgw90",
+                "laeDay": 63.3,
+                "laeEve": 63.5,
+                "lafmaxDay": 75.5
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_PzHb74",
+                "laeDay": 91.3,
+                "laeEve": 91.5,
+                "lafmaxDay": 103.5
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_FlzKan92",
+                "laeDay": 72.3,
+                "laeEve": 72.5,
+                "lafmaxDay": 84.5
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_Stgw90",
+                "laeDay": 62.3,
+                "laeEve": 62.5,
+                "lafmaxDay": 74.5
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_Mw87",
+                "laeDay": 79.3,
+                "laeEve": 79.5,
+                "lafmaxDay": 91.5
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_PzHb79",
+                "laeDay": 90.3,
+                "laeEve": 90.5,
+                "lafmaxDay": 102.5
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Mg51",
+                "laeDay": 58.8,
+                "laeEve": 59,
+                "lafmaxDay": 71
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Stgw90",
+                "laeDay": 56.3,
+                "laeEve": 56.5,
+                "lafmaxDay": 68.5
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Pist75",
+                "laeDay": 50.3,
+                "laeEve": 50.5,
+                "lafmaxDay": 62.5
+              },
+              {
+                "receiver": "E5",
+                "source": "C1_Mw12cm",
+                "laeDay": 76.3,
+                "laeEve": 76.5,
+                "lafmaxDay": 88.5
+              },
+              {
+                "receiver": "E5",
+                "source": "C1_Mg51",
+                "laeDay": 56.8,
+                "laeEve": 57,
+                "lafmaxDay": 69
+              },
+              {
+                "receiver": "E5",
+                "source": "A3_Mw72",
+                "laeDay": 77.3,
+                "laeEve": 77.5,
+                "lafmaxDay": 89.5
+              },
+              {
+                "receiver": "E5",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 69.3,
+                "laeEve": 69.5,
+                "lafmaxDay": 81.5
+              },
+              {
+                "receiver": "E5",
+                "source": "A1L_Stgw90",
+                "laeDay": 60.3,
+                "laeEve": 60.5,
+                "lafmaxDay": 72.5
+              },
+              {
+                "receiver": "E5",
+                "source": "A2R_Stgw90",
+                "laeDay": 59.3,
+                "laeEve": 59.5,
+                "lafmaxDay": 71.5
+              },
+              {
+                "receiver": "E5",
+                "source": "D_Mw72",
+                "laeDay": 70.3,
+                "laeEve": 70.5,
+                "lafmaxDay": 82.5
+              }
+            ]
+          },
+          {
+            "name": "Sanierter Zustand SPM Geissalp",
+            "supplier": "Empa",
+            "deliveredAt": "2025-03-25",
+            "referenceYear": 2025,
+            "buildYearClass": "mixed",
+            "isCurrent": false,
+            "isMgdm": false,
+            "wlr": [
+              {
+                "receiver": "E1",
+                "source": "B3_Stgw90",
+                "laeDay": 57,
+                "laeEve": 57.2,
+                "lafmaxDay": 64.7
+              },
+              {
+                "receiver": "E1",
+                "source": "B3_PzHb74",
+                "laeDay": 85,
+                "laeEve": 85.2,
+                "lafmaxDay": 92.7
+              },
+              {
+                "receiver": "E1",
+                "source": "B3_FlzKan92",
+                "laeDay": 66,
+                "laeEve": 66.2,
+                "lafmaxDay": 73.7
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_Stgw90",
+                "laeDay": 55,
+                "laeEve": 55.2,
+                "lafmaxDay": 62.7
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_Mw87",
+                "laeDay": 72,
+                "laeEve": 72.2,
+                "lafmaxDay": 79.7
+              },
+              {
+                "receiver": "E1",
+                "source": "C3_PzHb79",
+                "laeDay": 83,
+                "laeEve": 83.2,
+                "lafmaxDay": 90.7
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Mg51",
+                "laeDay": 59.5,
+                "laeEve": 59.7,
+                "lafmaxDay": 67.2
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Stgw90",
+                "laeDay": 57,
+                "laeEve": 57.2,
+                "lafmaxDay": 64.7
+              },
+              {
+                "receiver": "E1",
+                "source": "B2_Pist75",
+                "laeDay": 51,
+                "laeEve": 51.2,
+                "lafmaxDay": 58.7
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mw12cm",
+                "laeDay": 76,
+                "laeEve": 76.2,
+                "lafmaxDay": 83.7
+              },
+              {
+                "receiver": "E1",
+                "source": "C1_Mg51",
+                "laeDay": 56.5,
+                "laeEve": 56.7,
+                "lafmaxDay": 64.2
+              },
+              {
+                "receiver": "E1",
+                "source": "A3_Mw72",
+                "laeDay": 74,
+                "laeEve": 74.2,
+                "lafmaxDay": 81.7
+              },
+              {
+                "receiver": "E1",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 69,
+                "laeEve": 69.2,
+                "lafmaxDay": 76.7
+              },
+              {
+                "receiver": "E1",
+                "source": "A1L_Stgw90",
+                "laeDay": 56,
+                "laeEve": 56.2,
+                "lafmaxDay": 63.7
+              },
+              {
+                "receiver": "E1",
+                "source": "A2R_Stgw90",
+                "laeDay": 56,
+                "laeEve": 56.2,
+                "lafmaxDay": 63.7
+              },
+              {
+                "receiver": "E1",
+                "source": "D_Mw72",
+                "laeDay": 69,
+                "laeEve": 69.2,
+                "lafmaxDay": 76.7
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_Stgw90",
+                "laeDay": 47.9,
+                "laeEve": 48.1,
+                "lafmaxDay": 51.4
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_PzHb74",
+                "laeDay": 75.9,
+                "laeEve": 76.1,
+                "lafmaxDay": 79.4
+              },
+              {
+                "receiver": "E2",
+                "source": "B3_FlzKan92",
+                "laeDay": 56.9,
+                "laeEve": 57.1,
+                "lafmaxDay": 60.4
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Stgw90",
+                "laeDay": 49.9,
+                "laeEve": 50.1,
+                "lafmaxDay": 53.4
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_Mw87",
+                "laeDay": 66.9,
+                "laeEve": 67.1,
+                "lafmaxDay": 70.4
+              },
+              {
+                "receiver": "E2",
+                "source": "C3_PzHb79",
+                "laeDay": 77.9,
+                "laeEve": 78.1,
+                "lafmaxDay": 81.4
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Mg51",
+                "laeDay": 59.4,
+                "laeEve": 59.6,
+                "lafmaxDay": 62.9
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Stgw90",
+                "laeDay": 56.9,
+                "laeEve": 57.1,
+                "lafmaxDay": 60.4
+              },
+              {
+                "receiver": "E2",
+                "source": "B2_Pist75",
+                "laeDay": 50.9,
+                "laeEve": 51.1,
+                "lafmaxDay": 54.4
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mw12cm",
+                "laeDay": 76.9,
+                "laeEve": 77.1,
+                "lafmaxDay": 80.4
+              },
+              {
+                "receiver": "E2",
+                "source": "C1_Mg51",
+                "laeDay": 57.4,
+                "laeEve": 57.6,
+                "lafmaxDay": 60.9
+              },
+              {
+                "receiver": "E2",
+                "source": "A3_Mw72",
+                "laeDay": 66.9,
+                "laeEve": 67.1,
+                "lafmaxDay": 70.4
+              },
+              {
+                "receiver": "E2",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 67.9,
+                "laeEve": 68.1,
+                "lafmaxDay": 71.4
+              },
+              {
+                "receiver": "E2",
+                "source": "A1L_Stgw90",
+                "laeDay": 49.9,
+                "laeEve": 50.1,
+                "lafmaxDay": 53.4
+              },
+              {
+                "receiver": "E2",
+                "source": "A2R_Stgw90",
+                "laeDay": 50.9,
+                "laeEve": 51.1,
+                "lafmaxDay": 54.4
+              },
+              {
+                "receiver": "E2",
+                "source": "D_Mw72",
+                "laeDay": 68.9,
+                "laeEve": 69.1,
+                "lafmaxDay": 72.4
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_Stgw90",
+                "laeDay": 51.4,
+                "laeEve": 51.6,
+                "lafmaxDay": 54
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_PzHb74",
+                "laeDay": 79.4,
+                "laeEve": 79.6,
+                "lafmaxDay": 82
+              },
+              {
+                "receiver": "E3",
+                "source": "B3_FlzKan92",
+                "laeDay": 60.4,
+                "laeEve": 60.6,
+                "lafmaxDay": 63
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Stgw90",
+                "laeDay": 53.4,
+                "laeEve": 53.6,
+                "lafmaxDay": 56
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_Mw87",
+                "laeDay": 70.4,
+                "laeEve": 70.6,
+                "lafmaxDay": 73
+              },
+              {
+                "receiver": "E3",
+                "source": "C3_PzHb79",
+                "laeDay": 81.4,
+                "laeEve": 81.6,
+                "lafmaxDay": 84
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Mg51",
+                "laeDay": 63.9,
+                "laeEve": 64.1,
+                "lafmaxDay": 66.5
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Stgw90",
+                "laeDay": 61.4,
+                "laeEve": 61.6,
+                "lafmaxDay": 64
+              },
+              {
+                "receiver": "E3",
+                "source": "B2_Pist75",
+                "laeDay": 55.4,
+                "laeEve": 55.6,
+                "lafmaxDay": 58
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mw12cm",
+                "laeDay": 83.4,
+                "laeEve": 83.6,
+                "lafmaxDay": 86
+              },
+              {
+                "receiver": "E3",
+                "source": "C1_Mg51",
+                "laeDay": 63.9,
+                "laeEve": 64.1,
+                "lafmaxDay": 66.5
+              },
+              {
+                "receiver": "E3",
+                "source": "A3_Mw72",
+                "laeDay": 69.4,
+                "laeEve": 69.6,
+                "lafmaxDay": 72
+              },
+              {
+                "receiver": "E3",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 74.4,
+                "laeEve": 74.6,
+                "lafmaxDay": 77
+              },
+              {
+                "receiver": "E3",
+                "source": "A1L_Stgw90",
+                "laeDay": 52.4,
+                "laeEve": 52.6,
+                "lafmaxDay": 55
+              },
+              {
+                "receiver": "E3",
+                "source": "A2R_Stgw90",
+                "laeDay": 53.4,
+                "laeEve": 53.6,
+                "lafmaxDay": 56
+              },
+              {
+                "receiver": "E3",
+                "source": "D_Mw72",
+                "laeDay": 75.4,
+                "laeEve": 75.6,
+                "lafmaxDay": 78
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_Stgw90",
+                "laeDay": 43.4,
+                "laeEve": 43.6,
+                "lafmaxDay": 47.3
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_PzHb74",
+                "laeDay": 71.4,
+                "laeEve": 71.6,
+                "lafmaxDay": 75.3
+              },
+              {
+                "receiver": "E4",
+                "source": "B3_FlzKan92",
+                "laeDay": 52.4,
+                "laeEve": 52.6,
+                "lafmaxDay": 56.3
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Stgw90",
+                "laeDay": 45.4,
+                "laeEve": 45.6,
+                "lafmaxDay": 49.3
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_Mw87",
+                "laeDay": 62.4,
+                "laeEve": 62.6,
+                "lafmaxDay": 66.3
+              },
+              {
+                "receiver": "E4",
+                "source": "C3_PzHb79",
+                "laeDay": 73.4,
+                "laeEve": 73.6,
+                "lafmaxDay": 77.3
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Mg51",
+                "laeDay": 56.9,
+                "laeEve": 57.1,
+                "lafmaxDay": 60.8
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Stgw90",
+                "laeDay": 54.4,
+                "laeEve": 54.6,
+                "lafmaxDay": 58.3
+              },
+              {
+                "receiver": "E4",
+                "source": "B2_Pist75",
+                "laeDay": 48.4,
+                "laeEve": 48.6,
+                "lafmaxDay": 52.3
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mw12cm",
+                "laeDay": 76.4,
+                "laeEve": 76.6,
+                "lafmaxDay": 80.3
+              },
+              {
+                "receiver": "E4",
+                "source": "C1_Mg51",
+                "laeDay": 56.9,
+                "laeEve": 57.1,
+                "lafmaxDay": 60.8
+              },
+              {
+                "receiver": "E4",
+                "source": "A3_Mw72",
+                "laeDay": 62.4,
+                "laeEve": 62.6,
+                "lafmaxDay": 66.3
+              },
+              {
+                "receiver": "E4",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 67.4,
+                "laeEve": 67.6,
+                "lafmaxDay": 71.3
+              },
+              {
+                "receiver": "E4",
+                "source": "A1L_Stgw90",
+                "laeDay": 45.4,
+                "laeEve": 45.6,
+                "lafmaxDay": 49.3
+              },
+              {
+                "receiver": "E4",
+                "source": "A2R_Stgw90",
+                "laeDay": 46.4,
+                "laeEve": 46.6,
+                "lafmaxDay": 50.3
+              },
+              {
+                "receiver": "E4",
+                "source": "D_Mw72",
+                "laeDay": 69.4,
+                "laeEve": 69.6,
+                "lafmaxDay": 73.3
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_Stgw90",
+                "laeDay": 61.4,
+                "laeEve": 61.6,
+                "lafmaxDay": 70.3
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_PzHb74",
+                "laeDay": 89.4,
+                "laeEve": 89.6,
+                "lafmaxDay": 98.3
+              },
+              {
+                "receiver": "E5",
+                "source": "B3_FlzKan92",
+                "laeDay": 70.4,
+                "laeEve": 70.6,
+                "lafmaxDay": 79.3
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_Stgw90",
+                "laeDay": 60.4,
+                "laeEve": 60.6,
+                "lafmaxDay": 69.3
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_Mw87",
+                "laeDay": 77.4,
+                "laeEve": 77.6,
+                "lafmaxDay": 86.3
+              },
+              {
+                "receiver": "E5",
+                "source": "C3_PzHb79",
+                "laeDay": 88.4,
+                "laeEve": 88.6,
+                "lafmaxDay": 97.3
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Mg51",
+                "laeDay": 60.9,
+                "laeEve": 61.1,
+                "lafmaxDay": 69.8
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Stgw90",
+                "laeDay": 58.4,
+                "laeEve": 58.6,
+                "lafmaxDay": 67.3
+              },
+              {
+                "receiver": "E5",
+                "source": "B2_Pist75",
+                "laeDay": 52.4,
+                "laeEve": 52.6,
+                "lafmaxDay": 61.3
+              },
+              {
+                "receiver": "E5",
+                "source": "C1_Mw12cm",
+                "laeDay": 78.4,
+                "laeEve": 78.6,
+                "lafmaxDay": 87.3
+              },
+              {
+                "receiver": "E5",
+                "source": "C1_Mg51",
+                "laeDay": 58.9,
+                "laeEve": 59.1,
+                "lafmaxDay": 67.8
+              },
+              {
+                "receiver": "E5",
+                "source": "A3_Mw72",
+                "laeDay": 79.4,
+                "laeEve": 79.6,
+                "lafmaxDay": 88.3
+              },
+              {
+                "receiver": "E5",
+                "source": "NGST-CR_FlabKan6390",
+                "laeDay": 71.4,
+                "laeEve": 71.6,
+                "lafmaxDay": 80.3
+              },
+              {
+                "receiver": "E5",
+                "source": "A1L_Stgw90",
+                "laeDay": 62.4,
+                "laeEve": 62.6,
+                "lafmaxDay": 71.3
+              },
+              {
+                "receiver": "E5",
+                "source": "A2R_Stgw90",
+                "laeDay": 61.4,
+                "laeEve": 61.6,
+                "lafmaxDay": 70.3
+              },
+              {
+                "receiver": "E5",
+                "source": "D_Mw72",
+                "laeDay": 72.4,
+                "laeEve": 72.6,
+                "lafmaxDay": 81.3
+              }
+            ]
+          }
+        ],
+        "usages": [
+          {
+            "room": "Stellungsraum A 3 auch Mw",
+            "source": "A3_Mw72",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-01-02",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 80,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mg51",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-01-09",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 2200,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_PzHb74",
+            "unit": "K1",
+            "date": "{{year}}-01-16",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 24,
+            "recordedBy": "Four Bühler Marc"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-01-23",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2600,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mw12cm",
+            "unit": "Art Abt 10",
+            "date": "{{year}}-02-02",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 52,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_PzHb74",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-02-09",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 32,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 1 links",
+            "source": "A1L_Stgw90",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-02-11",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 2450,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_Stgw90",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-02-16",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 1900,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Mg51",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-02-23",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 1100,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mw12cm",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-02-25",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 80,
+            "recordedBy": "Four Bühler Marc"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_PzHb79",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-03-02",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 40,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_Stgw90",
+            "unit": "Art Abt 10",
+            "date": "{{year}}-03-04",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 1350,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-03-04",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-03-07",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1350,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_Mw87",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-03-11",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 88,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_Stgw90",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-03-14",
+            "from": "08:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_Stgw90",
+            "unit": "K1",
+            "date": "{{year}}-03-16",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_Mw87",
+            "unit": "Pz Bat 12",
+            "date": "{{year}}-03-18",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 76,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_FlzKan92",
+            "unit": "K1",
+            "date": "{{year}}-03-23",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 392,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_PzHb74",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-04-02",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 44,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-04-04",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 2350,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-04-08",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-04-11",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 750,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-04-18",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 600,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm Mw Schönenboden, D",
+            "source": "D_Mw72",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-05-04",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 44,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-05-06",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-05-09",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1550,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm Mw Schönenboden, D",
+            "source": "D_Mw72",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-05-11",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 72,
+            "recordedBy": "Four Bühler Marc"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-05-16",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 400,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "source": "A2R_Stgw90",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-05-25",
+            "from": "18:00",
+            "to": "21:30",
+            "usageType": "military",
+            "shots": 1850,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_FlzKan92",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-06-02",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 316,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-06-03",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_FlzKan92",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-06-04",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 268,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_Mw87",
+            "unit": "Art Abt 10",
+            "date": "{{year}}-06-06",
+            "from": "13:00",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 96,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-06-13",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1600,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "source": "A2R_Stgw90",
+            "unit": "Pz Bat 12",
+            "date": "{{year}}-06-16",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 1750,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsraum A 3 auch Mw",
+            "source": "A3_Mw72",
+            "unit": "Pz Bat 12",
+            "date": "{{year}}-06-18",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 84,
+            "recordedBy": "Four Bühler Marc"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_PzHb74",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-07-02",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 40,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-07-04",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1300,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-07-08",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mg51",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-07-09",
+            "from": "18:00",
+            "to": "21:30",
+            "usageType": "military",
+            "shots": 1100,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-07-11",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-07-16",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-07-18",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 550,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-07-25",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1800,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-08-05",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-08-08",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1350,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "source": "A2R_Stgw90",
+            "unit": "Pz Bat 12",
+            "date": "{{year}}-08-11",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 2250,
+            "recordedBy": "Four Bühler Marc"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-08-15",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1400,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Mg51",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-08-18",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 1150,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_Stgw90",
+            "unit": "K1",
+            "date": "{{year}}-09-02",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 1800,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_PzHb74",
+            "unit": "Geb Inf Bat 29",
+            "date": "{{year}}-09-04",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 44,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-09-05",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1450,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Mg51",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-09-06",
+            "from": "09:00",
+            "to": "11:00",
+            "usageType": "military",
+            "shots": 800,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-09-09",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mg51",
+            "unit": "K1",
+            "date": "{{year}}-09-11",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 2350,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-09-12",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1850,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "NGST Seeli C rechts",
+            "source": "NGST-CR_FlabKan6390",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-09-16",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 400,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_Mw87",
+            "unit": "Art Abt 10",
+            "date": "{{year}}-09-18",
+            "from": "09:00",
+            "to": "12:00",
+            "usageType": "military",
+            "shots": 44,
+            "recordedBy": "Wm Huber Nina"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-09-19",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 750,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm Mw Schönenboden, D",
+            "source": "D_Mw72",
+            "unit": "Inf Bat 12",
+            "date": "{{year}}-09-23",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 60,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Pist75",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-09-26",
+            "from": "13:30",
+            "to": "16:30",
+            "usageType": "civil",
+            "shots": 400,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
+            "source": "A2R_Stgw90",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-10-02",
+            "from": "14:00",
+            "to": "17:30",
+            "usageType": "military",
+            "shots": 1450,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-10-07",
+            "from": "18:00",
+            "to": "20:00",
+            "usageType": "civil",
+            "shots": 900,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-10-10",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 2300,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year}}-10-24",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1850,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          },
+          {
+            "room": "Zielraum Seeli, C 1",
+            "source": "C1_Mw12cm",
+            "unit": "Flab Abt 32",
+            "date": "{{year}}-11-09",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 76,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_PzHb79",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-11-16",
+            "from": "08:00",
+            "to": "16:00",
+            "usageType": "military",
+            "shots": 32,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm Mw Schönenboden, D",
+            "source": "D_Mw72",
+            "unit": "Mech Bat 17",
+            "date": "{{year}}-11-23",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 84,
+            "recordedBy": "Oblt Keller Sven"
+          },
+          {
+            "room": "Stellungsrm Mw Salzmatt, C 3",
+            "source": "C3_PzHb79",
+            "unit": "Art Abt 10",
+            "date": "{{year-1}}-10-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 320,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsrm Mw Neuhaus, B 3",
+            "source": "B3_Stgw90",
+            "unit": "K1",
+            "date": "{{year-1}}-11-03",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 2200,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsrm B 2",
+            "source": "B2_Stgw90",
+            "unit": "Schützenverein Geissalp",
+            "date": "{{year-1}}-09-20",
+            "from": "08:30",
+            "to": "11:30",
+            "usageType": "civil",
+            "shots": 1500,
+            "recordedBy": "ELO-Import",
+            "source_kind": "elo"
+          }
+        ]
+      },
+      {
+        "name": "Vérolliez",
+        "coordinationSectionNo": "1202.230",
+        "sectoralPlanNo": "SP-VS-12",
+        "quotaStatus": "warn",
+        "noiseStatus": "ok",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "1202.230.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "1202.230.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Gehren",
+        "coordinationSectionNo": "2111.030",
+        "sectoralPlanNo": null,
+        "quotaStatus": "ok",
+        "noiseStatus": "ok",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "2111.030.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "2111.030.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Bière",
+        "coordinationSectionNo": "2201.010",
+        "sectoralPlanNo": "SP-VD-03",
+        "quotaStatus": "over",
+        "noiseStatus": "warn",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "2201.010.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "2201.010.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Thun",
+        "coordinationSectionNo": "3101.020",
+        "sectoralPlanNo": "SP-BE-07",
+        "quotaStatus": "ok",
+        "noiseStatus": "over",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "3101.020.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "3101.020.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Walenstadt",
+        "coordinationSectionNo": "4102.010",
+        "sectoralPlanNo": null,
+        "quotaStatus": "ok",
+        "noiseStatus": "ok",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "4102.010.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "4102.010.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Isone",
+        "coordinationSectionNo": "5101.040",
+        "sectoralPlanNo": "SP-TI-02",
+        "quotaStatus": "warn",
+        "noiseStatus": "ok",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "5101.040.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "5101.040.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Bure",
+        "coordinationSectionNo": "6101.020",
+        "sectoralPlanNo": null,
+        "quotaStatus": "ok",
+        "noiseStatus": "ok",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "6101.020.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "6101.020.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": [
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Stgw90",
+            "unit": "Inf Bat 5",
+            "date": "{{year}}-04-14",
+            "from": "08:00",
+            "to": "11:30",
+            "usageType": "military",
+            "shots": 2400,
+            "recordedBy": "Hptm Roth Beat"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "source": "S2_Mw87",
+            "unit": "Art Abt 4",
+            "date": "{{year}}-05-19",
+            "from": "13:30",
+            "to": "17:00",
+            "usageType": "military",
+            "shots": 120,
+            "recordedBy": "Lt Meier Fiona"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "source": "S1_Mg51",
+            "unit": "Mech Bat 3",
+            "date": "{{year}}-08-25",
+            "from": "19:00",
+            "to": "22:00",
+            "usageType": "military",
+            "shots": 1500,
+            "recordedBy": "Oblt Keller Sven"
+          }
+        ]
+      },
+      {
+        "name": "Hinterrhein",
+        "coordinationSectionNo": "7102.010",
+        "sectoralPlanNo": null,
+        "quotaStatus": "none",
+        "noiseStatus": "none",
+        "annex7Overall": false,
+        "rooms": [
+          {
+            "coordinationSectionNo": "7102.010.01",
+            "name": "Stellungsraum 1",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": false
+          },
+          {
+            "coordinationSectionNo": "7102.010.02",
+            "name": "Stellungsraum 2",
+            "groupName": "Stellungsräume",
+            "builtAfter1985": true
+          }
+        ],
+        "weapons": [
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Stgw 90 · 5.6 mm",
+            "weapon": "Stgw 90",
+            "caliber": "5.6 mm GP 90",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 320000,
+            "sourceId": "S1_Stgw90"
+          },
+          {
+            "room": "Stellungsraum 1",
+            "weaponName": "Mg 51 · 7.5 mm",
+            "weapon": "Mg 51",
+            "caliber": "7.5 mm GP 11",
+            "category": "handguns",
+            "annex7Category": "a",
+            "quota": 60000,
+            "sourceId": "S1_Mg51"
+          },
+          {
+            "room": "Stellungsraum 2",
+            "weaponName": "8.1 cm Mw 87",
+            "weapon": "Mw 87",
+            "caliber": "8.1 cm Spr Gr",
+            "category": "mortar",
+            "annex7Category": null,
+            "quota": 2500,
+            "sourceId": "S2_Mw87"
+          }
+        ],
+        "receivers": [],
+        "calculations": [],
+        "usages": []
+      }
+    ]
+  }
+}

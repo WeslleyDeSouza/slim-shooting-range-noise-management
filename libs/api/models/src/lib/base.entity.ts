@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
+import {TenantBaseEntity} from '@app-galaxy/core-api'
 /** Common audit columns for every entity. Extend, do not instantiate. */
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn()

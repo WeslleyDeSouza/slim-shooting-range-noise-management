@@ -32,8 +32,8 @@ import { DataSource } from 'typeorm';
 
 import { HealthModule } from './core/health-check';
 import { AuthThrottlerGuard } from './core/guards';
-import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA } from './mocks';
-import { AreaModule } from './modules';
+import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA, DemoSeedMarkerEntity } from './mocks';
+import { AreaModule, CalculationModule, UsageModule } from './modules';
 
 const isProd: boolean = env.isProd();
 
@@ -89,6 +89,10 @@ const isProd: boolean = env.isProd();
         ...(<never[]>TenantAdminEmailWithRoutingModule.dbSettings.entities),
         // Own modules
         ...(<never[]>AreaModule.DBOptions.entities),
+        ...(<never[]>UsageModule.DBOptions.entities),
+        ...(<never[]>CalculationModule.DBOptions.entities),
+        // Demo dataset marker (mocks/tenant), harmless in production
+        DemoSeedMarkerEntity,
       ],
     }),
 
@@ -113,6 +117,8 @@ const isProd: boolean = env.isProd();
 
     // Own modules (apps/api/src/modules)
     AreaModule,
+    UsageModule,
+    CalculationModule,
   ],
   providers: [
     { provide: APP_GUARD, useClass: AuthThrottlerGuard },

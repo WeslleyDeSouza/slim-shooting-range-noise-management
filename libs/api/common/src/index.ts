@@ -1,2 +1,2 @@
 export * from './lib/utils';
-export * from './lib/entities/slim-base.entity';
+export * from './lib/entities/base.entity';

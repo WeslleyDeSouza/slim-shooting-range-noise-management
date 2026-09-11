@@ -10,7 +10,7 @@ import {
 import * as http from 'node:http';
 
 import { AppModule } from './app.module';
-import { setupSwagger } from './common/docs';
+import { setupMermaidUml, setupSwagger } from './common/docs';
 import { applyMiddlewareAppStripeDouble, resolveTrustProxy } from '@api-slim/common';
 
 env.load();
@@ -40,6 +40,10 @@ async function bootstrap() {
 
   if (env.isSwaggerEnabled) {
     setupSwagger(app);
+    // ERD of the live schema → /erd and docs/architecture/uml.mmd (dev only)
+    void setupMermaidUml(app).catch((error) =>
+      Logger.warn(`ERD generation failed: ${error?.message ?? error}`, 'Uml'),
+    );
   }
 
   // Timeout handling (5 min)

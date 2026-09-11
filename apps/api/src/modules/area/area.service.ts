@@ -105,6 +105,10 @@ export class AreaService {
         [tenantId],
       ),
     ]);
-    return { areas, users: Number(row?.n ?? 0), weapons: Number(weaponRow?.n ?? 0) };
+    return {
+      areas,
+      users: Number(row?.n ?? 0),
+      weapons: Number(weaponRow?.n ?? 0),
+    };
   }
 }

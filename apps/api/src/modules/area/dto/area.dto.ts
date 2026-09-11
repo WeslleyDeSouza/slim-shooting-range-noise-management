@@ -121,10 +121,6 @@ export class AreaSummaryDto {
 export class DashboardDto {
   @ApiProperty() areas: number;
   @ApiProperty() users: number;
-  @ApiProperty({
-    description: 'null until the weapons module exists',
-    nullable: true,
-    type: Number,
-  })
-  weapons: number | null;
+  @ApiProperty({ description: 'Distinct weapons of the allowed room × weapon combinations' })
+  weapons: number;
 }

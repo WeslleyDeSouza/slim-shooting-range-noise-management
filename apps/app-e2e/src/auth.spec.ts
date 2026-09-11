@@ -85,7 +85,10 @@ test.describe('auth: login', () => {
       // Auto-continued (0/1 tenant) — nothing to click.
     }
 
-    await page.waitForURL(/\/admin\/dashboard/, { timeout: 60_000 });
+    // The tenant step continues to the entry page (/admin).
+    await page.waitForURL((url) => /^\/admin(\/|$)/.test(url.pathname), {
+      timeout: 60_000,
+    });
     expect(await hasSession(page)).toBe(true);
   });
 });

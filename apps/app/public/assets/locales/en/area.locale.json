@@ -5,8 +5,9 @@
   "export": "Export",
   "search_placeholder": "Search shooting range or coordination section no.",
   "filter": {
-    "all": "Status: all",
-    "attention": "Needs action only"
+    "all": "All",
+    "attention": "Needs action only",
+    "attention_info": "Only ranges whose quota or noise light shows «To review» or «Exceeded»."
   },
   "scope_lock": "Authorised shooting ranges only",
   "count": "{{n}} shooting ranges",
@@ -26,7 +27,11 @@
     "overview": "Overview",
     "shots": "Shot counts",
     "details": "Details",
-    "simulation": "Simulation"
+    "simulation": "Simulation",
+    "overview_hint": "Open the range overview",
+    "shots_hint": "Record and edit shot counts",
+    "details_hint": "Open the assessment per immission point (details)",
+    "simulation_hint": "Open the «what if» simulation"
   },
   "legend": "Legend",
   "sample_note": "Sample data · UI draft · chapters 5.8 / 5.9",
@@ -322,5 +327,18 @@
     "state_changed": "<b>{{n}}</b> values changed · total <b>{{total}}</b> shots ({{pct}} % versus current)",
     "reset": "Reset",
     "run": "Run simulation"
+  },
+  "year_info": "The year selects the usages for quota (the year’s actual and the three-year mean) and noise; the noise light is based on the calculation state marked «current» for the range.",
+  "basis": {
+    "quota": "Basis: usages {{from}}–{{year}}",
+    "noise": "Basis: state «{{state}}», usages {{year}}"
+  },
+  "legend_note": "Hover over a light to see its reason and basis.",
+  "legend_hint": {
+    "ok": "Compliant: computed, within the limit or target values",
+    "warn": "To review: less than 5 dB reserve or up to 125 % of the quota",
+    "over": "Exceeded: limit or 125 % of the quota exceeded",
+    "incomplete": "Not assessable: usages without a source or level in the state (O8)",
+    "none": "No data: no calculation basis or no usages recorded"
   }
 }

@@ -5,6 +5,135 @@
 }
 
 .admin-layout {
+  // Brand on top of the sidebar (desktop); the topbar keeps it on phones only.
+  // Same height and bottom line as the topbar so both read as one bar.
+  &__brand {
+    flex: none;
+    box-sizing: border-box;
+    margin: calc(-1 * slim.space(4)) calc(-1 * slim.space(3)) 0;
+    height: calc(slim.size('topbar-h') + env(safe-area-inset-top, 0px));
+    padding: env(safe-area-inset-top, 0px) slim.space(6) 0;
+    border-bottom: 1px solid slim.color('line');
+    text-decoration: none;
+  }
+
+  &__brand-text {
+    b {
+      display: flex;
+      align-items: center;
+      gap: slim.space(2);
+    }
+    span:not(.admin-layout__demo) {
+      display: block;
+    }
+  }
+
+  // Permanent «Demo» mark next to SLIM (stays after the welcome dialog is closed).
+  &__demo {
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-block: 0;
+    line-height: 1.4;
+  }
+
+  // Compact sidebar: smaller type, tighter rows, room for the groups.
+  &__sidebar {
+    gap: slim.space(4);
+    font-size: slim.font-size('sm');
+
+    .slim-sidebar__link {
+      padding: slim.space(1) slim.space(2);
+      gap: slim.space(2);
+      font-size: slim.font-size('sm');
+    }
+    .slim-sidebar__icon {
+      width: 16px;
+      height: 16px;
+    }
+    .slim-sidebar__heading {
+      padding-bottom: slim.space(1);
+    }
+  }
+
+  &__group-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: slim.color('text-4');
+  }
+
+  &__chevron {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    transition: transform 0.15s ease;
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__area-pick {
+    min-height: 32px;
+    margin: 0 0 slim.space(1);
+    font-size: slim.font-size('sm');
+  }
+
+  &__sub {
+    padding-left: slim.space(6) !important;
+  }
+
+  &__group-hint {
+    margin: 0;
+    padding: 0 slim.space(2);
+    font-size: slim.font-size('xs');
+  }
+
+  // Collapsible sub block inside a section (Lesezeichen) and the star toggle.
+  &__sub-toggle,
+  &__star {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    width: 100%;
+    padding: slim.space(1) slim.space(2);
+    border: 0;
+    border-radius: slim.radius('md');
+    background: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('medium');
+    color: slim.color('text-2');
+    text-align: left;
+
+    &:hover {
+      background: slim.color('hover');
+      color: slim.color('ink');
+    }
+  }
+
+  &__sub-toggle-label {
+    flex: 1;
+  }
+
+  &__star {
+    color: slim.color('text-3');
+    &--on {
+      color: slim.color('warning');
+    }
+  }
+
   &__avatar {
     background: #5b3e76;
     color: #fff;

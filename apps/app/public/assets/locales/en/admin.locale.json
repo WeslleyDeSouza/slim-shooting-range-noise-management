@@ -307,6 +307,7 @@
       "action_update": "Updated",
       "action_delete": "Deleted",
       "action_get": "Read",
+      "action_read": "Viewed",
       "action_mail": "Email",
       "action_auth": "Sign-in",
       "action_export": "Exported",
@@ -319,24 +320,31 @@
       "col_entry": "Entry"
     },
     "dm_area": {
-      "title": "Shooting ranges overview",
-      "subtitle": "Select a shooting range and jump to General, Weapon assignment or Calculations.",
+      "title": "Manage shooting ranges",
+      "subtitle": "Open master data, weapon assignments and calculation states of a range.",
       "search_placeholder": "Name, coordination section no. or sectoral plan no.",
-      "count": "{{n}} of {{total}} shooting ranges",
-      "no_create": "New shooting ranges are created via import or database administration (5.14).",
+      "count": "{{n}} of {{total}} ranges",
+      "no_create": "New ranges are created by the database administration.",
+      "filter_active": "Status",
+      "filter_active_only": "Active",
+      "filter_inactive_only": "Inactive",
+      "filter_all": "All",
       "col_ka": "Coordination section no.",
       "col_sp": "Sectoral plan no.",
       "col_name": "Name",
       "col_active": "Active",
-      "col_nav": "Jump to",
+      "col_nav": "Actions",
       "active": "Active",
       "inactive": "Inactive",
       "sort": "Sort by {{col}}",
       "jump_general": "General",
+      "jump_general_hint": "Open the general master data of the range",
       "jump_weapons": "Weapon assignment",
+      "jump_weapons_hint": "Open the permitted weapon/calibre combinations per firing position",
       "jump_calculations": "Calculations",
-      "empty": "No shooting range found. Check the name, coordination section no. or sectoral plan no.",
-      "scope_lock": "Authorised shooting ranges only"
+      "jump_calculations_hint": "Open the calculation states (immission calculations and states)",
+      "empty": "No range found. Check the name, coordination section no., sectoral plan no. or the status filter.",
+      "scope_lock": "Only authorised ranges"
     }
   }
 }

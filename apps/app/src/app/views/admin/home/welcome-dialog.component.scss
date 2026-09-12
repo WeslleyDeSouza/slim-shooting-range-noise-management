@@ -1,71 +1,30 @@
 @use 'slim/abstracts' as slim;
 
-// Welcome banner dialog (demo entry): landscape banner 950 × 250 on top of a sheet.
+// Welcome banner dialog (demo entry): header_welcome.png cropped to a 950 × 250 strip on top of a sheet.
 .welcome {
   &__panel {
     max-width: 950px;
     width: min(950px, 100%);
     padding: 0;
     overflow: hidden;
+    // Panel = flex column (slim-sheet): banner and footer keep their size,
+    // the body scrolls when the viewport is low — the buttons stay reachable.
   }
 
   &__banner {
+    flex: none;
     display: block;
     width: 100%;
-    aspect-ratio: 950 / 250;
     max-width: 100%;
-  }
+    height: auto;
+    aspect-ratio: 950 / 250;
+    object-fit: cover;
+    object-position: center;
 
-  &__sky-top {
-    stop-color: slim.color('bg');
-  }
-  &__sky-bottom {
-    stop-color: slim.color('surface');
-  }
-  &__sun {
-    fill: slim.color('warning');
-    opacity: 0.85;
-  }
-  &__hill {
-    fill: slim.color('primary');
-
-    &--far {
-      opacity: 0.25;
+    // Low viewports (landscape phones): a flatter strip leaves room for text and buttons.
+    @media (max-height: 640px) {
+      aspect-ratio: 950 / 140;
     }
-    &--mid {
-      opacity: 0.45;
-    }
-    &--near {
-      opacity: 0.7;
-    }
-  }
-  &__lake {
-    fill: slim.color('info');
-    opacity: 0.55;
-  }
-  &__stand,
-  &__berm {
-    fill: slim.color('ink');
-    opacity: 0.55;
-  }
-  &__line {
-    stroke: slim.color('ink');
-    stroke-width: 1.5;
-    stroke-dasharray: 6 5;
-    opacity: 0.6;
-  }
-  &__house path {
-    fill: slim.color('surface');
-    stroke: slim.color('ink');
-    stroke-width: 1.5;
-  }
-  &__pin circle {
-    fill: slim.color('success');
-    stroke: slim.color('surface');
-    stroke-width: 2;
-  }
-  &__pin--warn circle {
-    fill: slim.color('warning');
   }
 
   &__body {
@@ -102,6 +61,7 @@
   }
 
   &__footer {
+    flex: none;
     display: flex;
     justify-content: flex-end;
     gap: slim.space(2);

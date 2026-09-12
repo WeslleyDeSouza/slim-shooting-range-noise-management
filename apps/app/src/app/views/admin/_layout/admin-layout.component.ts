@@ -3,26 +3,36 @@ import {
   Component,
   computed,
   inject,
+  linkedSignal,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  NavigationEnd,
   Router,
   RouterLink,
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
+import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { SlimThemeToggleComponent } from '@ui-slim/design-system';
-import { APP_ROUTES } from '@slim/shared';
+import { APP_ROUTES, GALAXY_APP_ID, ROUTE_SEGMENT, SLIM_APP_ID } from '@slim/shared';
+import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
+import { AccessFacade } from '../../../core/access/access.facade';
 import { AreaFacade } from '../../../core/area/area.facade';
 import { AuthFacade } from '../../auth/auth.facade';
+import { resetWelcome } from '../home/welcome-dialog.component';
 
 interface NavItem {
   key: string;
   link: string;
   icon: string;
   exact?: boolean;
+  /** App the entry needs a right for (B1 8.1.2); entries without one are always shown. */
+  app?: number;
 }
 
 /**
@@ -49,13 +59,16 @@ interface NavItem {
       <!-- Topbar: general controls ------------------------------------ -->
       <header class="slim-topbar slim-shell__topbar">
         <a
-          class="slim-topbar__brand"
+          class="slim-topbar__brand slim-u-mobile-only"
           [routerLink]="routes.admin.home"
           [attr.title]="'shell.home' | translate"
         >
           <span class="slim-topbar__mark" aria-hidden="true"></span>
           <span class="slim-topbar__brand-text">
-            <b>{{ 'app.title' | translate }}</b>
+            <b
+              >{{ 'app.title' | translate }}
+              <span class="slim-badge slim-badge--outline admin-layout__demo" data-testid="shell-demo">{{ 'shell.demo' | translate }}</span></b
+            >
             <span>{{ 'app.subtitle' | translate }}</span>
           </span>
         </a>
@@ -289,7 +302,22 @@ interface NavItem {
       </header>
 
       <!-- Sidebar (desktop) --------------------------------------------- -->
-      <aside class="slim-sidebar slim-shell__sidebar">
+      <aside class="slim-sidebar slim-shell__sidebar admin-layout__sidebar">
+        <a
+          class="slim-sidebar__brand admin-layout__brand"
+          [routerLink]="routes.admin.home"
+          [attr.title]="'shell.home' | translate"
+          data-testid="sidebar-brand"
+        >
+          <span class="slim-topbar__mark" aria-hidden="true"></span>
+          <span class="slim-topbar__brand-text admin-layout__brand-text">
+            <b
+              >{{ 'app.title' | translate }}
+              <span class="slim-badge slim-badge--outline admin-layout__demo" data-testid="shell-demo">{{ 'shell.demo' | translate }}</span></b
+            >
+            <span>{{ 'app.subtitle' | translate }}</span>
+          </span>
+        </a>
         <nav
           class="slim-sidebar__section"
           [attr.aria-label]="'shell.workspace' | translate"
@@ -297,7 +325,7 @@ interface NavItem {
           <div class="slim-sidebar__heading">
             {{ 'shell.workspace' | translate }}
           </div>
-          @for (item of workspace; track item.key) {
+          @for (item of visibleWorkspace(); track item.key) {
             <a
               class="slim-sidebar__link"
               [routerLink]="item.link"
@@ -321,69 +349,212 @@ interface NavItem {
               {{ item.key | translate }}
             </a>
           }
+
+          <!-- Lesezeichen: Schiessplätze the user starred (per browser and tenant) -->
+          @if (canAreas()) {
+            <button
+              type="button"
+              class="admin-layout__sub-toggle"
+              [attr.aria-expanded]="bookmarksOpen()"
+              (click)="toggleGroup('bookmarks')"
+              data-testid="sidebar-bookmarks-toggle"
+            >
+              <svg class="slim-sidebar__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path [attr.d]="starIcon" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+              </svg>
+              <span class="admin-layout__sub-toggle-label">{{ 'shell.bookmarks' | translate }}</span>
+              <svg class="admin-layout__chevron" [class.admin-layout__chevron--open]="bookmarksOpen()" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            @if (bookmarksOpen()) {
+              @for (a of bookmarkedAreas(); track a.id) {
+                <a
+                  class="slim-sidebar__link admin-layout__sub"
+                  [routerLink]="routes.admin.area.details(a.id)"
+                  routerLinkActive="slim-sidebar__link--active"
+                  [attr.title]="labelOf(a)"
+                  data-testid="sidebar-bookmark"
+                >
+                  {{ a.name }}
+                </a>
+              } @empty {
+                <p class="admin-layout__group-hint slim-text--muted">{{ 'shell.bookmarks_empty' | translate }}</p>
+              }
+            }
+          }
         </nav>
+
+        <!-- Schiessplätze: all, pick one (autocomplete), then its four pages -->
+        @if (canAreas()) {
+          <nav
+            class="slim-sidebar__section admin-layout__group"
+            [attr.aria-label]="'shell.area_group' | translate"
+            data-testid="sidebar-area-group"
+          >
+            <button
+              type="button"
+              class="slim-sidebar__heading admin-layout__group-toggle"
+              [attr.aria-expanded]="areaGroupOpen()"
+              (click)="toggleGroup('areas')"
+            >
+              <span>{{ 'shell.area_group' | translate }}</span>
+              <svg class="admin-layout__chevron" [class.admin-layout__chevron--open]="areaGroupOpen()" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
+            @if (areaGroupOpen()) {
+              <a
+                class="slim-sidebar__link"
+                [routerLink]="routes.admin.area.root"
+                routerLinkActive="slim-sidebar__link--active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                data-testid="sidebar-areas-all"
+              >
+                <svg class="slim-sidebar__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path [attr.d]="listIcon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                {{ 'menu.areas' | translate }}
+              </a>
+              <input
+                class="slim-input admin-layout__area-pick"
+                type="search"
+                list="sidebar-areas"
+                autocomplete="off"
+                [placeholder]="'shell.area_pick' | translate"
+                [attr.aria-label]="'shell.area_pick' | translate"
+                [attr.title]="'shell.area_pick_hint' | translate"
+                [value]="areaPickText()"
+                (input)="areaPickText.set($any($event.target).value)"
+                (change)="pickArea($any($event.target).value)"
+                data-testid="sidebar-area-pick"
+              />
+              <datalist id="sidebar-areas">
+                @for (a of areas(); track a.id) {
+                  <option [value]="labelOf(a)"></option>
+                }
+              </datalist>
+              @if (activeArea(); as a) {
+                <button
+                  type="button"
+                  class="admin-layout__star"
+                  [class.admin-layout__star--on]="isBookmarked(a.id)"
+                  [attr.aria-pressed]="isBookmarked(a.id)"
+                  [attr.title]="(isBookmarked(a.id) ? 'shell.bookmark_remove' : 'shell.bookmark_add') | translate"
+                  (click)="toggleBookmark(a.id)"
+                  data-testid="sidebar-bookmark-toggle"
+                >
+                  <svg class="slim-sidebar__icon" viewBox="0 0 16 16" [attr.fill]="isBookmarked(a.id) ? 'currentColor' : 'none'" aria-hidden="true">
+                    <path [attr.d]="starIcon" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                  </svg>
+                  <span>{{ a.name }}</span>
+                </button>
+                @for (page of areaPages; track page.key) {
+                  <a
+                    class="slim-sidebar__link admin-layout__sub"
+                    [routerLink]="page.link(a.id)"
+                    routerLinkActive="slim-sidebar__link--active"
+                    [attr.data-testid]="'sidebar-area-' + page.id"
+                  >
+                    <svg class="slim-sidebar__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path [attr.d]="page.icon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    {{ page.key | translate }}
+                  </a>
+                }
+              } @else {
+                <p class="admin-layout__group-hint slim-text--muted">{{ 'shell.area_pick_hint' | translate }}</p>
+              }
+            }
+          </nav>
+        }
+
         <nav
           class="slim-sidebar__section"
           [attr.aria-label]="'menu.data_management' | translate"
         >
-          <div class="slim-sidebar__heading">
-            {{ 'menu.data_management' | translate }}
-          </div>
-          @for (item of dataManagement; track item.key) {
-            <a
-              class="slim-sidebar__link"
-              [routerLink]="item.link"
-              routerLinkActive="slim-sidebar__link--active"
-            >
-              <svg
-                class="slim-sidebar__icon"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  [attr.d]="item.icon"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+          <button
+            type="button"
+            class="slim-sidebar__heading admin-layout__group-toggle"
+            [attr.aria-expanded]="dataOpen()"
+            (click)="toggleGroup('data')"
+            data-testid="sidebar-data-toggle"
+          >
+            <span>{{ 'menu.data_management' | translate }}</span>
+            <svg class="admin-layout__chevron" [class.admin-layout__chevron--open]="dataOpen()" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-              {{ item.key | translate }}
-            </a>
+          </button>
+          @if (dataOpen()) {
+            @for (item of visibleDataManagement(); track item.key) {
+              <a
+                class="slim-sidebar__link"
+                [routerLink]="item.link"
+                routerLinkActive="slim-sidebar__link--active"
+              >
+                <svg
+                  class="slim-sidebar__icon"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    [attr.d]="item.icon"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                {{ item.key | translate }}
+              </a>
+            }
           }
         </nav>
+        @if (visibleUserManagement().length) {
         <nav
           class="slim-sidebar__section"
           [attr.aria-label]="'menu.user_management' | translate"
         >
-          <div class="slim-sidebar__heading">
-            {{ 'menu.user_management' | translate }}
-          </div>
-          @for (item of userManagement; track item.key) {
-            <a
-              class="slim-sidebar__link"
-              [routerLink]="item.link"
-              routerLinkActive="slim-sidebar__link--active"
-            >
-              <svg
-                class="slim-sidebar__icon"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  [attr.d]="item.icon"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
+          <button
+            type="button"
+            class="slim-sidebar__heading admin-layout__group-toggle"
+            [attr.aria-expanded]="usersOpen()"
+            (click)="toggleGroup('users')"
+            data-testid="sidebar-users-toggle"
+          >
+            <span>{{ 'menu.user_management' | translate }}</span>
+            <svg class="admin-layout__chevron" [class.admin-layout__chevron--open]="usersOpen()" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
-              {{ item.key | translate }}
-            </a>
+          </button>
+          @if (usersOpen()) {
+            @for (item of visibleUserManagement(); track item.key) {
+              <a
+                class="slim-sidebar__link"
+                [routerLink]="item.link"
+                routerLinkActive="slim-sidebar__link--active"
+              >
+                <svg
+                  class="slim-sidebar__icon"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    [attr.d]="item.icon"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                {{ item.key | translate }}
+              </a>
+            }
           }
         </nav>
+        }
         <div class="slim-sidebar__footer slim-text--muted slim-text--xs">
           {{ 'shell.org' | translate }} · SLIM {{ version }}
         </div>
@@ -399,7 +570,7 @@ interface NavItem {
         class="slim-tabbar slim-shell__tabbar"
         [attr.aria-label]="'shell.main_menu' | translate"
       >
-        @for (item of tabs; track item.key) {
+        @for (item of visibleTabs(); track item.key) {
           <a
             class="slim-tabbar__item"
             [routerLink]="item.link"
@@ -428,8 +599,9 @@ interface NavItem {
   `,
   styleUrl: './admin-layout.component.scss',
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
+  private readonly access = inject(AccessFacade);
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
@@ -452,6 +624,7 @@ export class AdminLayoutComponent {
     return tenant ? this.auth.tenantName(tenant) : '';
   });
 
+  /** Arbeitsbereich: Startseite (+ the Lesezeichen block); the Schiessplätze have their own group. */
   protected readonly workspace: NavItem[] = [
     {
       key: 'shell.home',
@@ -459,7 +632,6 @@ export class AdminLayoutComponent {
       exact: true,
       icon: ICON.home,
     },
-    { key: 'menu.areas', link: APP_ROUTES.admin.area.root, icon: ICON.target },
   ];
 
   protected readonly dataManagement: NavItem[] = [
@@ -467,45 +639,57 @@ export class AdminLayoutComponent {
       key: 'menu.area',
       link: APP_ROUTES.admin.dataManagement.area.root,
       icon: ICON.database,
+      app: SLIM_APP_ID.ADMIN_DATA_AREA,
     },
     {
       key: 'menu.weapons',
       link: APP_ROUTES.admin.dataManagement.weapons.root,
       icon: ICON.weapon,
+      app: SLIM_APP_ID.ADMIN_DATA_WEAPONS,
     },
     {
       key: 'menu.mgdm_export',
       link: APP_ROUTES.admin.dataManagement.mgdmExport,
       icon: ICON.export,
+      app: SLIM_APP_ID.ADMIN_DATA_MGDM_EXPORT,
     },
     {
       key: 'menu.system_settings',
       link: APP_ROUTES.admin.dataManagement.system,
       icon: ICON.settings,
+      app: SLIM_APP_ID.ADMIN_DATA_SYSTEM,
     },
   ];
 
-  /** Benutzerverwaltung (B1 5.26 / 8.1): users, roles, app catalogue. */
+  /**
+   * Benutzerverwaltung (B1 5.26 / 8.1): users, roles, logbook, app
+   * catalogue. «Apps» is platform administration (galaxy app catalogue) and
+   * only the Applikationsadministrator*in has a right for it.
+   */
   protected readonly userManagement: NavItem[] = [
     {
       key: 'menu.users',
       link: APP_ROUTES.admin.dataManagement.users,
       icon: ICON.users,
+      app: GALAXY_APP_ID.ADMIN_USER_LIST,
     },
     {
       key: 'menu.roles',
       link: APP_ROUTES.admin.dataManagement.roles,
       icon: ICON.shield,
+      app: GALAXY_APP_ID.ADMIN_ROLE_LIST,
     },
     {
       key: 'menu.logs',
       link: APP_ROUTES.admin.dataManagement.logs,
       icon: ICON.log,
+      app: SLIM_APP_ID.ADMIN_LOGS,
     },
     {
       key: 'menu.apps',
       link: APP_ROUTES.admin.dataManagement.apps,
       icon: ICON.apps,
+      app: GALAXY_APP_ID.ADMIN_APPS_LIST,
     },
   ];
 
@@ -516,18 +700,139 @@ export class AdminLayoutComponent {
       exact: true,
       icon: ICON.home,
     },
-    { key: 'menu.area', link: APP_ROUTES.admin.area.root, icon: ICON.target },
+    { key: 'menu.area', link: APP_ROUTES.admin.area.root, icon: ICON.target, app: SLIM_APP_ID.ADMIN_AREA },
     {
       key: 'shell.data',
       link: APP_ROUTES.admin.dataManagement.root,
       icon: ICON.database,
+      app: SLIM_APP_ID.ADMIN_DATA_AREA,
     },
     {
       key: 'menu.users',
       link: APP_ROUTES.admin.dataManagement.users,
       icon: ICON.users,
+      app: GALAXY_APP_ID.ADMIN_USER_LIST,
     },
   ];
+
+  /** The four pages of one Schiessplatz (sidebar group «Schiessplätze»). */
+  protected readonly areaPages = [
+    { id: 'overview', key: 'menu.area_overview', link: APP_ROUTES.admin.area.overview, icon: ICON.home },
+    { id: 'shots', key: 'menu.area_shots', link: APP_ROUTES.admin.area.shots, icon: ICON.target },
+    { id: 'details', key: 'menu.area_details', link: APP_ROUTES.admin.area.details, icon: ICON.info },
+    { id: 'simulation', key: 'menu.area_simulation', link: APP_ROUTES.admin.area.simulation, icon: ICON.chart },
+  ];
+  protected readonly starIcon = ICON.star;
+  protected readonly listIcon = ICON.list;
+
+  protected readonly areas = this.area.areas;
+  protected readonly canAreas = this.access.can(SLIM_APP_ID.ADMIN_AREA);
+
+  /** Schiessplatz of the current URL (`/admin/area/:id/…`), else ''. */
+  private readonly routeAreaId = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+      startWith(this.router.url),
+      map((url) => areaIdOf(url)),
+    ),
+    { initialValue: areaIdOf(this.router.url) },
+  );
+  /** Picked in the sidebar; the route wins whenever it names a Schiessplatz. */
+  private readonly pickedAreaId = linkedSignal<string, string>({
+    source: this.routeAreaId,
+    computation: (fromRoute, previous) => fromRoute || previous?.value || '',
+  });
+  protected readonly activeArea = computed<AreaResultDto | null>(() => {
+    const id = this.pickedAreaId();
+    return (id && this.areas().find((a) => a.id === id)) || null;
+  });
+  // Open/closed state of the collapsible groups, remembered per browser.
+  private readonly groups = signal<SidebarGroups>(readGroups());
+  protected readonly areaGroupOpen = computed(() => this.groups().areas);
+  protected readonly bookmarksOpen = computed(() => this.groups().bookmarks);
+  protected readonly dataOpen = computed(() => this.groups().data);
+  protected readonly usersOpen = computed(() => this.groups().users);
+
+  protected toggleGroup(group: keyof SidebarGroups): void {
+    const next = { ...this.groups(), [group]: !this.groups()[group] };
+    this.groups.set(next);
+    writeGroups(next);
+  }
+  protected readonly areaPickText = linkedSignal(() => {
+    const a = this.activeArea();
+    return a ? this.labelOf(a) : '';
+  });
+
+  protected labelOf(a: AreaResultDto): string {
+    return `${a.coordinationSectionNo} ${a.name}`;
+  }
+
+  /** Datalist pick: match the typed text (label, name or number), then open the Schiessplatz. */
+  protected pickArea(text: string): void {
+    const q = text.trim().toLowerCase();
+    if (!q) {
+      this.pickedAreaId.set('');
+      return;
+    }
+    const list = this.areas();
+    const hit =
+      list.find((a) => this.labelOf(a).toLowerCase() === q) ??
+      list.find((a) => a.name.toLowerCase() === q || a.coordinationSectionNo === q) ??
+      list.find((a) => this.labelOf(a).toLowerCase().includes(q));
+    if (!hit) return;
+    this.pickedAreaId.set(hit.id);
+    // Stay on the same kind of page when one is open, otherwise the assessment (Details).
+    const fromRoute = this.routeAreaId();
+    const current = fromRoute ? this.areaPages.find((p) => this.router.url.startsWith(p.link(fromRoute))) : undefined;
+    void this.router.navigateByUrl((current ?? this.areaPages[2]).link(hit.id));
+  }
+
+  // Lesezeichen (bookmarks): starred Schiessplätze, kept per browser and
+  // tenant in localStorage — demo scope; product: galaxy user settings.
+  private readonly bookmarkIds = signal<string[]>(readBookmarks(this.bookmarkKey()));
+  protected readonly bookmarkedAreas = computed(() => {
+    const ids = this.bookmarkIds();
+    return ids.map((id) => this.areas().find((a) => a.id === id)).filter((a): a is AreaResultDto => !!a);
+  });
+
+  protected isBookmarked(id: string): boolean {
+    return this.bookmarkIds().includes(id);
+  }
+
+  protected toggleBookmark(id: string): void {
+    const next = this.isBookmarked(id) ? this.bookmarkIds().filter((x) => x !== id) : [...this.bookmarkIds(), id];
+    this.bookmarkIds.set(next);
+    writeBookmarks(this.bookmarkKey(), next);
+  }
+
+  private bookmarkKey(): string {
+    const tenant = this.auth.currentTenant();
+    const id = tenant ? this.auth.tenantId(tenant) : '';
+    return `slim.bookmarks.${id || 'default'}`;
+  }
+
+  // Menu entries the signed-in user has a right for (B1 8.1.2). Until the
+  // rights are loaded everything is shown; the API guards remain authoritative.
+  protected readonly visibleWorkspace = this.visible(this.workspace);
+  protected readonly visibleDataManagement = this.visible(this.dataManagement);
+  protected readonly visibleUserManagement = this.visible(this.userManagement);
+  protected readonly visibleTabs = this.visible(this.tabs);
+
+  private visible(items: NavItem[]) {
+    return computed(() => {
+      const loaded = this.access.loaded();
+      const apps = this.access.appIds();
+      return items.filter((item) => item.app == null || !loaded || apps.includes(item.app));
+    });
+  }
+
+  /** ComponentBase calls this on init and on every DATA_RELOAD emit (tenant switch). */
+  override getData(): void {
+    void this.access.load();
+    // The Schiessplatz picker and the bookmarks need the list; the facade deduplicates loads.
+    void this.area.load();
+  }
 
   protected toggle(menu: 'main' | 'user'): void {
     this.openMenu.update((open) => (open === menu ? null : menu));
@@ -544,6 +849,9 @@ export class AdminLayoutComponent {
     // The API call may fail (expired token, offline) — the local session is
     // cleared either way so the user always lands on a clean login.
     await this.auth.logout();
+    this.access.reset();
+    // The welcome dialog greets every login (demo), not only every tab.
+    resetWelcome();
     await this.router.navigateByUrl(APP_ROUTES.auth.login);
   }
 }
@@ -559,6 +867,9 @@ function initialsOf(name: string): string {
 
 /** 16×16 outline icon paths (mock set). */
 const ICON = {
+  star: 'M8 1.8l1.9 3.9 4.3.6-3.1 3 .7 4.3L8 11.6l-3.8 2 .7-4.3-3.1-3 4.3-.6L8 1.8z',
+  list: 'M3 4h10M3 8h10M3 12h10',
+  info: 'M8 1.7a6.3 6.3 0 100 12.6A6.3 6.3 0 008 1.7zM8 7.2v4M8 5v.2',
   home: 'M2 7.5L8 2.5l6 5V13a1 1 0 01-1 1h-3.5v-4h-3v4H3a1 1 0 01-1-1V7.5z',
   target: 'M8 2a6 6 0 100 12A6 6 0 008 2zm0 3a3 3 0 100 6 3 3 0 000-6z',
   chart: 'M2.5 13.5h11M4 11V7M8 11V4M12 11V8.5',
@@ -574,3 +885,55 @@ const ICON = {
   settings:
     'M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4',
 } as const;
+
+const AREA_URL = new RegExp(`^/${ROUTE_SEGMENT.admin}/${ROUTE_SEGMENT.area}/([^/?#]+)/`);
+
+function areaIdOf(url: string): string {
+  return AREA_URL.exec(url)?.[1] ?? '';
+}
+
+function readBookmarks(key: string): string[] {
+  try {
+    const raw = localStorage.getItem(key);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeBookmarks(key: string, ids: string[]): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(ids));
+  } catch {
+    // storage blocked: bookmarks live for the page only
+  }
+}
+
+/** Collapsible sidebar groups (all open by default). */
+interface SidebarGroups {
+  areas: boolean;
+  bookmarks: boolean;
+  data: boolean;
+  users: boolean;
+}
+const GROUPS_KEY = 'slim.sidebar.groups';
+const GROUPS_DEFAULT: SidebarGroups = { areas: true, bookmarks: true, data: true, users: true };
+
+function readGroups(): SidebarGroups {
+  try {
+    const raw = localStorage.getItem(GROUPS_KEY);
+    const parsed = raw ? (JSON.parse(raw) as Partial<SidebarGroups>) : {};
+    return { ...GROUPS_DEFAULT, ...parsed };
+  } catch {
+    return GROUPS_DEFAULT;
+  }
+}
+
+function writeGroups(groups: SidebarGroups): void {
+  try {
+    localStorage.setItem(GROUPS_KEY, JSON.stringify(groups));
+  } catch {
+    // storage blocked: the state lives for the page only
+  }
+}

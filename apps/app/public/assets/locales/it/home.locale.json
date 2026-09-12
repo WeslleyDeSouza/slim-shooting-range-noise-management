@@ -37,11 +37,11 @@
   "welcome": {
     "tag": "Versione dimostrativa",
     "title": "Benvenuti in SLIM",
-    "lead": "Scoprite come SLIM riunisce in modo chiaro gli utilizzi delle piazze di tiro e le immissioni foniche.",
-    "explore": "Esplorate una piazza di esempio, consultate i dati di utilizzo e confrontate i risultati di calcolo.",
-    "prototype": "State usando un prototipo con dati di esempio preparati. Alcune funzioni sono ancora in sviluppo.",
-    "disclaimer": "I risultati presentati servono alla dimostrazione e non sono valutazioni tecniche approvate.",
-    "start": "Avvia la demo",
-    "later": "Più tardi"
+    "lead": "Per ogni piazza di tiro militare SLIM mostra quanto è stato sparato e se i valori limite del rumore presso gli edifici circostanti sono rispettati.",
+    "explore": "Esplorate una piazza di esempio, verificate i dati di utilizzo e confrontate le valutazioni del rumore.",
+    "prototype": "Questa demo utilizza dati di esempio preparati. Alcune aree, come la gestione dei dati, sono ancora segnaposto.",
+    "disclaimer": "I risultati servono a scopo illustrativo e non sono valutazioni tecniche approvate.",
+    "start": "Apri la piazza di esempio",
+    "later": "Chiudi"
   }
 }

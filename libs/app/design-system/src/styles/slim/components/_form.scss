@@ -84,6 +84,9 @@
 
 .slim-select {
   @include control-base;
+  // Own chevron only: without the reset the browser paints its arrow as well.
+  appearance: none;
+  -webkit-appearance: none;
   padding-right: space(8);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;

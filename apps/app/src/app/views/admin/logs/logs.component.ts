@@ -22,6 +22,7 @@ const ACTION_ORDER = [
   'UPDATE',
   'DELETE',
   'GET',
+  'READ',
   'MAIL',
   'AUTH',
   'EXPORT',

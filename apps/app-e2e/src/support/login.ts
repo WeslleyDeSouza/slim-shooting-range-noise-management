@@ -7,7 +7,23 @@ import {
   ROUTES,
   SESSION_KEY,
   SESSION_TIMEOUT_MS,
+  WELCOME,
 } from './selectors';
+
+/**
+ * Skip the demo welcome banner: mark it as seen before the app boots so the
+ * entry page renders without the modal (its backdrop would swallow clicks).
+ * Call it before the first `page.goto` of a signed-in spec.
+ */
+export async function skipWelcome(page: Page): Promise<void> {
+  await page.addInitScript((key) => {
+    try {
+      window.sessionStorage.setItem(key, '1');
+    } catch {
+      // storage blocked: the spec dismisses the dialog explicitly
+    }
+  }, WELCOME.seenKey);
+}
 
 /**
  * Sign in and wait until the session really exists (`app.session` is written

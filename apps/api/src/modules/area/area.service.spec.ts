@@ -63,16 +63,22 @@ describe('AreaService', () => {
     await module.get(AreaStatusService).refreshAll(mockTenantId, NOW);
     const areas = await service.list(mockTenantId);
     const geissalp = areas.find((a) => a.name === 'Geissalp');
-    // Noise: E1 is over the IGW of the current state. Quota: the Sprengladung has no Kontingent → Soll 0 → red (B1 5.10).
-    expect(geissalp?.noiseStatus).toBe('over');
-    expect(geissalp?.quotaStatus).toBe('over');
-    // No state → no noise light; the light areas have quotas for everything they shoot → green.
+    // Noise: E1 is over the IGW of the current state. Quota: the Sprengladung has no Kontingent → Soll 0 → red (B1 5.10),
+    // and the light says so («no-quota») instead of a bare red.
+    expect(geissalp).toMatchObject({
+      noiseStatus: 'over',
+      noiseStatusReason: null,
+      noiseStatusBasis: 'Initiale Aufnahme Areal Geissalp',
+      quotaStatus: 'over',
+      quotaStatusReason: 'no-quota',
+      statusYear: NOW.getFullYear(),
+    });
+    // No state → no noise light («no-calculation»); the light areas have quotas for everything they shoot → green.
     const thun = areas.find((a) => a.name === 'Thun');
-    expect(thun?.noiseStatus).toBe('none');
-    expect(thun?.quotaStatus).toBe('ok');
-    // Kontingente without any usage: nothing shot → within (green); no state → no noise light.
+    expect(thun).toMatchObject({ noiseStatus: 'none', noiseStatusReason: 'no-calculation', quotaStatus: 'ok', quotaStatusReason: null });
+    // Kontingente without any usage in the three years: nothing to compare → no light, never green by default.
     const hinterrhein = areas.find((a) => a.name === 'Hinterrhein');
-    expect(hinterrhein).toMatchObject({ noiseStatus: 'none', quotaStatus: 'ok' });
+    expect(hinterrhein).toMatchObject({ noiseStatus: 'none', quotaStatus: 'none', quotaStatusReason: 'no-usages' });
     const summary = await service.summary(mockTenantId);
     expect(summary.total).toBe(9);
     expect(summary.over).toBe(1);

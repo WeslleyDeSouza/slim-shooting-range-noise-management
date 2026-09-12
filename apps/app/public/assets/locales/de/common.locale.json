@@ -76,6 +76,7 @@
   },
   "shell": {
     "org": "armasuisse",
+    "demo": "Demo",
     "org_sub": "Bundesamt für Rüstung",
     "workspace": "Arbeitsbereich",
     "main_menu": "Hauptmenü",
@@ -98,7 +99,14 @@
     "documentation": "Dokumentation",
     "data": "Daten",
     "areas_count": "{{n}} Schiessplätze",
-    "user": "Benutzer"
+    "user": "Benutzer",
+    "area_group": "Schiessplätze",
+    "area_pick": "Schiessplatz wählen …",
+    "area_pick_hint": "Nummer oder Bezeichnung eingeben; danach erscheinen Übersicht, Schusszahlen, Details und Simulation.",
+    "bookmarks": "Lesezeichen",
+    "bookmarks_empty": "Noch keine Lesezeichen. Wählen Sie einen Schiessplatz und markieren Sie ihn mit dem Stern.",
+    "bookmark_add": "Als Lesezeichen merken",
+    "bookmark_remove": "Lesezeichen entfernen"
   },
   "placeholder": {
     "title": "In Vorbereitung",
@@ -109,6 +117,23 @@
     "warn": "Zu prüfen",
     "over": "Überschritten",
     "none": "Keine Daten",
-    "incomplete": "Nicht beurteilbar"
+    "incomplete": "Nicht beurteilbar",
+    "none_no_calculation": "Keine Berechnungsgrundlage",
+    "none_no_usages": "Keine Nutzungen erfasst",
+    "hint": {
+      "quota_ok": "Kontingent: Ist des Jahres und Dreijahresmittel je Kombination liegen innerhalb des Solls gemäss Plangenehmigung.",
+      "quota_warn": "Kontingent: Ist oder Dreijahresmittel über dem Soll, aber höchstens 125 %.",
+      "quota_over": "Kontingent: Ist oder Dreijahresmittel über 125 % des Solls.",
+      "quota_none": "Kontingent: keine Ampel, weil die Grundlage fehlt.",
+      "quota_incomplete": "Kontingent: nicht beurteilbar.",
+      "noise_ok": "Lärmbelastung: alle Immissionspunkte des aktuellen Zustands halten die Grenzwerte mit Reserve ein.",
+      "noise_warn": "Lärmbelastung: mindestens ein Immissionspunkt liegt weniger als 5 dB unter dem Grenzwert.",
+      "noise_over": "Lärmbelastung: mindestens ein Immissionspunkt überschreitet den Grenzwert.",
+      "noise_none": "Lärmbelastung: keine Ampel, weil die Grundlage fehlt.",
+      "noise_incomplete": "Lärmbelastung: nicht beurteilbar – Nutzungen ohne Quelle oder Pegel im Zustand (Fachregel O8); Teilpegel in den Details sichtbar.",
+      "no_calculation": "Kein Berechnungsstand ist als «aktuell» markiert.",
+      "no_usages": "Im Jahr und den zwei Vorjahren sind keine Nutzungen erfasst. Keine Einträge bedeuten nicht null Schüsse.",
+      "no_quota": "Mindestens eine beschossene Kombination hat kein Kontingent: Soll 0, jeder Schuss zählt als Überschreitung (B1 5.10)."
+    }
   }
 }

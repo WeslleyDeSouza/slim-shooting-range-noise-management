@@ -1,6 +1,6 @@
 # API und App: Datenstruktur
 
-> Physische Tabellennamen sind deutsch (B1 12.2, `slm 51`): `schiessplatz`, `stellungsraum`, `stellungsraum_waffe`, `nutzung`, `immissionsberechnung`, `zustand`, `empfangspunkt`, `wlr_pegel`, `schiessplatz_benutzer`, `logbuch`, `demo_datensatz`. Die Klassen im Code (`AreaEntity`, `AreaUsageEntity`, …) und die Spaltennamen bleiben englisch – Spalten sind der nächste Schritt (Entity-`name`-Mapping). Die galaxy-Tabellen (`auth_user`, `app_role`, `tenant_user_role`, …) kommen aus der Bibliothek.
+> Physische Tabellen sind deutsch (B1 12.2, `slm 51`) und folgen dem fachlichen Datenmodell B1 Kap. 10 (Abb. 43): übergeordnete Referenzstruktur `schiessplatz`, `stellungsraum`, `waffe`, `kaliber`, `waffenkategorie`, `waffe_kaliber_kombination`, `stellungsraum_kombination`, `kontingent`, `feiertag`; Nutzungen `nutzung`, `nutzung_position` (ohne Zustandsbezug, `slm 44`); Zustandsebene `immissionsberechnung` → `zustand` → `zustand_anlageteil`, `schusslinie`, `quelldaten_anhang9`, `quelldaten_anhang7`, `untersuchungsperimeter`, `ausbreitungsberechnung`, `gebaeude`, `immissionspunkt`, `wlr_pegel`, `isophonen`, `betroffene_analyse`, `hindernis`, `hochblende`, `schuetzenhaus`, `massnahmen_*`; dazu `berechnungslauf`, `schiessplatz_benutzer`, `logbuch`, `demo_datensatz`. Spalten sind deutsch in der Zustandsebene und im `berechnungslauf` (`ZustandAnlageteil.coordinationSectionNo` → Spalte `koord_nr`, Mapping in `DbPlatformColumn({ name })`); die Spalten der Referenzstruktur und der Nutzungen sind noch englisch (nächster Schritt, gleiches Muster). Die Klassen und Properties im Code bleiben englisch. Die galaxy-Tabellen (`auth_user`, `app_role`, `tenant_user_role`, …) kommen aus der Bibliothek.
 
 ## Ordnerstruktur & Architektur
 
@@ -21,9 +21,9 @@ apps/api/src/
 ├── mocks/                   # API_APPS_MAPPING, API_CATEGORY_MAPPING, API_MOCK_DATA (Seed), E-Mail-Parser
 │   └── tenant/              # «SLIM Demo»-Datensatz: tenant.mock.json, tenant-dataset.ts, demo-dataset.seed.ts, Marker-Entity
 └── modules/                 # Geschäftslogik-Module (siehe sitemap.md)
-    ├── area/                # Schiessplätze, Stellungsräume, Zuordnung Waffen (= Quellen): entities/, dto/, controllers/, db/, service, spec
+    ├── area/                # Referenzstruktur: Schiessplätze, Stellungsräume, Waffen/Kaliber/Kombinationen, Kontingente, Feiertage
     ├── usage/               # Schiessplatz-Nutzungen (5.11): overview / create / update / delete / restore
-    ├── calculation/         # Berechnungsgrundlagen, Empfangspunkte, WLR-Pegel; AssessmentService (5.12), SimulationService (5.13)
+    ├── calculation/         # Zustandsebene (FGDB-Objekte, Quelldaten, WLR), Import 5.19, Zeiger aktuell/MGDM, AssessmentService (5.12), SimulationService (5.13), Berechnungslauf, AreaStatusService
     └── auth-audit/          # galaxy Lifecycle-Hooks (Benutzer/Rollen/Apps) → Logbuch
 ```
 
@@ -92,26 +92,63 @@ Client. Kein NgRx im App-Code, keine Mocks, keine handgeschriebenen API-Modelle.
 
 ## Domänenmodell
 
-- **Area (Schiessplatz)** `area`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr.),
-  `sectoralPlanNo` (Sachplan-Nr.), `quotaStatus` / `noiseStatus` (`ok | warn | over | none`),
-  `enabled`, `tenantId`. Endpunkte `admin/area` (Liste, Summary, Dashboard, CRUD).
-- **Stellungsraum** `stellungsraum`: `areaId`, `coordinationSectionNo` (optional), `name`, `groupName`,
-  `builtAfter1985` (Planungswert gilt), `sortOrder`, `enabled`.
-- **Zuordnung Waffen / Quelle** `stellungsraum_waffe` (5.17): `areaId`, `roomId`, `weaponName` (Erfassung), `weapon`,
-  `caliber`, `category` (`artillery | air_defence | handguns | mortar`), `annex7Category` (`a`–`f`, zivil),
-  `sourceId` (sonARMS QuellenID), `quota` (Kontingent Plangenehmigung).
-- **Schiessplatz-Nutzung** `nutzung` (5.11): `roomId`, `weaponId` (zulässige Kombination), `unit`, `date`,
-  `timeFrom`/`timeTo`, `usageType` (`military | civil`), `shots`, `recordedBy`, `source` (`manual | elo | import`),
-  `note`; Soft-Delete für «Rückgängig». Endpunkte `admin/area/:areaId/usage/{overview,restore}`, CRUD.
-- **Immissionsberechnung** `immissionsberechnung` (5.18, Lieferung): `name`, `supplier`, `deliveredAt`; Hierarchie Schiessplatz → Immissionsberechnung → Zustand.
-- **Zustand** `zustand` (5.18, ZustandsID): `calculationId` (→ Immissionsberechnung), `name`, `referenceYear`,
-  `buildYearClass` (`before1985 | after1985 | mixed`), `isCurrent`, `isMgdm`.
-- **Empfangspunkt** `empfangspunkt` (5.12): `code`, `egid`, `address`, `municipality`, `type` (`facade | reserve`),
-  `sensitivityLevel` (ES I–IV), `east`/`north` (LV95), `mapX`/`mapY` (schematische Karte).
-- **WLR-Pegel** `wlr_pegel`: je Zustand × Empfangspunkt × Quelle `laeDay`, `laeEve` (Anhang 9), `lafmaxDay` (Anhang 7).
-- **Beurteilung / Simulation**: nicht persistiert, `AssessmentService` und `SimulationService` rechnen mit
-  `@slim/lsv` aus Nutzungen + WLR (`admin/area/:areaId/calculation/{assessment,simulation}`).
-- **Waffe / Kaliber / Waffenkategorie** (Datenverwaltung, 5.22–5.25): Stammdaten-Masken — folgt (heute über `stellungsraum_waffe`).
+Drei Ebenen wie in B1 Kap. 10 (Abb. 43); vollständiges ERD: [uml.mmd](uml.mmd) (`/erd`, bei jedem API-Start neu).
+
+### Übergeordnete Referenzstruktur (zustandsunabhängig)
+
+- **Schiessplatz** `schiessplatz`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr.), `sectoralPlanNo`
+  (Sachplan-Nr.), `enabled`; `quotaStatus` / `noiseStatus` (`ok | warn | over | incomplete | none`) sind nur ein
+  **Cache** der `AreaStatusService`-Berechnung (nach Mutation, Import, Zeigerwechsel und beim Start neu gesetzt,
+  nicht schreibbar über die API). Endpunkte `admin/area` (Liste, Summary, Dashboard, CRUD).
+- **Stellungsraum** `stellungsraum`: `areaId`, `coordinationSectionNo`, `name`, `groupName`, `sortOrder`, `enabled`;
+  kein Baujahr mehr – das steht je Zustand am `zustand_anlageteil`.
+- **Waffe / Kaliber / Waffenkategorie** `waffe`, `kaliber`, `waffenkategorie` (B1.7): `kaliber.quantityUnit`
+  (`shots | kg`) bestimmt die Einheit der Mengen; `waffe.annex7Category` (`a`–`f`) die Kategorie nach Anhang 7.
+- **Kombination Waffe/Kaliber** `waffe_kaliber_kombination`: `sonarmsId` (Schlüssel zur Schusslinie), Namen DE/FR/IT.
+- **Zulässige Kombination je Stellungsraum** `stellungsraum_kombination` (5.17): `roomId`, `combinationId`, `entryName`
+  (Waffenname für die Erfassung), `enabled`; Composite-FK `(tenantId, areaId, roomId)` – ein fremder Stellungsraum
+  ist nicht zuordenbar.
+- **Kontingent** `kontingent`: je Schiessplatz × Kombination `shotsPerYear`, `basis` (Plangenehmigung).
+- **Feiertag** `feiertag`: je Schiessplatz `date`, optional `from`/`to` (halber Feiertag), wird an Anhang 9/7 übergeben.
+
+### Nutzungen (Betriebsdaten, ohne Zustandsbezug – `slm 44`)
+
+- **Schiessplatz-Nutzung** `nutzung` (5.11): `roomId`, `unit`, `date`, `timeFrom`/`timeTo` (Viertelstundenraster),
+  `usageType` (`military | civil | blue_light | sat`), `civilUsageKind` (Pflicht bei Zivil), `personCount`,
+  `recordedBy`, `source` (`manual | elo | import`), `externalId` (ELO-Idempotenz), `note`; Soft-Delete für «Rückgängig».
+- **Position** `nutzung_position`: n je Nutzung, `combinationId` + `quantity` DECIMAL(12,3) + `quantityUnit`
+  (aus dem Kaliber), `from`/`to`.
+- Endpunkte `admin/area/:areaId/usage/{overview,restore}`, CRUD; nur Kombinationen des Stellungsraums sind zulässig.
+
+### Zustandsebene (alles gehört einem `zustand`)
+
+- **Immissionsberechnung** `immissionsberechnung` (5.18, Lieferung): `name`, `supplier`, `deliveredAt`.
+- **Zustand** `zustand` (ZustandsID): `calculationId`, `name`, `referenceYear`, `buildYearClass`, `isCurrent`, `isMgdm`;
+  «genau ein aktueller / ein MGDM-Zustand je Schiessplatz» erzwingen die Unique-Indizes `uq_zustand_aktuell` /
+  `uq_zustand_mgdm` über die Markerspalten `aktuell_schluessel` / `mgdm_schluessel` (= `schiessplatz_id` oder NULL).
+- **Anlageteil** `zustand_anlageteil`: Sicht des Zustands auf einen Stellungsraum (`stellungsraum_id`, Baujahr nach 1985,
+  Typ, Bez. SPL-Dossier); der Import bricht ab, wenn ein Anlageteil keinen übergeordneten Stellungsraum hat (`slm 45`).
+- **Schusslinie** `schusslinie` (= Quelle, sonARMS QuellenID) mit `quelldaten_anhang9` (`a9_m1`/`a9_m2`, Zahl/Halbtage
+  Werktag–Sonntag) und `quelldaten_anhang7` (Kategorie, Zahl, Halbtage) – beide optional je Quelle (Abb. 43); die
+  Quelldaten liefern die Gewichte der Verteilung B1 7.5.
+- **Immissionspunkt** `immissionspunkt` (5.12): `code`, `sonarmsId`, `egid`, `egrid`, Adresse, Gemeinde, `es` (ES I–IV),
+  `typ` (Fassade/Freifeld/Baulinie), `ost`/`nord`/`hoehe` (LV95), `karte_x`/`karte_y` (schematische Karte), `gebaeude_id`.
+- **WLR-Pegel** `wlr_pegel`: je Zustand × Immissionspunkt × Schusslinie × **Zeitgruppe** `lae` (Anhang 9, Tag/Abend)
+  bzw. `lafmax` (Anhang 7), dazu die Detailpegel `lae_det/gk/mk`, `elevation`.
+- **Untersuchungsperimeter, Ausbreitungsberechnung, Gebäude, Isophonen, Betroffenen-Analyse, Hindernis, Hochblende,
+  Schützenhaus, Massnahmen (Punkt/Fläche/Betrieb/SSF)**: importierte FGDB-Objekte je Zustand; Geometrien als Text
+  (Prototyp, SQLite) – Ziel PostGIS `geometry`.
+- Alle Zustandsobjekte referenzieren über Composite-FKs `(tenantId, zustand_id, …)`: eine Schusslinie von Zustand A
+  kann keinen Immissionspunkt von Zustand B treffen (`state-isolation.spec`).
+
+### Berechnung
+
+- **Beurteilung / Simulation** (5.12/5.13): `AssessmentService` und `SimulationService` rechnen in-process mit
+  `@slim/lsv` aus Nutzungen + Quelldaten + WLR des gewählten Zustands
+  (`admin/area/:areaId/calculation/{assessment,simulation}`, `years=` für repräsentative Jahre); nichts wird persistiert.
+- **Berechnungslauf** `berechnungslauf` (`POST …/calculation/run`): friert einen Lauf ein – Zeitraum/Jahre,
+  Kopie der Nutzungen (`nutzungen_kopie`), Referenz-Snapshot (`referenz_kopie`: Feiertage, Zuordnungen, Kontingente,
+  Fachentscheide), Parameter, `kern_version`, Vollständigkeit (O8), Ergebnis, Prüfsumme, Ersteller.
 - **Benutzer / Rollen / Mandanten**: galaxy (`@app-galaxy/auth-api`, `core-api`); App-Katalog
   und Rollen-Rechte über `API_APPS_MAPPING`.
 - **MGDM Export**: Export nach dem minimalen Geodatenmodell — folgt.

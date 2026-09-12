@@ -37,11 +37,11 @@
   "welcome": {
     "tag": "Demoversion",
     "title": "Willkommen bei SLIM",
-    "lead": "Entdecken Sie, wie SLIM Schiessplatznutzungen und Lärmimmissionen übersichtlich zusammenführt.",
-    "explore": "Erkunden Sie einen Beispielplatz, sehen Sie Nutzungsdaten ein und vergleichen Sie Berechnungsergebnisse.",
-    "prototype": "Sie nutzen einen Prototyp mit vorbereiteten Beispieldaten. Einzelne Funktionen befinden sich noch in Entwicklung.",
-    "disclaimer": "Die dargestellten Ergebnisse dienen der Demonstration und sind keine freigegebenen fachlichen Beurteilungen.",
-    "start": "Demo starten",
-    "later": "Später"
+    "lead": "SLIM zeigt für jeden militärischen Schiessplatz, wie viel geschossen wurde und ob die Lärmgrenzwerte an den umliegenden Gebäuden eingehalten sind.",
+    "explore": "Erkunden Sie einen Beispielplatz, prüfen Sie Nutzungsdaten und vergleichen Sie Lärmbeurteilungen.",
+    "prototype": "Diese Demo läuft auf vorbereiteten Beispieldaten. Einzelne Bereiche wie die Datenverwaltung sind noch Platzhalter.",
+    "disclaimer": "Die Ergebnisse dienen der Veranschaulichung und sind keine fachlich freigegebenen Beurteilungen.",
+    "start": "Beispielplatz öffnen",
+    "later": "Schliessen"
   }
 }

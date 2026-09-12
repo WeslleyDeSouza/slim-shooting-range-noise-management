@@ -62,7 +62,8 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 **Demo-Konten** (Passwort `1234`, `tenant.mock.json`): `slim@demo.ch` (galaxy-Admin, alles),
 `fachspezialist@demo.ch`, `schiessplatz@demo.ch` (Schiessplatz-Verantwortlicher, zugeordnet:
 Geissalp, Thun), `interessent@demo.ch`, `appadmin@demo.ch`. Damit lässt sich jede Spalte der
-Matrix am laufenden System prüfen (Menü bleibt vorerst statisch; die API antwortet 403, die
+Matrix am laufenden System prüfen (das Menü zeigt nur Einträge mit App-Recht der Sitzung —
+`core/access/access.facade.ts` über `GET admin/apps/app/user/:userId`; die API antwortet 403, die
 Seiten zeigen den Fehler).
 
 ## 3. Übernommene Oberfläche (ELO → SLIM)
@@ -92,7 +93,7 @@ noch nicht im Design System; Umbau ist ein reiner Template-Job.
 
 | Thema | Anforderung | Stand | Nächster Schritt |
 |---|---|---|---|
-| Rechte im Frontend (CASL) | 8.1.2, `slm 50` (Rollen-GUI) | Menü und Schaltflächen sind statisch; die API antwortet 403. Rollen tragen bereits einen Schlüssel (`settings.key`, Formular «Rollen bearbeiten»), System-Rollen sind nicht löschbar | `@casl/ability` + `@casl/angular` wie in ELO (`app.casl.ts`: `AbilityFactory.defineFor(roles)`, `CaslService`; Menü in `admin-menu.service.ts`): Abilities aus den App-Rechten der Session bauen, `@if (can('write', 'usage'))` für Schaltflächen, Menü aus den Rechten, Lese-Modus der Masken (`readonly`-Signal in Schusszahlen ist vorbereitet) |
+| Rechte im Frontend (CASL) | 8.1.2, `slm 50` (Rollen-GUI) | Menü nach App-Rechten der Sitzung (`AccessFacade`, App-Ids `SLIM_APP_ID`/`GALAXY_APP_ID` in `@slim/shared`); Schaltflächen sind statisch; die API antwortet 403. Rollen tragen bereits einen Schlüssel (`settings.key`, Formular «Rollen bearbeiten»), System-Rollen sind nicht löschbar | `@casl/ability` + `@casl/angular` wie in ELO (`app.casl.ts`: `AbilityFactory.defineFor(roles)`, `CaslService`; Menü in `admin-menu.service.ts`): Abilities aus den App-Rechten der Session bauen, `@if (can('write', 'usage'))` für Schaltflächen, Menü aus den Rechten, Lese-Modus der Masken (`readonly`-Signal in Schusszahlen ist vorbereitet) |
 | Zuordnung Schiessplätze pflegen | 5.26, 8.1.2 W/R-O | nur per Seed (`schiessplatz_benutzer`) | Benutzerformular: Mehrfachauswahl Schiessplätze (`AreaScopeService.assign`), Endpunkt `admin/user/:id/areas` |
 | Session-Claim `areaIds` | Komfort | – | in `me/session` liefern, damit der Wechsler nur eigene Plätze zeigt |
 | «Berechnung speichern» (App 47) | 5.10, 5.18–5.21 | Recht vorhanden, kein Endpunkt | mit dem Berechnungs-Import (5.19) |

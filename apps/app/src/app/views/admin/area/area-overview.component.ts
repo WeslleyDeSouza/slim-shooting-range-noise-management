@@ -10,7 +10,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AreaResultDto } from '@ui-slim/apiClient';
 import { StatusPillComponent } from '../../../common/status-pill.component';
@@ -20,7 +20,7 @@ import {
   needsAttention,
 } from '../../../core/area/area.facade';
 
-type StatusFilter = '' | 'attention' | AreaStatus;
+type StatusFilter = '' | AreaStatus;
 
 /**
  * "Übersicht Schiessplätze" (mock view-plaetze, chapters 5.8 / 5.9):
@@ -54,12 +54,13 @@ type StatusFilter = '' | 'attention' | AreaStatus;
           <p class="slim-page__subtitle">{{ 'subtitle' | translate }}</p>
         </div>
         <div class="slim-page__actions">
-          <label class="slim-filter">
+          <label class="slim-filter" [attr.title]="'year_info' | translate">
             {{ 'year' | translate }}
             <select
               class="slim-select"
               [value]="year()"
               (change)="year.set(+$any($event.target).value)"
+              [attr.aria-describedby]="'area-year-info'"
             >
               @for (y of years; track y) {
                 <option [value]="y">{{ y }}</option>
@@ -85,6 +86,10 @@ type StatusFilter = '' | 'attention' | AreaStatus;
           </button>
         </div>
       </div>
+
+      <p class="slim-text--muted slim-text--xs area__year-info" id="area-year-info">
+        {{ 'year_info' | translate }}
+      </p>
 
       @if (error()) {
         <div class="slim-alert slim-alert--danger slim-u-mb-4">
@@ -122,21 +127,48 @@ type StatusFilter = '' | 'attention' | AreaStatus;
               (input)="query.set($any($event.target).value)"
             />
           </div>
-          <select
-            class="slim-select area__status"
-            [value]="status()"
-            (change)="status.set($any($event.target).value)"
-            [attr.aria-label]="'columns.quota' | translate"
+          <button
+            type="button"
+            class="slim-btn slim-btn--sm area__attention"
+            [class.slim-btn--primary]="attention()"
+            [attr.aria-pressed]="attention()"
+            [attr.title]="'filter.attention_info' | translate"
+            data-testid="area-filter-attention"
+            (click)="attention.set(!attention())"
           >
-            <option value="">{{ 'filter.all' | translate }}</option>
-            <option value="attention">
-              {{ 'filter.attention' | translate }}
-            </option>
-            <option value="ok">{{ 'status_area.ok' | translate }}</option>
-            <option value="warn">{{ 'status_area.warn' | translate }}</option>
-            <option value="over">{{ 'status_area.over' | translate }}</option>
-            <option value="none">{{ 'status_area.none' | translate }}</option>
-          </select>
+            {{ 'filter.attention' | translate }}
+          </button>
+          <label class="slim-filter area__status">
+            {{ 'columns.quota' | translate }}
+            <select
+              class="slim-select"
+              [value]="quotaFilter()"
+              (change)="quotaFilter.set($any($event.target).value)"
+              data-testid="area-filter-quota"
+            >
+              <option value="">{{ 'filter.all' | translate }}</option>
+              <option value="ok">{{ 'status_area.ok' | translate }}</option>
+              <option value="warn">{{ 'status_area.warn' | translate }}</option>
+              <option value="over">{{ 'status_area.over' | translate }}</option>
+              <option value="none">{{ 'status_area.none' | translate }}</option>
+            </select>
+          </label>
+          <label class="slim-filter area__status">
+            {{ 'columns.noise' | translate }}
+            <select
+              class="slim-select"
+              [value]="noiseFilter()"
+              (change)="noiseFilter.set($any($event.target).value)"
+              data-testid="area-filter-noise"
+            >
+              <option value="">{{ 'filter.all' | translate }}</option>
+              <option value="ok">{{ 'status_area.ok' | translate }}</option>
+              <option value="warn">{{ 'status_area.warn' | translate }}</option>
+              <option value="over">{{ 'status_area.over' | translate }}</option>
+              <option value="incomplete">{{ 'status_area.incomplete' | translate }}</option>
+              <option value="none">{{ 'status_area.none' | translate }}</option>
+            </select>
+          </label>
           <div class="slim-toolbar__meta">
             <span>{{ 'count' | translate: { n: all().length } }}</span>
             <span class="slim-toolbar__lock">
@@ -193,12 +225,13 @@ type StatusFilter = '' | 'attention' | AreaStatus;
               @for (r of filtered(); track r.id) {
                 <tr
                   class="slim-table__row slim-table__row--clickable"
-                  [routerLink]="routes.admin.area.overview(r.id)"
+                  [routerLink]="routes.admin.area.details(r.id)"
                 >
                   <td [attr.data-label]="'columns.name' | translate">
                     <a
                       class="area__name"
-                      [routerLink]="routes.admin.area.overview(r.id)"
+                      [routerLink]="routes.admin.area.details(r.id)"
+                      [attr.title]="'actions.details_hint' | translate"
                       >{{ r.name }}</a
                     >
                   </td>
@@ -216,10 +249,10 @@ type StatusFilter = '' | 'attention' | AreaStatus;
                     {{ r.sectoralPlanNo ?? '—' }}
                   </td>
                   <td [attr.data-label]="'columns.quota' | translate">
-                    <app-status-pill [status]="r.quotaStatus" />
+                    <app-status-pill kind="quota" [status]="r.quotaStatus" [reason]="r.quotaStatusReason" [basis]="quotaBasis(r)" />
                   </td>
                   <td [attr.data-label]="'columns.noise' | translate">
-                    <app-status-pill [status]="r.noiseStatus" />
+                    <app-status-pill kind="noise" [status]="r.noiseStatus" [reason]="r.noiseStatusReason" [basis]="noiseBasis(r)" />
                   </td>
                   <td
                     [attr.data-label]="'columns.nav' | translate"
@@ -230,8 +263,8 @@ type StatusFilter = '' | 'attention' | AreaStatus;
                         <a
                           class="slim-btn slim-btn--ghost slim-btn--icon slim-btn--sm"
                           [routerLink]="action.link(r.id)"
-                          [attr.title]="action.key | translate"
-                          [attr.aria-label]="action.key | translate"
+                          [attr.title]="action.key + '_hint' | translate"
+                          [attr.aria-label]="action.key + '_hint' | translate"
                           [attr.data-testid]="'area-action-' + action.id"
                           (click)="$event.stopPropagation()"
                         >
@@ -300,9 +333,10 @@ type StatusFilter = '' | 'attention' | AreaStatus;
       <div class="slim-legend" [attr.aria-label]="'legend' | translate">
         @for (s of legend; track s) {
           <span class="slim-legend__item"
-            ><app-status-pill [status]="s"
+            ><app-status-pill [status]="s" [attr.title]="'legend_hint.' + s | translate"
           /></span>
         }
+        <span class="slim-legend__item slim-text--muted">{{ 'legend_note' | translate }}</span>
       </div>
       <p class="slim-text--muted slim-text--xs slim-u-text-right">
         {{ 'sample_note' | translate }}
@@ -313,6 +347,7 @@ type StatusFilter = '' | 'attention' | AreaStatus;
 export class AreaOverviewComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
   private readonly route = inject(ActivatedRoute);
+  private readonly translate = inject(TranslateService);
 
   protected readonly routes = APP_ROUTES;
   protected readonly years = [2026, 2025, 2024];
@@ -329,17 +364,16 @@ export class AreaOverviewComponent extends ComponentBase {
   protected readonly year = signal(this.years[0]);
   protected readonly query = signal('');
 
-  private readonly statusFromUrl = toSignal(
-    this.route.queryParamMap.pipe(
-      map((p) => (p.get('status') ?? '') as StatusFilter),
-    ),
-    { initialValue: '' as StatusFilter },
+  private readonly attentionFromUrl = toSignal(
+    this.route.queryParamMap.pipe(map((p) => p.get('status') === 'attention')),
+    { initialValue: false },
   );
   // Query param seeds the filter (home notice → ?status=attention), the
-  // select overrides it until the param changes again.
-  protected readonly status = linkedSignal<StatusFilter>(() =>
-    this.statusFromUrl(),
-  );
+  // toggle overrides it until the param changes again.
+  protected readonly attention = linkedSignal<boolean>(() => this.attentionFromUrl());
+  /** Separate filters per light: «Status: Alle» did not say which one it filtered. */
+  protected readonly quotaFilter = signal<StatusFilter>('');
+  protected readonly noiseFilter = signal<StatusFilter>('');
 
   protected readonly all = this.area.areas;
   protected readonly loading = this.area.loading;
@@ -347,7 +381,8 @@ export class AreaOverviewComponent extends ComponentBase {
 
   protected readonly filtered = computed<AreaResultDto[]>(() => {
     const q = this.query().trim().toLowerCase();
-    const status = this.status();
+    const quota = this.quotaFilter();
+    const noise = this.noiseFilter();
     return this.all().filter((r) => {
       if (
         q &&
@@ -356,11 +391,24 @@ export class AreaOverviewComponent extends ComponentBase {
       ) {
         return false;
       }
-      if (status === 'attention') return needsAttention(r);
-      if (status) return r.quotaStatus === status || r.noiseStatus === status;
+      if (this.attention() && !needsAttention(r)) return false;
+      if (quota && r.quotaStatus !== quota) return false;
+      if (noise && r.noiseStatus !== noise) return false;
       return true;
     });
   });
+
+  /** Data behind the Kontingent light: the year window the API compared. */
+  protected quotaBasis(r: AreaResultDto): string | null {
+    if (!r.statusYear) return null;
+    return this.translate.translate('basis.quota', { year: r.statusYear, from: r.statusYear - 2 }) ?? null;
+  }
+
+  /** Data behind the noise light: the current Zustand and the year. */
+  protected noiseBasis(r: AreaResultDto): string | null {
+    if (!r.noiseStatusBasis) return null;
+    return this.translate.translate('basis.noise', { state: r.noiseStatusBasis, year: r.statusYear ?? '' }) ?? null;
+  }
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
   override getData(): void {

@@ -26,6 +26,21 @@
     white-space: nowrap;
   }
 
+  &__action {
+    gap: slim.space(1);
+  }
+
+  &__active {
+    width: 100%;
+    @include slim.mq('md') {
+      width: auto;
+    }
+  }
+
+  &__help {
+    margin: slim.space(1) 0 0;
+  }
+
   // Sortable column header: inherits the th typography, shows the arrow only
   // for the active column.
   &__sort {

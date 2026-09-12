@@ -214,6 +214,31 @@ Zielbild zeigen; heute hängt im ERD `AREA_RECEIVER` am Schiessplatz und die Mat
 8. **Geometrie** – LV95-Punkte, Linien und Flächen als PostGIS-Spalten (slm 38); im SQLite/MariaDB-Prototyp als
    WKT-Text mit derselben Spaltenbezeichnung, damit die Migration nur den Typ wechselt.
 
+### 7.3 Umsetzung im Prototyp (12.09.2026)
+
+Die Punkte 1–8 sind umgesetzt (Details: [umsetzungsstand.md](umsetzungsstand.md), Abschnitt 2, und
+[../architecture/datenstruktur.md](../architecture/datenstruktur.md)); die Tabelle 7.1 beschreibt den Stand **vor**
+dem Umbau und bleibt als Begründung stehen. Abweichungen gegenüber dem Vorschlag 7.2:
+
+| Punkt 7.2 | Umsetzung | Abweichung |
+|---|---|---|
+| 1 Kombination trennen | `waffe`, `kaliber`, `waffenkategorie`, `waffe_kaliber_kombination`, `stellungsraum_kombination`, `kontingent` | Kontingent eigene Tabelle je Schiessplatz × Kombination (statt Spalte der Zuordnung); Einheit der Menge am Kaliber |
+| 2 Anlageteil je Zustand | `zustand_anlageteil` mit Pflicht-FK `(tenantId, schiessplatz_id, stellungsraum_id)`; Import bricht ab (`ImportAbortedException`, nichts geschrieben) | – |
+| 3 Quelle und Quelldaten | `schusslinie` → Anlageteil + Kombination (sonARMS-ID), `quelldaten_anhang9` (M1/M2, Zahl/Halbtage Wo/So), `quelldaten_anhang7` (Kategorie, Zahl/Halbtage); beide optional je Quelle (Abb. 43); `wlr_pegel` je Schusslinie × Immissionspunkt × Zeitgruppe | Halbtage stehen an den Quelldaten der Quelle, nicht separat je Zustand und Kategorie |
+| 4 Immissionspunkt/Gebäude | `gebaeude`, `immissionspunkt` je Zustand | kein übergeordneter `empfangspunkt`: der Vergleich über Zustände (5.12) läuft über die sonARMS-ID des Immissionspunkts |
+| 5 Perimeter/Metadaten | `untersuchungsperimeter`, `ausbreitungsberechnung` je Zustand; Metadaten der Lieferung an `immissionsberechnung`, Klassierung/Ref-Jahr am `zustand` | – |
+| 6 Geometrieklassen | eigene Tabellen `hindernis`, `hochblende`, `schuetzenhaus`, `isophonen`, `betroffene_analyse`, `massnahmen_punkt/flaeche/betrieb/ssf` | statt generischer `zustand_objekt`-Tabelle (Round-Trip mit typisierten Spalten) |
+| 7 Nutzung mit Positionen | `nutzung` + `nutzung_position` (Menge DECIMAL(12,3), Einheit) | – |
+| 8 Geometrie | Textspalten in SQLite | PostGIS erst nach der Typ-Map in `@app-galaxy/*` (validierung-technisch.md) |
+
+Zusätzlich aus dem Review: Composite-FKs `(tenantId, zustand_id, …)` auf allen Zustandsobjekten, Unique-Indizes für
+«ein aktueller / ein MGDM-Zustand je Schiessplatz», `noiseStatus`/`quotaStatus` nur als Cache (`AreaStatusService`),
+`berechnungslauf` mit Kopie der Nutzungen und Referenz-Snapshot (Feiertage, Zuordnungen, Kontingente, Fachentscheide),
+deutsche Spaltennamen in der Zustandsebene (Referenzstruktur und Nutzungen noch englisch). Nachweis: `apps/api/src/modules/calculation/state-isolation.spec.ts` (zwei Zustände mit
+gleichen externen IDs, unterschiedlicher Geometrie/Pegel; Änderung am neuen lässt alten Zustand und gespeicherten
+Lauf unverändert). Bewertung slm 42–45 damit: ✅ / ✅ / ✅ / ✅ (Import heute über JSON-Staging, kein FGDB-Parser).
+
+
 Reihenfolge mit dem geringsten Umbau: 1 und 7 (Stammdaten und Nutzung, betreffen Maske 5.11 und Seed), dann 2–3
 (Zustandsebene, Voraussetzung für Import 5.19, Verteilung 7.5 und Details 5.21), dann 4–6 mit der Karte.
 

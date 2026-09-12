@@ -135,7 +135,8 @@ Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel �
 | 3 | 3.2 Kartendienst fällt aus | S03 | klarer Fehlerzustand, Rest bedienbar; Stub ausgewiesen |
 
 Mathematische Randfälle laufen **nicht** durch den Browser: Kernel-Tests in `libs/shared/lsv` (grün) plus die
-vorbereiteten Service-Fälle `apps/api/src/modules/calculation/rechenfaelle.spec.ts` (`it.todo`, Soll aus `platz-s.md`):
+ausführbaren Service-Fälle `apps/api/src/modules/calculation/rechenfaelle.spec.ts` (25 grün, Soll aus `platz-s.md`;
+Nachweis mit Commit und Befunden: `docs/anforderungskatalog/nachweis-rechenfaelle.md`):
 11:00–13:00-Trennung, 2 h / 2 h 01, Werktag vs. Feiertag, ×10 (+10 dB A9 / +3 dB A7), 60.4 / 60.5 gegen 60
 (Beurteilungswert = ungerundeter Pegel auf ganze dB, Anzeige separat), Mittelung kleiner kg-Mengen, mehrere Nutzungen im selben Halbtag.
 

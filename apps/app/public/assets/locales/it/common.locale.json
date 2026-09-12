@@ -76,6 +76,7 @@
   },
   "shell": {
     "org": "armasuisse",
+    "demo": "Demo",
     "org_sub": "Ufficio federale dell'armamento",
     "workspace": "Area di lavoro",
     "main_menu": "Menu principale",
@@ -98,7 +99,14 @@
     "documentation": "Documentazione",
     "data": "Dati",
     "areas_count": "{{n}} piazze di tiro",
-    "user": "Utente"
+    "user": "Utente",
+    "area_group": "Piazze di tiro",
+    "area_pick": "Scegliere una piazza di tiro …",
+    "area_pick_hint": "Inserire numero o denominazione; poi appaiono panoramica, numero di colpi, dettagli e simulazione.",
+    "bookmarks": "Segnalibri",
+    "bookmarks_empty": "Nessun segnalibro. Scegliere una piazza di tiro e contrassegnarla con la stella.",
+    "bookmark_add": "Aggiungi ai segnalibri",
+    "bookmark_remove": "Rimuovi dai segnalibri"
   },
   "placeholder": {
     "title": "In preparazione",
@@ -109,6 +117,23 @@
     "warn": "Da verificare",
     "over": "Superato",
     "none": "Nessun dato",
-    "incomplete": "Non valutabile"
+    "incomplete": "Non valutabile",
+    "none_no_calculation": "Nessuna base di calcolo",
+    "none_no_usages": "Nessun utilizzo registrato",
+    "hint": {
+      "quota_ok": "Contingente: l’effettivo dell’anno e la media triennale per combinazione rientrano nel valore previsto dall’approvazione dei piani.",
+      "quota_warn": "Contingente: effettivo o media triennale sopra il valore previsto, ma al massimo 125 %.",
+      "quota_over": "Contingente: effettivo o media triennale oltre il 125 % del valore previsto.",
+      "quota_none": "Contingente: nessun semaforo, manca la base.",
+      "quota_incomplete": "Contingente: non valutabile.",
+      "noise_ok": "Rumore: tutti i punti di immissione dello stato attuale rispettano i valori limite con riserva.",
+      "noise_warn": "Rumore: almeno un punto di immissione è a meno di 5 dB dal valore limite.",
+      "noise_over": "Rumore: almeno un punto di immissione supera il valore limite.",
+      "noise_none": "Rumore: nessun semaforo, manca la base.",
+      "noise_incomplete": "Rumore: non valutabile – utilizzi senza sorgente o livello nello stato (regola O8); livelli parziali visibili nei dettagli.",
+      "no_calculation": "Nessuno stato di calcolo è contrassegnato come «attuale».",
+      "no_usages": "Nessun utilizzo registrato nell’anno e nei due anni precedenti. Nessuna registrazione non significa zero colpi.",
+      "no_quota": "Almeno una combinazione sparata non ha contingente: valore previsto 0, ogni colpo conta come superamento (B1 5.10)."
+    }
   }
 }

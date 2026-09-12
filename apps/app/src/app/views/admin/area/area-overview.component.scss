@@ -12,6 +12,14 @@
     }
   }
 
+  &__attention {
+    white-space: nowrap;
+  }
+
+  &__year-info {
+    margin: calc(-1 * slim.space(2)) 0 slim.space(3);
+  }
+
   &__table-wrap {
     border: 0;
     border-radius: 0;

@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Optional,
   Param,
   Patch,
   Post,
@@ -20,6 +21,7 @@ import { AppsRolesGuard, GetUserId, ReplayGuard } from '@app-galaxy/auth-api';
 import { GetTenantId, RulesGuard, TenantGuard } from '@app-galaxy/core-api';
 import { AreaScoped, TenantIdOnRequestGuard } from '../scope/area-scope.rule';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
+import { LogAction, LoggerService } from '../../../core/logger';
 import { AreaService } from '../area.service';
 import {
   AreaCreateDto,
@@ -49,7 +51,12 @@ import {
 )
 @AreaScoped()
 export class AdminAreaController {
-  constructor(private readonly areaService: AreaService) {}
+  constructor(
+    private readonly areaService: AreaService,
+    // The logbook comes from the global CoreLoggerModule (app.module.ts);
+    // service specs build AreaModule without it, so it is optional here.
+    @Optional() private readonly logger?: LoggerService,
+  ) {}
 
   @Get()
   @ApiOkResponse({ type: AreaResultDto, isArray: true })
@@ -78,11 +85,25 @@ export class AdminAreaController {
   @Get(':id')
   @ApiParam({ name: 'id', type: String })
   @ApiOkResponse({ type: AreaResultDto })
-  get(
+  async get(
     @GetTenantId() tenantId: string,
+    @GetUserId() userId: string,
     @Param('id') id: string,
   ): Promise<AreaResultDto> {
-    return this.areaService.get(tenantId, id);
+    const area = await this.areaService.get(tenantId, id);
+    // Logbuch (slm 56): who opened which Schiessplatz — a READ entry per
+    // detail view; the list (GET admin/area) is deliberately not logged.
+    await this.logger?.createLog({
+      tenantId,
+      userId,
+      section: 'AREA',
+      action: LogAction.READ,
+      refType: 'AREA',
+      refId: area.id,
+      message: area.coordinationSectionNo,
+      data: { name: area.name },
+    });
+    return area;
   }
 
   @Post()

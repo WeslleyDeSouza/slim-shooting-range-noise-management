@@ -5,8 +5,9 @@
   "export": "Exporter",
   "search_placeholder": "Rechercher une place de tir ou un n° de secteur de coordination",
   "filter": {
-    "all": "Statut : tous",
-    "attention": "Uniquement à traiter"
+    "all": "Tous",
+    "attention": "Uniquement à traiter",
+    "attention_info": "Uniquement les places de tir dont le feu contingent ou bruit indique « À vérifier » ou « Dépassé »."
   },
   "scope_lock": "Uniquement les places de tir autorisées",
   "count": "{{n}} places de tir",
@@ -26,7 +27,11 @@
     "overview": "Aperçu",
     "shots": "Nombre de coups",
     "details": "Détails",
-    "simulation": "Simulation"
+    "simulation": "Simulation",
+    "overview_hint": "Ouvrir l’aperçu de la place de tir",
+    "shots_hint": "Saisir et modifier les nombres de coups",
+    "details_hint": "Ouvrir l’évaluation par point d’immission (détails)",
+    "simulation_hint": "Ouvrir la simulation « que se passerait-il si »"
   },
   "legend": "Légende",
   "sample_note": "Données d'exemple · maquette UI · chapitres 5.8 / 5.9",
@@ -322,5 +327,18 @@
     "state_changed": "<b>{{n}}</b> valeurs modifiées · total <b>{{total}}</b> coups ({{pct}} % par rapport à l’actuel)",
     "reset": "Réinitialiser",
     "run": "Lancer la simulation"
+  },
+  "year_info": "L’année détermine les utilisations pour le contingent (réel de l’année et moyenne sur trois ans) et le bruit ; le feu bruit repose sur l’état de calcul marqué « actuel » de la place de tir.",
+  "basis": {
+    "quota": "Base : utilisations {{from}}–{{year}}",
+    "noise": "Base : état « {{state}} », utilisations {{year}}"
+  },
+  "legend_note": "Survolez un feu pour voir la raison et la base.",
+  "legend_hint": {
+    "ok": "Respecté : calculé, dans les valeurs limites ou cibles",
+    "warn": "À vérifier : moins de 5 dB de réserve ou jusqu’à 125 % du contingent",
+    "over": "Dépassé : valeur limite ou 125 % du contingent dépassés",
+    "incomplete": "Non évaluable : utilisations sans source ou niveau dans l’état (O8)",
+    "none": "Pas de données : pas de base de calcul ou aucune utilisation saisie"
   }
 }

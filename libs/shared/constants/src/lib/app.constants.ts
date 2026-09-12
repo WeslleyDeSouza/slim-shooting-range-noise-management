@@ -24,6 +24,44 @@ export const SLIM_ROLE_KEY = {
 } as const;
 export type SlimRoleKey = (typeof SLIM_ROLE_KEY)[keyof typeof SLIM_ROLE_KEY];
 
+/**
+ * App ids of this installation (galaxy `app_app.appId` rows). One app per
+ * sitemap area (docs/architecture/sitemap.md); ids start at 40 to stay clear
+ * of the galaxy defaults. The API guards its controllers with them
+ * (`AppsRolesGuard`, `apps/api/src/mocks/apps.mapping.ts` re-exports this
+ * enum as `API_APPS_MAPPING`) and the frontend shows only the menu entries
+ * the signed-in user has a right for (`core/access`).
+ */
+export enum SLIM_APP_ID {
+  /** Übersicht Schiessplätze (+ Übersicht / Schusszahlen / Details / Simulation) */
+  ADMIN_AREA = 40,
+  /** Datenverwaltung › Schiessplatz (Allgemein) */
+  ADMIN_DATA_AREA = 41,
+  /** Datenverwaltung › Schiessplatz › Berechnungen */
+  ADMIN_DATA_CALCULATIONS = 42,
+  /** Datenverwaltung › Waffen (Kaliber / Waffe / Waffenkategorie) */
+  ADMIN_DATA_WEAPONS = 43,
+  /** Datenverwaltung › MGDM Export */
+  ADMIN_DATA_MGDM_EXPORT = 44,
+  /** Datenverwaltung › Erweiterte Systemeinstellungen */
+  ADMIN_DATA_SYSTEM = 45,
+  /** Schiessplatz › Simulation (5.13) — own right, X for Interessent / Administrator */
+  ADMIN_AREA_SIMULATION = 46,
+  /** Schiessplatz › Immissionsberechnung durchführen und speichern (5.10) — Fachspezialist only */
+  ADMIN_AREA_CALCULATION_RUN = 47,
+  /** Datenverwaltung › Schiessplatz › Zuordnung Waffen (5.17) — W/R-O for the Schiessplatz-Verantwortlicher */
+  ADMIN_DATA_AREA_WEAPONS = 48,
+  /** Datenverwaltung › Logbuch (slm 56: Login-Logging und Auswertung) */
+  ADMIN_LOGS = 49,
+}
+
+/** Galaxy apps of the Benutzerverwaltung (`@app-galaxy/auth-api` API_APPS_MAPPING). */
+export enum GALAXY_APP_ID {
+  ADMIN_USER_LIST = 1,
+  ADMIN_ROLE_LIST = 2,
+  ADMIN_APPS_LIST = 4,
+}
+
 /** Keys of the two galaxy roles every tenant gets (roleId 1 = admin, 2 = default). */
 export const GALAXY_ROLE_KEY = {
   admin: 'galaxy_admin',

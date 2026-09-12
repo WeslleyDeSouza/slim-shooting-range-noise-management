@@ -6,7 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import { AREA_STATUS, AreaStatus } from '../entities';
+import { AREA_STATUS, AREA_STATUS_REASON, AreaStatus, AreaStatusReason } from '../entities';
 
 /** One area as the API returns it (the generated client model `AreaResultDto`). */
 export class AreaResultDto {
@@ -27,6 +27,18 @@ export class AreaResultDto {
 
   @ApiProperty({ enum: AREA_STATUS, description: 'Lärm-Ampel: schlechtester Immissionspunkt des gültigen Zustands im laufenden Jahr (Cache, nach jeder Änderung neu)' })
   noiseStatus: AreaStatus;
+
+  @ApiProperty({ enum: AREA_STATUS_REASON, nullable: true, type: String, description: 'Erklärung zur Kontingent-Ampel: no-usages (keine Nutzungen im Jahr und den zwei Vorjahren → none), no-quota (mindestens eine beschossene Kombination ohne Kontingent → Soll 0 nach B1 5.10, Ampel bleibt berechnet)' })
+  quotaStatusReason: AreaStatusReason | null;
+
+  @ApiProperty({ enum: AREA_STATUS_REASON, nullable: true, type: String, description: 'Warum die Lärm-Ampel «none» zeigt: no-calculation (kein Berechnungsstand), no-usages (Stand vorhanden, keine Nutzungen im Jahr)' })
+  noiseStatusReason: AreaStatusReason | null;
+
+  @ApiProperty({ nullable: true, type: String, description: 'Bezeichnung des gültigen Berechnungsstands, auf dem die Lärm-Ampel beruht' })
+  noiseStatusBasis: string | null;
+
+  @ApiProperty({ nullable: true, type: Number, description: 'Kalenderjahr der Ampeln (laufendes Jahr beim letzten Neuberechnen)' })
+  statusYear: number | null;
 
   @ApiProperty({ description: 'Gesamtbeurteilung nach Anhang 7 (5.16)' })
   annex7Overall: boolean;

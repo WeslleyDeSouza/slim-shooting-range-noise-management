@@ -76,6 +76,7 @@
   },
   "shell": {
     "org": "armasuisse",
+    "demo": "Demo",
     "org_sub": "Federal Office for Defence Procurement",
     "workspace": "Workspace",
     "main_menu": "Main menu",
@@ -98,7 +99,14 @@
     "documentation": "Documentation",
     "data": "Data",
     "areas_count": "{{n}} shooting ranges",
-    "user": "User"
+    "user": "User",
+    "area_group": "Shooting ranges",
+    "area_pick": "Choose a range …",
+    "area_pick_hint": "Type the number or name; overview, shot counts, details and simulation follow.",
+    "bookmarks": "Bookmarks",
+    "bookmarks_empty": "No bookmarks yet. Choose a range and mark it with the star.",
+    "bookmark_add": "Add bookmark",
+    "bookmark_remove": "Remove bookmark"
   },
   "placeholder": {
     "title": "In preparation",
@@ -109,6 +117,23 @@
     "warn": "To review",
     "over": "Exceeded",
     "none": "No data",
-    "incomplete": "Not assessable"
+    "incomplete": "Not assessable",
+    "none_no_calculation": "No calculation basis",
+    "none_no_usages": "No usages recorded",
+    "hint": {
+      "quota_ok": "Quota: the year’s actual and the three-year mean per combination are within the target of the planning approval.",
+      "quota_warn": "Quota: actual or three-year mean above the target, but at most 125 %.",
+      "quota_over": "Quota: actual or three-year mean above 125 % of the target.",
+      "quota_none": "Quota: no light, the basis is missing.",
+      "quota_incomplete": "Quota: not assessable.",
+      "noise_ok": "Noise: every immission point of the current state meets the limits with reserve.",
+      "noise_warn": "Noise: at least one immission point is less than 5 dB below the limit.",
+      "noise_over": "Noise: at least one immission point exceeds the limit.",
+      "noise_none": "Noise: no light, the basis is missing.",
+      "noise_incomplete": "Noise: not assessable – usages without a source or level in the state (rule O8); partial levels visible in the details.",
+      "no_calculation": "No calculation state is marked as «current».",
+      "no_usages": "No usages recorded in the year and the two years before. No entries does not mean zero shots.",
+      "no_quota": "At least one shot combination has no quota: target 0, every shot counts as an exceedance (B1 5.10)."
+    }
   }
 }

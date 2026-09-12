@@ -37,11 +37,11 @@
   "welcome": {
     "tag": "Demo version",
     "title": "Welcome to SLIM",
-    "lead": "Discover how SLIM brings shooting range usages and noise immissions together in one clear view.",
-    "explore": "Explore an example range, look at usage data and compare calculation results.",
-    "prototype": "You are using a prototype with prepared example data. Some functions are still under development.",
-    "disclaimer": "The results shown are for demonstration and are not approved technical assessments.",
-    "start": "Start demo",
-    "later": "Later"
+    "lead": "For every military shooting range, SLIM shows how much was fired and whether the noise limits at the surrounding buildings are met.",
+    "explore": "Explore an example range, check usage data and compare noise assessments.",
+    "prototype": "This demo runs on prepared example data. Some areas, such as data management, are still placeholders.",
+    "disclaimer": "The results are for illustration only and are not technically approved assessments.",
+    "start": "Open example range",
+    "later": "Close"
   }
 }

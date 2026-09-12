@@ -5,8 +5,9 @@
   "export": "Exportieren",
   "search_placeholder": "Schiessplatz oder Koordinationsabschnitt-Nr. suchen",
   "filter": {
-    "all": "Status: Alle",
-    "attention": "Nur Handlungsbedarf"
+    "all": "Alle",
+    "attention": "Nur Handlungsbedarf",
+    "attention_info": "Nur Schiessplätze, deren Kontingent- oder Lärmampel «Zu prüfen» oder «Überschritten» zeigt."
   },
   "scope_lock": "Nur berechtigte Schiessplätze",
   "count": "{{n}} Schiessplätze",
@@ -26,7 +27,11 @@
     "overview": "Übersicht",
     "shots": "Schusszahlen",
     "details": "Details",
-    "simulation": "Simulation"
+    "simulation": "Simulation",
+    "overview_hint": "Übersicht des Schiessplatzes öffnen",
+    "shots_hint": "Schusszahlen erfassen und bearbeiten",
+    "details_hint": "Beurteilung je Immissionspunkt öffnen (Details)",
+    "simulation_hint": "Simulation «was wäre wenn» öffnen"
   },
   "legend": "Legende",
   "sample_note": "Beispieldaten · Entwurf UI · Kapitel 5.8 / 5.9",
@@ -322,5 +327,18 @@
     "state_changed": "<b>{{n}}</b> Werte geändert · Total <b>{{total}}</b> Schuss ({{pct}} % gegenüber Ist)",
     "reset": "Zurücksetzen",
     "run": "Simulation ausführen"
+  },
+  "year_info": "Das Jahr bestimmt die Nutzungen für Kontingent (Ist des Jahres und Mittel der drei Jahre) und Lärmbelastung; die Lärmampel beruht auf dem als «aktuell» markierten Berechnungsstand des Schiessplatzes.",
+  "basis": {
+    "quota": "Grundlage: Nutzungen {{from}}–{{year}}",
+    "noise": "Grundlage: Zustand «{{state}}», Nutzungen {{year}}"
+  },
+  "legend_note": "Fahren Sie über eine Ampel, um Grund und Grundlage zu sehen.",
+  "legend_hint": {
+    "ok": "Eingehalten: berechnet, innerhalb der Grenz- bzw. Sollwerte",
+    "warn": "Zu prüfen: weniger als 5 dB Reserve bzw. bis 125 % des Kontingents",
+    "over": "Überschritten: Grenzwert bzw. 125 % des Kontingents überschritten",
+    "incomplete": "Nicht beurteilbar: Nutzungen ohne Quelle oder Pegel im Zustand (O8)",
+    "none": "Keine Daten: keine Berechnungsgrundlage oder keine Nutzungen erfasst"
   }
 }

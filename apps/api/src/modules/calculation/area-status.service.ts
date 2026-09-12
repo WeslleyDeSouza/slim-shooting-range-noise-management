@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { quotaState, worstState } from '@slim/lsv';
-import { AreaEntity, AreaQuotaEntity, AreaStatus } from '../area/entities';
+import { AreaEntity, AreaQuotaEntity, AreaStatus, AreaStatusReason } from '../area/entities';
 import { UsageService } from '../usage/usage.service';
 import { AssessmentService } from './assessment.service';
 
@@ -30,10 +30,18 @@ export class AreaStatusService {
     private readonly usages: UsageService,
   ) {}
 
-  async refresh(tenantId: string, areaId: string, now = new Date()): Promise<{ quotaStatus: AreaStatus; noiseStatus: AreaStatus }> {
-    const [noiseStatus, quotaStatus] = await Promise.all([this.noise(tenantId, areaId, now), this.quota(tenantId, areaId, now)]);
-    await this.areas.update({ tenantId, id: areaId }, { quotaStatus, noiseStatus });
-    return { quotaStatus, noiseStatus };
+  async refresh(tenantId: string, areaId: string, now = new Date()): Promise<AreaStatusResult> {
+    const [noise, quota] = await Promise.all([this.noise(tenantId, areaId, now), this.quota(tenantId, areaId, now)]);
+    const result: AreaStatusResult = {
+      quotaStatus: quota.status,
+      quotaStatusReason: quota.reason,
+      noiseStatus: noise.status,
+      noiseStatusReason: noise.reason,
+      noiseStatusBasis: noise.basis,
+      statusYear: now.getFullYear(),
+    };
+    await this.areas.update({ tenantId, id: areaId }, result);
+    return result;
   }
 
   async refreshAll(tenantId: string, now = new Date()): Promise<void> {
@@ -47,14 +55,27 @@ export class AreaStatusService {
     }
   }
 
-  private async noise(tenantId: string, areaId: string, now: Date): Promise<AreaStatus> {
+  /**
+   * «Keine Daten» said precisely: no state marked «aktuell» (the assessment
+   * page may fall back to the newest state, the overview light never does —
+   * B1 5.9/5.18), or a current state but no usages in the year.
+   */
+  private async noise(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason & { basis: string | null }> {
     const result = await this.assessment.assess(tenantId, areaId, { now });
-    if (!result.calculation || !result.receivers.length) return 'none';
-    return worstState(result.receivers.map((r) => r.state));
+    if (!result.calculation?.isCurrent || !result.receivers.length) return { status: 'none', reason: 'no-calculation', basis: null };
+    const basis = result.calculation.name;
+    if (!result.operatingData.length) return { status: 'none', reason: 'no-usages', basis };
+    return { status: worstState(result.receivers.map((r) => r.state)), reason: null, basis };
   }
 
-  /** Kontingent (5.10): Ist of the current year and Ø over the year + two before, per combination. */
-  private async quota(tenantId: string, areaId: string, now: Date): Promise<AreaStatus> {
+  /**
+   * Kontingent (5.10): Ist of the current year and Ø over the year + two
+   * before, per combination. Green is only ever a computed result: without
+   * any usage in that window there is nothing to compare («no-usages», grey).
+   * A shot combination without Kontingent counts with Soll 0 (B1 5.10) — red
+   * at the first shot — and the light carries «no-quota» so the UI can say why.
+   */
+  private async quota(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason> {
     const year = now.getFullYear();
     const [quotas, current, previous1, previous2] = await Promise.all([
       this.quotas.find({ where: { tenantId, areaId } }),
@@ -70,14 +91,30 @@ export class AreaStatusService {
     const ist = sumBy(current);
     const three = sumBy([...current, ...previous1, ...previous2]);
     const target = new Map(quotas.map((q) => [q.combinationId, Number(q.shotsPerYear)]));
-    const combinations = new Set([...ist.keys(), ...three.keys(), ...target.keys()]);
-    if (!combinations.size) return 'none';
+    if (!three.size) return { status: 'none', reason: 'no-usages' };
+    const combinations = new Set([...three.keys(), ...target.keys()]);
     const states: AreaStatus[] = [];
+    let withoutQuota = false;
     for (const id of combinations) {
-      const soll = target.get(id) ?? 0; // no Kontingent → Soll 0 (B1 5.10)
+      const soll = target.get(id) ?? 0; // no Kontingent for this combination → Soll 0 (B1 5.10)
+      if (!target.has(id) && (three.get(id) ?? 0) > 0) withoutQuota = true;
       states.push(quotaState(ist.get(id) ?? 0, soll));
       states.push(quotaState((three.get(id) ?? 0) / 3, soll));
     }
-    return worstState(states);
+    return { status: worstState(states), reason: withoutQuota ? 'no-quota' : null };
   }
+}
+
+interface StatusWithReason {
+  status: AreaStatus;
+  reason: AreaStatusReason | null;
+}
+
+export interface AreaStatusResult {
+  quotaStatus: AreaStatus;
+  quotaStatusReason: AreaStatusReason | null;
+  noiseStatus: AreaStatus;
+  noiseStatusReason: AreaStatusReason | null;
+  noiseStatusBasis: string | null;
+  statusYear: number;
 }

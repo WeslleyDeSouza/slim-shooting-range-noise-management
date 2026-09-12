@@ -57,7 +57,7 @@ Konventionen (wie ELO / alco-map):
 | Schiessplatz – Schusszahlen                            | `/admin/area/:id/shots`                                                                                   | `views/admin/area/shots`                   | `area`  | `usage` (`admin/area/:id/usage/*`)       | 40                           | umgesetzt   |
 | Schiessplatz – Details                                 | `/admin/area/:id/details`                                                                                 | `views/admin/area/details`                 | `area`  | `calculation` (`…/calculation/assessment`) | 40                         | umgesetzt   |
 | Schiessplatz – Simulation                              | `/admin/area/:id/simulation`                                                                              | `views/admin/area/simulation`              | `area`  | `calculation` (`…/calculation/simulation`) | 40                         | umgesetzt   |
-| Datenverwaltung › Schiessplatz › Allgemein › Übersicht | `/admin/data-management/area/overview`                                                                    | `views/admin/data-management/area`         | `admin` | `area` (CRUD)                            | 41 `ADMIN_DATA_AREA`         | umgesetzt (5.14: Suche inkl. Sachplan-Nr., sortierbare Tabelle, Absprünge; kein «Neuer Schiessplatz») |
+| Datenverwaltung › Schiessplatz › «Schiessplätze verwalten» | `/admin/data-management/area/overview`                                                                    | `views/admin/data-management/area`         | `admin` | `area` (CRUD)                            | 41 `ADMIN_DATA_AREA`         | umgesetzt (5.14: Suche inkl. Sachplan-Nr., Filter Aktive/Inaktive/Alle, sortierbare Tabelle, Aktionen Allgemein / Waffen-Zuordnung / Berechnungen; kein «Neuer Schiessplatz») |
 | … › Allgemein / Zuordnung Waffen / Berechnungen eines Schiessplatzes | `/admin/data-management/area/:areaId/{master-data,weapon-assignment,calculations}` (Ziele der Absprünge aus 5.14, `APP_ROUTES.admin.dataManagement.area.*Of(id)`) | dito | `admin` | `area` | 41 / 42 | Platzhalter |
 | … › Stammdaten                                         | `/admin/data-management/area/master-data`                                                                 | dito                                       | `admin` | `area`                                   | 41                           | Platzhalter |
 | … › Zuordnung Waffen                                   | `/admin/data-management/area/weapon-assignment`                                                           | dito                                       | `admin` | `area-weapon`                            | 41                           | Platzhalter |
@@ -87,8 +87,12 @@ Aus dem Mock `_mocks/home/index.html` und dem ELO-Admin-Shell:
   Sprache DE/FR/IT/EN (Desktop im Kopf, Mobile im Hauptmenü), Hell/Dunkel,
   Hauptmenü (Hilfe & Kontakt, Applikation/Version), Benutzermenü (Konto, Einstellungen,
   Mandant wechseln, Abmelden).
-- **Seitenleiste** (Desktop ≥ 1024 px): Arbeitsbereich → Startseite, Übersicht Schiessplätze;
-  Datenverwaltung → Schiessplatz, Waffen, Benutzer, MGDM Export, Erweiterte Systemeinstellungen.
+- **Seitenleiste** (Desktop ≥ 1024 px, kompakt, Gruppen einklappbar, Zustand je Browser): oben die Marke
+  (Logo, SLIM + «Demo», Untertitel) auf Topbar-Höhe; Arbeitsbereich → Startseite, Lesezeichen (mit Stern
+  markierte Schiessplätze); Schiessplätze → Übersicht Schiessplätze, Auswahl mit Autocomplete → Übersicht /
+  Schusszahlen / Details / Simulation des gewählten Platzes (folgt der Route); Datenverwaltung → Schiessplatz,
+  Waffen, MGDM Export, Erweiterte Systemeinstellungen; Benutzerverwaltung → Benutzer, Rollen, Logbuch, Apps.
+  Einträge erscheinen nur mit App-Recht der Sitzung (`core/access/access.facade.ts`, `SLIM_APP_ID`).
 - **Tabbar** (Mobile): Start, Schiessplatz, Daten, Benutzer.
 
 ## Seiten

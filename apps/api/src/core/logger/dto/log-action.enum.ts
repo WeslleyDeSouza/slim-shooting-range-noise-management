@@ -7,6 +7,7 @@ export enum LogAction {
   BACKUP = 'BACKUP',
   MAIL = 'MAIL',
   GET = 'GET', // Lists
+  READ = 'READ', // One record opened (e.g. a Schiessplatz)
   AUTH = 'AUTH',
   IMPORT = 'IMPORT',
   //

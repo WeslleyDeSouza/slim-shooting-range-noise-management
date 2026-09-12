@@ -5,8 +5,9 @@
   "export": "Esporta",
   "search_placeholder": "Cerca piazza di tiro o n. settore di coordinamento",
   "filter": {
-    "all": "Stato: tutti",
-    "attention": "Solo da trattare"
+    "all": "Tutti",
+    "attention": "Solo da trattare",
+    "attention_info": "Solo piazze di tiro il cui semaforo contingente o rumore indica «Da verificare» o «Superato»."
   },
   "scope_lock": "Solo piazze di tiro autorizzate",
   "count": "{{n}} piazze di tiro",
@@ -26,7 +27,11 @@
     "overview": "Panoramica",
     "shots": "Numero di colpi",
     "details": "Dettagli",
-    "simulation": "Simulazione"
+    "simulation": "Simulazione",
+    "overview_hint": "Aprire la panoramica della piazza di tiro",
+    "shots_hint": "Registrare e modificare il numero di colpi",
+    "details_hint": "Aprire la valutazione per punto di immissione (dettagli)",
+    "simulation_hint": "Aprire la simulazione «cosa succederebbe se»"
   },
   "legend": "Legenda",
   "sample_note": "Dati di esempio · bozza UI · capitoli 5.8 / 5.9",
@@ -322,5 +327,18 @@
     "state_changed": "<b>{{n}}</b> valori modificati · totale <b>{{total}}</b> colpi ({{pct}} % rispetto all’attuale)",
     "reset": "Ripristinare",
     "run": "Eseguire la simulazione"
+  },
+  "year_info": "L’anno determina gli utilizzi per il contingente (effettivo dell’anno e media triennale) e il rumore; il semaforo rumore si basa sullo stato di calcolo contrassegnato come «attuale» della piazza di tiro.",
+  "basis": {
+    "quota": "Base: utilizzi {{from}}–{{year}}",
+    "noise": "Base: stato «{{state}}», utilizzi {{year}}"
+  },
+  "legend_note": "Passare sopra un semaforo per vedere motivo e base.",
+  "legend_hint": {
+    "ok": "Rispettato: calcolato, entro i valori limite o previsti",
+    "warn": "Da verificare: meno di 5 dB di riserva o fino al 125 % del contingente",
+    "over": "Superato: valore limite o 125 % del contingente superati",
+    "incomplete": "Non valutabile: utilizzi senza sorgente o livello nello stato (O8)",
+    "none": "Nessun dato: nessuna base di calcolo o nessun utilizzo registrato"
   }
 }

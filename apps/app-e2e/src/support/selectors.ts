@@ -12,6 +12,19 @@ export const LOGIN = {
   tenant: '.auth-tenant',
 } as const;
 
+/**
+ * Welcome banner of the demo (views/admin/home/welcome-dialog.component.ts):
+ * shown on the entry page until it is dismissed for the browser session
+ * (sessionStorage, not part of the Playwright storage state).
+ */
+export const WELCOME = {
+  dialog: '[data-testid="welcome-dialog"]',
+  close: '[data-testid="welcome-close"]',
+  start: '[data-testid="welcome-start"]',
+  /** sessionStorage key the dialog sets when dismissed. */
+  seenKey: 'slim.welcome.seen',
+} as const;
+
 /** localStorage key auth-ui writes once the API accepted the credentials. */
 export const SESSION_KEY = 'app.session';
 

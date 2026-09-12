@@ -76,6 +76,7 @@
   },
   "shell": {
     "org": "armasuisse",
+    "demo": "Démo",
     "org_sub": "Office fédéral de l'armement",
     "workspace": "Espace de travail",
     "main_menu": "Menu principal",
@@ -98,7 +99,14 @@
     "documentation": "Documentation",
     "data": "Données",
     "areas_count": "{{n}} places de tir",
-    "user": "Utilisateur"
+    "user": "Utilisateur",
+    "area_group": "Places de tir",
+    "area_pick": "Choisir une place de tir …",
+    "area_pick_hint": "Saisir le numéro ou la désignation ; l’aperçu, les nombres de coups, les détails et la simulation apparaissent ensuite.",
+    "bookmarks": "Favoris",
+    "bookmarks_empty": "Pas encore de favoris. Choisissez une place de tir et marquez-la avec l’étoile.",
+    "bookmark_add": "Ajouter aux favoris",
+    "bookmark_remove": "Retirer des favoris"
   },
   "placeholder": {
     "title": "En préparation",
@@ -109,6 +117,23 @@
     "warn": "À vérifier",
     "over": "Dépassé",
     "none": "Pas de données",
-    "incomplete": "Non évaluable"
+    "incomplete": "Non évaluable",
+    "none_no_calculation": "Pas de base de calcul",
+    "none_no_usages": "Aucune utilisation saisie",
+    "hint": {
+      "quota_ok": "Contingent : le réel de l’année et la moyenne sur trois ans par combinaison restent dans la valeur cible de l’approbation des plans.",
+      "quota_warn": "Contingent : réel ou moyenne sur trois ans au-dessus de la cible, mais au plus 125 %.",
+      "quota_over": "Contingent : réel ou moyenne sur trois ans au-dessus de 125 % de la cible.",
+      "quota_none": "Contingent : pas de feu, la base manque.",
+      "quota_incomplete": "Contingent : non évaluable.",
+      "noise_ok": "Bruit : tous les points d’immission de l’état actuel respectent les valeurs limites avec réserve.",
+      "noise_warn": "Bruit : au moins un point d’immission est à moins de 5 dB de la valeur limite.",
+      "noise_over": "Bruit : au moins un point d’immission dépasse la valeur limite.",
+      "noise_none": "Bruit : pas de feu, la base manque.",
+      "noise_incomplete": "Bruit : non évaluable – utilisations sans source ou sans niveau dans l’état (règle O8) ; niveaux partiels visibles dans les détails.",
+      "no_calculation": "Aucun état de calcul n’est marqué « actuel ».",
+      "no_usages": "Aucune utilisation saisie pour l’année et les deux années précédentes. Aucune entrée ne signifie pas zéro coup.",
+      "no_quota": "Au moins une combinaison tirée n’a pas de contingent : cible 0, chaque coup compte comme dépassement (B1 5.10)."
+    }
   }
 }

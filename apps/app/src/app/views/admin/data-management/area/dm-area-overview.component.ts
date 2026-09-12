@@ -13,16 +13,20 @@ import type { AreaResultDto } from '@ui-slim/apiClient';
 import { AreaFacade } from '../../../../core/area/area.facade';
 
 type SortKey = 'coordinationSectionNo' | 'sectoralPlanNo' | 'name';
+type ActiveFilter = 'active' | 'inactive' | 'all';
 
 const I18N = 'admin.dm_area';
 
 /**
- * 5.14 Datenverwaltung › Schiessplatz › Übersicht (mock
- * _mocks/data-management/area.index.html, B1 slm 13): search over name,
- * Koordinationsabschnitt-Nr. and Sachplan-Nr., sortable table, jumps to
- * Allgemein (5.15/5.16), Zuordnung Waffen (5.17) and Berechnungen (5.18).
- * No «Neuer Schiessplatz» — ranges come from the import / DB administration.
- * Data: AreaFacade (already scoped to the user's ranges by the API).
+ * 5.14 Datenverwaltung › Schiessplatz › «Schiessplätze verwalten» (mock
+ * _mocks/data-management/area.index.html, B1 slm 13): master data, not the
+ * assessment overview with the lights (5.9). Search over name,
+ * Koordinationsabschnitt-Nr. and Sachplan-Nr., active/inactive filter (historic
+ * ranges stay findable), sortable table, actions Allgemein (5.15/5.16),
+ * Waffen-Zuordnung (5.17) and Berechnungen (5.18). No «Neuer Schiessplatz» —
+ * ranges are created by the database administration (the calculation import
+ * never creates Stellungsräume or ranges, slm 45). Data: AreaFacade (already
+ * scoped to the user's ranges by the API).
  */
 @Component({
   selector: 'app-dm-area-overview',
@@ -52,6 +56,9 @@ const I18N = 'admin.dm_area';
           <p class="slim-page__subtitle">
             {{ prefix + '.subtitle' | translate }}
           </p>
+          <p class="slim-text--muted slim-text--xs dma__help" data-testid="dma-no-create">
+            {{ prefix + '.no_create' | translate }}
+          </p>
         </div>
       </div>
 
@@ -60,10 +67,6 @@ const I18N = 'admin.dm_area';
           <div class="slim-alert__body">{{ message }}</div>
         </div>
       }
-
-      <div class="slim-alert slim-alert--info slim-u-mb-4" data-testid="dma-no-create">
-        <div class="slim-alert__body">{{ prefix + '.no_create' | translate }}</div>
-      </div>
 
       <section class="slim-card slim-card--bleed">
         <div class="slim-toolbar">
@@ -81,6 +84,19 @@ const I18N = 'admin.dm_area';
               (input)="query.set($any($event.target).value)"
             />
           </div>
+          <label class="slim-filter dma__active">
+            {{ prefix + '.filter_active' | translate }}
+            <select
+              class="slim-select"
+              [value]="active()"
+              (change)="active.set($any($event.target).value)"
+              data-testid="dma-filter-active"
+            >
+              <option value="active">{{ prefix + '.filter_active_only' | translate }}</option>
+              <option value="inactive">{{ prefix + '.filter_inactive_only' | translate }}</option>
+              <option value="all">{{ prefix + '.filter_all' | translate }}</option>
+            </select>
+          </label>
           <div class="slim-toolbar__meta">
             <span data-testid="dma-count">{{
               prefix + '.count'
@@ -131,6 +147,14 @@ const I18N = 'admin.dm_area';
                   [attr.data-testid]="'dma-row-' + r.id"
                   [routerLink]="routes.admin.dataManagement.area.masterDataOf(r.id)"
                 >
+                  <td [attr.data-label]="prefix + '.col_name' | translate">
+                    <a
+                      class="dma__name"
+                      [routerLink]="routes.admin.dataManagement.area.masterDataOf(r.id)"
+                      [attr.title]="prefix + '.jump_general_hint' | translate"
+                      >{{ r.name }}</a
+                    >
+                  </td>
                   <td
                     [attr.data-label]="prefix + '.col_ka' | translate"
                     class="slim-table__cell--num dma__num"
@@ -143,13 +167,6 @@ const I18N = 'admin.dm_area';
                     [class.slim-text--muted]="!r.sectoralPlanNo"
                   >
                     {{ r.sectoralPlanNo ?? '—' }}
-                  </td>
-                  <td [attr.data-label]="prefix + '.col_name' | translate">
-                    <a
-                      class="dma__name"
-                      [routerLink]="routes.admin.dataManagement.area.masterDataOf(r.id)"
-                      >{{ r.name }}</a
-                    >
                   </td>
                   <td [attr.data-label]="prefix + '.col_active' | translate">
                     <span
@@ -165,16 +182,17 @@ const I18N = 'admin.dm_area';
                     <div class="slim-row-actions dma__actions">
                       @for (action of rowActions; track action.id) {
                         <a
-                          class="slim-btn slim-btn--ghost slim-btn--icon slim-btn--sm"
+                          class="slim-btn slim-btn--ghost slim-btn--sm dma__action"
                           [routerLink]="action.link(r.id)"
-                          [attr.title]="prefix + '.' + action.key | translate"
-                          [attr.aria-label]="prefix + '.' + action.key | translate"
+                          [attr.title]="prefix + '.' + action.key + '_hint' | translate"
+                          [attr.aria-label]="prefix + '.' + action.key + '_hint' | translate"
                           [attr.data-testid]="'dma-action-' + action.id"
                           (click)="$event.stopPropagation()"
                         >
                           <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                             <path [attr.d]="action.icon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                           </svg>
+                          <span class="slim-btn__label">{{ prefix + '.' + action.key | translate }}</span>
                         </a>
                       }
                     </div>
@@ -208,13 +226,14 @@ export class DmAreaOverviewComponent extends ComponentBase {
   protected readonly prefix = I18N;
   protected readonly routes = APP_ROUTES;
 
+  /** Bezeichnung first: the eye searches by name, the numbers confirm. */
   protected readonly columns: { key: SortKey; label: string }[] = [
+    { key: 'name', label: 'col_name' },
     { key: 'coordinationSectionNo', label: 'col_ka' },
     { key: 'sectoralPlanNo', label: 'col_sp' },
-    { key: 'name', label: 'col_name' },
   ];
 
-  /** Jumps of 5.14: Allgemein (5.15/5.16), Zuordnung Waffen (5.17), Berechnungen (5.18). */
+  /** Actions of 5.14: Allgemein (5.15/5.16), Waffen-Zuordnung (5.17), Berechnungen (5.18). */
   protected readonly rowActions = [
     { id: 'general', key: 'jump_general', link: APP_ROUTES.admin.dataManagement.area.masterDataOf, icon: ICON.layers },
     { id: 'weapons', key: 'jump_weapons', link: APP_ROUTES.admin.dataManagement.area.weaponAssignmentOf, icon: ICON.weapon },
@@ -222,6 +241,8 @@ export class DmAreaOverviewComponent extends ComponentBase {
   ];
 
   protected readonly query = signal('');
+  /** Default: active ranges; historic ones stay reachable via «Inaktive» / «Alle». */
+  protected readonly active = signal<ActiveFilter>('active');
   protected readonly sortKey = signal<SortKey>('name');
   protected readonly sortAsc = signal(true);
 
@@ -231,9 +252,11 @@ export class DmAreaOverviewComponent extends ComponentBase {
 
   protected readonly filtered = computed<AreaResultDto[]>(() => {
     const q = this.query().trim().toLowerCase();
+    const active = this.active();
     const key = this.sortKey();
     const dir = this.sortAsc() ? 1 : -1;
     return this.all()
+      .filter((r) => active === 'all' || r.enabled === (active === 'active'))
       .filter(
         (r) =>
           !q ||

@@ -44,11 +44,14 @@ describe('the SLIM Demo dataset', () => {
     expect(dataset.areas).toHaveLength(9);
     expect(geissalp.coordinationSectionNo).toBe('1104.020');
     expect(geissalp.rooms).toHaveLength(14);
-    expect(geissalp.weapons).toHaveLength(16);
-    expect(geissalp.receivers.map((r) => r.code)).toEqual(['E1', 'E2', 'E3', 'E4', 'E5', 'E6']);
-    expect(geissalp.calculations.map((c) => c.isCurrent)).toEqual([true, false]);
-    expect(geissalp.calculations.filter((c) => c.isMgdm)).toHaveLength(1);
+    expect(geissalp.roomCombinations).toHaveLength(17);
+    expect(dataset.masterData.combinations.length).toBeGreaterThan(10);
+    const states = geissalp.calculations.flatMap((c) => c.states);
+    expect(states.map((s) => s.isCurrent)).toEqual([true, false]);
+    expect(states.filter((s) => s.isMgdm)).toHaveLength(1);
+    for (const s of states) expect(s.immissionPoints.map((r) => r.code)).toEqual(['E1', 'E2', 'E3', 'E4', 'E5', 'E6']);
     expect(geissalp.usages.length).toBeGreaterThan(60);
+    expect(dataset.holidays?.length).toBeGreaterThan(3);
   });
 
   it('rolls every usage date to the seed year', () => {
@@ -58,32 +61,51 @@ describe('the SLIM Demo dataset', () => {
     expect([...years].sort()).toEqual(['2025', '2026']);
   });
 
-  it('references only rooms, sources and receivers it defines', () => {
+  it('references only rooms, combinations, plant parts, sources and points it defines (B1 Kap. 10)', () => {
+    const combinations = new Map(dataset.masterData.combinations.map((c) => [c.key, c]));
+    const weapons = new Map(dataset.masterData.weapons.map((w) => [w.key, w]));
     for (const area of dataset.areas) {
       const rooms = new Set(area.rooms.map((r) => r.name));
-      const sources = new Map(area.weapons.map((w) => [w.sourceId, w]));
-      const receivers = new Set(area.receivers.map((r) => r.code));
-      expect(sources.size, `${area.name}: duplicate sourceId`).toBe(area.weapons.length);
-      for (const w of area.weapons) expect(rooms.has(w.room), `${area.name}: weapon room ${w.room}`).toBe(true);
+      const allowed = new Set(area.roomCombinations.map((rc) => `${rc.room}|${rc.combination}`));
+      for (const rc of area.roomCombinations) {
+        expect(rooms.has(rc.room), `${area.name}: assignment room ${rc.room}`).toBe(true);
+        expect(combinations.has(rc.combination), `${area.name}: assignment combination ${rc.combination}`).toBe(true);
+      }
       for (const u of area.usages) {
         expect(rooms.has(u.room), `${area.name}: usage room ${u.room}`).toBe(true);
-        const weapon = sources.get(u.source);
-        expect(weapon, `${area.name}: usage source ${u.source}`).toBeDefined();
-        // The usage's room must be the room of the combination (5.17).
-        expect(weapon?.room).toBe(u.room);
+        expect(u.positions.length).toBeGreaterThan(0);
+        for (const p of u.positions) {
+          // The position's combination must be allowed for the usage's room (5.17).
+          expect(allowed.has(`${u.room}|${p.combination}`), `${area.name}: ${u.room} × ${p.combination}`).toBe(true);
+          expect(p.quantity).toBeGreaterThan(0);
+          const weapon = weapons.get(combinations.get(p.combination)?.weapon as string);
+          if (u.usageType === 'civil' || u.usageType === 'sat') expect(weapon?.annex7Category).not.toBeNull();
+        }
         expect(parseMinutes(u.to)).toBeGreaterThan(parseMinutes(u.from));
         expect(() => weekday(u.date)).not.toThrow();
-        expect(u.shots).toBeGreaterThan(0);
-        if (u.usageType === 'civil' || u.usageType === 'sat') expect(weapon?.annex7Category).not.toBeNull();
+        if (u.usageType === 'civil') expect(u.civilUsageKind).toBeTruthy();
+        // Usages reference no state and no source (slm 44).
+        expect(Object.keys(u)).not.toContain('source');
       }
       for (const c of area.calculations) {
-        for (const row of c.wlr) {
-          expect(receivers.has(row.receiver), `${c.name}: receiver ${row.receiver}`).toBe(true);
-          expect(sources.has(row.source), `${c.name}: source ${row.source}`).toBe(true);
+        for (const s of c.states) {
+          const parts = new Set(s.plantParts.map((p) => p.coordinationSectionNo));
+          const sources = new Set(s.sources.map((x) => x.sourceId));
+          const points = new Set(s.immissionPoints.map((p) => p.sonarmsId));
+          expect(sources.size, `${s.name}: duplicate sourceId`).toBe(s.sources.length);
+          for (const p of s.plantParts) expect(rooms.has(p.room), `${s.name}: plant part room ${p.room}`).toBe(true);
+          for (const src of s.sources) {
+            expect(parts.has(src.plantPart), `${s.name}: source plant part ${src.plantPart}`).toBe(true);
+            expect(dataset.masterData.combinations.some((k) => k.sonarmsId === src.weaponSystem), `${s.name}: weapon system ${src.weaponSystem}`).toBe(true);
+          }
+          for (const row of s.wlr) {
+            expect(points.has(row.point), `${s.name}: point ${row.point}`).toBe(true);
+            expect(sources.has(row.source), `${s.name}: source ${row.source}`).toBe(true);
+          }
+          // Day and evening rows per assessed point × source, reserve points excepted.
+          const assessed = s.immissionPoints.filter((r) => r.type !== 'reserve').length;
+          expect(s.wlr).toHaveLength(2 * assessed * s.sources.length);
         }
-        // One row per receiver × source, reserve points excepted.
-        const assessed = area.receivers.filter((r) => r.type === 'facade').length;
-        expect(c.wlr).toHaveLength(assessed * area.weapons.length);
       }
     }
   });
@@ -124,17 +146,17 @@ describe('seedDemoDataset', () => {
   it('writes the dataset once and skips while the marker matches', async () => {
     const first = await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
     expect(first.skipped).toBe(false);
-    expect(first).toMatchObject({ year: 2026, areas: 9, receivers: 6, calculations: 2 });
-    expect(first.wlr).toBe(2 * 5 * 16);
+    expect(first).toMatchObject({ year: 2026, areas: 9, receivers: 12, calculations: 2, sources: 17 + 18 });
+    expect(first.wlr).toBe(2 * 5 * 17 + 2 * 5 * 18);
     expect(first.usages).toBeGreaterThan(60);
 
     const second = await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
     expect(second.skipped).toBe(true);
 
     expect(await dataSource.getRepository(AreaEntity).count({ where: { tenantId: mockTenantId } })).toBe(9);
-    expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(160);
+    expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(350);
     const marker = await dataSource.getRepository(DemoSeedMarkerEntity).findOneByOrFail({ tenantId: mockTenantId });
-    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 4, year: 2026 });
+    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 5, year: 2026 });
   });
 
   it('rewrites the demo when the year turns, without duplicating rows', async () => {

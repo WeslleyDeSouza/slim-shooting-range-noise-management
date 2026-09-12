@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES } from './support/selectors';
+import { ROUTES } from '../support/selectors';
 
 /**
  * Schiessplatz – Details · Empfangspunkte (B1 5.12). Signed in via the

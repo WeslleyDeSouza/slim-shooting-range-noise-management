@@ -209,17 +209,23 @@ describe('annex7HalfDays — Schiesshalbtage (B1 7.4)', () => {
     });
   });
 
-  it('splits a usage spanning 13:00 into both halves', () => {
-    // 11:00–13:00 = exactly 2 h (not more) → ½; 13:00–15:00 = 2 h → ½
-    expect(annex7HalfDays([a(MON, '11:00', '15:00')]).a).toEqual({
+  it('splits a usage spanning 12:00 into both halves (B1 7.4.3)', () => {
+    // 10:00–12:00 = exactly 2 h (not more) → ½; 12:00–14:00 = 2 h → ½
+    expect(annex7HalfDays([a(MON, '10:00', '14:00')]).a).toEqual({
       work: 1,
       sunday: 0,
     });
-    // 10:00–16:00 = 3 h + 3 h → 2
-    expect(annex7HalfDays([a(MON, '10:00', '16:00')]).a).toEqual({
+    // 09:00–15:00 = 3 h + 3 h → 2
+    expect(annex7HalfDays([a(MON, '09:00', '15:00')]).a).toEqual({
       work: 2,
       sunday: 0,
     });
+    // 11:00–13:00 straddles noon: 1 h before + 1 h after → ½ + ½ (not one full morning)
+    expect(annex7HalfDays([a(MON, '11:00', '13:00')]).a).toEqual({
+      work: 1,
+      sunday: 0,
+    });
+    expect(annex7HalfDays([a(MON, '11:00', '12:00')]).a).toEqual({ work: 0.5, sunday: 0 });
   });
 
   it('counts only the free half of a half holiday as Sunday (B1 7.4)', () => {

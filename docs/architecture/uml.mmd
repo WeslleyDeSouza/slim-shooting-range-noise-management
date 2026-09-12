@@ -254,11 +254,64 @@ OPERATIONS: Broad range of activities related to business operations."
     text coordinationSectionNo
     varchar name
     text groupName
-    integer builtAfter1985
     integer sortOrder
     integer enabled
   }
-  stellungsraum_waffe {
+  kaliber {
+    text tenantId
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar nameDe
+    text nameFr
+    text nameIt
+    text alnNo
+    text sapNo
+    text quantityUnit
+    integer enabled
+  }
+  waffenkategorie {
+    text tenantId
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar code
+    varchar nameDe
+    text nameFr
+    text nameIt
+    integer sortOrder
+    integer enabled
+  }
+  waffe {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar nameDe
+    text nameFr
+    text nameIt
+    varchar categoryId FK
+    text annex7Category
+    integer enabled
+  }
+  waffe_kaliber_kombination {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar weaponId FK
+    varchar caliberId FK
+    varchar nameDe
+    text nameFr
+    text nameIt
+    text sonarmsId
+    integer enabled
+  }
+  stellungsraum_kombination {
     text tenantId FK
     varchar id PK
     datetime createdAt
@@ -266,13 +319,8 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime deletedAt
     varchar areaId FK
     varchar roomId FK
-    varchar weaponName
-    varchar weapon
-    varchar caliber
-    text category
-    text annex7Category
-    varchar sourceId
-    integer quota
+    varchar combinationId FK
+    varchar entryName
     integer enabled
   }
   schiessplatz {
@@ -298,38 +346,174 @@ OPERATIONS: Broad range of activities related to business operations."
     varchar areaId FK
     text userId
   }
-  empfangspunkt {
+  kontingent {
     text tenantId FK
     varchar id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar areaId FK
-    varchar code
-    text egid
-    varchar address
-    text municipality
-    text type
-    text sensitivityLevel
-    real east
-    real north
-    real mapX
-    real mapY
-    integer sortOrder
-    integer enabled
+    varchar combinationId FK
+    numeric shotsPerYear
+    text basis
   }
-  wlr_pegel {
+  feiertag {
     text tenantId FK
     varchar id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
+    varchar areaId FK
+    text date
+    text from
+    text to
+    varchar name
+  }
+  quelldaten_anhang9 {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar sourceLineId FK
+    integer shotsInside
+    integer shotsOutside
+    integer estimated
+    integer year
+    text remark
+    varchar planCategory
+  }
+  quelldaten_anhang7 {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar sourceLineId FK
+    real halfDaysWork
+    real halfDaysSunday
+    integer shotsWork
+    integer shotsSunday
+    integer estimated
+    integer year
+    text remark
+    varchar planCategory
+  }
+  schusslinie {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar combinationId FK
+    varchar sourceId
+    varchar weaponSystem
+    text remarkGeom
+  }
+  zustand_anlageteil {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar areaId FK
+    varchar roomId FK
+    varchar coordinationSectionNo
+    varchar name
+    varchar type
+    text remark
+    integer builtAfter1985
+  }
+  ausbreitungsberechnung {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar model
+    varchar modelVersion
+    text heightModel
+    text buildingDataset
+    integer meteoIncluded
+    integer meteoCount
+    text meteoData
+    integer reflectionIncluded
+    integer forestIncluded
+    varchar primarySurfaces
+    text remark
+  }
+  gebaeude {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar propagationId FK
+    text egid
+    text address
+    varchar surfaceType
+    varchar assessment
+    integer persons
+    text remark
+  }
+  immissionspunkt {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar propagationId FK
+    varchar buildingId FK
+    varchar sonarmsId
+    varchar code
+    text egid
+    text egrid
+    varchar address
+    text municipality
+    integer pointNo
+    real deliveredLr
+    varchar operation
+    text type
+    varchar deliveredAssessment
+    text remark
+    text sensitivityLevel
+    real east
+    real north
+    real height
+    real mapX
+    real mapY
+    integer sortOrder
+  }
+  zustand {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar areaId FK
     varchar calculationId FK
-    varchar receiverId FK
-    varchar weaponId FK
-    real laeDay
-    real laeEve
-    real lafmaxDay
+    text externalId
+    varchar name
+    integer referenceYear
+    text buildYearClass
+    integer isCurrent
+    integer isMgdm
+    integer enabled
   }
   immissionsberechnung {
     text tenantId FK
@@ -341,22 +525,218 @@ OPERATIONS: Broad range of activities related to business operations."
     varchar name
     varchar supplier
     text deliveredAt
+    text fgdbStateMpv
+    text fgdbStateIst
+    integer mpvMeasures
+    integer istObstacles
+    integer istHighScreens
+    integer immissionPointCount
+    integer civilUse
+    integer shootingHousePresent
     integer enabled
   }
-  zustand {
+  untersuchungsperimeter {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar name
+    varchar spmNo
+    varchar coordinationSectionNo
+  }
+  wlr_pegel {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar propagationId FK
+    varchar sourceLineId FK
+    varchar immissionPointId FK
+    text timeGroup
+    real lae
+    real lafmax
+    real laeMk
+    real laeGk
+    real laeDet
+    real elevation
+  }
+  isophonen {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar propagationId FK
+    integer lr
+    real height
+    integer resolution
+    text remark
+  }
+  betroffene_analyse {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar propagationId FK
+    integer personsPwIgw
+    integer personsIgwAw
+    integer personsAw
+    integer year
+    text remark
+    varchar spmNo
+    integer persons55
+    integer persons60
+  }
+  hindernis {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    varchar surfaceType
+    varchar obstacleType
+    text remark
+  }
+  hochblende {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    real bottomHeight
+    varchar surfaceType
+    text remark
+  }
+  schuetzenhaus {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    real houseHeight
+    real houseDepth
+    real ridgeDistance
+    real ridgeHeight
+    real leftScreenLength
+    real leftScreenHeight
+    real rightScreenLength
+    real rightScreenHeight
+    text houseMaterial
+    text leftScreenMaterial
+    text rightScreenMaterial
+    text remark
+  }
+  massnahmen_punkt {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    varchar remark
+    varchar measureType
+  }
+  massnahmen_flaeche {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    varchar remark
+    real width
+    real length
+    real height
+    real spacingAcross
+    real spacingAlong
+    real depth
+    varchar measureType
+  }
+  massnahmen_betrieb {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar plantPartId FK
+    varchar coordinationSectionNo
+    varchar measureType
+  }
+  massnahmen_ssf {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar zustandId FK
+    text geometry
+    varchar buildingId FK
+    text egid
+    varchar coordinationSectionNo
+    varchar measureType
+  }
+  berechnungslauf {
     text tenantId FK
     varchar id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar areaId FK
-    varchar calculationId FK
-    varchar name
-    integer referenceYear
-    text buildYearClass
-    integer isCurrent
-    integer isMgdm
-    integer enabled
+    varchar zustandId FK
+    text periodFrom
+    text periodTo
+    text years
+    text usageSnapshot
+    text parameters
+    varchar kernelVersion
+    text completeness
+    text results
+    varchar checksum
+    varchar createdBy
+    integer archived
+  }
+  nutzung_position {
+    text tenantId FK
+    varchar id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar usageId FK
+    text areaId
+    varchar combinationId FK
+    numeric quantity
+    text quantityUnit
   }
   nutzung {
     text tenantId FK
@@ -366,16 +746,16 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime deletedAt
     varchar areaId FK
     varchar roomId FK
-    varchar weaponId FK
     varchar unit
     text date
     text timeFrom
     text timeTo
     text usageType
-    numeric shots
-    text quantityUnit
+    text civilUsageKind
+    integer personCount
     varchar recordedBy
     text source
+    text externalId
     text note
   }
   demo_datensatz {
@@ -401,16 +781,60 @@ OPERATIONS: Broad range of activities related to business operations."
   tenant_structure_user_role }|--|| auth_user: user
   logbuch }|--|| auth_user: user
   stellungsraum }|--|| schiessplatz: area
-  stellungsraum_waffe }|--|| schiessplatz: area
-  stellungsraum_waffe }|--|| stellungsraum: room
+  waffe }|--|| waffenkategorie: category
+  waffe_kaliber_kombination }|--|| waffe: weapon
+  waffe_kaliber_kombination }|--|| kaliber: caliber
+  stellungsraum_kombination }|--|| schiessplatz: area
+  stellungsraum_kombination }|--|| stellungsraum: room
+  stellungsraum_kombination }|--|| waffe_kaliber_kombination: combination
   schiessplatz_benutzer }|--|| schiessplatz: area
-  empfangspunkt }|--|| schiessplatz: area
-  wlr_pegel }|--|| zustand: calculation
-  wlr_pegel }|--|| empfangspunkt: receiver
-  wlr_pegel }|--|| stellungsraum_waffe: weapon
-  immissionsberechnung }|--|| schiessplatz: area
+  kontingent }|--|| schiessplatz: area
+  kontingent }|--|| waffe_kaliber_kombination: combination
+  feiertag }|--|| schiessplatz: area
+  quelldaten_anhang9 }|--|| zustand: state
+  quelldaten_anhang9 ||--|| schusslinie: source
+  quelldaten_anhang7 }|--|| zustand: state
+  quelldaten_anhang7 ||--|| schusslinie: source
+  schusslinie }|--|| zustand: state
+  schusslinie }|--|| zustand_anlageteil: plantPart
+  schusslinie }|--|| waffe_kaliber_kombination: combination
+  zustand_anlageteil }|--|| zustand: state
+  zustand_anlageteil }|--|| stellungsraum: room
+  ausbreitungsberechnung }|--|| zustand: state
+  gebaeude }|--|| zustand: state
+  gebaeude }|--|| ausbreitungsberechnung: propagation
+  immissionspunkt }|--|| zustand: state
+  immissionspunkt }|--|| ausbreitungsberechnung: propagation
+  immissionspunkt }|--|| gebaeude: building
   zustand }|--|| schiessplatz: area
   zustand }|--|| immissionsberechnung: calculation
+  immissionsberechnung }|--|| schiessplatz: area
+  untersuchungsperimeter }|--|| zustand: state
+  wlr_pegel }|--|| zustand: state
+  wlr_pegel }|--|| ausbreitungsberechnung: propagation
+  wlr_pegel }|--|| schusslinie: sourceLine
+  wlr_pegel }|--|| immissionspunkt: immissionPoint
+  isophonen }|--|| zustand: state
+  isophonen }|--|| ausbreitungsberechnung: propagation
+  betroffene_analyse }|--|| zustand: state
+  betroffene_analyse }|--|| ausbreitungsberechnung: propagation
+  hindernis }|--|| zustand: state
+  hindernis }|--|| zustand_anlageteil: plantPart
+  hochblende }|--|| zustand: state
+  hochblende }|--|| zustand_anlageteil: plantPart
+  schuetzenhaus }|--|| zustand: state
+  schuetzenhaus }|--|| zustand_anlageteil: plantPart
+  massnahmen_punkt }|--|| zustand: state
+  massnahmen_punkt }|--|| zustand_anlageteil: plantPart
+  massnahmen_flaeche }|--|| zustand: state
+  massnahmen_flaeche }|--|| zustand_anlageteil: plantPart
+  massnahmen_betrieb }|--|| zustand: state
+  massnahmen_betrieb }|--|| zustand_anlageteil: plantPart
+  massnahmen_ssf }|--|| zustand: state
+  massnahmen_ssf }|--|| gebaeude: building
+  berechnungslauf }|--|| schiessplatz: area
+  berechnungslauf }|--|| zustand: state
+  nutzung_position }|--|| nutzung: usage
+  nutzung_position }|--|| waffe_kaliber_kombination: combination
   nutzung }|--|| schiessplatz: area
   nutzung }|--|| stellungsraum: room
-  nutzung }|--|| stellungsraum_waffe: weapon

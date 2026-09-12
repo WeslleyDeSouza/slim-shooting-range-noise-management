@@ -7,15 +7,16 @@ import {
 } from './types';
 
 /**
- * Belastungsgrenzwerte Anhang 9 LSV (militärische Schiessplätze), dB, per
- * Empfindlichkeitsstufe: Planungswert / Immissionsgrenzwert / Alarmwert.
+ * Belastungsgrenzwerte Anhang 9 LSV Ziff. 2 (militärische Waffen-, Schiess- und
+ * Übungsplätze), dB, per Empfindlichkeitsstufe: Planungswert / Immissionsgrenzwert /
+ * Alarmwert (AW: 65 / 70 / 70 / 75).
  * Exported so the admin configuration (B1 5.28) can override them later.
  */
 export const ANNEX9_LIMITS: Readonly<Record<SensitivityLevel, LimitSet>> = {
   I: { pw: 50, igw: 55, aw: 65 },
   II: { pw: 55, igw: 60, aw: 70 },
-  III: { pw: 60, igw: 65, aw: 75 },
-  IV: { pw: 65, igw: 70, aw: 80 },
+  III: { pw: 60, igw: 65, aw: 70 },
+  IV: { pw: 65, igw: 70, aw: 75 },
 };
 
 /** Belastungsgrenzwerte Anhang 7 LSV (zivile Schiessanlagen), dB. */

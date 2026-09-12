@@ -109,15 +109,15 @@ export class AreaService {
 
   async dashboard(tenantId: string): Promise<DashboardDto> {
     const areas = await this.repo.count({ where: { tenantId } });
-    // Users of this tenant (galaxy tables); distinct weapons of the allowed
-    // room × weapon combinations (5.17).
+    // Users of this tenant (galaxy tables); Kombinationen Waffe/Kaliber of
+    // the master data (5.22).
     const [[row], [weaponRow]] = await Promise.all([
       rawQuery<{ n: number }[]>(this.dataSource,
         'select count(distinct userId) as n from tenant_user_role where tenantId = ?',
         [tenantId],
       ),
       rawQuery<{ n: number }[]>(this.dataSource,
-        'select count(distinct weapon) as n from stellungsraum_waffe where tenantId = ? and deletedAt is null',
+        'select count(*) as n from waffe_kaliber_kombination where tenantId = ? and deletedAt is null',
         [tenantId],
       ),
     ]);

@@ -188,7 +188,7 @@ export namespace API_MOCK_DATA {
         .then((r) => {
           if (!r.skipped) {
             console.log(
-              `[seed] SLIM Demo ${r.year}: ${r.areas} areas, ${r.rooms} rooms, ${r.weapons} sources, ${r.receivers} receivers, ${r.calculations} calculation states (${r.wlr} WLR rows), ${r.usages} usages`,
+              `[seed] SLIM Demo ${r.year}: ${r.areas} areas, ${r.rooms} rooms, ${r.combinations} room combinations, ${r.calculations} states (${r.sources} sources, ${r.receivers} points, ${r.wlr} WLR rows), ${r.usages} usages`,
             );
           }
         })

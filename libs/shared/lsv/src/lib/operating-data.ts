@@ -12,8 +12,8 @@ import {
 /** Anhang 9 workday window: Mo–Fr 07:00–19:00 (B1 7.4). */
 export const ANNEX9_WORKDAY = { fromMinute: 7 * 60, toMinute: 19 * 60 };
 
-/** Boundary between the morning and the afternoon half-day (Anhang 7). */
-export const ANNEX7_NOON_MINUTE = 13 * 60;
+/** Boundary between the morning and the afternoon half-day (B1 7.4.3: «vor 12:00» / «nach 12:00»). */
+export const ANNEX7_NOON_MINUTE = 12 * 60;
 
 /** A half-day counts fully once the shooting time exceeds this (B1 7.4). */
 export const ANNEX7_FULL_HALF_DAY_MINUTES = 2 * 60;
@@ -204,7 +204,7 @@ function emptyHalfDays(): Annex7HalfDays {
  * Mo–Sa except the site's holidays; Sunday and holidays are "sunday"
  * half-days, and on a half holiday only the free half (the one whose middle
  * lies in the holiday window) is. Per calendar day and category, the morning
- * (before 13:00) and the afternoon (from 13:00) each count 1 when the
+ * (before 12:00) and the afternoon (from 12:00) each count 1 when the
  * category's shooting time in that half exceeds 2 h, ½ when it is shorter
  * but not zero, and 0 when nobody shot. Several usages of the same category
  * in the same half add up; a usage spanning 13:00 contributes to both halves.

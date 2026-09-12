@@ -539,6 +539,7 @@
     pendingDel.forEach(id=>selIds.delete(id)); document.getElementById("modal").hidden=true;
     toast(`${lastDel.length} Nutzung${lastDel.length>1?"en":""} gelöscht.`, true); render();
   }
+
   let toastTimer;
   function toast(msg,undoable){ document.getElementById("toastText").textContent=msg; const t=document.getElementById("toast"); t.querySelector("button").hidden=!undoable; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.hidden=true,6000); }
   function undo(){ DATA.push(...lastDel); lastDel=[]; document.getElementById("toast").hidden=true; render(); }

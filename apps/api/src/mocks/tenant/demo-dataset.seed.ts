@@ -7,21 +7,24 @@ import { genSalt } from 'bcryptjs';
 import { SLIM_ROLE_BY_KEY } from '../roles.mock-data';
 import {
   AreaEntity,
+  AreaQuotaEntity,
   AreaRoomEntity,
   AreaUserEntity,
-  AreaWeaponEntity,
+  CaliberEntity,
+  HolidayEntity,
+  RoomCombinationEntity,
+  WeaponCategoryEntity,
+  WeaponCombinationEntity,
+  WeaponEntity,
 } from '../../modules/area/entities';
-import {
-  AreaCalculationEntity,
-  AreaReceiverEntity,
-  AreaWlrEntity,
-  ImmissionCalculationEntity,
-} from '../../modules/calculation/entities';
-import { AreaUsageEntity } from '../../modules/usage/entities';
+import { StateImportDto } from '../../modules/calculation/dto/import.dto';
+import { ImportService } from '../../modules/calculation/import.service';
+import { AreaUsageEntity, UsagePositionEntity } from '../../modules/usage/entities';
 import { DemoSeedMarkerEntity } from './demo-seed-marker.entity';
 import {
   DEFAULT_DATASET_KEY,
   DatasetArea,
+  DatasetMasterData,
   TenantDataset,
   loadDataset,
 } from './tenant-dataset';
@@ -30,19 +33,44 @@ const log = new Logger('DemoDataset');
 
 /**
  * The demo tenant's own tables, in the order they can be emptied without a
- * foreign key complaining. Nothing of the login (users, roles, rights) or
- * the galaxy tenant tables is touched.
+ * foreign key complaining (Zustandsebene first, then Nutzungen, then the
+ * permanent references, then master data). Nothing of the login (users,
+ * roles, rights) or the galaxy tenant tables is touched.
  */
 const WIPE = [
-  'schiessplatz_benutzer',
+  'berechnungslauf',
   'wlr_pegel',
-  'nutzung',
+  'massnahmen_ssf',
+  'massnahmen_punkt',
+  'massnahmen_flaeche',
+  'massnahmen_betrieb',
+  'isophonen',
+  'betroffene_analyse',
+  'hindernis',
+  'hochblende',
+  'schuetzenhaus',
+  'immissionspunkt',
+  'gebaeude',
+  'quelldaten_anhang9',
+  'quelldaten_anhang7',
+  'schusslinie',
+  'zustand_anlageteil',
+  'untersuchungsperimeter',
+  'ausbreitungsberechnung',
   'zustand',
   'immissionsberechnung',
-  'empfangspunkt',
-  'stellungsraum_waffe',
+  'nutzung_position',
+  'nutzung',
+  'kontingent',
+  'stellungsraum_kombination',
+  'feiertag',
+  'schiessplatz_benutzer',
   'stellungsraum',
   'schiessplatz',
+  'waffe_kaliber_kombination',
+  'waffe',
+  'kaliber',
+  'waffenkategorie',
 ];
 
 /**
@@ -60,16 +88,23 @@ export interface DemoSeedResult {
   year: number;
   areas: number;
   rooms: number;
-  weapons: number;
+  /** Zulässige Kombinationen je Stellungsraum. */
+  combinations: number;
+  /** Immissionspunkte over every state. */
   receivers: number;
+  /** Zustände. */
   calculations: number;
+  /** Schusslinien over every state. */
+  sources: number;
   wlr: number;
   usages: number;
 }
 
 /**
  * Fill the demo tenant with the «SLIM Demo» dataset, rolled to the year the
- * seed runs in.
+ * seed runs in. Master data and permanent references are written directly;
+ * every Zustand goes through the `ImportService` — the same path as the
+ * FGDB upload (5.19), so the demo proves the import and its checks.
  *
  * Does nothing as long as the marker says this version was already written
  * for this year. A new year, a bumped dataset version or `force` empty the
@@ -96,9 +131,8 @@ export async function seedDemoDataset(
     marker.datasetKey === key &&
     marker.version === dataset.version &&
     marker.year === year;
-  if (current && !options.force) {
-    return { skipped: true, year, areas: 0, rooms: 0, weapons: 0, receivers: 0, calculations: 0, wlr: 0, usages: 0 };
-  }
+  const empty: DemoSeedResult = { skipped: true, year, areas: 0, rooms: 0, combinations: 0, receivers: 0, calculations: 0, sources: 0, wlr: 0, usages: 0 };
+  if (current && !options.force) return empty;
 
   log.log(
     marker
@@ -108,19 +142,25 @@ export async function seedDemoDataset(
   await wipeTenant(connection, tenantId);
   await writeTenantHead(connection, tenantId, dataset);
   await writeUsers(connection, tenantId, dataset);
+  const master = await writeMasterData(connection, tenantId, dataset.masterData);
 
-  const result: DemoSeedResult = { skipped: false, year, areas: 0, rooms: 0, weapons: 0, receivers: 0, calculations: 0, wlr: 0, usages: 0 };
+  const result: DemoSeedResult = { ...empty, skipped: false };
+  const importer = new ImportService(connection);
+  const areaIdByName = new Map<string, string>();
   for (const area of dataset.areas) {
-    const counts = await writeArea(connection, tenantId, area);
+    const counts = await writeArea(connection, tenantId, area, master, importer);
+    areaIdByName.set(area.name, counts.areaId);
     result.areas++;
     result.rooms += counts.rooms;
-    result.weapons += counts.weapons;
+    result.combinations += counts.combinations;
     result.receivers += counts.receivers;
     result.calculations += counts.calculations;
+    result.sources += counts.sources;
     result.wlr += counts.wlr;
     result.usages += counts.usages;
   }
 
+  await writeHolidays(connection, tenantId, dataset, areaIdByName);
   await writeAreaAssignments(connection, tenantId, dataset);
 
   await markers.save(markers.create({ tenantId, datasetKey: key, version: dataset.version, year }));
@@ -206,7 +246,56 @@ async function writeUsers(connection: DataSource, tenantId: string, dataset: Ten
   }
 }
 
-/** «W/R-O»: which Schiessplätze a range owner is assigned to (area_user). */
+/** Resolved master data: dataset keys → saved rows. */
+interface MasterIndex {
+  combinationByKey: Map<string, WeaponCombinationEntity>;
+}
+
+/** Tenant-wide Waffenkategorien, Waffen, Kaliber and Kombinationen (5.22–5.25). */
+async function writeMasterData(connection: DataSource, tenantId: string, data: DatasetMasterData): Promise<MasterIndex> {
+  const categories = connection.getRepository(WeaponCategoryEntity);
+  const weapons = connection.getRepository(WeaponEntity);
+  const calibers = connection.getRepository(CaliberEntity);
+  const combinations = connection.getRepository(WeaponCombinationEntity);
+
+  const savedCategories = await categories.save(
+    data.categories.map((c, i) => categories.create({ tenantId, code: c.code, nameDe: c.nameDe, nameFr: c.nameFr ?? null, nameIt: c.nameIt ?? null, sortOrder: c.sortOrder ?? i, enabled: true })),
+  );
+  const categoryByCode = new Map(savedCategories.map((c) => [c.code, c]));
+  const weaponByKey = new Map<string, WeaponEntity>();
+  for (const w of data.weapons) {
+    const category = categoryByCode.get(w.category);
+    if (!category) throw new Error(`master data: weapon ${w.key} has unknown category ${w.category}`);
+    weaponByKey.set(w.key, await weapons.save(weapons.create({ tenantId, nameDe: w.nameDe, nameFr: w.nameFr ?? null, nameIt: w.nameIt ?? null, categoryId: category.id, annex7Category: w.annex7Category, enabled: true })));
+  }
+  const caliberByKey = new Map<string, CaliberEntity>();
+  for (const c of data.calibers) {
+    caliberByKey.set(c.key, await calibers.save(calibers.create({ tenantId, nameDe: c.nameDe, nameFr: c.nameFr ?? null, nameIt: c.nameIt ?? null, alnNo: c.alnNo ?? null, sapNo: c.sapNo ?? null, quantityUnit: c.quantityUnit ?? 'shots', enabled: true })));
+  }
+  const combinationByKey = new Map<string, WeaponCombinationEntity>();
+  for (const k of data.combinations) {
+    const weapon = weaponByKey.get(k.weapon);
+    const caliber = caliberByKey.get(k.caliber);
+    if (!weapon || !caliber) throw new Error(`master data: combination ${k.key} references unknown weapon/caliber`);
+    combinationByKey.set(k.key, await combinations.save(combinations.create({ tenantId, weaponId: weapon.id, caliberId: caliber.id, nameDe: k.nameDe, nameFr: k.nameFr ?? null, nameIt: k.nameIt ?? null, sonarmsId: k.sonarmsId ?? null, enabled: true })));
+  }
+  return { combinationByKey };
+}
+
+/** Feiertage (B1 7.4): tenant-wide (area null) or local to one Schiessplatz. */
+async function writeHolidays(connection: DataSource, tenantId: string, dataset: TenantDataset, areaIdByName: Map<string, string>): Promise<void> {
+  const holidays = connection.getRepository(HolidayEntity);
+  for (const h of dataset.holidays ?? []) {
+    const areaId = h.area ? areaIdByName.get(h.area) ?? null : null;
+    if (h.area && !areaId) {
+      log.warn(`holiday ${h.name}: area "${h.area}" is not in the dataset`);
+      continue;
+    }
+    await holidays.save(holidays.create({ tenantId, areaId, date: h.date, from: h.from ?? null, to: h.to ?? null, name: h.name }));
+  }
+}
+
+/** «W/R-O»: which Schiessplätze a range owner is assigned to (schiessplatz_benutzer). */
 async function writeAreaAssignments(connection: DataSource, tenantId: string, dataset: TenantDataset): Promise<void> {
   const users = connection.getRepository(UserEntity);
   const areas = connection.getRepository(AreaEntity);
@@ -226,15 +315,13 @@ async function writeAreaAssignments(connection: DataSource, tenantId: string, da
   }
 }
 
-async function writeArea(connection: DataSource, tenantId: string, data: DatasetArea) {
+async function writeArea(connection: DataSource, tenantId: string, data: DatasetArea, master: MasterIndex, importer: ImportService) {
   const areas = connection.getRepository(AreaEntity);
   const rooms = connection.getRepository(AreaRoomEntity);
-  const weapons = connection.getRepository(AreaWeaponEntity);
-  const receivers = connection.getRepository(AreaReceiverEntity);
-  const calculations = connection.getRepository(AreaCalculationEntity);
-  const deliveries = connection.getRepository(ImmissionCalculationEntity);
-  const wlr = connection.getRepository(AreaWlrEntity);
+  const assignments = connection.getRepository(RoomCombinationEntity);
+  const quotas = connection.getRepository(AreaQuotaEntity);
   const usages = connection.getRepository(AreaUsageEntity);
+  const positions = connection.getRepository(UsagePositionEntity);
 
   const area = await areas.save(
     areas.create({
@@ -242,8 +329,8 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
       name: data.name,
       coordinationSectionNo: data.coordinationSectionNo,
       sectoralPlanNo: data.sectoralPlanNo,
-      quotaStatus: data.quotaStatus,
-      noiseStatus: data.noiseStatus,
+      quotaStatus: 'none',
+      noiseStatus: 'none',
       annex7Overall: data.annex7Overall,
       enabled: true,
     }),
@@ -257,9 +344,8 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
         coordinationSectionNo: r.coordinationSectionNo,
         name: r.name,
         groupName: r.groupName,
-        builtAfter1985: r.builtAfter1985,
         sortOrder: r.sortOrder ?? i,
-        enabled: true,
+        enabled: r.enabled ?? true,
       }),
     ),
   );
@@ -269,127 +355,88 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
     if (!found) throw new Error(`${data.name}: room "${name}" is not in the dataset`);
     return found;
   };
-
-  const savedWeapons = await weapons.save(
-    data.weapons.map((w) =>
-      weapons.create({
-        tenantId,
-        areaId: area.id,
-        roomId: room(w.room).id,
-        weaponName: w.weaponName,
-        weapon: w.weapon,
-        caliber: w.caliber,
-        category: w.category,
-        annex7Category: w.annex7Category,
-        sourceId: w.sourceId,
-        quota: w.quota,
-        enabled: true,
-      }),
-    ),
-  );
-  const weaponBySource = new Map(savedWeapons.map((w) => [w.sourceId, w]));
-  const source = (id: string): AreaWeaponEntity => {
-    const found = weaponBySource.get(id);
-    if (!found) throw new Error(`${data.name}: source "${id}" is not in the dataset`);
+  const combination = (key: string): WeaponCombinationEntity => {
+    const found = master.combinationByKey.get(key);
+    if (!found) throw new Error(`${data.name}: combination "${key}" is not in the master data`);
     return found;
   };
 
-  const savedReceivers = await receivers.save(
-    data.receivers.map((r, i) =>
-      receivers.create({
-        tenantId,
-        areaId: area.id,
-        code: r.code,
-        egid: r.egid,
-        address: r.address,
-        municipality: r.municipality,
-        type: r.type,
-        sensitivityLevel: r.sensitivityLevel,
-        east: r.east,
-        north: r.north,
-        mapX: r.mapX,
-        mapY: r.mapY,
-        sortOrder: r.sortOrder ?? i,
-        enabled: true,
-      }),
+  const savedAssignments = await assignments.save(
+    data.roomCombinations.map((rc) =>
+      assignments.create({ tenantId, areaId: area.id, roomId: room(rc.room).id, combinationId: combination(rc.combination).id, entryName: rc.entryName, enabled: true }),
     ),
   );
-  const receiverByCode = new Map(savedReceivers.map((r) => [r.code, r]));
+  await quotas.save(
+    data.quotas.map((q) => quotas.create({ tenantId, areaId: area.id, combinationId: combination(q.combination).id, shotsPerYear: q.shotsPerYear, basis: q.basis ?? null })),
+  );
 
-  let wlrCount = 0;
-  for (const c of data.calculations) {
-    // Hierarchy B1 5.18: Immissionsberechnung (delivery) → Zustand. The
-    // dataset lists states; each becomes its own delivery unless it names
-    // an existing one (`calculation`).
-    const deliveryName = c.calculation ?? c.name;
-    const delivery =
-      (await deliveries.findOne({ where: { tenantId, areaId: area.id, name: deliveryName } })) ??
-      (await deliveries.save(
-        deliveries.create({
+  let usageCount = 0;
+  for (let i = 0; i < data.usages.length; i += 100) {
+    const chunk = data.usages.slice(i, i + 100);
+    const saved = await usages.save(
+      chunk.map((u) =>
+        usages.create({
           tenantId,
           areaId: area.id,
-          name: deliveryName,
-          supplier: c.supplier,
-          deliveredAt: c.deliveredAt,
-          enabled: true,
+          roomId: room(u.room).id,
+          unit: u.unit,
+          date: u.date,
+          timeFrom: u.from,
+          timeTo: u.to,
+          usageType: u.usageType,
+          civilUsageKind: u.civilUsageKind ?? null,
+          personCount: u.personCount ?? null,
+          recordedBy: u.recordedBy,
+          source: u.source_kind ?? 'manual',
+          externalId: u.externalId ?? null,
+          note: u.note ?? null,
         }),
-      ));
-    const calculation = await calculations.save(
-      calculations.create({
-        tenantId,
-        areaId: area.id,
-        calculationId: delivery.id,
-        name: c.name,
-        referenceYear: c.referenceYear,
-        buildYearClass: c.buildYearClass,
-        isCurrent: c.isCurrent,
-        isMgdm: c.isMgdm,
-        enabled: true,
-      }),
+      ),
     );
-    const rows = c.wlr.map((row) => {
-      const receiver = receiverByCode.get(row.receiver);
-      if (!receiver) throw new Error(`${data.name}: receiver "${row.receiver}" is not in the dataset`);
-      return wlr.create({
-        tenantId,
-        calculationId: calculation.id,
-        receiverId: receiver.id,
-        weaponId: source(row.source).id,
-        laeDay: row.laeDay,
-        laeEve: row.laeEve,
-        lafmaxDay: row.lafmaxDay,
-      });
+    const rows: UsagePositionEntity[] = [];
+    saved.forEach((usage, j) => {
+      for (const p of chunk[j].positions) {
+        rows.push(positions.create({ tenantId, usageId: usage.id, areaId: area.id, combinationId: combination(p.combination).id, quantity: p.quantity, quantityUnit: p.quantityUnit ?? 'shots' }));
+      }
     });
-    // Chunked: SQLite limits the variables of one INSERT.
-    for (let i = 0; i < rows.length; i += 200) await wlr.save(rows.slice(i, i + 200));
-    wlrCount += rows.length;
+    for (let k = 0; k < rows.length; k += 200) await positions.save(rows.slice(k, k + 200));
+    usageCount += saved.length;
   }
 
-  const usageRows = data.usages.map((u) =>
-    usages.create({
-      tenantId,
-      areaId: area.id,
-      roomId: room(u.room).id,
-      weaponId: source(u.source).id,
-      unit: u.unit,
-      date: u.date,
-      timeFrom: u.from,
-      timeTo: u.to,
-      usageType: u.usageType,
-      shots: u.shots,
-      recordedBy: u.recordedBy,
-      source: u.source_kind ?? 'manual',
-      note: u.note ?? null,
-    }),
-  );
-  for (let i = 0; i < usageRows.length; i += 200) await usages.save(usageRows.slice(i, i + 200));
+  let receivers = 0;
+  let states = 0;
+  let sources = 0;
+  let wlr = 0;
+  for (const c of data.calculations) {
+    for (const s of c.states) {
+      const dto: StateImportDto = {
+        calculation: { name: c.name, supplier: c.supplier, deliveredAt: c.deliveredAt },
+        state: { externalId: s.externalId, name: s.name, referenceYear: s.referenceYear, isCurrent: s.isCurrent, isMgdm: s.isMgdm },
+        propagation: s.propagation ?? null,
+        perimeter: s.perimeter ?? null,
+        plantParts: s.plantParts.map((p) => ({ coordinationSectionNo: p.coordinationSectionNo, name: p.name, type: p.type, builtAfter1985: p.builtAfter1985, geometry: p.geometry ?? null, roomName: p.room })),
+        sources: s.sources.map((src) => ({ sourceId: src.sourceId, plantPartNo: src.plantPart, weaponSystem: src.weaponSystem, geometry: src.geometry ?? null, a9: src.a9 ?? null, a7: src.a7 ?? null })),
+        buildings: s.immissionPoints.filter((p) => p.egid).map((p) => ({ egid: p.egid, address: p.address, surfaceType: 'schallhart', assessment: '', persons: 4 })),
+        immissionPoints: s.immissionPoints.map((p, i) => ({ ...p, sortOrder: p.sortOrder ?? i })),
+        wlr: s.wlr,
+      };
+      const report = await importer.importState(tenantId, area.id, dto);
+      states++;
+      receivers += report.counts.immissionPoints;
+      sources += report.counts.sources;
+      wlr += report.counts.wlr;
+      for (const w of report.warnings) log.debug(`${data.name} / ${s.name}: ${w}`);
+    }
+  }
 
   return {
+    areaId: area.id,
     rooms: savedRooms.length,
-    weapons: savedWeapons.length,
-    receivers: savedReceivers.length,
-    calculations: data.calculations.length,
-    wlr: wlrCount,
-    usages: usageRows.length,
+    combinations: savedAssignments.length,
+    receivers,
+    calculations: states,
+    sources,
+    wlr,
+    usages: usageCount,
   };
 }

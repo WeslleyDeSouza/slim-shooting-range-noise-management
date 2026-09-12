@@ -1,20 +1,24 @@
 /**
  * The demo tenant as a dataset (llumi pattern): `tenant.mock.json` holds
- * the users, the Schiessplätze with their Stellungsräume, allowed weapons
- * (= noise sources), Empfangspunkte, calculation states with their sonARMS
- * levels and the year's Schiessplatz-Nutzungen. Every date in it is a
- * placeholder the seed rolls to the year it runs in:
+ * the users, the tenant-wide master data (Waffenkategorien, Waffen, Kaliber,
+ * Kombinationen), the Schiessplätze with their übergeordneten Stellungsräumen,
+ * zulässigen Kombinationen, Kontingenten and Nutzungen (with positions), and
+ * the Immissionsberechnungen with their Zustände — each state with its own
+ * Anlageteile, Schusslinien (+ Quelldaten A9/A7), Immissionspunkte and
+ * WLR-Pegel, exactly as B1 Kap. 10 separates the permanent reference
+ * structure from the calculation states.
+ *
+ * Every date in it is a placeholder the seed rolls to the year it runs in:
  *
  *   {{year}} {{year+1}} {{year-1}}   the calendar year
  *   {{ym-N}}                          "YYYY-MM" of N months before this month
  *
- * That is what lets the same file fill the demo next year and look right,
- * and what the setup wizard (setup/11-seed-data) reads to know what to
- * expect. Regenerate it with `tools/tenant-dataset.generator.ts`.
+ * Regenerate it with `tools/tenant-dataset.generator.ts`. The seed writes the
+ * states through the same import service the FGDB upload (5.19) uses.
  */
-import type { AreaStatus, Annex7CategoryCode, WeaponCategory } from '../../modules/area/entities';
-import type { BuildYearClassCode, ReceiverType, SensitivityLevelCode } from '../../modules/calculation/entities';
-import type { UsageSource, UsageType } from '../../modules/usage/entities';
+import type { Annex7CategoryCode, QuantityUnit } from '../../modules/area/entities';
+import type { BuildYearClassCode, ReceiverType, SensitivityLevelCode, TimeGroup } from '../../modules/calculation/entities';
+import type { CivilUsageKind, UsageSource, UsageType } from '../../modules/usage/entities';
 import datasetJson from './tenant.mock.json';
 
 /** Role keys of `roles.mock-data.ts` (`SLIM_ROLE_BY_KEY`). */
@@ -31,96 +35,199 @@ export interface DatasetUser {
   areas?: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Tenant-wide master data (B1 5.22–5.25, übergeordnet)
+// ---------------------------------------------------------------------------
+
+export interface DatasetWeaponCategory {
+  code: string;
+  nameDe: string;
+  nameFr?: string | null;
+  nameIt?: string | null;
+  sortOrder?: number;
+}
+
+export interface DatasetWeaponType {
+  /** Key other records refer to. */
+  key: string;
+  nameDe: string;
+  nameFr?: string | null;
+  nameIt?: string | null;
+  /** `DatasetWeaponCategory.code`. */
+  category: string;
+  annex7Category: Annex7CategoryCode | null;
+}
+
+export interface DatasetCaliber {
+  key: string;
+  nameDe: string;
+  nameFr?: string | null;
+  nameIt?: string | null;
+  alnNo?: string | null;
+  sapNo?: string | null;
+  quantityUnit?: QuantityUnit;
+}
+
+/** Kombination Waffe/Kaliber with its sonARMS weapon name (B1.7). */
+export interface DatasetCombination {
+  key: string;
+  weapon: string;
+  caliber: string;
+  nameDe: string;
+  nameFr?: string | null;
+  nameIt?: string | null;
+  /** «Name» of the sonARMS weapon database; the import matches source lines by it. */
+  sonarmsId?: string | null;
+}
+
+export interface DatasetMasterData {
+  categories: DatasetWeaponCategory[];
+  weapons: DatasetWeaponType[];
+  calibers: DatasetCaliber[];
+  combinations: DatasetCombination[];
+}
+
+// ---------------------------------------------------------------------------
+// Schiessplatz: permanent references and usages
+// ---------------------------------------------------------------------------
+
 export interface DatasetRoom {
   /** Koordinationsabschnitt-Nr. of the room, optional (5.15). */
   coordinationSectionNo: string | null;
   name: string;
   groupName: string | null;
-  builtAfter1985: boolean;
   sortOrder?: number;
+  /** false = historical room (kept for old usages and states). */
+  enabled?: boolean;
 }
 
-/** Allowed room × weapon combination = one source of the noise model (5.17). */
-export interface DatasetWeapon {
-  /** Room name; resolved against `rooms`. */
+/** Zulässige Kombination je Stellungsraum (5.17). */
+export interface DatasetRoomCombination {
   room: string;
-  weaponName: string;
-  weapon: string;
-  caliber: string;
-  category: WeaponCategory;
-  annex7Category: Annex7CategoryCode | null;
-  /** sonARMS QuellenID, unique per area. */
-  sourceId: string;
-  /** Kontingent gemäss Plangenehmigung, shots per year. */
-  quota: number | null;
+  combination: string;
+  /** Waffenname für die Erfassung. */
+  entryName: string;
 }
 
-export interface DatasetReceiver {
+/** Kontingent gemäss Plangenehmigung je Kombination (5.16). */
+export interface DatasetQuota {
+  combination: string;
+  shotsPerYear: number;
+  basis?: string | null;
+}
+
+export interface DatasetUsagePosition {
+  combination: string;
+  quantity: number;
+  quantityUnit?: QuantityUnit;
+}
+
+export interface DatasetUsage {
+  /** Room name. */
+  room: string;
+  unit: string;
+  date: string;
+  from: string;
+  to: string;
+  usageType: UsageType;
+  civilUsageKind?: CivilUsageKind | null;
+  personCount?: number | null;
+  recordedBy: string;
+  /** manual (default), elo (interface 6.x) or import (9.x). */
+  source_kind?: UsageSource;
+  externalId?: string | null;
+  note?: string | null;
+  positions: DatasetUsagePosition[];
+}
+
+// ---------------------------------------------------------------------------
+// Immissionsberechnung → Zustände (hellblau, per state)
+// ---------------------------------------------------------------------------
+
+export interface DatasetPlantPart {
+  /** Übergeordneter Stellungsraum (name) the Anlageteil maps to. */
+  room: string;
+  coordinationSectionNo: string;
+  name: string;
+  type: string;
+  builtAfter1985: boolean;
+  geometry?: string | null;
+}
+
+export interface DatasetSourceLine {
+  /** QuellenID (unique per state). */
+  sourceId: string;
+  /** Anlageteil by its Koordinationsabschnittsnummer. */
+  plantPart: string;
+  /** sonARMS weapon name (matches `DatasetCombination.sonarmsId`). */
+  weaponSystem: string;
+  geometry?: string | null;
+  /** Quelldaten Anhang 9: shots inside / outside the workday per year (weights, 7.5.3). */
+  a9?: { shotsInside: number; shotsOutside: number; estimated?: boolean; year?: number | null } | null;
+  /** Quelldaten Anhang 7: half-days and shots per year (weights, 7.5.2). */
+  a7?: { halfDaysWork: number; halfDaysSunday: number; shotsWork: number; shotsSunday?: number | null; estimated?: boolean; year?: number | null } | null;
+}
+
+export interface DatasetImmissionPoint {
+  sonarmsId: string;
   code: string;
   egid: string | null;
+  egrid?: string | null;
   address: string;
   municipality: string | null;
   type: ReceiverType;
   sensitivityLevel: SensitivityLevelCode;
   east: number | null;
   north: number | null;
+  height?: number | null;
   /** Position on the schematic map, percent. */
   mapX: number;
   mapY: number;
   sortOrder?: number;
 }
 
-/** One WLR line: levels of a source at a receiver. */
+/** One WLR line: levels of a source at a point for one Zeitgruppe. */
 export interface DatasetWlr {
-  /** Receiver code. */
-  receiver: string;
-  /** Source id (`DatasetWeapon.sourceId`). */
+  /** `DatasetImmissionPoint.sonarmsId`. */
+  point: string;
+  /** `DatasetSourceLine.sourceId`. */
   source: string;
-  laeDay: number;
-  laeEve: number;
-  lafmaxDay: number;
+  timeGroup: TimeGroup;
+  lae: number;
+  lafmax: number;
+}
+
+export interface DatasetState {
+  /** K1 ZustandID. */
+  externalId: string;
+  name: string;
+  referenceYear: number;
+  buildYearClass?: BuildYearClassCode;
+  isCurrent: boolean;
+  isMgdm: boolean;
+  propagation?: { model: string; modelVersion: string; primarySurfaces?: string } | null;
+  perimeter?: { name: string; spmNo: string; coordinationSectionNo: string } | null;
+  plantParts: DatasetPlantPart[];
+  sources: DatasetSourceLine[];
+  immissionPoints: DatasetImmissionPoint[];
+  wlr: DatasetWlr[];
 }
 
 export interface DatasetCalculation {
   name: string;
-  /** Immissionsberechnung (delivery) the state belongs to; defaults to its own name. */
-  calculation?: string;
   supplier: string;
   deliveredAt: string;
-  referenceYear: number;
-  buildYearClass: BuildYearClassCode;
-  isCurrent: boolean;
-  isMgdm: boolean;
-  wlr: DatasetWlr[];
-}
-
-export interface DatasetUsage {
-  /** Room name. */
-  room: string;
-  /** `DatasetWeapon.sourceId` of the combination shot. */
-  source: string;
-  unit: string;
-  date: string;
-  from: string;
-  to: string;
-  usageType: UsageType;
-  shots: number;
-  recordedBy: string;
-  /** manual (default), elo (interface 6.x) or import (9.x). */
-  source_kind?: UsageSource;
-  note?: string | null;
+  states: DatasetState[];
 }
 
 export interface DatasetArea {
   name: string;
   coordinationSectionNo: string;
   sectoralPlanNo: string | null;
-  quotaStatus: AreaStatus;
-  noiseStatus: AreaStatus;
   annex7Overall: boolean;
   rooms: DatasetRoom[];
-  weapons: DatasetWeapon[];
-  receivers: DatasetReceiver[];
+  roomCombinations: DatasetRoomCombination[];
+  quotas: DatasetQuota[];
   calculations: DatasetCalculation[];
   usages: DatasetUsage[];
 }
@@ -134,6 +241,8 @@ export interface TenantDataset {
   /** Bump it when the data changes; the seed then rewrites the demo. */
   version: number;
   users: DatasetUser[];
+  masterData: DatasetMasterData;
+  holidays?: DatasetHoliday[];
   areas: DatasetArea[];
 }
 
@@ -179,4 +288,13 @@ export function fillPlaceholders(text: string, now: Date): string {
     const d = new Date(now.getFullYear(), now.getMonth() + shift, 1);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   });
+}
+
+/** Feiertag am Standort (B1 7.4): whole day, or half with `from`/`to`; `area` null = every Schiessplatz. */
+export interface DatasetHoliday {
+  area?: string | null;
+  date: string;
+  from?: string | null;
+  to?: string | null;
+  name: string;
 }

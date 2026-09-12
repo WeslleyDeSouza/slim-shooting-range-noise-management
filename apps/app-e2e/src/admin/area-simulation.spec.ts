@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES } from './support/selectors';
+import { ROUTES } from '../support/selectors';
 
 /**
  * «Schiessplatz – Simulation» (5.13) on the demo area 1104.020 Geissalp

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES } from './support/selectors';
+import { ROUTES } from '../support/selectors';
 
 /** Signed-in pages (session from auth.setup.ts). */
 test('serves the entry page with the area KPIs from the API', async ({ page }) => {

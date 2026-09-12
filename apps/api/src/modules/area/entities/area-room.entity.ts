@@ -5,14 +5,16 @@ import { SlimBaseEntity } from '@api-slim/common';
 import { AreaEntity } from './area.entity';
 
 /**
- * Stellungsraum of an area (B1 5.15): where a unit shoots from. Sources of
- * the noise model (sonARMS) hang off room × weapon (`AreaWeaponEntity`).
- * `builtAfter1985` drives which LSV limit applies (7.7: Planungswert for
- * new plant parts, Immissionsgrenzwert for the rest).
+ * Übergeordneter Stellungsraum of a Schiessplatz (B1 5.15, Kap. 10.1): the
+ * permanent, time-independent reference every usage and every state's
+ * Anlageteil points to — including rooms that no longer exist (`enabled`
+ * false keeps them referenceable). State-specific properties (geometry,
+ * Baujahr, sources) live on the Anlageteil of a Zustand, not here.
  */
 // Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
 @Entity('stellungsraum')
 @Unique(['tenantId', 'id'])
+@Unique(['tenantId', 'areaId', 'id'])
 @Unique(['tenantId', 'areaId', 'name'])
 export class AreaRoomEntity extends SlimBaseEntity {
   protected self = AreaRoomEntity;
@@ -32,10 +34,6 @@ export class AreaRoomEntity extends SlimBaseEntity {
   @ApiProperty({ description: 'Gruppe (Zielräume, Stellungsräume, NGST …)', nullable: true })
   @DbPlatformColumn({ type: 'varchar', length: 60, nullable: true })
   groupName: string | null;
-
-  @ApiProperty({ description: 'Anlageteil nach 1985 erstellt (Planungswert gilt)' })
-  @DbPlatformColumn({ type: 'boolean', nullable: false, default: false })
-  builtAfter1985: boolean;
 
   @ApiProperty()
   @DbPlatformColumn({ type: 'int', nullable: false, default: 0 })

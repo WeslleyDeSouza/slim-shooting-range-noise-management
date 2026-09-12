@@ -30,3 +30,16 @@ npx playwright test --config=apps/app-e2e/playwright.config.ts --project=criteri
 
 Skelett: alle Fälle `test.fixme` mit den Schritten als Kommentar. Details im
 [README des Ordners](src/criterias/README.md).
+
+## Anwendungsfälle je Akteur (`src/actors/`)
+
+Fachliche Durchspiel-Drehbücher je Akteur (A01–A05, S01–S03, T01–T07) und Anwendungsfall
+(B1 4.x), eigenes Projekt `actors` ohne gemeinsame Sitzung — jeder Fall meldet sich mit
+`signInAs('A01')` an, Negativfälle prüfen zusätzlich die API (`apiAs`):
+
+```bash
+npx playwright test --config=apps/app-e2e/playwright.config.ts --project=actors
+```
+
+Skelett: heute nur A01 · 4.4 «Grundlagen Schiessplatznutzung entgegennehmen», alle Fälle
+`test.fixme`. Akteure, Konten, Fixtures und Ablage: [readme des Ordners](src/actors/readme.md).

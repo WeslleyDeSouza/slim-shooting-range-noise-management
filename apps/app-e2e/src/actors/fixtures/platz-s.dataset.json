@@ -1,0 +1,161 @@
+{
+  "SLIM Testplatz S": {
+    "name": "SLIM Testplatz S",
+    "identifier": "slim-testplatz-s",
+    "description": "Synthetischer Schiessplatz mit handgerechneten Soll-Werten (platz-s.md). Format: apps/api/src/mocks/tenant/tenant-dataset.ts, Stand 12.09.2026. Daten auf das Jahr 2026 ausgelegt (Wochentage).",
+    "version": 1,
+    "users": [
+      { "username": "fachspezialist@demo.ch", "password": "1234", "firstName": "Fiona", "lastName": "Meier", "role": "slim_specialist" },
+      { "username": "schiessplatz@demo.ch", "password": "1234", "firstName": "Beat", "lastName": "Roth", "role": "slim_range_owner", "areas": ["Testplatz S"] },
+      { "username": "interessent@demo.ch", "password": "1234", "firstName": "Nina", "lastName": "Huber", "role": "slim_interested" },
+      { "username": "appadmin@demo.ch", "password": "1234", "firstName": "Sven", "lastName": "Keller", "role": "slim_admin" }
+    ],
+    "masterData": {
+      "categories": [
+        { "code": "handguns", "nameDe": "Handfeuerwaffen", "sortOrder": 0 },
+        { "code": "artillery", "nameDe": "Artillerie / Sprengmittel", "sortOrder": 1 }
+      ],
+      "weapons": [
+        { "key": "stgw90", "nameDe": "Stgw 90", "category": "handguns", "annex7Category": "a" },
+        { "key": "pist75", "nameDe": "Pist 75", "category": "handguns", "annex7Category": "b" },
+        { "key": "sprengladung", "nameDe": "Sprengladung", "category": "artillery", "annex7Category": null }
+      ],
+      "calibers": [
+        { "key": "gp90", "nameDe": "5.6 mm GP 90", "quantityUnit": "shots" },
+        { "key": "pistpat41", "nameDe": "9 mm Pist Pat 41", "quantityUnit": "shots" },
+        { "key": "sprengstoff", "nameDe": "Sprengstoff", "quantityUnit": "kg" }
+      ],
+      "combinations": [
+        { "key": "stgw90", "weapon": "stgw90", "caliber": "gp90", "nameDe": "Stgw 90 – 5.6 mm", "sonarmsId": "Stgw90" },
+        { "key": "pist75", "weapon": "pist75", "caliber": "pistpat41", "nameDe": "Pist 75 – 9 mm", "sonarmsId": "Pist75" },
+        { "key": "sprengladung", "weapon": "sprengladung", "caliber": "sprengstoff", "nameDe": "Sprengladung", "sonarmsId": "Sprengladung" }
+      ]
+    },
+    "holidays": [
+      { "date": "2026-12-25", "name": "Weihnachten" },
+      { "date": "2026-12-24", "from": "12:00", "name": "Heiligabend (Nachmittag)" }
+    ],
+    "areas": [
+      {
+        "name": "Testplatz S",
+        "coordinationSectionNo": "9999.001",
+        "sectoralPlanNo": null,
+        "annex7Overall": false,
+        "rooms": [
+          { "coordinationSectionNo": "9999.001.01", "name": "Stellungsraum S1", "groupName": "Stellungsräume", "sortOrder": 0 }
+        ],
+        "roomCombinations": [
+          { "room": "Stellungsraum S1", "combination": "stgw90", "entryName": "Stgw 90 – 5.6 mm" },
+          { "room": "Stellungsraum S1", "combination": "pist75", "entryName": "Pist 75 – 9 mm" },
+          { "room": "Stellungsraum S1", "combination": "sprengladung", "entryName": "Sprengladung (kg)" }
+        ],
+        "quotas": [
+          { "combination": "stgw90", "shotsPerYear": 2000, "basis": "Plangenehmigung Test" }
+        ],
+        "calculations": [
+          {
+            "name": "Ist-Aufnahme 2020",
+            "supplier": "Testbüro",
+            "deliveredAt": "2020-06-01",
+            "states": [
+              {
+                "externalId": "S_Z1",
+                "name": "Z1 Ist 2020",
+                "referenceYear": 2020,
+                "buildYearClass": "before1985",
+                "isCurrent": true,
+                "isMgdm": true,
+                "plantParts": [
+                  { "room": "Stellungsraum S1", "coordinationSectionNo": "9999.001.01", "name": "Anlageteil P1", "type": "Schiessanlage (300m)", "builtAfter1985": false }
+                ],
+                "sources": [
+                  { "sourceId": "Q1", "plantPart": "9999.001.01", "weaponSystem": "Stgw90", "a9": { "shotsInside": 1000, "shotsOutside": 0, "year": 2020 }, "a7": { "halfDaysWork": 10, "halfDaysSunday": 1, "shotsWork": 1000, "year": 2020 } }
+                ],
+                "immissionPoints": [
+                  { "sonarmsId": "E1", "code": "E1", "egid": null, "address": "Testweg 1", "municipality": "Testdorf", "type": "facade", "sensitivityLevel": "II", "east": 2600000, "north": 1200000, "mapX": 50, "mapY": 50, "sortOrder": 0 }
+                ],
+                "wlr": [
+                  { "point": "E1", "source": "Q1", "timeGroup": "day", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E1", "source": "Q1", "timeGroup": "eve", "lae": 80.0, "lafmax": 70.0 }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Sanierung 2024",
+            "supplier": "Testbüro",
+            "deliveredAt": "2024-09-01",
+            "states": [
+              {
+                "externalId": "S_Z2",
+                "name": "Z2 Sanierung 2024",
+                "referenceYear": 2024,
+                "buildYearClass": "before1985",
+                "isCurrent": false,
+                "isMgdm": false,
+                "plantParts": [
+                  { "room": "Stellungsraum S1", "coordinationSectionNo": "9999.001.01", "name": "Anlageteil P1", "type": "Schiessanlage (300m)", "builtAfter1985": false }
+                ],
+                "sources": [
+                  { "sourceId": "Q1a", "plantPart": "9999.001.01", "weaponSystem": "Stgw90", "a9": { "shotsInside": 1000, "shotsOutside": 0, "year": 2024 }, "a7": { "halfDaysWork": 10, "halfDaysSunday": 1, "shotsWork": 1000, "year": 2024 } },
+                  { "sourceId": "Q1b", "plantPart": "9999.001.01", "weaponSystem": "Stgw90", "a9": { "shotsInside": 0, "shotsOutside": 0, "year": 2024 }, "a7": { "halfDaysWork": 0, "halfDaysSunday": 0, "shotsWork": 0, "year": 2024 } }
+                ],
+                "immissionPoints": [
+                  { "sonarmsId": "E1", "code": "E1", "egid": null, "address": "Testweg 1", "municipality": "Testdorf", "type": "facade", "sensitivityLevel": "II", "east": 2600000, "north": 1200000, "mapX": 50, "mapY": 50, "sortOrder": 0 },
+                  { "sonarmsId": "E2", "code": "E2", "egid": null, "address": "Testweg 9", "municipality": "Testdorf", "type": "facade", "sensitivityLevel": "III", "east": 2600300, "north": 1200100, "mapX": 70, "mapY": 40, "sortOrder": 1 }
+                ],
+                "wlr": [
+                  { "point": "E1", "source": "Q1a", "timeGroup": "day", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1a", "timeGroup": "eve", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1b", "timeGroup": "day", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1b", "timeGroup": "eve", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E2", "source": "Q1a", "timeGroup": "day", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1a", "timeGroup": "eve", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1b", "timeGroup": "day", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1b", "timeGroup": "eve", "lae": 80.0, "lafmax": 70.0 }
+                ]
+              },
+              {
+                "externalId": "S_Z3",
+                "name": "Z3 Sanierung ohne Gewichte",
+                "referenceYear": 2024,
+                "buildYearClass": "before1985",
+                "isCurrent": false,
+                "isMgdm": false,
+                "plantParts": [
+                  { "room": "Stellungsraum S1", "coordinationSectionNo": "9999.001.01", "name": "Anlageteil P1", "type": "Schiessanlage (300m)", "builtAfter1985": false }
+                ],
+                "sources": [
+                  { "sourceId": "Q1a", "plantPart": "9999.001.01", "weaponSystem": "Stgw90", "a9": { "shotsInside": 0, "shotsOutside": 0, "year": 2024 }, "a7": null },
+                  { "sourceId": "Q1b", "plantPart": "9999.001.01", "weaponSystem": "Stgw90", "a9": { "shotsInside": 0, "shotsOutside": 0, "year": 2024 }, "a7": null }
+                ],
+                "immissionPoints": [
+                  { "sonarmsId": "E1", "code": "E1", "egid": null, "address": "Testweg 1", "municipality": "Testdorf", "type": "facade", "sensitivityLevel": "II", "east": 2600000, "north": 1200000, "mapX": 50, "mapY": 50, "sortOrder": 0 },
+                  { "sonarmsId": "E2", "code": "E2", "egid": null, "address": "Testweg 9", "municipality": "Testdorf", "type": "facade", "sensitivityLevel": "III", "east": 2600300, "north": 1200100, "mapX": 70, "mapY": 40, "sortOrder": 1 }
+                ],
+                "wlr": [
+                  { "point": "E1", "source": "Q1a", "timeGroup": "day", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1a", "timeGroup": "eve", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1b", "timeGroup": "day", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E1", "source": "Q1b", "timeGroup": "eve", "lae": 74.0, "lafmax": 64.0 },
+                  { "point": "E2", "source": "Q1a", "timeGroup": "day", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1a", "timeGroup": "eve", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1b", "timeGroup": "day", "lae": 80.0, "lafmax": 70.0 },
+                  { "point": "E2", "source": "Q1b", "timeGroup": "eve", "lae": 80.0, "lafmax": 70.0 }
+                ]
+              }
+            ]
+          }
+        ],
+        "usages": [
+          { "room": "Stellungsraum S1", "unit": "Inf Kp 1", "date": "2026-03-02", "from": "08:00", "to": "11:00", "usageType": "military", "personCount": 30, "recordedBy": "Test U1", "positions": [{ "combination": "stgw90", "quantity": 1200 }] },
+          { "room": "Stellungsraum S1", "unit": "Schützengesellschaft Testdorf", "date": "2026-03-08", "from": "09:00", "to": "12:00", "usageType": "civil", "civilUsageKind": "field_shooting", "personCount": 20, "recordedBy": "Test U2", "positions": [{ "combination": "stgw90", "quantity": 100 }] },
+          { "room": "Stellungsraum S1", "unit": "Schützengesellschaft Testdorf", "date": "2026-03-09", "from": "11:00", "to": "13:00", "usageType": "civil", "civilUsageKind": "other", "personCount": 4, "recordedBy": "Test U3", "positions": [{ "combination": "stgw90", "quantity": 10 }] },
+          { "room": "Stellungsraum S1", "unit": "Inf Kp 1", "date": "2026-12-25", "from": "08:00", "to": "11:00", "usageType": "military", "personCount": 30, "recordedBy": "Test U4", "positions": [{ "combination": "stgw90", "quantity": 100 }] },
+          { "room": "Stellungsraum S1", "unit": "MP Kp 2", "date": "2025-03-03", "from": "08:00", "to": "10:00", "usageType": "military", "personCount": 10, "recordedBy": "Test U5", "positions": [{ "combination": "pist75", "quantity": 50 }] },
+          { "room": "Stellungsraum S1", "unit": "G Kp 3", "date": "2025-03-03", "from": "14:00", "to": "16:00", "usageType": "military", "personCount": 8, "recordedBy": "Test U6", "positions": [{ "combination": "sprengladung", "quantity": 2.5, "quantityUnit": "kg" }] }
+        ]
+      }
+    ]
+  }
+}

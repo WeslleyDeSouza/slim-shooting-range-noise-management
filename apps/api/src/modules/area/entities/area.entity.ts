@@ -3,7 +3,7 @@ import { Entity, OneToMany, Unique } from 'typeorm';
 import { DbPlatformColumn } from '@app-galaxy/core-api';
 import { SlimBaseEntity } from '@api-slim/common';
 import { AreaRoomEntity } from './area-room.entity';
-import { AreaWeaponEntity } from './area-weapon.entity';
+import { RoomCombinationEntity } from './room-combination.entity';
 
 /** Traffic-light status of an area (quota / noise), see sitemap.md. */
 /** Ampel incl. `incomplete` = «nicht beurteilbar» (Fachregel O8, see @slim/lsv NoiseState). */
@@ -68,6 +68,6 @@ export class AreaEntity extends SlimBaseEntity {
   @OneToMany(() => AreaRoomEntity, (room) => room.area)
   rooms: AreaRoomEntity[];
 
-  @OneToMany(() => AreaWeaponEntity, (weapon) => weapon.area)
-  weapons: AreaWeaponEntity[];
+  @OneToMany(() => RoomCombinationEntity, (assignment) => assignment.area)
+  combinations: RoomCombinationEntity[];
 }

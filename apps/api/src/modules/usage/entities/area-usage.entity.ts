@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Index, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { Entity, Index, JoinColumn, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { DbPlatformColumn } from '@app-galaxy/core-api';
 import { SlimBaseEntity } from '@api-slim/common';
 import { USAGE_CATEGORIES, UsageCategory } from '@slim/lsv';
-import { AreaEntity, AreaRoomEntity, AreaWeaponEntity } from '../../area/entities';
+import { AreaEntity, AreaRoomEntity } from '../../area/entities';
+import { UsagePositionEntity } from './usage-position.entity';
 
 /**
  * Nutzungskategorie (B1 5.11 «Nutzung», Tabelle 2): Militär, Zivil, Blaulicht,
@@ -12,23 +13,24 @@ import { AreaEntity, AreaRoomEntity, AreaWeaponEntity } from '../../area/entitie
 export const USAGE_TYPE = USAGE_CATEGORIES;
 export type UsageType = UsageCategory;
 
+/** Zivile Nutzungsart (B1 6.1.3, 11.2.2): mandatory when the category is «Zivil». */
+export const CIVIL_USAGE_KIND = ['obligatory', 'field_shooting', 'other'] as const;
+export type CivilUsageKind = (typeof CIVIL_USAGE_KIND)[number];
+
 /** Where the row came from: typed in, the ELO interface (6.x) or an import (9.x). */
 export const USAGE_SOURCE = ['manual', 'elo', 'import'] as const;
-
-/** Unit of the quantity: shots (Stück) or kilograms of explosive (B1 6.2, 11.2.3). */
-export const QUANTITY_UNIT = ['shots', 'kg'] as const;
-export type QuantityUnit = (typeof QUANTITY_UNIT)[number];
-
-/** DECIMAL comes back as a string from MySQL/PostgreSQL drivers — keep it a number in the entity. */
-const decimalToNumber = { to: (v: number) => v, from: (v: string | number | null) => (v == null ? v : Number(v)) };
 export type UsageSource = (typeof USAGE_SOURCE)[number];
 
 /**
- * Schiessplatz-Nutzung (B1 5.11, 7.4.1): one unit shooting one weapon /
- * calibre from one Stellungsraum during one time slot. The raw material
- * of the noise calculation (7.4) and of the quota check (5.10).
+ * Schiessplatz-Nutzung (B1 5.11, 6.1.3, 7.4.2, Kap. 10.3): one unit shooting
+ * from one Stellungsraum during one time slot of one day; the weapons shot
+ * are its positions (`nutzung_position`, n × Kombination + Menge).
+ *
+ * The usage hangs on the permanent reference structure (Schiessplatz,
+ * Stellungsraum, Kombination) and on **no** calculation state — slm 44: it
+ * can be combined with any Zustand at calculation time. Physical table
+ * `nutzung` (German database objects, B1 12.2 / slm 51).
  */
-// Physical table name in German (B1 12.2 / slm 51); the class keeps its English name.
 @Entity('nutzung')
 @Unique(['tenantId', 'id'])
 @Index(['tenantId', 'areaId', 'date'])
@@ -43,13 +45,8 @@ export class AreaUsageEntity extends SlimBaseEntity {
   @DbPlatformColumn({ type: 'uuid', nullable: false })
   roomId: string;
 
-  /** The allowed room × weapon combination (= the noise source). */
-  @ApiProperty()
-  @DbPlatformColumn({ type: 'uuid', nullable: false })
-  weaponId: string;
-
-  @ApiProperty({ description: 'Nutzungseinheit, z. B. «Art Abt 10»' })
-  @DbPlatformColumn({ length: 120, nullable: false })
+  @ApiProperty({ description: 'Benutzende Einheit, z. B. «Art Abt 10» (B1 6.1.3: max. 256 Zeichen)' })
+  @DbPlatformColumn({ length: 256, nullable: false })
   unit: string;
 
   @ApiProperty({ description: 'Datum YYYY-MM-DD' })
@@ -68,14 +65,13 @@ export class AreaUsageEntity extends SlimBaseEntity {
   @DbPlatformColumn({ type: 'varchar', length: 10, nullable: false })
   usageType: UsageType;
 
-  /** Menge als Dezimalzahl (B1 6.2/11.2.3): Anzahl Schuss oder kg Sprengstoff, 3 Dezimalen. */
-  @ApiProperty({ description: 'Menge (Dezimalzahl): Anzahl Schuss oder kg Sprengstoff' })
-  @DbPlatformColumn({ type: 'decimal', precision: 12, scale: 3, nullable: false, default: 0, transformer: decimalToNumber })
-  shots: number;
+  @ApiProperty({ enum: CIVIL_USAGE_KIND, nullable: true, description: 'Zivile Nutzungsart (nur bei Kategorie Zivil)' })
+  @DbPlatformColumn({ type: 'varchar', length: 16, nullable: true })
+  civilUsageKind: CivilUsageKind | null;
 
-  @ApiProperty({ enum: QUANTITY_UNIT, description: 'Einheit der Menge: Stück oder kg' })
-  @DbPlatformColumn({ type: 'varchar', length: 5, nullable: false, default: 'shots' })
-  quantityUnit: QuantityUnit;
+  @ApiProperty({ nullable: true, description: 'Anzahl Personen, die geschossen haben (B1 6.1.3)' })
+  @DbPlatformColumn({ type: 'int', nullable: true })
+  personCount: number | null;
 
   @ApiProperty({ description: 'Erfasser (Anzeigename)' })
   @DbPlatformColumn({ length: 120, nullable: false, default: '' })
@@ -84,6 +80,10 @@ export class AreaUsageEntity extends SlimBaseEntity {
   @ApiProperty({ enum: USAGE_SOURCE })
   @DbPlatformColumn({ type: 'varchar', length: 10, nullable: false, default: 'manual' })
   source: UsageSource;
+
+  @ApiProperty({ nullable: true, description: 'Externe Identität (z. B. ELO-Meldung), für Idempotenz' })
+  @DbPlatformColumn({ type: 'varchar', length: 64, nullable: true })
+  externalId: string | null;
 
   @ApiProperty({ nullable: true })
   @DbPlatformColumn({ type: 'text', nullable: true })
@@ -96,17 +96,15 @@ export class AreaUsageEntity extends SlimBaseEntity {
   ])
   area: AreaEntity;
 
-  @ManyToOne(() => AreaRoomEntity, { onDelete: 'CASCADE' })
+  /** Composite with the area: the room must belong to the same Schiessplatz. */
+  @ManyToOne(() => AreaRoomEntity, { onDelete: 'RESTRICT' })
   @JoinColumn([
     { name: 'tenantId', referencedColumnName: 'tenantId' },
+    { name: 'areaId', referencedColumnName: 'areaId' },
     { name: 'roomId', referencedColumnName: 'id' },
   ])
   room: AreaRoomEntity;
 
-  @ManyToOne(() => AreaWeaponEntity, { onDelete: 'CASCADE' })
-  @JoinColumn([
-    { name: 'tenantId', referencedColumnName: 'tenantId' },
-    { name: 'weaponId', referencedColumnName: 'id' },
-  ])
-  weapon: AreaWeaponEntity;
+  @OneToMany(() => UsagePositionEntity, (position) => position.usage, { cascade: true })
+  positions: UsagePositionEntity[];
 }

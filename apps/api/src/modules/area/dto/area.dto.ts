@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -23,10 +22,10 @@ export class AreaResultDto {
   @ApiProperty({ description: 'Sachplan-Nr.', nullable: true, type: String })
   sectoralPlanNo: string | null;
 
-  @ApiProperty({ enum: AREA_STATUS })
+  @ApiProperty({ enum: AREA_STATUS, description: 'Kontingent-Ampel: aus Nutzungen und Kontingenten berechnet (Cache, nach jeder Änderung neu)' })
   quotaStatus: AreaStatus;
 
-  @ApiProperty({ enum: AREA_STATUS })
+  @ApiProperty({ enum: AREA_STATUS, description: 'Lärm-Ampel: schlechtester Immissionspunkt des gültigen Zustands im laufenden Jahr (Cache, nach jeder Änderung neu)' })
   noiseStatus: AreaStatus;
 
   @ApiProperty({ description: 'Gesamtbeurteilung nach Anhang 7 (5.16)' })
@@ -56,16 +55,6 @@ export class AreaCreateDto {
   sectoralPlanNo?: string | null;
 
   @IsOptional()
-  @IsIn(AREA_STATUS)
-  @ApiPropertyOptional({ enum: AREA_STATUS, default: 'none' })
-  quotaStatus?: AreaStatus;
-
-  @IsOptional()
-  @IsIn(AREA_STATUS)
-  @ApiPropertyOptional({ enum: AREA_STATUS, default: 'none' })
-  noiseStatus?: AreaStatus;
-
-  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ default: true })
   enabled?: boolean;
@@ -89,16 +78,6 @@ export class AreaUpdateDto {
   @MaxLength(40)
   @ApiPropertyOptional({ description: 'Sachplan-Nr.', nullable: true })
   sectoralPlanNo?: string | null;
-
-  @IsOptional()
-  @IsIn(AREA_STATUS)
-  @ApiPropertyOptional({ enum: AREA_STATUS })
-  quotaStatus?: AreaStatus;
-
-  @IsOptional()
-  @IsIn(AREA_STATUS)
-  @ApiPropertyOptional({ enum: AREA_STATUS })
-  noiseStatus?: AreaStatus;
 
   @IsOptional()
   @IsBoolean()

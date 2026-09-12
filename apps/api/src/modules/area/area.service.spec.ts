@@ -7,6 +7,7 @@ import {
 } from '@api-slim/tests';
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
+import { AreaStatusService } from '../calculation/area-status.service';
 import { CalculationModule } from '../calculation/calculation.module';
 import { UsageModule } from '../usage/usage.module';
 import { AreaModule } from './area.module';
@@ -55,17 +56,27 @@ describe('AreaService', () => {
     expect(await service.list('other-tenant')).toEqual([]);
   });
 
-  it('summarises the traffic-light status', async () => {
+  it('summarises the traffic-light status computed from usages and states (5.9/5.10)', async () => {
     await seedDemoDataset(dataSource, mockTenantId, { now: NOW });
+    // Fresh seed: the lights are a cache and start empty.
+    expect(await service.summary(mockTenantId)).toMatchObject({ total: 9, none: 9 });
+    await module.get(AreaStatusService).refreshAll(mockTenantId, NOW);
+    const areas = await service.list(mockTenantId);
+    const geissalp = areas.find((a) => a.name === 'Geissalp');
+    // Noise: E1 is over the IGW of the current state. Quota: the Sprengladung has no Kontingent → Soll 0 → red (B1 5.10).
+    expect(geissalp?.noiseStatus).toBe('over');
+    expect(geissalp?.quotaStatus).toBe('over');
+    // No state → no noise light; the light areas have quotas for everything they shoot → green.
+    const thun = areas.find((a) => a.name === 'Thun');
+    expect(thun?.noiseStatus).toBe('none');
+    expect(thun?.quotaStatus).toBe('ok');
+    // Kontingente without any usage: nothing shot → within (green); no state → no noise light.
+    const hinterrhein = areas.find((a) => a.name === 'Hinterrhein');
+    expect(hinterrhein).toMatchObject({ noiseStatus: 'none', quotaStatus: 'ok' });
     const summary = await service.summary(mockTenantId);
-    expect(summary).toEqual({
-      total: 9,
-      ok: 3,
-      warn: 2,
-      over: 3,
-      none: 1,
-      attention: 5,
-    });
+    expect(summary.total).toBe(9);
+    expect(summary.over).toBe(1);
+    expect(summary.attention).toBe(1);
   });
 
   it('creates, updates and soft-deletes an area', async () => {
@@ -76,9 +87,9 @@ describe('AreaService', () => {
     expect(created.quotaStatus).toBe('none');
 
     const updated = await service.update(mockTenantId, created.id, {
-      noiseStatus: 'over',
+      sectoralPlanNo: 'SP-TEST',
     });
-    expect(updated.noiseStatus).toBe('over');
+    expect(updated.sectoralPlanNo).toBe('SP-TEST');
 
     await service.remove(mockTenantId, created.id);
     await expect(service.get(mockTenantId, created.id)).rejects.toThrow();

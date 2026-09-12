@@ -10,8 +10,8 @@ describe('limits (Art. 43 LSV, Anhang 7 / 9)', () => {
   it.each<[SensitivityLevel, number, number, number]>([
     ['I', 50, 55, 65],
     ['II', 55, 60, 70],
-    ['III', 60, 65, 75],
-    ['IV', 65, 70, 80],
+    ['III', 60, 65, 70],
+    ['IV', 65, 70, 75],
   ])('Anhang 9, ES %s → PW %d / IGW %d / AW %d', (es, pw, igw, aw) => {
     expect(limits(9, es)).toEqual({ pw, igw, aw });
     expect(ANNEX9_LIMITS[es]).toEqual({ pw, igw, aw });

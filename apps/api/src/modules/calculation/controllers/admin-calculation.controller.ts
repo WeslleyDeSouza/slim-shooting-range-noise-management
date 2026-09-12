@@ -5,6 +5,7 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -17,26 +18,40 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { AppsRolesGuard, ReplayGuard } from '@app-galaxy/auth-api';
+import { AppsRolesGuard, GetUser, IAuthUser, ReplayGuard } from '@app-galaxy/auth-api';
 import { GetTenantId, RulesGuard, TenantGuard } from '@app-galaxy/core-api';
 import { AreaScoped, TenantIdOnRequestGuard } from '../../area/scope/area-scope.rule';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
+import { AreaStatusService } from '../area-status.service';
 import { AssessmentService } from '../assessment.service';
+import { CalculationRunService } from '../calculation-run.service';
 import { CalculationService } from '../calculation.service';
 import {
   AssessmentDto,
   AssessmentQueryDto,
   CalculationDto,
+  CalculationRunDto,
+  ImportReportDto,
   SimulationBaseDto,
   SimulationResultDto,
   SimulationRunDto,
+  StateImportDto,
+  StatePointerDto,
 } from '../dto';
+import { ImportService } from '../import.service';
 import { SimulationService } from '../simulation.service';
 
+/** «Ersteller»: the signed-in user's name, falling back to the e-mail. */
+function displayName(user: Partial<IAuthUser> | undefined): string {
+  const full = [user?.firstName, user?.lastName].filter(Boolean).join(' ');
+  return full || user?.email || '';
+}
+
 /**
- * Noise assessment of one area: calculation states (5.18), the receiver
- * assessment of 5.12 «Details» and the 5.13 «Simulation». Generated
- * client: `AdminCalculationService.adminCalculation*()`.
+ * Noise assessment of one area: calculation states (5.18) with their
+ * import (5.19), the receiver assessment of 5.12 «Details», the 5.13
+ * «Simulation» and the stored Berechnungsläufe (5.10). Generated client:
+ * `AdminCalculationService.adminCalculation*()`.
  */
 @ApiTags('AdminCalculation')
 @ApiBearerAuth()
@@ -55,6 +70,9 @@ export class AdminCalculationController {
     private readonly calculations: CalculationService,
     private readonly assessment: AssessmentService,
     private readonly simulation: SimulationService,
+    private readonly importer: ImportService,
+    private readonly runs: CalculationRunService,
+    private readonly status: AreaStatusService,
   ) {}
 
   @Get()
@@ -69,11 +87,46 @@ export class AdminCalculationController {
     return all.map((c) => this.calculations.toDto(c, counts.get(c.id)));
   }
 
+  /** 5.19: import a Berechnungszustand (parsed FGDB + WLR + Betriebsdaten). Needs the Berechnungen right (B1 8.1.2). */
+  @Post('import')
+  @UseGuards(AppsRolesGuard(API_APPS_MAPPING.ADMIN_DATA_CALCULATIONS))
+  @HttpCode(201)
+  @ApiParam({ name: 'areaId' })
+  @ApiOkResponse({ type: ImportReportDto })
+  async importState(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Body() dto: StateImportDto,
+  ): Promise<ImportReportDto> {
+    const report = await this.importer.importState(tenantId, areaId, dto);
+    await this.status.refresh(tenantId, areaId);
+    return report;
+  }
+
+  /** 5.18: make a state the «aktuell gültige» one or the «Stand MGDM». */
+  @Patch(':stateId/pointer')
+  @UseGuards(AppsRolesGuard(API_APPS_MAPPING.ADMIN_DATA_CALCULATIONS))
+  @ApiParam({ name: 'areaId' })
+  @ApiParam({ name: 'stateId' })
+  @ApiOkResponse({ type: CalculationDto })
+  async setPointer(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Param('stateId', ParseUUIDPipe) stateId: string,
+    @Body() dto: StatePointerDto,
+  ): Promise<CalculationDto> {
+    const state = await this.calculations.setPointer(tenantId, areaId, stateId, dto.pointer);
+    await this.status.refresh(tenantId, areaId);
+    const counts = await this.calculations.sourceCounts(tenantId, [state.id]);
+    return this.calculations.toDto(state, counts.get(state.id));
+  }
+
   @Get('assessment')
   @ApiParam({ name: 'areaId' })
   @ApiQuery({ name: 'calculationId', required: false })
   @ApiQuery({ name: 'from', required: false, description: 'YYYY-MM-DD' })
   @ApiQuery({ name: 'to', required: false, description: 'YYYY-MM-DD' })
+  @ApiQuery({ name: 'years', required: false, description: 'Representative years, comma separated' })
   @ApiOkResponse({ type: AssessmentDto })
   assess(
     @GetTenantId() tenantId: string,
@@ -81,6 +134,43 @@ export class AdminCalculationController {
     @Query() query: AssessmentQueryDto,
   ): Promise<AssessmentDto> {
     return this.assessment.assess(tenantId, areaId, query);
+  }
+
+  /** 5.10 «Immissionsberechnung durchführen und abspeichern»: store an immutable run. */
+  @Post('run')
+  @UseGuards(AppsRolesGuard(API_APPS_MAPPING.ADMIN_AREA_CALCULATION_RUN))
+  @HttpCode(201)
+  @ApiParam({ name: 'areaId' })
+  @ApiOkResponse({ type: CalculationRunDto })
+  run(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Body() query: AssessmentQueryDto,
+    @GetUser() user: IAuthUser,
+  ): Promise<CalculationRunDto> {
+    return this.runs.run(tenantId, areaId, query, displayName(user));
+  }
+
+  @Get('run')
+  @ApiParam({ name: 'areaId' })
+  @ApiOkResponse({ type: CalculationRunDto, isArray: true })
+  listRuns(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+  ): Promise<CalculationRunDto[]> {
+    return this.runs.list(tenantId, areaId);
+  }
+
+  @Get('run/:runId')
+  @ApiParam({ name: 'areaId' })
+  @ApiParam({ name: 'runId' })
+  @ApiOkResponse({ type: CalculationRunDto })
+  getRun(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Param('runId', ParseUUIDPipe) runId: string,
+  ): Promise<CalculationRunDto> {
+    return this.runs.get(tenantId, areaId, runId);
   }
 
   /** Simulation (5.13) needs its own right on top of the area right (B1 8.1.2). */

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ROUTES } from './support/selectors';
+import { ROUTES } from '../support/selectors';
 
 /**
  * «Schiessplatz – Schusszahlen» (5.11) of the demo area 1104.020 Geissalp

@@ -82,5 +82,17 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
       dependencies: ['setup'],
     },
+    // Use cases per actor (B1 4.x, `src/actors/readme.md`):
+    // `npx playwright test --project=actors`. No shared session on purpose —
+    // every case signs in as its actor (`signInAs`), T01 stays signed out.
+    // Skeleton only for now (every case is `test.fixme`).
+    {
+      name: 'actors',
+      testMatch: ['**/src/actors/**/*.spec.ts'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: { cookies: [], origins: [] },
+      },
+    },
   ],
 });

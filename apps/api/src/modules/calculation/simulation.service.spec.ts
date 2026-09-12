@@ -48,7 +48,7 @@ describe('SimulationService (5.13 Simulation)', () => {
 
   it('starts from the year\'s military shot counts per room × weapon (7.4.5)', async () => {
     expect(base.calculation?.isCurrent).toBe(true);
-    expect(base.rows).toHaveLength(16);
+    expect(base.rows).toHaveLength(17);
     expect(base.rows.every((r) => r.hasLevels)).toBe(true);
     const shot = base.rows.filter((r) => r.inside + r.outside > 0);
     expect(shot.length).toBeGreaterThan(8);
@@ -62,7 +62,7 @@ describe('SimulationService (5.13 Simulation)', () => {
       .get(AssessmentService)
       .assess(mockTenantId, geissalpId, { from: `${YEAR}-01-01`, to: `${YEAR}-12-31`, now: NOW });
     for (const op of assessment.operatingData) {
-      expect(base.rows.find((r) => r.weaponId === op.weaponId)).toMatchObject({ inside: op.inside, outside: op.outside });
+      expect(base.rows.find((r) => r.roomId === op.roomId && r.combinationId === op.combinationId)).toMatchObject({ inside: op.inside, outside: op.outside });
     }
     // Ist levels equal the assessment's Annex 9 IGW levels.
     for (const receiver of base.receivers) {
@@ -77,7 +77,7 @@ describe('SimulationService (5.13 Simulation)', () => {
   it('reproduces the Ist when the values are unchanged', async () => {
     const result = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: r.inside, outside: r.outside })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside, outside: r.outside })),
     });
     for (const receiver of result.receivers) {
       expect(receiver.simulated).toBe(receiver.current);
@@ -92,7 +92,7 @@ describe('SimulationService (5.13 Simulation)', () => {
   it('raises every level by 10 dB when all shots are multiplied by ten', async () => {
     const result = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: r.inside * 10, outside: r.outside * 10 })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside * 10, outside: r.outside * 10 })),
     });
     for (const receiver of result.receivers.filter((r) => r.current !== null)) {
       expect(receiver.delta).toBeCloseTo(10, 0);
@@ -100,13 +100,14 @@ describe('SimulationService (5.13 Simulation)', () => {
     }
     // E4 (ES III, limit 65) stays orange at 62.3 dB; the ES II points go red.
     expect(result.counts).toMatchObject({ over: 4, warn: 1, none: 1 });
-    expect(result.totals.inside).toBe(result.totals.baseInside * 10);
+    // The explosive (kg) is scaled like everything else: decimal quantities survive the simulation.
+    expect(result.totals.inside).toBeCloseTo(result.totals.baseInside * 10, 3);
   });
 
   it('halving the shots lowers the level by about 3 dB and can turn the light', async () => {
     const result = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: Math.round(r.inside / 2), outside: Math.round(r.outside / 2) })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: Math.round(r.inside / 2), outside: Math.round(r.outside / 2) })),
     });
     const e1 = result.receivers.find((r) => r.code === 'E1');
     expect(e1?.currentState).toBe('over');
@@ -117,11 +118,11 @@ describe('SimulationService (5.13 Simulation)', () => {
   it('moving shots into the evening weighs them 5 dB more', async () => {
     const day = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: r.inside + r.outside, outside: 0 })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside + r.outside, outside: 0 })),
     });
     const eve = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: 0, outside: r.inside + r.outside })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: 0, outside: r.inside + r.outside })),
     });
     for (const receiver of day.receivers.filter((r) => r.simulated !== null)) {
       const other = eve.receivers.find((r) => r.id === receiver.id);
@@ -133,7 +134,7 @@ describe('SimulationService (5.13 Simulation)', () => {
   it('yields no level at all without shots', async () => {
     const result = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ weaponId: r.weaponId, inside: 0, outside: 0 })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: 0, outside: 0 })),
     });
     expect(result.receivers.every((r) => r.simulated === null && r.simulatedState === 'none')).toBe(true);
     expect(result.counts.none).toBe(6);
@@ -143,7 +144,7 @@ describe('SimulationService (5.13 Simulation)', () => {
     const one = base.rows.find((r) => r.inside > 0) as SimulationBaseDto['rows'][number];
     const result = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: [{ weaponId: one.weaponId, inside: one.inside, outside: one.outside }],
+      rows: [{ roomId: one.roomId, combinationId: one.combinationId, inside: one.inside, outside: one.outside }],
     });
     expect(result.receivers.every((r) => r.simulated === r.current)).toBe(true);
   });
@@ -152,9 +153,9 @@ describe('SimulationService (5.13 Simulation)', () => {
     await expect(
       service.run(mockTenantId, geissalpId, {
         year: YEAR,
-        rows: [{ weaponId: '11111111-1111-1111-1111-111111111111', inside: 1, outside: 0 }],
+        rows: [{ roomId: '11111111-1111-1111-1111-111111111111', combinationId: '11111111-1111-1111-1111-111111111111', inside: 1, outside: 0 }],
       }),
-    ).rejects.toThrow(/Unknown sources/);
+    ).rejects.toThrow(/Unknown combinations/);
   });
 
   it('can simulate on another calculation state', async () => {
@@ -163,6 +164,20 @@ describe('SimulationService (5.13 Simulation)', () => {
     expect(other.calculation?.id).toBe(saniert?.id);
     const e1 = other.receivers.find((r) => r.code === 'E1');
     expect(e1?.current).toBe(56.4);
+  });
+
+  it('spreads a simulated combination over its Schusslinien of the state (7.5) and stays consistent with the assessment', async () => {
+    const saniert = (await module.get(AssessmentService).assess(mockTenantId, geissalpId, { now: NOW })).calculations.find((c) => !c.isCurrent);
+    const other = await service.base(mockTenantId, geissalpId, YEAR, saniert?.id);
+    expect(other.calculation?.sourceCount).toBe(18);
+    // Same Stellungsraum × Kombination rows as on the current state — the rows are the reference structure, not the model.
+    expect(other.rows.map((r) => `${r.roomId}|${r.combinationId}`).sort()).toEqual(base.rows.map((r) => `${r.roomId}|${r.combinationId}`).sort());
+    const result = await service.run(mockTenantId, geissalpId, {
+      year: YEAR,
+      calculationId: saniert?.id,
+      rows: other.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside * 10, outside: r.outside * 10 })),
+    });
+    for (const receiver of result.receivers.filter((r) => r.current !== null)) expect(Math.abs((receiver.delta as number) - 10)).toBeLessThanOrEqual(0.1);
   });
 
   it('has nothing to simulate for an area without calculation', async () => {

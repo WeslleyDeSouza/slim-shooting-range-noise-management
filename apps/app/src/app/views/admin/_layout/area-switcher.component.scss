@@ -1,0 +1,211 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+// Schiessplatz-Wechsler: selection card + fixed popover with search and groups.
+.area-switch {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 48px;
+  border: 1px solid slim.color('line');
+  border-radius: slim.radius('md');
+  background: slim.color('surface-2');
+
+  &--open {
+    border-color: slim.color('line-strong');
+  }
+
+  &__trigger {
+    @include slim.control-reset;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'name chevron'
+      'no chevron';
+    align-items: center;
+    column-gap: slim.space(2);
+    flex: 1;
+    min-width: 0;
+    padding: slim.space(1) slim.space(2);
+    // Order on the right: text | star (absolute, 26px) | chevron (14px). The chevron's
+    // margin-left reserves the star's place, so the text never runs under it.
+    border-radius: inherit;
+    text-align: left;
+    color: slim.color('ink');
+    @include slim.focus-visible(true);
+
+    &:hover {
+      background: slim.color('hover');
+    }
+    .area-switch__chevron {
+      grid-area: chevron;
+      // Sits after the star (which is absolutely placed at the chevron's left).
+      margin-left: calc(26px + 6px);
+    }
+    .area-switch__name {
+      grid-area: name;
+    }
+    .area-switch__no {
+      grid-area: no;
+    }
+  }
+
+  &--empty &__trigger {
+    grid-template-areas: 'placeholder chevron';
+    .area-switch__chevron {
+      margin-left: 0;
+    }
+  }
+
+  &__placeholder {
+    grid-area: placeholder;
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('medium');
+    color: slim.color('text-3');
+  }
+
+  &__icon {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+
+  &__name {
+    display: block;
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('semibold');
+    line-height: 1.25;
+    @include slim.truncate;
+  }
+
+  &__no {
+    display: block;
+    font-size: slim.font-size('xs');
+    line-height: 1.25;
+    color: slim.color('text-3');
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__chevron {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    color: slim.color('text-3');
+    transition: transform 0.15s ease;
+  }
+  &--open &__chevron {
+    transform: rotate(180deg);
+  }
+
+  // Standalone favourite button between text and chevron (never nested in the trigger).
+  &__star {
+    @include slim.control-reset;
+    position: absolute;
+    top: 50%;
+    right: calc(slim.space(2) + 14px + 6px);
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: slim.radius('sm');
+    color: slim.color('text-3');
+    @include slim.focus-visible;
+
+    svg {
+      width: 15px;
+      height: 15px;
+    }
+    &:hover {
+      background: slim.color('hover');
+      color: slim.color('ink');
+    }
+    &--on {
+      color: slim.color('warning');
+    }
+  }
+
+  // Popover: fixed under the trigger (see reposition()), above the navigation.
+  &__panel {
+    position: fixed;
+    z-index: slim.z('sheet');
+    display: flex;
+    flex-direction: column;
+    padding: slim.space(2);
+    border-radius: slim.radius('md');
+    @include slim.surface('lg');
+    animation: slim-pop-down 140ms ease-out;
+  }
+
+  &__search {
+    flex: none;
+    margin-bottom: slim.space(2);
+  }
+
+  &__input {
+    min-height: slim.size('control-h-sm');
+    font-size: slim.font-size('sm');
+  }
+
+  &__list {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  &__heading {
+    padding: slim.space(2) slim.space(2) slim.space(1);
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: slim.color('text-4');
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    min-height: 40px;
+    padding: slim.space(1) slim.space(2);
+    border-radius: slim.radius('sm');
+    cursor: pointer;
+
+    &--active {
+      background: slim.color('hover');
+    }
+    &--selected {
+      color: slim.color('primary');
+      .area-switch__no {
+        color: slim.color('primary');
+        opacity: 0.8;
+      }
+    }
+  }
+
+  &__option-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__check {
+    width: 16px;
+    height: 16px;
+    flex: none;
+  }
+
+  &__empty {
+    padding: slim.space(3) slim.space(2);
+    font-size: slim.font-size('sm');
+    color: slim.color('text-3');
+  }
+}

@@ -22,6 +22,7 @@ import { APP_ROUTES, GALAXY_APP_ID, ROUTE_SEGMENT, SLIM_APP_ID } from '@slim/sha
 import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
 import { AccessFacade } from '../../../core/access/access.facade';
+import { AreaSwitcherComponent } from './area-switcher.component';
 import { AreaFacade } from '../../../core/area/area.facade';
 import { AuthFacade } from '../../auth/auth.facade';
 import { resetWelcome } from '../home/welcome-dialog.component';
@@ -32,6 +33,15 @@ interface NavItem {
   icon: string;
   exact?: boolean;
   /** App the entry needs a right for (B1 8.1.2); entries without one are always shown. */
+  app?: number;
+}
+
+/** One page of a Schiessplatz (link takes the area id). */
+interface AreaPage {
+  id: string;
+  key: string;
+  link: (id: string) => string;
+  icon: string;
   app?: number;
 }
 
@@ -52,6 +62,7 @@ interface NavItem {
     TranslatePipe,
     SlimThemeToggleComponent,
     LanguageSwitchComponent,
+    AreaSwitcherComponent,
   ],
   host: { '(document:click)': 'onDocumentClick($event)' },
   template: `
@@ -379,7 +390,7 @@ interface NavItem {
                   {{ a.name }}
                 </a>
               } @empty {
-                <p class="admin-layout__group-hint slim-text--muted">{{ 'shell.bookmarks_empty' | translate }}</p>
+                <p class="admin-layout__group-hint slim-text--muted" data-testid="sidebar-bookmarks-empty">{{ 'shell.bookmarks_empty' | translate }}</p>
               }
             }
           }
@@ -414,42 +425,18 @@ interface NavItem {
                 <svg class="slim-sidebar__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                   <path [attr.d]="listIcon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-                {{ 'menu.areas' | translate }}
+                {{ 'menu.areas_all' | translate }}
               </a>
-              <input
-                class="slim-input admin-layout__area-pick"
-                type="search"
-                list="sidebar-areas"
-                autocomplete="off"
-                [placeholder]="'shell.area_pick' | translate"
-                [attr.aria-label]="'shell.area_pick' | translate"
-                [attr.title]="'shell.area_pick_hint' | translate"
-                [value]="areaPickText()"
-                (input)="areaPickText.set($any($event.target).value)"
-                (change)="pickArea($any($event.target).value)"
-                data-testid="sidebar-area-pick"
+              <app-area-switcher
+                class="admin-layout__switcher"
+                [areas]="areas()"
+                [selected]="activeArea()"
+                [favoriteIds]="bookmarkIds()"
+                (pick)="pickArea($event)"
+                (favoriteToggle)="toggleBookmark($event)"
               />
-              <datalist id="sidebar-areas">
-                @for (a of areas(); track a.id) {
-                  <option [value]="labelOf(a)"></option>
-                }
-              </datalist>
               @if (activeArea(); as a) {
-                <button
-                  type="button"
-                  class="admin-layout__star"
-                  [class.admin-layout__star--on]="isBookmarked(a.id)"
-                  [attr.aria-pressed]="isBookmarked(a.id)"
-                  [attr.title]="(isBookmarked(a.id) ? 'shell.bookmark_remove' : 'shell.bookmark_add') | translate"
-                  (click)="toggleBookmark(a.id)"
-                  data-testid="sidebar-bookmark-toggle"
-                >
-                  <svg class="slim-sidebar__icon" viewBox="0 0 16 16" [attr.fill]="isBookmarked(a.id) ? 'currentColor' : 'none'" aria-hidden="true">
-                    <path [attr.d]="starIcon" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
-                  </svg>
-                  <span>{{ a.name }}</span>
-                </button>
-                @for (page of areaPages; track page.key) {
+                @for (page of visibleAreaPages(); track page.key) {
                   <a
                     class="slim-sidebar__link admin-layout__sub"
                     [routerLink]="page.link(a.id)"
@@ -462,8 +449,6 @@ interface NavItem {
                     {{ page.key | translate }}
                   </a>
                 }
-              } @else {
-                <p class="admin-layout__group-hint slim-text--muted">{{ 'shell.area_pick_hint' | translate }}</p>
               }
             }
           </nav>
@@ -715,13 +700,14 @@ export class AdminLayoutComponent extends ComponentBase {
     },
   ];
 
-  /** The four pages of one Schiessplatz (sidebar group «Schiessplätze»). */
-  protected readonly areaPages = [
+  /** The four pages of one Schiessplatz (sidebar group «Schiessplätze»); Simulation needs its own right. */
+  protected readonly areaPages: AreaPage[] = [
     { id: 'overview', key: 'menu.area_overview', link: APP_ROUTES.admin.area.overview, icon: ICON.home },
     { id: 'shots', key: 'menu.area_shots', link: APP_ROUTES.admin.area.shots, icon: ICON.target },
     { id: 'details', key: 'menu.area_details', link: APP_ROUTES.admin.area.details, icon: ICON.info },
-    { id: 'simulation', key: 'menu.area_simulation', link: APP_ROUTES.admin.area.simulation, icon: ICON.chart },
+    { id: 'simulation', key: 'menu.area_simulation', link: APP_ROUTES.admin.area.simulation, icon: ICON.chart, app: SLIM_APP_ID.ADMIN_AREA_SIMULATION },
   ];
+  protected readonly visibleAreaPages = this.visible(this.areaPages);
   protected readonly starIcon = ICON.star;
   protected readonly listIcon = ICON.list;
 
@@ -759,38 +745,28 @@ export class AdminLayoutComponent extends ComponentBase {
     this.groups.set(next);
     writeGroups(next);
   }
-  protected readonly areaPickText = linkedSignal(() => {
-    const a = this.activeArea();
-    return a ? this.labelOf(a) : '';
-  });
-
   protected labelOf(a: AreaResultDto): string {
     return `${a.coordinationSectionNo} ${a.name}`;
   }
 
-  /** Datalist pick: match the typed text (label, name or number), then open the Schiessplatz. */
-  protected pickArea(text: string): void {
-    const q = text.trim().toLowerCase();
-    if (!q) {
-      this.pickedAreaId.set('');
-      return;
-    }
-    const list = this.areas();
-    const hit =
-      list.find((a) => this.labelOf(a).toLowerCase() === q) ??
-      list.find((a) => a.name.toLowerCase() === q || a.coordinationSectionNo === q) ??
-      list.find((a) => this.labelOf(a).toLowerCase().includes(q));
-    if (!hit) return;
-    this.pickedAreaId.set(hit.id);
-    // Stay on the same kind of page when one is open, otherwise the assessment (Details).
+  /**
+   * A range was chosen in the switcher: keep the current sub page when one
+   * is open and allowed, otherwise the first allowed page (Übersicht). The
+   * router runs the pages' own guards, so nothing here bypasses them.
+   */
+  protected pickArea(id: string): void {
+    if (!this.areas().some((a) => a.id === id)) return;
+    this.pickedAreaId.set(id);
+    const allowed = this.visibleAreaPages();
     const fromRoute = this.routeAreaId();
-    const current = fromRoute ? this.areaPages.find((p) => this.router.url.startsWith(p.link(fromRoute))) : undefined;
-    void this.router.navigateByUrl((current ?? this.areaPages[2]).link(hit.id));
+    const current = fromRoute ? allowed.find((p) => this.router.url.split('?')[0].startsWith(p.link(fromRoute))) : undefined;
+    const target = current ?? allowed[0] ?? this.areaPages[0];
+    void this.router.navigateByUrl(target.link(id));
   }
 
   // Lesezeichen (bookmarks): starred Schiessplätze, kept per browser and
   // tenant in localStorage — demo scope; product: galaxy user settings.
-  private readonly bookmarkIds = signal<string[]>(readBookmarks(this.bookmarkKey()));
+  protected readonly bookmarkIds = signal<string[]>(readBookmarks(this.bookmarkKey()));
   protected readonly bookmarkedAreas = computed(() => {
     const ids = this.bookmarkIds();
     return ids.map((id) => this.areas().find((a) => a.id === id)).filter((a): a is AreaResultDto => !!a);
@@ -819,7 +795,7 @@ export class AdminLayoutComponent extends ComponentBase {
   protected readonly visibleUserManagement = this.visible(this.userManagement);
   protected readonly visibleTabs = this.visible(this.tabs);
 
-  private visible(items: NavItem[]) {
+  private visible<T extends { app?: number }>(items: T[]) {
     return computed(() => {
       const loaded = this.access.loaded();
       const apps = this.access.appIds();

@@ -39,7 +39,8 @@
     "admin_tenant": "Mandanten (galaxy)",
     "app_config": "App-Konfiguration",
     "ad": "Administration",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "areas_all": "Alle Schiessplätze"
   },
   "common": {
     "save": "Speichern",
@@ -101,12 +102,17 @@
     "areas_count": "{{n}} Schiessplätze",
     "user": "Benutzer",
     "area_group": "Schiessplätze",
-    "area_pick": "Schiessplatz wählen …",
-    "area_pick_hint": "Nummer oder Bezeichnung eingeben; danach erscheinen Übersicht, Schusszahlen, Details und Simulation.",
+    "area_pick": "Schiessplatz wählen",
     "bookmarks": "Lesezeichen",
-    "bookmarks_empty": "Noch keine Lesezeichen. Wählen Sie einen Schiessplatz und markieren Sie ihn mit dem Stern.",
+    "bookmarks_empty": "Plätze mit ☆ merken.",
     "bookmark_add": "Als Lesezeichen merken",
-    "bookmark_remove": "Lesezeichen entfernen"
+    "bookmark_remove": "Lesezeichen entfernen",
+    "area_switch": "Schiessplatz wechseln",
+    "area_search": "Name oder Nummer suchen …",
+    "area_favorites": "Favoriten",
+    "area_others": "Weitere Schiessplätze",
+    "area_no_match": "Keine Treffer für «{{q}}». Name oder Koordinationsabschnitt-Nr. prüfen.",
+    "area_selected": "Ausgewählt"
   },
   "placeholder": {
     "title": "In Vorbereitung",

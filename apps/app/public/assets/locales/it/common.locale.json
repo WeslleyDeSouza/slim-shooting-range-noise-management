@@ -39,7 +39,8 @@
     "admin_tenant": "Mandanti (galaxy)",
     "app_config": "Configurazione app",
     "ad": "Amministrazione",
-    "settings": "Impostazioni"
+    "settings": "Impostazioni",
+    "areas_all": "Tutte le piazze di tiro"
   },
   "common": {
     "save": "Salva",
@@ -101,12 +102,17 @@
     "areas_count": "{{n}} piazze di tiro",
     "user": "Utente",
     "area_group": "Piazze di tiro",
-    "area_pick": "Scegliere una piazza di tiro …",
-    "area_pick_hint": "Inserire numero o denominazione; poi appaiono panoramica, numero di colpi, dettagli e simulazione.",
+    "area_pick": "Scegliere una piazza di tiro",
     "bookmarks": "Segnalibri",
-    "bookmarks_empty": "Nessun segnalibro. Scegliere una piazza di tiro e contrassegnarla con la stella.",
+    "bookmarks_empty": "Contrassegnare piazze con ☆.",
     "bookmark_add": "Aggiungi ai segnalibri",
-    "bookmark_remove": "Rimuovi dai segnalibri"
+    "bookmark_remove": "Rimuovi dai segnalibri",
+    "area_switch": "Cambiare piazza di tiro",
+    "area_search": "Cercare nome o numero …",
+    "area_favorites": "Preferiti",
+    "area_others": "Altre piazze di tiro",
+    "area_no_match": "Nessun risultato per «{{q}}». Verificare nome o n. settore di coordinamento.",
+    "area_selected": "Selezionata"
   },
   "placeholder": {
     "title": "In preparazione",

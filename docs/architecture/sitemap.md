@@ -89,8 +89,10 @@ Aus dem Mock `_mocks/home/index.html` und dem ELO-Admin-Shell:
   Mandant wechseln, Abmelden).
 - **Seitenleiste** (Desktop ≥ 1024 px, kompakt, Gruppen einklappbar, Zustand je Browser): oben die Marke
   (Logo, SLIM + «Demo», Untertitel) auf Topbar-Höhe; Arbeitsbereich → Startseite, Lesezeichen (mit Stern
-  markierte Schiessplätze); Schiessplätze → Übersicht Schiessplätze, Auswahl mit Autocomplete → Übersicht /
-  Schusszahlen / Details / Simulation des gewählten Platzes (folgt der Route); Datenverwaltung → Schiessplatz,
+  markierte Schiessplätze); Schiessplätze → «Alle Schiessplätze», Schiessplatz-Wechsler (Auswahlkarte mit Name,
+  Nummer, Stern; Popover mit Suche, Favoriten und weiteren berechtigten Plätzen, Tastaturbedienung,
+  `views/admin/_layout/area-switcher.component.ts`) → Übersicht / Schusszahlen / Details / Simulation des
+  gewählten Platzes (folgt der Route, Simulation nur mit Recht 46); Datenverwaltung → Schiessplatz,
   Waffen, MGDM Export, Erweiterte Systemeinstellungen; Benutzerverwaltung → Benutzer, Rollen, Logbuch, Apps.
   Einträge erscheinen nur mit App-Recht der Sitzung (`core/access/access.facade.ts`, `SLIM_APP_ID`).
 - **Tabbar** (Mobile): Start, Schiessplatz, Daten, Benutzer.

@@ -39,7 +39,8 @@
     "admin_tenant": "Mandants (galaxy)",
     "app_config": "Configuration des apps",
     "ad": "Administration",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "areas_all": "Toutes les places de tir"
   },
   "common": {
     "save": "Enregistrer",
@@ -101,12 +102,17 @@
     "areas_count": "{{n}} places de tir",
     "user": "Utilisateur",
     "area_group": "Places de tir",
-    "area_pick": "Choisir une place de tir …",
-    "area_pick_hint": "Saisir le numéro ou la désignation ; l’aperçu, les nombres de coups, les détails et la simulation apparaissent ensuite.",
+    "area_pick": "Choisir une place de tir",
     "bookmarks": "Favoris",
-    "bookmarks_empty": "Pas encore de favoris. Choisissez une place de tir et marquez-la avec l’étoile.",
+    "bookmarks_empty": "Marquer des places avec ☆.",
     "bookmark_add": "Ajouter aux favoris",
-    "bookmark_remove": "Retirer des favoris"
+    "bookmark_remove": "Retirer des favoris",
+    "area_switch": "Changer de place de tir",
+    "area_search": "Rechercher un nom ou un numéro …",
+    "area_favorites": "Favoris",
+    "area_others": "Autres places de tir",
+    "area_no_match": "Aucun résultat pour « {{q}} ». Vérifier le nom ou le n° de secteur de coordination.",
+    "area_selected": "Sélectionnée"
   },
   "placeholder": {
     "title": "En préparation",

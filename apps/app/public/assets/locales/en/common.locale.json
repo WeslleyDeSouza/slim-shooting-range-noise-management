@@ -39,7 +39,8 @@
     "admin_tenant": "Tenants (galaxy)",
     "app_config": "App configuration",
     "ad": "Administration",
-    "settings": "Settings"
+    "settings": "Settings",
+    "areas_all": "All shooting ranges"
   },
   "common": {
     "save": "Save",
@@ -101,12 +102,17 @@
     "areas_count": "{{n}} shooting ranges",
     "user": "User",
     "area_group": "Shooting ranges",
-    "area_pick": "Choose a range …",
-    "area_pick_hint": "Type the number or name; overview, shot counts, details and simulation follow.",
+    "area_pick": "Choose a range",
     "bookmarks": "Bookmarks",
-    "bookmarks_empty": "No bookmarks yet. Choose a range and mark it with the star.",
+    "bookmarks_empty": "Mark ranges with ☆.",
     "bookmark_add": "Add bookmark",
-    "bookmark_remove": "Remove bookmark"
+    "bookmark_remove": "Remove bookmark",
+    "area_switch": "Switch range",
+    "area_search": "Search name or number …",
+    "area_favorites": "Favourites",
+    "area_others": "Other ranges",
+    "area_no_match": "No match for «{{q}}». Check the name or coordination section no.",
+    "area_selected": "Selected"
   },
   "placeholder": {
     "title": "In preparation",

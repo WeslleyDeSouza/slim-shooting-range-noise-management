@@ -40,10 +40,11 @@
 
   // Compact sidebar: smaller type, tighter rows, room for the groups.
   &__sidebar {
-    gap: slim.space(4);
+    gap: slim.space(3);
     font-size: slim.font-size('sm');
 
     .slim-sidebar__link {
+      min-height: 32px;
       padding: slim.space(1) slim.space(2);
       gap: slim.space(2);
       font-size: slim.font-size('sm');
@@ -83,12 +84,6 @@
     }
   }
 
-  &__area-pick {
-    min-height: 32px;
-    margin: 0 0 slim.space(1);
-    font-size: slim.font-size('sm');
-  }
-
   &__sub {
     padding-left: slim.space(6) !important;
   }
@@ -99,13 +94,13 @@
     font-size: slim.font-size('xs');
   }
 
-  // Collapsible sub block inside a section (Lesezeichen) and the star toggle.
-  &__sub-toggle,
-  &__star {
+  // Collapsible sub block inside a section (Lesezeichen).
+  &__sub-toggle {
     display: flex;
     align-items: center;
     gap: slim.space(2);
     width: 100%;
+    min-height: 32px;
     padding: slim.space(1) slim.space(2);
     border: 0;
     border-radius: slim.radius('md');
@@ -127,11 +122,8 @@
     flex: 1;
   }
 
-  &__star {
-    color: slim.color('text-3');
-    &--on {
-      color: slim.color('warning');
-    }
+  &__switcher {
+    margin: slim.space(1) 0;
   }
 
   &__avatar {

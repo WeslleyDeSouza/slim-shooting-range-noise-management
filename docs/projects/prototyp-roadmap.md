@@ -87,11 +87,11 @@ Status: ☐ offen · ◐ teilweise / in Arbeit · ☑ erledigt (Stand 12.09.2026
 
 | # | Arbeitspaket | slm | PT | Status |
 |---|---|---|---:|---|
-| 1.1 | Datenmodell nach B1 Kap. 10: `Schiessplatz` (bestehend `area`) erweitern um Sachplan-Nr., Aktiv, Flag «Gesamtbeurteilung Anh. 7», Stand SPM/MPV/Projekt; neue Entities `Stellungsraum`, `Waffe`, `Kaliber`, `Waffenkategorie` (+ Anh.-7-Kategorie a–f), `KombinationWaffeKaliber` (+ sonARMS-Id), `StellungsraumKombination`, `Kontingent` | 42, 16, 22–25 | 1.5 | ◐ | (`schiessplatz`, `stellungsraum`, `stellungsraum_waffe` mit Kontingent vorhanden; Lookups Waffe/Kaliber/Kategorie fehlen)
-| 1.2 | Seed aus Beilage B1.6 «Areal_Grundlagen» (126 Areale / 766 Stellungsräume), «Waffen mil/ziv» und B1.7 Waffenliste (195 sonARMS-IDs); Importskript = späterer initialer Import (`slm 36`) | 36 | 1 | ☐ | (heute Demo-Datensatz `tenant.mock.json`, nicht B1.6/B1.7)
-| 1.3 | Datenverwaltung Schiessplatz: Übersicht 5.14, Allgemein 5.15, Stammdaten 5.16 (Kontingente pro Waffe/Kaliber), Zuordnung Waffen 5.17 | 13–17 | 1.5 | ◐ | (5.14 Übersicht umgesetzt; 5.15–5.17 Platzhalter)
+| 1.1 | Datenmodell nach B1 Kap. 10: `Schiessplatz` (bestehend `area`) erweitern um Sachplan-Nr., Aktiv, Flag «Gesamtbeurteilung Anh. 7», Stand SPM/MPV/Projekt; neue Entities `Stellungsraum`, `Waffe`, `Kaliber`, `Waffenkategorie` (+ Anh.-7-Kategorie a–f), `KombinationWaffeKaliber` (+ sonARMS-Id), `StellungsraumKombination`, `Kontingent` | 42, 16, 22–25 | 1.5 | ◐ (`schiessplatz`, `stellungsraum`, `stellungsraum_waffe` mit Kontingent vorhanden; Lookups Waffe/Kaliber/Kategorie fehlen) |
+| 1.2 | Seed aus Beilage B1.6 «Areal_Grundlagen» (126 Areale / 766 Stellungsräume), «Waffen mil/ziv» und B1.7 Waffenliste (195 sonARMS-IDs); Importskript = späterer initialer Import (`slm 36`) | 36 | 1 | ☐ (heute Demo-Datensatz `tenant.mock.json`, nicht B1.6/B1.7) |
+| 1.3 | Datenverwaltung Schiessplatz: Übersicht 5.14, Allgemein 5.15, Stammdaten 5.16 (Kontingente pro Waffe/Kaliber), Zuordnung Waffen 5.17 | 13–17 | 1.5 | ◐ (5.14 Übersicht umgesetzt; 5.15–5.17 Platzhalter) |
 | 1.4 | Datenverwaltung Waffen: Waffe/Kaliber 5.22, Kaliber 5.23, Waffe 5.24, Waffenkategorie 5.25 (CRUD, DE/FR/IT-Felder, Aktiv) | 22–25 | 1 | ☐ |
-| 1.5 | `Schiessplatznutzung` + `NutzungPosition`; Maske 5.11 (Stellungsraum-Liste, Tabelle, Filter Default laufendes Jahr, Neu/Bearbeiten/Löschen); berechnete Hilfsattribute vorbereiten | 10 | 1 | ☑ | (Maske 5.11 inkl. Rückgängig, Dezimalmengen, ELO-Kennzeichnung)
+| 1.5 | `Schiessplatznutzung` + `NutzungPosition`; Maske 5.11 (Stellungsraum-Liste, Tabelle, Filter Default laufendes Jahr, Neu/Bearbeiten/Löschen); berechnete Hilfsattribute vorbereiten | 10 | 1 | ☑ (Maske 5.11 inkl. Rückgängig, Dezimalmengen, ELO-Kennzeichnung) |
 | 1.6 | Excel-Import nach B1.6 «Erfassung» (Areal, Stellungsraum, Nutzungseinheit, Datum, Zeitraum, Waffenspalten) mit Fehlerbericht | 37 | 0.5 (ExcelJS aus ELO) | ☐ |
 | 1.7 | Sperrdatum Schusszahlenerfassung als globale Konfiguration (Teil von 5.28) | 27 | 0.5 | ☐ |
 
@@ -108,12 +108,12 @@ Status: ☐ offen · ◐ teilweise / in Arbeit · ☑ erledigt (Stand 12.09.2026
 
 | # | Arbeitspaket | slm | PT | Status |
 |---|---|---|---:|---|
-| 3.1 | Entities `Berechnung`, `Zustand` (ZustandsID, RefJahr, Baujahr vor/nach 1985/gemischt, Flags aktuell / Stand MGDM), `Quelle`, `Immissionspunkt` (x, y, h, Empfindlichkeitsstufe, Gebäude), `WlrEintrag` (Day/Eve: Empfänger, Quelle, Waffe, LAE, LAFmax), `BetriebsdatenA9` (Tag/Abend), `BetriebsdatenA7` (WKa–WKf, Werk-/Sonnhalbtage) | 18, 43 | 1 | ◐ | (`immissionsberechnung`, `zustand`, `empfangspunkt`, `wlr_pegel` vorhanden; Betriebsdaten-Entities fehlen)
+| 3.1 | Entities `Berechnung`, `Zustand` (ZustandsID, RefJahr, Baujahr vor/nach 1985/gemischt, Flags aktuell / Stand MGDM), `Quelle`, `Immissionspunkt` (x, y, h, Empfindlichkeitsstufe, Gebäude), `WlrEintrag` (Day/Eve: Empfänger, Quelle, Waffe, LAE, LAFmax), `BetriebsdatenA9` (Tag/Abend), `BetriebsdatenA7` (WKa–WKf, Werk-/Sonnhalbtage) | 18, 43 | 1 | ◐ (`immissionsberechnung`, `zustand`, `empfangspunkt`, `wlr_pegel` vorhanden; Betriebsdaten-Entities fehlen) |
 | 3.2 | Parser für `.wlr` (Kopf + Tabelle), Betriebsdaten A9/A7 (`//`-Kommentare, `END`), Resultatdateien A9p/A7p (Empfangspunkte mit Koordinaten) aus B1.4; Upload + strukturelle Validierung + Zuordnung zu Stellungsräumen, Abbruch bei unbekanntem Stellungsraum | 19, 45 | 1 | ☐ |
-| 3.3 | Betriebsdaten aus Nutzungen (7.4): Anh. 9 Split innerhalb/ausserhalb Werktag (Mo–Fr 07–19, Sa/So/Feiertag, halbe Feiertage anteilig), Anh. 7 Schiesshalbtage pro Waffenkategorie (Mo–Sa, Sonn-/Feiertage), Betrachtungszeitraum 3 wählbare Jahre oder frei, Flag «Gesamtbeurteilung Anh. 7»; Feiertagskalender pro Standort (Kanton) | 31 | 1.5 | ◐ | (Werktag-Split, ganze/halbe Feiertage, Nutzungskategorien im Kernel; 3 Referenzjahre und Feiertagskalender je Standort offen)
-| 3.4 | Verteilung auf Quellen (7.5) im Verhältnis der Betriebsdaten der Berechnungsgrundlage | 32 | 0.5 | ◐ | (1:1 Quelle = Stellungsraum × Waffe; `distributeShots` mit O8-Regel; Schusslinien offen)
-| 3.5 | Beurteilungspegel (7.6): `gemw`, `esm`, Lr Anh. 9 und Anh. 7 exakt nach den Excel-Formeln; Unit-Tests gegen die Kontrollwerte aus B1.4 | 33 | 1 | ☑ | (95 Tests gegen B1.4, metamorphe ×10-Tests)
-| 3.6 | Grenzwertvergleich (7.7): PW/IGW je Empfindlichkeitsstufe (Tabelle LSV Anh. 7/9 als Konfiguration) und Baujahr; Ampel pro Empfangspunkt und Aggregation auf den Schiessplatz; `noiseStatus` des Area-Moduls wird daraus abgeleitet | 34 | 0.5 | ☑ | (Rundung ganze dB, Baujahr-Regel, `incomplete`; Grenzwerte noch Konstante)
+| 3.3 | Betriebsdaten aus Nutzungen (7.4): Anh. 9 Split innerhalb/ausserhalb Werktag (Mo–Fr 07–19, Sa/So/Feiertag, halbe Feiertage anteilig), Anh. 7 Schiesshalbtage pro Waffenkategorie (Mo–Sa, Sonn-/Feiertage), Betrachtungszeitraum 3 wählbare Jahre oder frei, Flag «Gesamtbeurteilung Anh. 7»; Feiertagskalender pro Standort (Kanton) | 31 | 1.5 | ◐ (Werktag-Split, ganze/halbe Feiertage, Nutzungskategorien im Kernel; 3 Referenzjahre und Feiertagskalender je Standort offen) |
+| 3.4 | Verteilung auf Quellen (7.5) im Verhältnis der Betriebsdaten der Berechnungsgrundlage | 32 | 0.5 | ◐ (1:1 Quelle = Stellungsraum × Waffe; `distributeShots` mit O8-Regel; Schusslinien offen) |
+| 3.5 | Beurteilungspegel (7.6): `gemw`, `esm`, Lr Anh. 9 und Anh. 7 exakt nach den Excel-Formeln; Unit-Tests gegen die Kontrollwerte aus B1.4 | 33 | 1 | ☑ (95 Tests gegen B1.4, metamorphe ×10-Tests) |
+| 3.6 | Grenzwertvergleich (7.7): PW/IGW je Empfindlichkeitsstufe (Tabelle LSV Anh. 7/9 als Konfiguration) und Baujahr; Ampel pro Empfangspunkt und Aggregation auf den Schiessplatz; `noiseStatus` des Area-Moduls wird daraus abgeleitet | 34 | 0.5 | ☑ (Rundung ganze dB, Baujahr-Regel, `incomplete`; Grenzwerte noch Konstante) |
 | 3.7 | Masken Berechnungen 5.18 (Übersicht, aktueller Zustand / Stand MGDM), 5.19 (Import), 5.21 (Details je Stellungsraum); Export 5.20 nur Schusszahlen-CSV | 18–21 | 0.5 | ☐ |
 
 ### Sprint 4 – Schiessplatz-Detail, GIS, Simulation (M5, 5 PT)
@@ -122,22 +122,22 @@ Status: ☐ offen · ◐ teilweise / in Arbeit · ☑ erledigt (Stand 12.09.2026
 |---|---|---|---:|---|
 | 4.1 | Kartenkomponente im Design System: swisstopo Light/Imagery Base Map, LV95-Koordinatenanzeige, Massstab, Zoomstufen, Layer-Konfiguration als JSON, Marker mit Popup, Vollansicht in neuem Tab, PDF-Export (Basisvariante) | 2 | 1.5 | ☐ |
 | 4.2 | Schiessplatz – Übersicht 5.10: Beurteilung Lärmbelastung (beide Ampeln, Regelwerk), Stand SPM/MPV/Projekt, Kontingent-Tabelle (Soll, Ist laufendes Jahr, Ist Ø 3 Jahre, Farben 100 %/125 %), Karte mit Empfangspunkten; `quotaStatus` wird berechnet statt gespeichert | 9, 8 | 1 | ☐ |
-| 4.3 | Schiessplatz – Details 5.12: Karte + Detailbereich pro Empfangspunkt (Lr vs. PW/IGW je Anhang) | 11 | 0.5 | ☑ | (schematische Karte; GIS in 4.1)
+| 4.3 | Schiessplatz – Details 5.12: Karte + Detailbereich pro Empfangspunkt (Lr vs. PW/IGW je Anhang) | 11 | 0.5 | ☑ (schematische Karte; GIS in 4.1) |
 | 4.4 | Simulation 5.13: Tabelle Stellungsraum × Kombination mit Schuss innerhalb/ausserhalb Werktag, überschreiben, zurücksetzen, «Simulation ausführen» (Anh. 9) → Karte | 12 | 1 | ☑ |
 | 4.5 | Erweiterte Konfiguration 5.28 komplett: Handbuch-Upload (PDF, im Hauptmenü verlinkt), Ampel-Schwellenwerte und -Farben (Plangenehmigung, Empfangspunkte) | 27, 53 | 0.5 | ☐ |
-| 4.6 | Startseite mit echten Zahlen (Anzahl Plätze nach Ampel, Datenverwaltung-Zähler inkl. Waffen) und Hinweis «Handlungsbedarf» | 7 | 0.5 | ◐ | (Kacheln mit Zählern aus dem Seed, Ampel-Zahlen noch nicht aus der Berechnung)
+| 4.6 | Startseite mit echten Zahlen (Anzahl Plätze nach Ampel, Datenverwaltung-Zähler inkl. Waffen) und Hinweis «Handlungsbedarf» | 7 | 0.5 | ◐ (Kacheln mit Zählern aus dem Seed, Ampel-Zahlen noch nicht aus der Berechnung) |
 
 ### Sprint 5 – Validierung und Lösungskonzept (M6, 5 PT)
 
 | # | Arbeitspaket | slm | PT | Status |
 |---|---|---|---:|---|
-| 5.1 | Tabellenkomponente: Textsuche, Sortierung, Mehrfachselektion, Spaltenfilter (Text/Zahl/Datum/Diskret inkl. leer), CSV/Excel-Export mit aktiven Filtern, persistente Einstellungen pro Benutzer | 3, 50 | 1.5 | ◐ | (Nutzungstabelle: Filter/Sortierung/Gruppierung/Mehrfachauswahl; generische Komponente + Export offen)
-| 5.2 | Rollen nach 8.1.2 als galaxy-Apps/Rollen: vier Seed-Benutzer, Rechte pro Schiessplatz (W/R-O), Ausblenden nicht autorisierter Funktionen; E2E pro Rolle | 26, 35, 50 | 1 | ◐ | (Seed + Demo-Konten, W/R-O in der API; Frontend-Rechte und e2e je Rolle offen)
-| 5.3 | Benutzerverwaltung 5.26 auf Basis der galaxy-Admin-Seiten aus ELO (Users/Roles/Apps) | 26 | 0.5 | ☑ | (Masken aus ELO, Rollen-Keys, Logbuch)
-| 5.4 | Performance-Messung nach 12.5 (Suche, Filter, Details, Berechnung) mit k6 aus ELO; Berechnung in Worker/Queue, falls > 5 s | 54 | 0.5 | ◐ | (Kernel-Benchmark ≈ 92 ms bei Zielvolumen; k6-Messung der Masken offen)
+| 5.1 | Tabellenkomponente: Textsuche, Sortierung, Mehrfachselektion, Spaltenfilter (Text/Zahl/Datum/Diskret inkl. leer), CSV/Excel-Export mit aktiven Filtern, persistente Einstellungen pro Benutzer | 3, 50 | 1.5 | ◐ (Nutzungstabelle: Filter/Sortierung/Gruppierung/Mehrfachauswahl; generische Komponente + Export offen) |
+| 5.2 | Rollen nach 8.1.2 als galaxy-Apps/Rollen: vier Seed-Benutzer, Rechte pro Schiessplatz (W/R-O), Ausblenden nicht autorisierter Funktionen; E2E pro Rolle | 26, 35, 50 | 1 | ◐ (Seed + Demo-Konten, W/R-O in der API; Frontend-Rechte und e2e je Rolle offen) |
+| 5.3 | Benutzerverwaltung 5.26 auf Basis der galaxy-Admin-Seiten aus ELO (Users/Roles/Apps) | 26 | 0.5 | ☑ (Masken aus ELO, Rollen-Keys, Logbuch) |
+| 5.4 | Performance-Messung nach 12.5 (Suche, Filter, Details, Berechnung) mit k6 aus ELO; Berechnung in Worker/Queue, falls > 5 s | 54 | 0.5 | ◐ (Kernel-Benchmark ≈ 92 ms bei Zielvolumen; k6-Messung der Masken offen) |
 | 5.5 | Exporte: Nutzungen im Format B1.6 (`slm 40`), Gesamtstatistik MPV (`slm 41`), DB-Views für MGDM/ImmoGIS auf PostGIS (`slm 38`) | 38–41 | 0.5 | ☐ |
 | 5.6 | Barrierefreiheit-Check (axe, Tastaturbedienung), kontextsensitive Hilfe (Tooltips/Info-Panels aus Locale-Dateien), Handbuch-Gerüst | 52, 53 | 0.5 | ☐ |
-| 5.7 | Lösungskonzept nach A2 (max. 15 Seiten): Architektur-Schema, Stack, Sicherheit, Deployment, Schnittstellen, Lärmberechnung, UX, NFA mit Referenz auf die `slm`-Matrix; Screenshots und Demo-Video | – | 1 | ◐ | (C2 v0.2 mit Skizzen und Screenshots, Seitenbudget eingehalten; Demo-Video und Firmenentscheide offen)
+| 5.7 | Lösungskonzept nach A2 (max. 15 Seiten): Architektur-Schema, Stack, Sicherheit, Deployment, Schnittstellen, Lärmberechnung, UX, NFA mit Referenz auf die `slm`-Matrix; Screenshots und Demo-Video | – | 1 | ◐ (C2 v0.2 mit Skizzen und Screenshots, Seitenbudget eingehalten; Demo-Video und Firmenentscheide offen) |
 
 Summe Sprints 1–5: **25 PT** (ohne M1).
 

@@ -33,5 +33,15 @@
       "text": "Confronti annuali, andamento delle immissioni di rumore e utilizzo del contingente su tutte le piazze autorizzate.",
       "foot": "In preparazione"
     }
+  },
+  "welcome": {
+    "tag": "Versione dimostrativa",
+    "title": "Benvenuti in SLIM",
+    "lead": "Scoprite come SLIM riunisce in modo chiaro gli utilizzi delle piazze di tiro e le immissioni foniche.",
+    "explore": "Esplorate una piazza di esempio, consultate i dati di utilizzo e confrontate i risultati di calcolo.",
+    "prototype": "State usando un prototipo con dati di esempio preparati. Alcune funzioni sono ancora in sviluppo.",
+    "disclaimer": "I risultati presentati servono alla dimostrazione e non sono valutazioni tecniche approvate.",
+    "start": "Avvia la demo",
+    "later": "Più tardi"
   }
 }

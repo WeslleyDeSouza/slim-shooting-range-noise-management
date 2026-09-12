@@ -83,7 +83,7 @@ export class UsageResultDto {
   @ApiProperty({ description: 'Waffen der Positionen, zusammengefasst («Stgw 90 · 5.6 mm, Pist 75 · 9 mm»)' }) weaponName: string;
   @ApiProperty({ description: 'Waffenkategorie der ersten Position (Filter)' }) category: string;
   @ApiProperty({ description: 'Summe der Mengen (Stück; kg separat in den Positionen)' }) shots: number;
-  @ApiProperty({ enum: QUANTITY_UNIT, description: 'Einheit der Summe: shots, kg oder mixed' }) quantityUnit: QuantityUnit | 'mixed';
+  @ApiProperty({ enum: [...QUANTITY_UNIT, 'mixed'], description: 'Einheit der Summe: shots, kg oder mixed' }) quantityUnit: QuantityUnit | 'mixed';
   @ApiProperty() recordedBy: string;
   @ApiProperty({ enum: USAGE_SOURCE }) source: UsageSource;
   @ApiProperty({ nullable: true, type: String }) externalId: string | null;

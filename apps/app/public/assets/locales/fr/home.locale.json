@@ -33,5 +33,15 @@
       "text": "Comparaisons annuelles, tendance des nuisances sonores et utilisation du contingent sur toutes les places autorisées.",
       "foot": "En préparation"
     }
+  },
+  "welcome": {
+    "tag": "Version de démonstration",
+    "title": "Bienvenue dans SLIM",
+    "lead": "Découvrez comment SLIM réunit clairement les utilisations des places de tir et les immissions de bruit.",
+    "explore": "Explorez une place d'exemple, consultez les données d'utilisation et comparez les résultats de calcul.",
+    "prototype": "Vous utilisez un prototype avec des données d'exemple préparées. Certaines fonctions sont encore en développement.",
+    "disclaimer": "Les résultats présentés servent à la démonstration et ne constituent pas des évaluations techniques validées.",
+    "start": "Démarrer la démo",
+    "later": "Plus tard"
   }
 }

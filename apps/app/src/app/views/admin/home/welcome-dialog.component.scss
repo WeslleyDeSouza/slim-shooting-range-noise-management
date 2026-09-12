@@ -1,0 +1,110 @@
+@use 'slim/abstracts' as slim;
+
+// Welcome banner dialog (demo entry): landscape banner 950 × 250 on top of a sheet.
+.welcome {
+  &__panel {
+    max-width: 950px;
+    width: min(950px, 100%);
+    padding: 0;
+    overflow: hidden;
+  }
+
+  &__banner {
+    display: block;
+    width: 100%;
+    aspect-ratio: 950 / 250;
+    max-width: 100%;
+  }
+
+  &__sky-top {
+    stop-color: slim.color('bg');
+  }
+  &__sky-bottom {
+    stop-color: slim.color('surface');
+  }
+  &__sun {
+    fill: slim.color('warning');
+    opacity: 0.85;
+  }
+  &__hill {
+    fill: slim.color('primary');
+
+    &--far {
+      opacity: 0.25;
+    }
+    &--mid {
+      opacity: 0.45;
+    }
+    &--near {
+      opacity: 0.7;
+    }
+  }
+  &__lake {
+    fill: slim.color('info');
+    opacity: 0.55;
+  }
+  &__stand,
+  &__berm {
+    fill: slim.color('ink');
+    opacity: 0.55;
+  }
+  &__line {
+    stroke: slim.color('ink');
+    stroke-width: 1.5;
+    stroke-dasharray: 6 5;
+    opacity: 0.6;
+  }
+  &__house path {
+    fill: slim.color('surface');
+    stroke: slim.color('ink');
+    stroke-width: 1.5;
+  }
+  &__pin circle {
+    fill: slim.color('success');
+    stroke: slim.color('surface');
+    stroke-width: 2;
+  }
+  &__pin--warn circle {
+    fill: slim.color('warning');
+  }
+
+  &__body {
+    padding: slim.space(5) slim.space(6) slim.space(2);
+  }
+
+  &__tag {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: slim.font-size('xs');
+  }
+
+  &__title {
+    margin: slim.space(3) 0 slim.space(2);
+    font-size: slim.font-size('2xl');
+    line-height: 1.2;
+  }
+
+  &__lead {
+    font-size: slim.font-size('md');
+    color: slim.color('ink');
+    margin: 0 0 slim.space(3);
+  }
+
+  &__note {
+    margin-top: slim.space(3);
+    opacity: 0.8;
+  }
+
+  &__disclaimer {
+    margin-top: slim.space(1);
+    font-size: slim.font-size('xs');
+    opacity: 0.7;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: slim.space(2);
+    padding: slim.space(3) slim.space(6) slim.space(5);
+  }
+}

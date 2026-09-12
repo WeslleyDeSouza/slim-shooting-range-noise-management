@@ -33,5 +33,15 @@
       "text": "Year-on-year comparisons, noise exposure trend and quota utilisation across all authorised ranges.",
       "foot": "In preparation"
     }
+  },
+  "welcome": {
+    "tag": "Demo version",
+    "title": "Welcome to SLIM",
+    "lead": "Discover how SLIM brings shooting range usages and noise immissions together in one clear view.",
+    "explore": "Explore an example range, look at usage data and compare calculation results.",
+    "prototype": "You are using a prototype with prepared example data. Some functions are still under development.",
+    "disclaimer": "The results shown are for demonstration and are not approved technical assessments.",
+    "start": "Start demo",
+    "later": "Later"
   }
 }

@@ -33,5 +33,15 @@
       "text": "Jahresvergleiche, Trend der Lärmbelastung und Kontingentausschöpfung über alle berechtigten Plätze.",
       "foot": "In Vorbereitung"
     }
+  },
+  "welcome": {
+    "tag": "Demoversion",
+    "title": "Willkommen bei SLIM",
+    "lead": "Entdecken Sie, wie SLIM Schiessplatznutzungen und Lärmimmissionen übersichtlich zusammenführt.",
+    "explore": "Erkunden Sie einen Beispielplatz, sehen Sie Nutzungsdaten ein und vergleichen Sie Berechnungsergebnisse.",
+    "prototype": "Sie nutzen einen Prototyp mit vorbereiteten Beispieldaten. Einzelne Funktionen befinden sich noch in Entwicklung.",
+    "disclaimer": "Die dargestellten Ergebnisse dienen der Demonstration und sind keine freigegebenen fachlichen Beurteilungen.",
+    "start": "Demo starten",
+    "later": "Später"
   }
 }

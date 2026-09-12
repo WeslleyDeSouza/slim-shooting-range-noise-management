@@ -6,7 +6,7 @@ import { AreaService } from '../area/area.service';
 import { AreaRoomEntity, HolidayEntity, WeaponCombinationEntity } from '../area/entities';
 import { UsageModule } from '../usage/usage.module';
 import { UsageService } from '../usage/usage.service';
-import { AreaUsageEntity } from '../usage/entities';
+import { AreaUsageEntity, UsagePositionEntity } from '../usage/entities';
 import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import type { TenantDataset } from '../../mocks/tenant/tenant-dataset';
@@ -14,7 +14,8 @@ import { AssessmentService, assessModel, labeller, resolvePeriod } from './asses
 import { CalculationModule } from './calculation.module';
 import { CalculationService } from './calculation.service';
 import { AssessmentDto, ReceiverAssessmentDto } from './dto';
-import { AreaCalculationEntity } from './entities';
+import { AreaCalculationEntity, SourceDataA9Entity, SourceLineEntity } from './entities';
+import { SimulationService } from './simulation.service';
 import { deriveOperatingData, refKey } from './operating-data';
 import { RoomCombinationEntity } from '../area/entities/room-combination.entity';
 
@@ -28,12 +29,12 @@ import { RoomCombinationEntity } from '../area/entities/room-combination.entity'
  * | Regel                                              | Kernel-Test (grün)                                     | Service        |
  * |----------------------------------------------------|--------------------------------------------------------|----------------|
  * | Nutzung 11:00–13:00 → Trennung 12:00, ½ + ½        | operating-data.spec.ts «splits a usage spanning 12:00» | Fall 1         |
- * | genau 2 h = ½, knapp darüber = 1                    | dito (10:00–12:00 = ½); 08:00–10:01 → todo 2a          | todo 2b/2c     |
+ * | genau 2 h = ½, knapp darüber = 1                    | dito; «exactly 2 h as half and one minute more» (2a)   | Fall 2b/2c     |
  * | Werktag vs. lokaler Feiertag in A7 und A9            | «…holidays entirely outside», «…holidays as Sunday»    | Fall 3         |
- * | ×10 Menge: A9 +10 dB, A7 +3 dB                      | annex9.spec «+10 dB», annex7.spec «+3 dB»              | todo 4         |
+ * | ×10 Menge: A9 +10 dB, A7 +3 dB                      | annex9.spec «+10 dB», annex7.spec «+3 dB»              | Fall 4         |
  * | 60.4 / 60.5 bei Grenzwert 60                         | traffic-light.spec «rounds to whole dB before …»       | Fall 5         |
  * | Mittelung kleiner kg-Mengen ohne Rundung             | operating-data.spec «keeps decimal quantities (kg)»    | Fall 6         |
- * | mehrere Nutzungen im selben Halbtag                  | operating-data.spec «adds several usages … same half»  | todo 7         |
+ * | mehrere Nutzungen im selben Halbtag                  | operating-data.spec «adds several usages … same half»  | Fall 7         |
  *
  * Grundsätze: frische Fixture je Fall (`beforeEach` seedet Testplatz S neu); Zwischenwerte werden
  * geprüft (Halbtage, Mengen je Kombination, Quellenanteile, Rohpegel, Status), nicht nur die Endampel.
@@ -67,6 +68,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
   let assessment: AssessmentService;
   let calculations: CalculationService;
   let usageService: UsageService;
+  let simulation: SimulationService;
   let usages: Repository<AreaUsageEntity>;
   let holidays: Repository<HolidayEntity>;
 
@@ -86,6 +88,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
     assessment = module.get(AssessmentService);
     calculations = module.get(CalculationService);
     usageService = module.get(UsageService);
+    simulation = module.get(SimulationService);
     usages = dataSource.getRepository(AreaUsageEntity);
     holidays = dataSource.getRepository(HolidayEntity);
     await testDbSeedBeforeEach(dataSource);
@@ -143,11 +146,14 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       roomId, unit: 'Test', date, timeFrom: from, timeTo: to, usageType: 'military', personCount: 10, recordedBy: 'rechenfaelle',
       positions: [{ combinationId, quantity, ...(quantityUnit ? { quantityUnit } : {}) }],
     });
-  const civil = (date: string, from: string, to: string, quantity: number) =>
+  const civil = (date: string, from: string, to: string, quantity: number, combinationId = combo.stgw90) =>
     usageService.create(mockTenantId, areaId, {
       roomId, unit: 'Test', date, timeFrom: from, timeTo: to, usageType: 'civil', civilUsageKind: 'other', personCount: 4, recordedBy: 'rechenfaelle',
-      positions: [{ combinationId: combo.stgw90, quantity }],
+      positions: [{ combinationId, quantity }],
     });
+  /** Leaves only the usages the case creates itself. */
+  const clearUsages = () => usages.delete({ tenantId: mockTenantId, areaId });
+  const assess = (options: Parameters<AssessmentService['assess']>[2]) => assessment.assess(mockTenantId, areaId, options);
 
   describe('0 · Abgleich Handrechnung → Dataset → Seed → Service', () => {
     it('seeds Testplatz S as specified: 1 Platz, 1 Raum, 3 Zustände, 6 Nutzungen, 2 Feiertage, 5 Quellen, 18 WLR-Zeilen (2 + 8 + 8)', async () => {
@@ -155,8 +161,8 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(result).toMatchObject({ skipped: false, areas: 1, rooms: 1, calculations: 3, sources: 5, receivers: 5, wlr: 18, usages: 6 });
       const days = await holidays.find({ where: { tenantId: mockTenantId } });
       expect(days.map((h) => [h.date, h.from ?? null]).sort()).toEqual([['2026-12-24', '12:00'], ['2026-12-25', null]]);
-      expect(states.z1.isCurrent).toBe(true);
-      expect(states.z2.isCurrent).toBe(false);
+      expect(Boolean(states.z1.isCurrent)).toBe(true); // SQLite stores booleans as 0/1
+      expect(Boolean(states.z2.isCurrent)).toBe(false);
     });
 
     it('2026: Betriebsdaten stgw90 1 210 / 200, zivil 110, Halbtage a = {1, 1}, alles auf Q1', async () => {
@@ -232,6 +238,29 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       );
       expect(dto.counts).toMatchObject({ incomplete: 1 });
     });
+
+    it('Negativfall Z2: Schüsse ausserhalb Werktag, aber Σ Abend-Gewichte = 0 → unvollständig, Mengen sichtbar, kein Teilwert als Ampel', async () => {
+      // The original Z2 fixture (Q1a 1000/0, Q1b 0/0): the 200 outside shots have no weight to be spread by.
+      const lines = await dataSource.getRepository(SourceLineEntity).find({ where: { tenantId: mockTenantId, zustandId: states.z2.id } });
+      const q1a = lines.find((l) => l.sourceId === 'Q1a') as SourceLineEntity;
+      await dataSource.getRepository(SourceDataA9Entity).update({ tenantId: mockTenantId, sourceLineId: q1a.id }, { shotsOutside: 0 });
+
+      const { operating, point } = await raw(Y2026, states.z2);
+      expect(operating.annex9.get(refKey(roomId, combo.stgw90))).toEqual({ inside: 1210, outside: 200 });
+      expect(point('E1').missing.map((m) => m.reason)).toEqual(['zero-weights']);
+      // What is left is the inside-only partial level (Teilberechnung), reported as such — never as a valid result.
+      expect(point('E1').annex9All).toBeCloseTo(REF.z2E1OutsideRefused.partialLr9, RAW);
+
+      const dto = await assess({ ...Y2026, calculationId: states.z2.id });
+      for (const code of ['E1', 'E2']) {
+        const r = receiver(dto, code);
+        expect(r.state).toBe('incomplete');
+        expect(r.missingSources).toHaveLength(1);
+        expect(row(r, 9).state).toBe('incomplete');
+      }
+      expect(dto.counts).toMatchObject({ total: 2, incomplete: 2, ok: 0, warn: 0, over: 0 });
+      expect(dto.operatingData.find((r) => r.combinationId === combo.stgw90)).toMatchObject({ inside: 1210, outside: 200 });
+    });
   });
 
   describe('1 · Trennung 12:00 (B1 7.4.3)', () => {
@@ -250,9 +279,39 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
     });
   });
 
-  it.todo('2a · Kernel: 08:00–10:00 = ½ Halbtag, 08:00–10:01 = 1 Halbtag (interner Rechentest) — libs/shared/lsv operating-data.spec.ts');
-  it.todo('2b · Service, regulärer Pfad (Viertelstundenraster): Zivil 08:00–10:00 → A7 28.9897 → 29.0; 08:00–10:15 → 32.0');
-  it.todo('2c · Service mit 08:00–10:01 → 32.0 – ausdrücklich interner Rechentest (Raster erzwingen Maske/ELO, nicht der Kernel)');
+  describe('2 · Dauergrenze eines Halbtags (LSV Anh. 7 Ziff. 322: «mehr als zwei Stunden»)', () => {
+    // 2a (Kernel: 08:00–10:00 = ½, 08:00–10:01 = 1) lives in libs/shared/lsv operating-data.spec.ts.
+    async function alone(to: string) {
+      await clearUsages();
+      await civil('2026-03-16', '08:00', to, 100);
+      const { operating, point } = await raw(Y2026, states.z1);
+      const dto = await assess(Y2026);
+      return { halfDays: operating.annex7HalfDays.a, shots: operating.annex7Shots.get(refKey(roomId, combo.stgw90)), rawLr7: point('E1').annex7All, row: row(receiver(dto, 'E1'), 7) };
+    }
+
+    it('2b · regulärer Pfad (Viertelstundenraster): 08:00–10:00 = ½ Halbtag → 28.9897 → 29.0; 08:00–10:15 = 1 → 32.0', async () => {
+      const twoHours = await alone('10:00');
+      expect(twoHours.halfDays).toEqual({ work: 0.5, sunday: 0 });
+      expect(twoHours.shots).toBe(100);
+      expect(twoHours.rawLr7).toBeCloseTo(REF.case2b.lr7HalfDay, RAW);
+      expect(twoHours.row).toMatchObject({ level: 29, state: 'ok' });
+
+      const next = await alone('10:15');
+      expect(next.halfDays).toEqual({ work: 1, sunday: 0 });
+      expect(next.rawLr7).toBeCloseTo(REF.case2b.lr7FullDay, RAW);
+      expect(next.row).toMatchObject({ level: 32, state: 'ok' });
+    });
+
+    it('2c · interner Rechentest 08:00–10:01 (ausserhalb des Rasters, direkt per Repository) → 1 Halbtag → 32.0', async () => {
+      await clearUsages();
+      const created = await civil('2026-03-16', '08:00', '10:00', 100);
+      // The DTO/ELO contract enforces the quarter-hour raster; the service itself values the minute.
+      await usages.update({ tenantId: mockTenantId, areaId, id: created.id }, { timeTo: '10:01' });
+      const { operating, point } = await raw(Y2026, states.z1);
+      expect(operating.annex7HalfDays.a).toEqual({ work: 1, sunday: 0 });
+      expect(point('E1').annex7All).toBeCloseTo(REF.case2b.lr7FullDay, RAW);
+    });
+  });
 
   describe('3 · Feiertag am Standort (B1 7.4.3 / 7.4.4)', () => {
     it('A9: U4 am 25.12.2026 (Fr, Weihnachten) zählt ausserhalb → 57.1494; ohne Kalender 56.6072', async () => {
@@ -294,7 +353,41 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
     });
   });
 
-  it.todo('4 · ×10 auf alle Nutzungen 2026: A9 57.1494 → 67.1494 (+10.000), A7 38.1448 → 41.1448 (+3.000) – Simulation und kopierte Nutzungen');
+  describe('4 · ×10 auf alle Mengen: A9 +10 dB, A7 +3 dB (Halbtage unverändert)', () => {
+    it('Nutzungen ×10: Betriebsdaten 12 100 / 2 000, Halbtage {1, 1}, A9 67.1494 (Δ 10.000), A7 41.1448 (Δ 3.000) → over / ok', async () => {
+      const before = await raw(Y2026, states.z1);
+      const positions = dataSource.getRepository(UsagePositionEntity);
+      const all = await usages.find({ where: { tenantId: mockTenantId, areaId }, relations: { positions: true } });
+      for (const u of all.filter((x) => x.date.startsWith('2026'))) {
+        for (const p of u.positions ?? []) await positions.update({ id: p.id }, { quantity: p.quantity * 10 });
+      }
+      const after = await raw(Y2026, states.z1);
+      expect(after.operating.annex9.get(refKey(roomId, combo.stgw90))).toEqual({ inside: 12100, outside: 2000 });
+      expect(after.operating.annex7HalfDays.a).toEqual(before.operating.annex7HalfDays.a);
+      expect((after.point('E1').annex9All as number) - (before.point('E1').annex9All as number)).toBeCloseTo(10, 6);
+      expect((after.point('E1').annex7All as number) - (before.point('E1').annex7All as number)).toBeCloseTo(3, 6);
+      expect(after.point('E1').annex9All).toBeCloseTo(REF.z1E1x10.lr9, RAW);
+      expect(after.point('E1').annex7All).toBeCloseTo(REF.z1E1x10.lr7, RAW);
+      const e1 = receiver(await assess(Y2026), 'E1');
+      expect(row(e1, 9)).toMatchObject({ level: 67.1, state: 'over' });
+      expect(row(e1, 7)).toMatchObject({ level: 41.1, state: 'ok' });
+    });
+
+    it('Simulation ×10 (5.13, nur Anhang 9): Ist 57.1 warn → simuliert 67.1 over, Δ +10.0; Nutzungen unverändert', async () => {
+      const base = await simulation.base(mockTenantId, areaId, 2026);
+      expect(base.receivers.find((r) => r.code === 'E1')).toMatchObject({ current: 57.1, currentState: 'warn', limit: 60, limitKind: 'igw', incomplete: false });
+      expect(base.rows.find((r) => r.combinationId === combo.stgw90)).toMatchObject({ inside: 1210, outside: 200 });
+
+      const result = await simulation.run(mockTenantId, areaId, {
+        year: 2026,
+        rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside * 10, outside: r.outside * 10 })),
+      });
+      expect(result.receivers.find((r) => r.code === 'E1')).toMatchObject({ simulated: 67.1, simulatedState: 'over', delta: 10 });
+      // Sandbox: the stored usages did not move.
+      const { operating } = await raw(Y2026, states.z1);
+      expect(operating.annex9.get(refKey(roomId, combo.stgw90))).toEqual({ inside: 1210, outside: 200 });
+    });
+  });
 
   describe('5 · Grenzwertvergleich auf ganze dB aus dem ungerundeten Pegel (B1.2 10.4)', () => {
     /** One military usage inside the workday with N shots; Lr = 24.4954… + 10·log10(N). */
@@ -322,6 +415,17 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       const r = await only(3990);
       expect(r.rawLevel).toBeCloseTo(REF.case5.n3990, RAW);
       expect(r.row).toMatchObject({ limit: 60, level: 60.5, state: 'over' });
+    });
+
+    it('Simulation: Ist und simulierter Wert vergleichen ebenfalls den Rohwert (3 985 → 60.5 warn, 3 990 → 60.5 over)', async () => {
+      await only(3985);
+      const base = await simulation.base(mockTenantId, areaId, 2026);
+      expect(base.receivers.find((r) => r.code === 'E1')).toMatchObject({ current: 60.5, currentState: 'warn' });
+      const rows = base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside, outside: r.outside }));
+      const same = await simulation.run(mockTenantId, areaId, { year: 2026, rows });
+      expect(same.receivers.find((r) => r.code === 'E1')).toMatchObject({ simulated: 60.5, simulatedState: 'warn', delta: 0 });
+      const over = await simulation.run(mockTenantId, areaId, { year: 2026, rows: rows.map((r) => ({ ...r, inside: 3990 })) });
+      expect(over.receivers.find((r) => r.code === 'E1')).toMatchObject({ simulated: 60.5, simulatedState: 'over' });
     });
   });
 
@@ -356,5 +460,40 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
     });
   });
 
-  it.todo('7 · zwei Zivil-Nutzungen im selben Vormittag (08:00–09:00 + 09:30–11:30) = 1 Werk-Halbtag → A7 32.5283; Variante 30 + 90 min → ½ → 29.5180');
+  describe('7 · mehrere Nutzungen im selben Halbtag (B1 7.4.3: Minuten je Kalendertag und Kategorie summiert)', () => {
+    it('08:00–09:00 (100) + 09:30–11:30 (50) = 180 min → 1 Werk-Halbtag, M = 150 → 32.5283 → 32.5', async () => {
+      await clearUsages();
+      await civil('2026-03-16', '08:00', '09:00', 100);
+      await civil('2026-03-16', '09:30', '11:30', 50);
+      const { operating, point } = await raw(Y2026, states.z1);
+      expect(operating.annex7HalfDays.a).toEqual({ work: 1, sunday: 0 });
+      expect(operating.annex7Shots.get(refKey(roomId, combo.stgw90))).toBe(150);
+      expect(point('E1').annex7All).toBeCloseTo(REF.case7.lr7, RAW);
+      expect(row(receiver(await assess(Y2026), 'E1'), 7)).toMatchObject({ level: 32.5, state: 'ok' });
+    });
+
+    it('08:00–08:30 + 09:30–11:00 = 120 min → ½ (nicht ½ + ½ = 1 je Nutzung) → 29.5180 → 29.5', async () => {
+      await clearUsages();
+      await civil('2026-03-16', '08:00', '08:30', 100);
+      await civil('2026-03-16', '09:30', '11:00', 50);
+      const { operating, point } = await raw(Y2026, states.z1);
+      expect(operating.annex7HalfDays.a).toEqual({ work: 0.5, sunday: 0 });
+      expect(point('E1').annex7All).toBeCloseTo(REF.case7.lr7Half, RAW);
+      expect(row(receiver(await assess(Y2026), 'E1'), 7)).toMatchObject({ level: 29.5 });
+    });
+
+    it('Kategorien getrennt: a 08:00–09:00 (½) und b 09:30–11:30 (½, pist75 ohne Quelle) → a berechnet, Punkt unvollständig (O8)', async () => {
+      await clearUsages();
+      await civil('2026-03-16', '08:00', '09:00', 100);
+      await civil('2026-03-16', '09:30', '11:30', 50, combo.pist75);
+      const { operating, point } = await raw(Y2026, states.z1);
+      expect(operating.annex7HalfDays.a).toEqual({ work: 0.5, sunday: 0 });
+      expect(operating.annex7HalfDays.b).toEqual({ work: 0.5, sunday: 0 });
+      expect(point('E1').annex7All).toBeCloseTo(REF.case7.lr7CategoryAOnly, RAW);
+      expect(point('E1').missing.map((m) => m.reason)).toEqual(['no-source']);
+      const e1 = receiver(await assess(Y2026), 'E1');
+      expect(e1.state).toBe('incomplete');
+      expect(row(e1, 7)).toMatchObject({ level: 29, state: 'incomplete' });
+    });
+  });
 });

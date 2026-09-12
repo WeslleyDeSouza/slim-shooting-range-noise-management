@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   linkedSignal,
@@ -121,6 +122,7 @@ export class AreaShotsComponent extends ComponentBase {
   private readonly areaFacade = inject(AreaFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly categories = WEAPON_CATEGORIES;
   /** Nutzungskategorien of B1 Tabelle 2 (API enum USAGE_TYPE). */
@@ -470,7 +472,8 @@ export class AreaShotsComponent extends ComponentBase {
       combinationId: [combinationId, Validators.required],
       quantity: [quantity, [Validators.required, Validators.min(0.001), Validators.pattern(QUANTITY)]],
     });
-    group.controls.category.valueChanges.pipe(takeUntilDestroyed()).subscribe((c) => {
+    // Built outside the constructor (openForm / addPosition): pass the DestroyRef explicitly.
+    group.controls.category.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((c) => {
       const chosen = this.combinations().find((x) => x.combinationId === group.controls.combinationId.value);
       if (chosen && c && chosen.category !== c) group.controls.combinationId.setValue('');
     });

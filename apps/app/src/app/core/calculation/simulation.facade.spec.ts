@@ -116,30 +116,32 @@ describe('SimulationFacade', () => {
       calculationId: undefined,
     });
     expect(facade.rows()).toHaveLength(2);
-    expect(facade.values()).toEqual({ w1: { inside: 1000, outside: 100 }, w2: { inside: 50, outside: 0 } });
+    expect(facade.values()).toEqual({ 'r1|c1': { inside: 1000, outside: 100 }, 'r1|c2': { inside: 50, outside: 0 } });
     expect(facade.dirty()).toBe(false);
     expect(facade.changedCount()).toBe(0);
     expect(facade.totals()).toEqual({ inside: 1050, outside: 100, baseInside: 1050, baseOutside: 100 });
     expect(facade.loading()).toBe(false);
   });
 
-  it('setValue clamps negatives and rounds, and counts the changed cells', async () => {
+  it('setValue clamps negatives, keeps three decimals, and counts the changed cells', async () => {
     await facade.load('a1', 2026);
 
-    facade.setValue('w1', 'inside', -5);
-    expect(facade.values()['w1'].inside).toBe(0);
-    facade.setValue('w1', 'outside', 149.6);
-    expect(facade.values()['w1'].outside).toBe(150);
-    facade.setValue('w2', 'inside', Number.NaN);
-    expect(facade.values()['w2'].inside).toBe(0);
+    facade.setValue('r1|c1', 'inside', -5);
+    expect(facade.values()['r1|c1'].inside).toBe(0);
+    facade.setValue('r1|c1', 'outside', 149.6);
+    expect(facade.values()['r1|c1'].outside).toBe(149.6); // decimal quantities (kg) keep 3 decimals
+    facade.setValue('r1|c1', 'outside', 149.60004);
+    expect(facade.values()['r1|c1'].outside).toBe(149.6);
+    facade.setValue('r1|c2', 'inside', Number.NaN);
+    expect(facade.values()['r1|c2'].inside).toBe(0);
 
     expect(facade.changedCount()).toBe(3);
     expect(facade.dirty()).toBe(true);
 
     // Back to the Ist → no longer counted.
-    facade.setValue('w1', 'inside', 1000);
-    facade.setValue('w1', 'outside', 100);
-    facade.setValue('w2', 'inside', 50);
+    facade.setValue('r1|c1', 'inside', 1000);
+    facade.setValue('r1|c1', 'outside', 100);
+    facade.setValue('r1|c2', 'inside', 50);
     expect(facade.dirty()).toBe(false);
   });
 
@@ -147,7 +149,7 @@ describe('SimulationFacade', () => {
     await facade.load('a1', 2026);
     facade.scaleAll(1.5);
 
-    expect(facade.values()).toEqual({ w1: { inside: 1500, outside: 150 }, w2: { inside: 75, outside: 0 } });
+    expect(facade.values()).toEqual({ 'r1|c1': { inside: 1500, outside: 150 }, 'r1|c2': { inside: 75, outside: 0 } });
     expect(facade.totals().inside).toBe(1575);
     expect(facade.changedCount()).toBe(3);
   });
@@ -180,11 +182,11 @@ describe('SimulationFacade', () => {
     facade.scaleAll(2);
     await facade.run();
 
-    facade.setValue('w2', 'outside', 10);
+    facade.setValue('r1|c2', 'outside', 10);
     expect(facade.stale()).toBe(true);
     expect(facade.result()).toBe(RESULT);
 
-    facade.setValue('w2', 'outside', 0);
+    facade.setValue('r1|c2', 'outside', 0);
     expect(facade.stale()).toBe(false);
   });
 
@@ -195,7 +197,7 @@ describe('SimulationFacade', () => {
 
     facade.reset();
 
-    expect(facade.values()).toEqual({ w1: { inside: 1000, outside: 100 }, w2: { inside: 50, outside: 0 } });
+    expect(facade.values()).toEqual({ 'r1|c1': { inside: 1000, outside: 100 }, 'r1|c2': { inside: 50, outside: 0 } });
     expect(facade.dirty()).toBe(false);
     expect(facade.result()).toBeNull();
     expect(facade.stale()).toBe(false);
@@ -230,7 +232,7 @@ describe('SimulationFacade', () => {
     expect(result).toBeNull();
     expect(facade.error()).toBe('Unknown sources: x');
     expect(facade.running()).toBe(false);
-    expect(facade.values()['w1'].inside).toBe(2000);
+    expect(facade.values()['r1|c1'].inside).toBe(2000);
     expect(facade.result()).toBeNull();
   });
 

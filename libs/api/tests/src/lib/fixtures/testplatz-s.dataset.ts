@@ -205,6 +205,16 @@ export const TESTPLATZ_S_REFERENCE = {
   case3Civil2512: { lr7: 41.41763828434432, lr7NoHoliday: 39.95635792756194 },
   /** Case 5: single military usage inside the workday, N shots (Lr = 24.4954290521427 + 10·log10(N)). */
   case5: { n3900: 60.406075122407685, n3985: 60.49971230946401, n3990: 60.50515800901018 },
+  /** Case 2b: one civil usage of 100 shots alone (no U2/U3): 08:00–10:00 = ½ half-day, 08:00–10:15 = 1. */
+  case2b: { lr7HalfDay: 28.989700043360187, lr7FullDay: 32.0 },
+  /** Case 7: two civil usages in the same morning, 100 + 50 shots: 60 + 120 min = 1 half-day; 30 + 90 min = ½. */
+  case7: { lr7: 32.528273777167044, lr7Half: 29.51797382052723, lr7CategoryAOnly: 28.989700043360187 },
+  /**
+   * Negative case: Z2 with both sources at weight 0 for the evening group —
+   * the 200 shots outside cannot be distributed (O8), what remains is the
+   * inside-only partial level (LAE1 − 6 dB), never a valid Ampel.
+   */
+  z2E1OutsideRefused: { partialLr9: 49.323282755307204 },
   /** Anhang 7 half-days of 2026 (category a): U2 Sunday 3 h = 1, U3 ½ + ½ = 1. */
   halfDays2026: { work: 1, sunday: 1 },
   operating2026: { stgw90: { inside: 1210, outside: 200, civil: 110 } },

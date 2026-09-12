@@ -202,6 +202,15 @@ describe('annex7HalfDays — Schiesshalbtage (B1 7.4)', () => {
     });
   });
 
+  it('counts exactly 2 h as half and one minute more as a full half-day (LSV Anh. 7 Ziff. 322 «mehr als zwei Stunden»)', () => {
+    // Internal boundary test: the quarter-hour raster is enforced by the
+    // usage form / ELO contract, the kernel must still value the minute.
+    expect(annex7HalfDays([a(MON, '08:00', '10:00')]).a).toEqual({ work: 0.5, sunday: 0 });
+    expect(annex7HalfDays([a(MON, '08:00', '10:01')]).a).toEqual({ work: 1, sunday: 0 });
+    // Regular raster: the next slot after 2 h.
+    expect(annex7HalfDays([a(MON, '08:00', '10:15')]).a).toEqual({ work: 1, sunday: 0 });
+  });
+
   it('counts an afternoon separately', () => {
     expect(annex7HalfDays([a(MON, '13:30', '17:00')]).a).toEqual({
       work: 1,

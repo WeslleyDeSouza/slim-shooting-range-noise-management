@@ -44,8 +44,10 @@ Sa/So/Feiertag ganz «ausserhalb». Anhang 7 – Werktag Mo–Sa, pro Kalenderta
 Vormittag/Nachmittag je 1 Halbtag (> 2 h) bzw. ½ (≤ 2 h), getrennt Werktag / Sonn-Feiertag.
 
 Grenzwertvergleich (7.7): Baujahr vor 1985 → IGW, nach 1985 → PW, gemischt → beide.
-Ampel: Rot `Lr > Grenzwert`, Orange `Lr > Grenzwert − 5 dB`, sonst Grün; Vergleich auf den
-angezeigten (auf 0.1 dB gerundeten) Wert.
+Ampel: Rot `Lr > Grenzwert`, Orange `Lr > Grenzwert − 5 dB`, sonst Grün; der Vergleich rundet den
+**ungerundeten** Pegel direkt auf ganze dB (B1.2 10.4), die Anzeige separat auf 0.1 dB – nie zuerst auf
+die Anzeige (60.4997 → Anzeige 60.5, Beurteilungswert 60 → eingehalten). Nachweis durch die Kette:
+`apps/api/src/modules/calculation/rechenfaelle.spec.ts` (Testplatz S, `@api-slim/tests`).
 
 ## Kontrollwerte B1.4 (Unit-Test-Erwartungen)
 

@@ -225,7 +225,7 @@ describe('AreaSimulationComponent', () => {
     input.dispatchEvent(new Event('change'));
     fixture.detectChanges();
 
-    expect(facade.setValue).toHaveBeenCalledWith('w1', 'outside', 30000);
+    expect(facade.setValue).toHaveBeenCalledWith('r1|c1', 'outside', 30000);
   });
 
   it('runs the simulation and shows the result table and ghost dots', async () => {

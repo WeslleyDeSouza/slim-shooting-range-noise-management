@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -11,6 +12,7 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import { AreaFacade } from '../../../core/area/area.facade';
 import { AuthFacade } from '../../auth/auth.facade';
+import { WelcomeDialogComponent, welcomeSeen } from './welcome-dialog.component';
 
 /**
  * Entry page (mock `_mocks/home/index.html` → "Einstiegsseite"): greeting,
@@ -19,9 +21,12 @@ import { AuthFacade } from '../../auth/auth.facade';
 @Component({
   selector: 'app-home',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, DatePipe],
+  imports: [RouterLink, TranslatePipe, DatePipe, WelcomeDialogComponent],
   styleUrl: './home.component.scss',
   template: `
+    @if (welcomeOpen()) {
+      <app-welcome-dialog (closed)="welcomeOpen.set(false)" />
+    }
     <div class="slim-page home">
       <div class="slim-hello">
         <div class="slim-hello__greet">{{ greeting() | translate }}</div>
@@ -225,6 +230,8 @@ import { AuthFacade } from '../../auth/auth.facade';
   `,
 })
 export class HomeComponent extends ComponentBase {
+  /** Welcome banner of the demo: once per browser session, i.e. after every login (not persisted per user yet). */
+  protected readonly welcomeOpen = signal(!welcomeSeen());
   private readonly area = inject(AreaFacade);
   private readonly auth = inject(AuthFacade);
   private readonly translate = inject(TranslateService);

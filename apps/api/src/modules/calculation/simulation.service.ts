@@ -61,8 +61,10 @@ export class SimulationService {
     for (const row of dto.rows) simulated.annex9.set(refKey(row.roomId, row.combinationId), { inside: row.inside, outside: row.outside });
 
     const result = receivers.map(({ entity, base }) => {
-      const level = model ? lr(entity, model, simulated, reference, labelOf) : null;
-      const simulatedState = noiseState(level, base.limit, undefined, undefined, { incomplete: base.incomplete });
+      const raw = model ? lr(entity, model, simulated, reference, labelOf) : null;
+      // State from the raw level (whole-dB rounding happens in noiseState), display rounded separately.
+      const simulatedState = noiseState(raw, base.limit, undefined, undefined, { incomplete: base.incomplete });
+      const level = raw === null ? null : roundDb(raw);
       return {
         ...base,
         simulated: level,
@@ -150,7 +152,7 @@ function toSimulationReceiver(
   const kinds = calculation ? applicableLimits(calculation.buildYearClass) : ['igw' as const];
   const limitKind = kinds.includes('igw') ? 'igw' : 'pw';
   const limit = limits(9, point.sensitivityLevel)[limitKind];
-  const current = lr(point, model, operating, reference, labelOf);
+  const raw = lr(point, model, operating, reference, labelOf);
   // O8: shots of a combination the state cannot attribute (no source, zero
   // weights, no level at this point) → the assessment is incomplete.
   const distributed = distributeOntoState(operating, reference, model, labelOf);
@@ -159,13 +161,14 @@ function toSimulationReceiver(
     ...toReceiverDto(point),
     limitKind,
     limit,
-    current,
+    current: raw === null ? null : roundDb(raw),
     incomplete,
-    currentState: noiseState(current, limit, undefined, undefined, { incomplete }),
+    // Whole-dB comparison from the raw level (B1.2 10.4), never from the displayed value.
+    currentState: noiseState(raw, limit, undefined, undefined, { incomplete }),
   };
 }
 
-/** Rounded Annex 9 Lr of a point for the given operating data, null without data. */
+/** Raw (unrounded) Annex 9 Lr of a point for the given operating data, null without data. */
 function lr(
   point: ImmissionPointEntity,
   model: StateModel,
@@ -178,5 +181,5 @@ function lr(
   const { annex9 } = pointSources(distributed, model, point.id, labelOf);
   if (!annex9.length) return null;
   const level = annex9Level(annex9).lr;
-  return Number.isFinite(level) && level > LSV_EMPTY_LEVEL ? roundDb(level) : null;
+  return Number.isFinite(level) && level > LSV_EMPTY_LEVEL ? level : null;
 }

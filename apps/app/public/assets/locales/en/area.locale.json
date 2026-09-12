@@ -117,7 +117,14 @@
       "discard_text": "The entries in this form have not been saved yet.",
       "keep_editing": "Keep editing",
       "discard": "Discard",
-      "quantity_unit": "Quantity unit"
+      "quantity_unit": "Quantity unit",
+      "persons": "Number of persons",
+      "civil_kind": "Civil usage kind",
+      "err_civil_kind": "The usage kind is required for the category Civil.",
+      "positions": "Weapons / calibres and quantities",
+      "add_position": "Another weapon / calibre",
+      "remove_position": "Remove position",
+      "err_time_quarter": "Times on the quarter hour (00, 15, 30, 45)."
     },
     "delete": {
       "title_one": "Delete usage?",
@@ -134,7 +141,13 @@
       "deleted": "{{n}} usage(s) deleted.",
       "undo": "Undo"
     },
-    "unit_kg": "kg"
+    "unit_kg": "kg",
+    "unit_mixed": "pcs / kg",
+    "civil_kind": {
+      "obligatory": "Compulsory shooting",
+      "field_shooting": "Field shooting",
+      "other": "Other"
+    }
   },
   "details": {
     "title": "Details · Receiver points",
@@ -200,7 +213,10 @@
       "type_facade": "Facade point",
       "type_reserve": "Reserve point",
       "es": "Sensitivity level",
-      "es_info": "ES II: residential zones · ES III: mixed zones · ES IV: industrial zones"
+      "es_info": "ES II: residential zones · ES III: mixed zones · ES IV: industrial zones",
+      "type_free_field": "Free-field point",
+      "type_building_line": "Building-line point",
+      "sonarms_id": "sonARMS ID"
     },
     "assess_title": "Assessment · {{name}}",
     "columns": {

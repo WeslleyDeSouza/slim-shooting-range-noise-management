@@ -117,7 +117,14 @@
       "discard_text": "I dati di questo modulo non sono ancora stati salvati.",
       "keep_editing": "Continuare a modificare",
       "discard": "Annullare",
-      "quantity_unit": "Unità della quantità"
+      "quantity_unit": "Unità della quantità",
+      "persons": "Numero di persone",
+      "civil_kind": "Tipo di utilizzo civile",
+      "err_civil_kind": "Per la categoria Civile è richiesto il tipo di utilizzo.",
+      "positions": "Armi / calibri e quantità",
+      "add_position": "Altra arma / calibro",
+      "remove_position": "Rimuovi posizione",
+      "err_time_quarter": "Orari al quarto d'ora (00, 15, 30, 45)."
     },
     "delete": {
       "title_one": "Eliminare l’utilizzo?",
@@ -134,7 +141,13 @@
       "deleted": "{{n}} utilizzo/i eliminato/i.",
       "undo": "Annulla"
     },
-    "unit_kg": "kg"
+    "unit_kg": "kg",
+    "unit_mixed": "pezzi / kg",
+    "civil_kind": {
+      "obligatory": "Tiro obbligatorio",
+      "field_shooting": "Tiro in campagna",
+      "other": "Altro"
+    }
   },
   "details": {
     "title": "Dettagli · Punti di ricezione",
@@ -200,7 +213,10 @@
       "type_facade": "Punto di facciata",
       "type_reserve": "Punto di riserva",
       "es": "Grado di sensibilità",
-      "es_info": "GS II: zone residenziali · GS III: zone miste · GS IV: zone industriali"
+      "es_info": "GS II: zone residenziali · GS III: zone miste · GS IV: zone industriali",
+      "type_free_field": "Punto in campo libero",
+      "type_building_line": "Punto sulla linea di costruzione",
+      "sonarms_id": "ID sonARMS"
     },
     "assess_title": "Valutazione · {{name}}",
     "columns": {

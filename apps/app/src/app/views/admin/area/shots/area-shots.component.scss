@@ -309,3 +309,23 @@
     }
   }
 }
+
+// Positions of a Nutzung (B1 6.1.3: n × Waffe/Kaliber + Menge)
+.shots__positions {
+  border: 1px solid slim.color('border');
+  border-radius: slim.radius('md');
+  padding: slim.space(3);
+  margin: 0 0 slim.space(3);
+  display: grid;
+  gap: slim.space(3);
+}
+
+.shots__position {
+  padding-bottom: slim.space(3);
+  border-bottom: 1px dashed slim.color('border');
+
+  &:last-of-type {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}

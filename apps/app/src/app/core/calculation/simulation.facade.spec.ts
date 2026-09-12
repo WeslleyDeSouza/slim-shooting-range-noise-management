@@ -12,6 +12,7 @@ const BASE: SimulationBaseDto = {
   year: 2026,
   calculation: {
     id: 'c1',
+    externalId: '02218_1',
     name: 'Initiale Aufnahme',
     calculationId: 'delivery-1',
     calculationName: 'Empa 2019',
@@ -25,8 +26,7 @@ const BASE: SimulationBaseDto = {
   },
   rows: [
     {
-      weaponId: 'w1',
-      sourceId: 'B3_Stgw90',
+      combinationId: 'c1',
       roomId: 'r1',
       roomName: 'Stellungsrm Mw Neuhaus, B 3',
       roomNo: '1104.020.05',
@@ -38,8 +38,7 @@ const BASE: SimulationBaseDto = {
       hasLevels: true,
     },
     {
-      weaponId: 'w2',
-      sourceId: 'B3_PzHb74',
+      combinationId: 'c2',
       roomId: 'r1',
       roomName: 'Stellungsrm Mw Neuhaus, B 3',
       roomNo: '1104.020.05',
@@ -55,6 +54,7 @@ const BASE: SimulationBaseDto = {
     {
       id: 'e1',
       code: 'E1',
+      sonarmsId: 'E1',
       egid: null,
       address: 'Laberhusstrasse 4',
       municipality: null,
@@ -62,6 +62,7 @@ const BASE: SimulationBaseDto = {
       sensitivityLevel: 'II',
       east: null,
       north: null,
+      height: 4,
       mapX: 37.5,
       mapY: 49,
       limitKind: 'igw',
@@ -164,8 +165,8 @@ describe('SimulationFacade', () => {
         year: 2026,
         calculationId: undefined,
         rows: [
-          { weaponId: 'w1', inside: 2000, outside: 200 },
-          { weaponId: 'w2', inside: 100, outside: 0 },
+          { roomId: 'r1', combinationId: 'c1', inside: 2000, outside: 200 },
+          { roomId: 'r1', combinationId: 'c2', inside: 100, outside: 0 },
         ],
       },
     });

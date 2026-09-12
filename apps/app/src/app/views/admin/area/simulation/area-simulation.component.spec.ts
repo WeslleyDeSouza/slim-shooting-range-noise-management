@@ -12,6 +12,7 @@ const BASE: SimulationBaseDto = {
   year: 2026,
   calculation: {
     id: 'c1',
+    externalId: '02218_1',
     name: 'Initiale Aufnahme',
     calculationId: 'delivery-1',
     calculationName: 'Empa 2019',
@@ -25,8 +26,7 @@ const BASE: SimulationBaseDto = {
   },
   rows: [
     {
-      weaponId: 'w1',
-      sourceId: 'B3_Stgw90',
+      combinationId: 'c1',
       roomId: 'r1',
       roomName: 'Stellungsrm Mw Neuhaus, B 3',
       roomNo: '1104.020.05',
@@ -38,8 +38,7 @@ const BASE: SimulationBaseDto = {
       hasLevels: true,
     },
     {
-      weaponId: 'w2',
-      sourceId: 'B3_PzHb74',
+      combinationId: 'c2',
       roomId: 'r1',
       roomName: 'Stellungsrm Mw Neuhaus, B 3',
       roomNo: '1104.020.05',
@@ -55,6 +54,7 @@ const BASE: SimulationBaseDto = {
     {
       id: 'e1',
       code: 'E1',
+      sonarmsId: 'E1',
       egid: null,
       address: 'Laberhusstrasse 4',
       municipality: null,
@@ -62,6 +62,7 @@ const BASE: SimulationBaseDto = {
       sensitivityLevel: 'II',
       east: null,
       north: null,
+      height: 4,
       mapX: 37.5,
       mapY: 49,
       limitKind: 'igw',
@@ -77,14 +78,14 @@ const BASE: SimulationBaseDto = {
 function mockFacade() {
   const base = signal<SimulationBaseDto | null>(BASE);
   const values = signal<Record<string, { inside: number; outside: number }>>({
-    w1: { inside: 257857, outside: 26777 },
-    w2: { inside: 1240, outside: 0 },
+    'r1|c1': { inside: 257857, outside: 26777 },
+    'r1|c2': { inside: 1240, outside: 0 },
   });
   const result = signal<SimulationResultDto | null>(null);
   const changedCount = computed(() => {
     let n = 0;
     for (const row of base()?.rows ?? []) {
-      const v = values()[row.weaponId];
+      const v = values()[`${row.roomId}|${row.combinationId}`];
       if (v.inside !== row.inside) n++;
       if (v.outside !== row.outside) n++;
     }

@@ -7,7 +7,7 @@ import {
   UsageResultDto,
   UsageRoomDto,
   UsageUpdateDto,
-  UsageWeaponDto,
+  UsageCombinationDto,
 } from '@ui-slim/apiClient';
 import { apiErrorMessage } from '../store/api-error';
 import { SignalStore } from '../store/signal-store';
@@ -17,7 +17,8 @@ interface UsageState {
   year: number;
   kpi: UsageKpiDto | null;
   rooms: UsageRoomDto[];
-  weapons: UsageWeaponDto[];
+  /** Zulässige Kombinationen je Stellungsraum (5.17). */
+  combinations: UsageCombinationDto[];
   usages: UsageResultDto[];
   loading: boolean;
   saving: boolean;
@@ -37,7 +38,7 @@ export class UsageFacade extends SignalStore<UsageState> {
   readonly year = this.select((s) => s.year);
   readonly kpi = this.select((s) => s.kpi);
   readonly rooms = this.select((s) => s.rooms);
-  readonly weapons = this.select((s) => s.weapons);
+  readonly combinations = this.select((s) => s.combinations);
   readonly usages = this.select((s) => s.usages);
   readonly loading = this.select((s) => s.loading);
   readonly saving = this.select((s) => s.saving);
@@ -49,7 +50,7 @@ export class UsageFacade extends SignalStore<UsageState> {
       year: new Date().getFullYear(),
       kpi: null,
       rooms: [],
-      weapons: [],
+      combinations: [],
       usages: [],
       loading: false,
       saving: false,
@@ -57,7 +58,7 @@ export class UsageFacade extends SignalStore<UsageState> {
     });
   }
 
-  /** Loads rooms, weapons, KPIs and the usages of `year` for the area. */
+  /** Loads rooms, allowed combinations, KPIs and the usages of `year` for the area. */
   async load(areaId: string, year = this.snapshot().year): Promise<void> {
     this.patch({ areaId, year, loading: true, error: null });
     try {

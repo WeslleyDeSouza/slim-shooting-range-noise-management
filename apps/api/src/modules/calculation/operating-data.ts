@@ -91,8 +91,8 @@ export function deriveOperatingData(
     }
   }
 
-  // Ø pro Jahr (7.4.5) — decimal quantities keep their precision (3 decimals).
-  const avg = (v: number) => (years > 1 ? Math.round((v / years) * 1000) / 1000 : v);
+  // Ø pro Jahr (7.4.5) — full precision; rounding (three decimals) is for the display only.
+  const avg = (v: number) => (years > 1 ? v / years : v);
   for (const entry of annex9.values()) {
     entry.inside = avg(entry.inside);
     entry.outside = avg(entry.outside);

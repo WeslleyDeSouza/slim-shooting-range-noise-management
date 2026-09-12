@@ -2,7 +2,10 @@
  * «Testplatz S» — a synthetic Schiessplatz small enough to compute by hand
  * (apps/app-e2e/src/actors/fixtures/platz-s.md holds the derivation):
  * one Stellungsraum, one source per state, one receiver (a second one only
- * in the later states), six usages. Format: `TenantDataset` of
+ * in the later states), six usages. Source weights (Betriebsdaten 7.5) are
+ * non-zero for both time groups of the carrying source: with two sources whose
+ * weights sum to 0 for a time group the kernel refuses to distribute (O8) —
+ * that is what Z3 is for, not Z2. Format: `TenantDataset` of
  * apps/api/src/mocks/tenant/tenant-dataset.ts (12.09.2026); the type is not
  * imported here so the test lib stays free of app code — the seed validates
  * the structure when it writes it (`seedDemoDataset(ds, tenantId, { dataset })`).
@@ -10,6 +13,46 @@
  * The dates are literal 2026 dates on purpose (Mo/So/holiday pattern); seed
  * it with `now = new Date(2026, 11, 31)`.
  */
+// ---------------------------------------------------------------------------
+
+function plantPart() {
+  return { room: 'Stellungsraum S1', coordinationSectionNo: '9999.001.01', name: 'Anlageteil P1', type: 'Schiessanlage (300m)', builtAfter1985: false };
+}
+
+const E1 = { sonarmsId: 'E1', code: 'E1', egid: null, address: 'Testweg 1', municipality: 'Testdorf', type: 'facade', sensitivityLevel: 'II', east: 2600000, north: 1200000, mapX: 50, mapY: 50, sortOrder: 0 };
+const E2 = { sonarmsId: 'E2', code: 'E2', egid: null, address: 'Testweg 9', municipality: 'Testdorf', type: 'facade', sensitivityLevel: 'III', east: 2600300, north: 1200100, mapX: 70, mapY: 40, sortOrder: 1 };
+
+function wlr(point: string, source: string, lae: number, lafmax: number) {
+  return [
+    { point, source, timeGroup: 'day', lae, lafmax },
+    { point, source, timeGroup: 'eve', lae, lafmax },
+  ];
+}
+
+function usage(
+  label: string,
+  date: string,
+  from: string,
+  to: string,
+  usageType: 'military' | 'civil',
+  unit: string,
+  positions: { combination: string; quantity: number; quantityUnit?: string }[],
+  civilUsageKind?: 'field_shooting' | 'other',
+) {
+  return {
+    room: 'Stellungsraum S1',
+    unit,
+    date,
+    from,
+    to,
+    usageType,
+    civilUsageKind: civilUsageKind ?? null,
+    personCount: 10,
+    recordedBy: `Test ${label}`,
+    positions,
+  };
+}
+
 export const TESTPLATZ_S_DATASET = {
   name: 'SLIM Testplatz S',
   identifier: 'slim-testplatz-s',
@@ -74,7 +117,7 @@ export const TESTPLATZ_S_DATASET = {
               isMgdm: true,
               plantParts: [plantPart()],
               sources: [
-                { sourceId: 'Q1', plantPart: '9999.001.01', weaponSystem: 'Stgw90', a9: { shotsInside: 1000, shotsOutside: 0, year: 2020 }, a7: { halfDaysWork: 10, halfDaysSunday: 1, shotsWork: 1000, year: 2020 } },
+                { sourceId: 'Q1', plantPart: '9999.001.01', weaponSystem: 'Stgw90', a9: { shotsInside: 1000, shotsOutside: 100, year: 2020 }, a7: { halfDaysWork: 10, halfDaysSunday: 1, shotsWork: 1000, year: 2020 } },
               ],
               immissionPoints: [E1],
               wlr: [...wlr('E1', 'Q1', 80, 70)],
@@ -95,7 +138,7 @@ export const TESTPLATZ_S_DATASET = {
               isMgdm: false,
               plantParts: [plantPart()],
               sources: [
-                { sourceId: 'Q1a', plantPart: '9999.001.01', weaponSystem: 'Stgw90', a9: { shotsInside: 1000, shotsOutside: 0, year: 2024 }, a7: { halfDaysWork: 10, halfDaysSunday: 1, shotsWork: 1000, year: 2024 } },
+                { sourceId: 'Q1a', plantPart: '9999.001.01', weaponSystem: 'Stgw90', a9: { shotsInside: 1000, shotsOutside: 100, year: 2024 }, a7: { halfDaysWork: 10, halfDaysSunday: 1, shotsWork: 1000, year: 2024 } },
                 { sourceId: 'Q1b', plantPart: '9999.001.01', weaponSystem: 'Stgw90', a9: { shotsInside: 0, shotsOutside: 0, year: 2024 }, a7: { halfDaysWork: 0, halfDaysSunday: 0, shotsWork: 0, year: 2024 } },
               ],
               immissionPoints: [E1, E2],
@@ -167,42 +210,3 @@ export const TESTPLATZ_S_REFERENCE = {
   operating2026: { stgw90: { inside: 1210, outside: 200, civil: 110 } },
 } as const;
 
-// ---------------------------------------------------------------------------
-
-function plantPart() {
-  return { room: 'Stellungsraum S1', coordinationSectionNo: '9999.001.01', name: 'Anlageteil P1', type: 'Schiessanlage (300m)', builtAfter1985: false };
-}
-
-const E1 = { sonarmsId: 'E1', code: 'E1', egid: null, address: 'Testweg 1', municipality: 'Testdorf', type: 'facade', sensitivityLevel: 'II', east: 2600000, north: 1200000, mapX: 50, mapY: 50, sortOrder: 0 };
-const E2 = { sonarmsId: 'E2', code: 'E2', egid: null, address: 'Testweg 9', municipality: 'Testdorf', type: 'facade', sensitivityLevel: 'III', east: 2600300, north: 1200100, mapX: 70, mapY: 40, sortOrder: 1 };
-
-function wlr(point: string, source: string, lae: number, lafmax: number) {
-  return [
-    { point, source, timeGroup: 'day', lae, lafmax },
-    { point, source, timeGroup: 'eve', lae, lafmax },
-  ];
-}
-
-function usage(
-  label: string,
-  date: string,
-  from: string,
-  to: string,
-  usageType: 'military' | 'civil',
-  unit: string,
-  positions: { combination: string; quantity: number; quantityUnit?: string }[],
-  civilUsageKind?: 'field_shooting' | 'other',
-) {
-  return {
-    room: 'Stellungsraum S1',
-    unit,
-    date,
-    from,
-    to,
-    usageType,
-    civilUsageKind: civilUsageKind ?? null,
-    personCount: 10,
-    recordedBy: `Test ${label}`,
-    positions,
-  };
-}

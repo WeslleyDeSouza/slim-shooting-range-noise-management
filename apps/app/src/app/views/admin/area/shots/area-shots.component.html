@@ -307,7 +307,7 @@
                   <td [attr.data-label]="'shots.columns.weapon' | translate">{{ row.usage.weaponName }}</td>
                   <td [attr.data-label]="'shots.columns.shots' | translate" class="slim-table__cell--num">
                     <b>{{ row.usage.shots | number: '1.0-3' }}</b>
-                    <small class="slim-text--muted">{{ (row.usage.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</small>
+                    <small class="slim-text--muted">{{ (row.usage.quantityUnit === 'kg' ? 'shots.unit_kg' : row.usage.quantityUnit === 'mixed' ? 'shots.unit_mixed' : 'shots.unit_shots') | translate }}</small>
                   </td>
                   <td [attr.data-label]="'shots.columns.recorded_by' | translate">
                     {{ row.usage.recordedBy }}
@@ -518,52 +518,82 @@
                 }
               </select>
             </div>
-            <div class="slim-field" [class.slim-field--invalid]="invalid('category')">
-              <label class="slim-field__label" for="shots-category">
-                {{ 'shots.columns.category' | translate }} <span class="slim-field__required">*</span>
+            <div class="slim-field">
+              <label class="slim-field__label" for="shots-persons">{{ 'shots.form.persons' | translate }}</label>
+              <input class="slim-input" id="shots-persons" type="number" inputmode="numeric" min="0" step="1" formControlName="personCount" data-testid="shots-persons" />
+            </div>
+          </div>
+
+          @if (formIsCivil()) {
+            <div class="slim-field" [class.slim-field--invalid]="submitted() && form.hasError('civilKind')">
+              <label class="slim-field__label" for="shots-civil-kind">
+                {{ 'shots.form.civil_kind' | translate }} <span class="slim-field__required">*</span>
               </label>
-              <select class="slim-select" id="shots-category" formControlName="category">
+              <select class="slim-select" id="shots-civil-kind" formControlName="civilUsageKind" data-testid="shots-civil-kind">
                 <option value="">{{ 'forms.select' | translate }}</option>
-                @for (c of formCategories(); track c) {
-                  <option [value]="c">{{ 'shots.category.' + c | translate }}</option>
+                @for (k of civilKinds; track k) {
+                  <option [value]="k">{{ 'shots.civil_kind.' + k | translate }}</option>
                 }
               </select>
-              <p class="slim-field__error">{{ 'shots.form.err_category' | translate }}</p>
+              <p class="slim-field__error">{{ 'shots.form.err_civil_kind' | translate }}</p>
             </div>
-          </div>
+          }
 
-          <div class="slim-field" [class.slim-field--invalid]="invalid('weaponId')">
-            <label class="slim-field__label" for="shots-weapon">
-              {{ 'shots.columns.weapon' | translate }} <span class="slim-field__required">*</span>
-            </label>
-            <select class="slim-select" id="shots-weapon" formControlName="weaponId">
-              <option value="">
-                {{ (formValueRoom() ? 'forms.select' : 'shots.form.weapon_first_room') | translate }}
-              </option>
-              @for (w of formWeapons(); track w.id) {
-                <option [value]="w.id">{{ w.weaponName }}</option>
-              }
-            </select>
+          <fieldset class="shots__positions" formArrayName="positions" data-testid="shots-positions">
+            <legend class="slim-field__label">
+              {{ 'shots.form.positions' | translate }} <span class="slim-field__required">*</span>
+            </legend>
             <p class="slim-field__hint">{{ 'shots.weapon_hint' | translate }}</p>
-            <p class="slim-field__error">{{ 'shots.form.err_weapon' | translate }}</p>
-          </div>
-
-          <div class="slim-field" [class.slim-field--invalid]="invalid('shots')">
-            <label class="slim-field__label" for="shots-shots">
-              {{ 'shots.columns.shots' | translate }} <span class="slim-field__required">*</span>
-            </label>
-            <div class="slim-stepper slim-stepper--block">
-              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.minus' | translate" (click)="step(-1)">−</button>
-              <input class="slim-stepper__input" id="shots-shots" type="number" inputmode="decimal" min="0" step="0.001" formControlName="shots" data-testid="shots-shots" />
-              <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.plus' | translate" (click)="step(1)">+</button>
-              <select class="slim-select slim-stepper__unit" formControlName="quantityUnit" [attr.aria-label]="'shots.form.quantity_unit' | translate" data-testid="shots-unit">
-                @for (u of quantityUnits; track u) {
-                  <option [value]="u">{{ (u === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</option>
-                }
-              </select>
-            </div>
-            <p class="slim-field__error">{{ 'shots.form.err_shots' | translate }}</p>
-          </div>
+            @for (g of positions.controls; track g; let i = $index) {
+              <div class="shots__position" [formGroupName]="i" data-testid="shots-position">
+                <div class="shots__f2">
+                  <div class="slim-field">
+                    <label class="slim-field__label" [for]="'shots-category-' + i">{{ 'shots.columns.category' | translate }}</label>
+                    <select class="slim-select" [id]="'shots-category-' + i" formControlName="category" [attr.data-testid]="i === 0 ? 'shots-category' : null">
+                      <option value="">{{ 'forms.all' | translate }}</option>
+                      @for (c of formCategories(); track c) {
+                        <option [value]="c">{{ 'shots.category.' + c | translate }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="slim-field" [class.slim-field--invalid]="invalidPosition(i, 'combinationId')">
+                    <label class="slim-field__label" [for]="'shots-weapon-' + i">
+                      {{ 'shots.columns.weapon' | translate }} <span class="slim-field__required">*</span>
+                    </label>
+                    <select class="slim-select" [id]="'shots-weapon-' + i" formControlName="combinationId" [attr.data-testid]="i === 0 ? 'shots-weapon' : null">
+                      <option value="">
+                        {{ (formValueRoom() ? 'forms.select' : 'shots.form.weapon_first_room') | translate }}
+                      </option>
+                      @for (c of combinationsFor(i); track c.combinationId) {
+                        <option [value]="c.combinationId">{{ c.entryName }}</option>
+                      }
+                    </select>
+                    <p class="slim-field__error">{{ 'shots.form.err_weapon' | translate }}</p>
+                  </div>
+                </div>
+                <div class="slim-field" [class.slim-field--invalid]="invalidPosition(i, 'quantity')">
+                  <label class="slim-field__label" [for]="'shots-shots-' + i">
+                    {{ 'shots.columns.shots' | translate }} <span class="slim-field__required">*</span>
+                  </label>
+                  <div class="slim-stepper slim-stepper--block">
+                    <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.minus' | translate" (click)="step(i, -1)">−</button>
+                    <input class="slim-stepper__input" [id]="'shots-shots-' + i" type="number" inputmode="decimal" min="0" step="0.001" formControlName="quantity" [attr.data-testid]="i === 0 ? 'shots-shots' : null" />
+                    <button type="button" class="slim-stepper__btn" [disabled]="readonly()" [attr.aria-label]="'shots.form.plus' | translate" (click)="step(i, 1)">+</button>
+                    <span class="slim-stepper__unit" data-testid="shots-unit">{{ (unitOf(i) === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</span>
+                    @if (positions.length > 1 && !readonly()) {
+                      <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" [attr.aria-label]="'shots.form.remove_position' | translate" (click)="removePosition(i)">×</button>
+                    }
+                  </div>
+                  <p class="slim-field__error">{{ 'shots.form.err_shots' | translate }}</p>
+                </div>
+              </div>
+            }
+            @if (!readonly()) {
+              <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="shots-add-position" (click)="addPosition()">
+                + {{ 'shots.form.add_position' | translate }}
+              </button>
+            }
+          </fieldset>
 
           <div class="slim-field">
             <label class="slim-field__label" for="shots-note">{{ 'forms.remark' | translate }}</label>

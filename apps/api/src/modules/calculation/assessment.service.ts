@@ -252,8 +252,11 @@ function toAssessment(
         limit: limitSet[kind],
         applicable,
         level: rounded,
+        // The comparison rounds the raw level to whole dB itself (B1.2 10.4);
+        // handing it the displayed 0.1-dB value would round twice (60.4997 →
+        // 60.5 → 61 «überschritten» although the Beurteilungswert is 60).
         // O8: an applicable row of an incomplete point carries no colour.
-        state: noiseState(rounded, limitSet[kind], undefined, undefined, { incomplete: applicable && incomplete }),
+        state: noiseState(level, limitSet[kind], undefined, undefined, { incomplete: applicable && incomplete }),
         reserve: rounded === null ? null : roundDb(limitSet[kind] - rounded),
         deltaToCurrent: rounded !== null && referenceRounded !== null ? roundDb(rounded - referenceRounded) : null,
       });

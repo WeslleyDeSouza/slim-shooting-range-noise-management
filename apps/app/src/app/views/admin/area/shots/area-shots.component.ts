@@ -11,7 +11,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
+  FormArray,
   FormBuilder,
+  FormControl,
+  FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
@@ -21,10 +25,10 @@ import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import type {
+  UsageCombinationDto,
   UsageCreateDto,
   UsageResultDto,
   UsageRoomDto,
-  UsageWeaponDto,
 } from '@ui-slim/apiClient';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
@@ -40,13 +44,33 @@ export type ShotsSortKey =
   | 'shots'
   | 'recordedBy';
 
-/** The four weapon categories of the usage form (5.11), API order. */
+/** The weapon categories of the usage form (5.11): codes of the Waffenkategorie master data. */
 export const WEAPON_CATEGORIES = [
   'artillery',
   'air_defence',
   'handguns',
   'mortar',
 ] as const;
+
+/** Zivile Nutzungsart (B1 6.1.3, 11.2.2), API enum CIVIL_USAGE_KIND. */
+export const CIVIL_USAGE_KINDS = ['obligatory', 'field_shooting', 'other'] as const;
+
+/** HH:mm on the quarter hour (B1 6.2.3 / 7.4.1). */
+const QUARTER_HOUR = /^([01]\d|2[0-3]):(00|15|30|45)$/;
+function quarterHourValidator(control: AbstractControl): ValidationErrors | null {
+  const v = control.value as string;
+  return !v || QUARTER_HOUR.test(v) ? null : { quarterHour: true };
+}
+
+/** Menge als Dezimalzahl (B1 6.2 / 11.2.3): > 0, up to three decimals. */
+const QUANTITY = /^\d+([.,]\d{1,3})?$/;
+
+/** Controls of one position line of the form. */
+interface PositionForm {
+  category: FormControl<string>;
+  combinationId: FormControl<string>;
+  quantity: FormControl<number>;
+}
 
 /** A row of the table: either a room heading (grouped view) or a usage. */
 export type ShotsRow =
@@ -67,13 +91,16 @@ const QUICK_TIMES = {
   night: ['19:00', '22:00'],
 } as const;
 
-/** Reactive-form group validator: «Bis» must be after «Von». */
-function timeRangeValidator(group: {
+/** Reactive-form group validator: «Bis» must be after «Von»; «Zivil» needs its Nutzungsart. */
+function usageFormValidator(group: {
   get(name: string): { value: unknown } | null;
 }): ValidationErrors | null {
   const from = group.get('timeFrom')?.value as string;
   const to = group.get('timeTo')?.value as string;
-  return from && to && to <= from ? { timeRange: true } : null;
+  const errors: ValidationErrors = {};
+  if (from && to && to <= from) errors['timeRange'] = true;
+  if (group.get('usageType')?.value === 'civil' && !group.get('civilUsageKind')?.value) errors['civilKind'] = true;
+  return Object.keys(errors).length ? errors : null;
 }
 
 /**
@@ -98,6 +125,7 @@ export class AreaShotsComponent extends ComponentBase {
   protected readonly categories = WEAPON_CATEGORIES;
   /** Nutzungskategorien of B1 Tabelle 2 (API enum USAGE_TYPE). */
   protected readonly types = ['military', 'civil', 'blue_light', 'sat'] as const;
+  protected readonly civilKinds = CIVIL_USAGE_KINDS;
 
   /** The area id is a param of the parent route (`/admin/area/:id/shots`). */
   readonly areaId = toSignal(
@@ -122,7 +150,8 @@ export class AreaShotsComponent extends ComponentBase {
   // Facade state ---------------------------------------------------------
   protected readonly kpi = this.facade.kpi;
   protected readonly rooms = this.facade.rooms;
-  protected readonly weapons = this.facade.weapons;
+  /** Zulässige Kombinationen je Stellungsraum (5.17) with their unit and quota. */
+  protected readonly combinations = this.facade.combinations;
   protected readonly usages = this.facade.usages;
   protected readonly loading = this.facade.loading;
   protected readonly saving = this.facade.saving;
@@ -221,28 +250,35 @@ export class AreaShotsComponent extends ComponentBase {
   protected readonly confirmDiscard = signal(false);
   protected readonly submitted = signal(false);
 
+  /**
+   * One Nutzung = header + n positions (B1 6.1.3, 7.4.2): Stellungsraum,
+   * Einheit, Datum, Zeitraum (Viertelstunden), Kategorie, zivile Nutzungsart,
+   * Anzahl Personen, and per position a zulässige Kombination with its Menge.
+   */
   protected readonly form = this.fb.nonNullable.group(
     {
       roomId: ['', Validators.required],
-      unit: ['', [Validators.required, Validators.maxLength(120)]],
+      unit: ['', [Validators.required, Validators.maxLength(256)]],
       date: ['', Validators.required],
-      timeFrom: ['', Validators.required],
-      timeTo: ['', Validators.required],
+      timeFrom: ['', [Validators.required, quarterHourValidator]],
+      timeTo: ['', [Validators.required, quarterHourValidator]],
       usageType: ['military' as UsageCreateDto['usageType'], Validators.required],
-      category: ['', Validators.required],
-      weaponId: ['', Validators.required],
-      // Menge als Dezimalzahl (B1 6.2/11.2.3): Schuss oder kg Sprengstoff, 3 Dezimalen.
-      shots: [0, [Validators.required, Validators.min(0.001), Validators.pattern(/^\d+([.,]\d{1,3})?$/)]],
-      quantityUnit: ['shots' as UsageCreateDto['quantityUnit'], Validators.required],
+      civilUsageKind: ['' as '' | UsageCreateDto['civilUsageKind']],
+      personCount: [null as number | null, [Validators.min(0), Validators.max(100000)]],
+      positions: this.fb.array<FormGroup<PositionForm>>([], [Validators.required, Validators.minLength(1)]),
       note: [''],
     },
-    { validators: timeRangeValidator },
+    { validators: usageFormValidator },
   );
 
   private readonly formValue = toSignal(this.form.valueChanges, { initialValue: this.form.getRawValue() });
   protected readonly dirty = signal(false);
 
   protected readonly formValueRoom = computed(() => this.formValue()?.roomId ?? '');
+  protected readonly formIsCivil = computed(() => this.formValue()?.usageType === 'civil');
+  protected get positions(): FormArray<FormGroup<PositionForm>> {
+    return this.form.controls.positions;
+  }
   /** Sortable column headers: sort key + translation key. */
   protected readonly columns: readonly (readonly [ShotsSortKey, string])[] = [
     ['room', 'shots.columns.room'],
@@ -255,17 +291,25 @@ export class AreaShotsComponent extends ComponentBase {
     ['recordedBy', 'shots.columns.recorded_by'],
   ];
 
-  protected readonly roomWeapons = computed(() => {
+  /** Combinations allowed for the selected room, active ones only for new entries (5.17). */
+  protected readonly roomCombinations = computed<UsageCombinationDto[]>(() => {
     const roomId = this.formValue()?.roomId ?? '';
-    return this.weapons().filter((w) => w.roomId === roomId);
+    return this.combinations().filter((c) => c.roomId === roomId && (c.enabled || Boolean(this.editId())));
   });
+  /** Waffenkategorien the room allows (guided pick: category first, then the combination, B1 11.2.3). */
   protected readonly formCategories = computed(() =>
-    WEAPON_CATEGORIES.filter((c) => this.roomWeapons().some((w) => w.category === c)),
+    [...new Set(this.roomCombinations().map((c) => c.category))].sort(),
   );
-  protected readonly formWeapons = computed<UsageWeaponDto[]>(() => {
-    const category = this.formValue()?.category ?? '';
-    return this.roomWeapons().filter((w) => !category || w.category === category);
-  });
+  /** Combinations a position may pick: the room's, minus those other positions already use. */
+  protected combinationsFor(index: number): UsageCombinationDto[] {
+    const category = this.positions.at(index)?.controls.category.value ?? '';
+    const taken = new Set(this.positions.controls.map((g, i) => (i === index ? '' : g.controls.combinationId.value)));
+    return this.roomCombinations().filter((c) => (!category || c.category === category) && !taken.has(c.combinationId));
+  }
+  protected unitOf(index: number): 'shots' | 'kg' {
+    const id = this.positions.at(index)?.controls.combinationId.value;
+    return this.combinations().find((c) => c.combinationId === id)?.quantityUnit ?? 'shots';
+  }
   protected readonly duration = computed(() => {
     const v = this.formValue();
     const minutes = minutesBetween(v?.timeFrom ?? '', v?.timeTo ?? '');
@@ -288,14 +332,16 @@ export class AreaShotsComponent extends ComponentBase {
       this.year();
       untracked(() => this.getData());
     });
-    // Category / weapon depend on the room: keep the selects consistent.
+    // The positions depend on the room: a room change clears their combinations.
     this.form.controls.roomId.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
-      this.form.controls.category.setValue('', { emitEvent: true });
-      this.form.controls.weaponId.setValue('');
+      for (const g of this.positions.controls) {
+        g.controls.category.setValue('');
+        g.controls.combinationId.setValue('');
+      }
     });
-    this.form.controls.category.valueChanges.pipe(takeUntilDestroyed()).subscribe((category) => {
-      const weapon = this.weapons().find((w) => w.id === this.form.controls.weaponId.value);
-      if (weapon && weapon.category !== category) this.form.controls.weaponId.setValue('');
+    // «Zivile Nutzungsart» only exists for «Zivil» (B1 11.2.2).
+    this.form.controls.usageType.valueChanges.pipe(takeUntilDestroyed()).subscribe((type) => {
+      if (type !== 'civil') this.form.controls.civilUsageKind.setValue('');
     });
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.drawerOpen()) this.dirty.set(true);
@@ -370,6 +416,10 @@ export class AreaShotsComponent extends ComponentBase {
     this.editId.set(usage?.id ?? null);
     this.submitted.set(false);
     this.confirmDiscard.set(false);
+    this.positions.clear();
+    for (const p of usage?.positions ?? [{ category: '', combinationId: '', quantity: 0 }]) {
+      this.positions.push(this.positionGroup(p.category, p.combinationId, p.quantity));
+    }
     this.form.reset({
       roomId: usage?.roomId ?? this.room() ?? '',
       unit: usage?.unit ?? '',
@@ -377,10 +427,9 @@ export class AreaShotsComponent extends ComponentBase {
       timeFrom: usage?.timeFrom ?? '',
       timeTo: usage?.timeTo ?? '',
       usageType: usage?.usageType ?? 'military',
-      category: usage?.category ?? '',
-      weaponId: usage?.weaponId ?? '',
-      shots: usage?.shots ?? 0,
-      quantityUnit: usage?.quantityUnit ?? 'shots',
+      civilUsageKind: usage?.civilUsageKind ?? '',
+      personCount: usage?.personCount ?? null,
+      positions: this.positions.getRawValue(),
       note: usage?.note ?? '',
     });
     if (this.readonly()) this.form.disable();
@@ -415,20 +464,49 @@ export class AreaShotsComponent extends ComponentBase {
     this.form.controls.timeTo.setValue(to);
   }
 
-  /** Stepper: 50 shots, or 0.1 kg when the quantity is explosive. */
-  protected step(direction: -1 | 1): void {
-    const kg = this.form.controls.quantityUnit.value === 'kg';
-    const delta = direction * (kg ? 0.1 : 50);
-    const current = Number(String(this.form.controls.shots.value).replace(',', '.')) || 0;
-    const next = Math.max(0, Math.round((current + delta) * 1000) / 1000);
-    this.form.controls.shots.setValue(next);
+  private positionGroup(category = '', combinationId = '', quantity = 0): FormGroup<PositionForm> {
+    const group = this.fb.nonNullable.group({
+      category: [category],
+      combinationId: [combinationId, Validators.required],
+      quantity: [quantity, [Validators.required, Validators.min(0.001), Validators.pattern(QUANTITY)]],
+    });
+    group.controls.category.valueChanges.pipe(takeUntilDestroyed()).subscribe((c) => {
+      const chosen = this.combinations().find((x) => x.combinationId === group.controls.combinationId.value);
+      if (chosen && c && chosen.category !== c) group.controls.combinationId.setValue('');
+    });
+    return group;
   }
 
-  protected readonly quantityUnits = ['shots', 'kg'] as const;
+  /** Multi-Eintrag (B1 11.2.3): another Waffe/Kaliber line of the same Nutzung. */
+  protected addPosition(): void {
+    if (this.readonly()) return;
+    this.positions.push(this.positionGroup());
+    this.dirty.set(true);
+  }
+
+  protected removePosition(index: number): void {
+    if (this.readonly() || this.positions.length <= 1) return;
+    this.positions.removeAt(index);
+    this.dirty.set(true);
+  }
+
+  /** Stepper per position: 50 shots, or 0.1 kg when the quantity is explosive. */
+  protected step(index: number, direction: -1 | 1): void {
+    const control = this.positions.at(index)?.controls.quantity;
+    if (!control) return;
+    const delta = direction * (this.unitOf(index) === 'kg' ? 0.1 : 50);
+    const current = Number(String(control.value).replace(',', '.')) || 0;
+    control.setValue(Math.max(0, Math.round((current + delta) * 1000) / 1000));
+  }
 
   protected invalid(control: keyof typeof this.form.controls): boolean {
     const c = this.form.controls[control];
     return this.submitted() && c.invalid;
+  }
+
+  protected invalidPosition(index: number, control: keyof PositionForm): boolean {
+    const c = this.positions.at(index)?.controls[control];
+    return this.submitted() && Boolean(c?.invalid);
   }
 
   protected async save(): Promise<void> {
@@ -437,14 +515,17 @@ export class AreaShotsComponent extends ComponentBase {
     const v = this.form.getRawValue();
     const dto: UsageCreateDto = {
       roomId: v.roomId,
-      weaponId: v.weaponId,
       unit: v.unit.trim(),
       date: v.date,
       timeFrom: v.timeFrom,
       timeTo: v.timeTo,
       usageType: v.usageType,
-      shots: Number(String(v.shots).replace(',', '.')),
-      quantityUnit: v.quantityUnit,
+      civilUsageKind: v.usageType === 'civil' && v.civilUsageKind ? v.civilUsageKind : null,
+      personCount: v.personCount === null || v.personCount === undefined || (v.personCount as unknown) === '' ? null : Number(v.personCount),
+      positions: v.positions.map((p) => ({
+        combinationId: p.combinationId,
+        quantity: Number(String(p.quantity).replace(',', '.')),
+      })),
       note: v.note?.trim() || null,
     };
     const id = this.editId();

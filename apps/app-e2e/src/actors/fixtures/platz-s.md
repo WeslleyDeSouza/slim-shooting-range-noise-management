@@ -27,11 +27,13 @@ Die Daten sind auf **2026** ausgelegt (Wochentage!) – bei anderem Jahr die Nut
 
 | Berechnung | Zustand | Baujahr | Quellen (Anlageteil P1 = SR1) | WLR E1 (day = eve) | WLR E2 |
 |---|---|---|---|---|---|
-| B1 «Ist-Aufnahme 2020» | **Z1** «Z1 Ist 2020», aktuell + MGDM | vor 1985 → IGW | Q1 Stgw90 (a9 1000/0, a7 10/1/1000) | LAE 80.0, LAFmax 70.0 | – |
-| B2 «Sanierung 2024» | **Z2** «Z2 Sanierung 2024» | vor 1985 → IGW | Q1a Stgw90 (a9 1000/0), Q1b Stgw90 (a9 **0/0** – Teil-Null) | Q1a: LAE 74.0, LAFmax 64.0 · Q1b: LAE 74.0 | Q1a: LAE 80.0 |
+| B1 «Ist-Aufnahme 2020» | **Z1** «Z1 Ist 2020», aktuell + MGDM | vor 1985 → IGW | Q1 Stgw90 (a9 1000/100, a7 10/1/1000) | LAE 80.0, LAFmax 70.0 | – |
+| B2 «Sanierung 2024» | **Z2** «Z2 Sanierung 2024» | vor 1985 → IGW | Q1a Stgw90 (a9 1000/100), Q1b Stgw90 (a9 **0/0** – Teil-Null) | Q1a: LAE 74.0, LAFmax 64.0 · Q1b: LAE 74.0 | Q1a: LAE 80.0 |
 | B2 | **Z3** «Z3 Sanierung ohne Gewichte» | vor 1985 | Q1a, Q1b beide a9 **0/0** (Σ = 0) | wie Z2 | wie Z2 |
 
-Keine Quelle für `pist75` und `sprengladung` in irgendeinem Zustand (→ O8-Fälle).
+Keine Quelle für `pist75` und `sprengladung` in irgendeinem Zustand (→ O8-Fälle). Die tragende Quelle hat in beiden
+Zeitgruppen ein Gewicht > 0: bei zwei Quellen mit Σ Gewicht = 0 in einer Zeitgruppe verweigert der Kernel die Verteilung
+(O8) – Befund aus dem ersten Lauf (Q1a 1000/0 hätte die 200 Schüsse «ausserhalb» in Z2 nicht beurteilbar gemacht).
 
 ## 3. Nutzungen (Jahr 2026 = Betrachtungszeitraum der Grundfälle)
 

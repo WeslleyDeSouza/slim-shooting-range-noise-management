@@ -10,6 +10,7 @@ import { AreaDetailsComponent } from './area-details.component';
 
 const CALC_INITIAL = {
   id: 'calc-initial',
+  externalId: '02218_1',
   name: 'Initiale Aufnahme',
   calculationId: 'delivery-1',
   calculationName: 'Empa 2019',
@@ -37,6 +38,7 @@ function receiver(
   ] as const;
   return {
     id: `id-${code}`,
+    sonarmsId: code,
     code,
     egid: type === 'facade' ? '123' : null,
     address: `${code} Strasse 1`,
@@ -45,6 +47,7 @@ function receiver(
     sensitivityLevel: 'II',
     east: null,
     north: null,
+    height: 4,
     mapX: 30,
     mapY: 40,
     state,
@@ -74,7 +77,7 @@ function assessment(overrides: Partial<AssessmentDto> = {}): AssessmentDto {
     calculation: CALC_INITIAL,
     current: CALC_INITIAL,
     calculations: [CALC_INITIAL, CALC_SANITISED],
-    period: { from: '2026-01-01', to: '2026-12-31', years: 1 },
+    period: { from: '2026-01-01', to: '2026-12-31', years: 1, selectedYears: [] },
     counts: { total: 3, ok: 1, warn: 0, over: 1, none: 1, incomplete: 0 },
     receivers: RECEIVERS,
     operatingData: [],

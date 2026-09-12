@@ -117,7 +117,14 @@
       "discard_text": "Les saisies de ce formulaire n’ont pas encore été enregistrées.",
       "keep_editing": "Continuer la saisie",
       "discard": "Abandonner",
-      "quantity_unit": "Unité de la quantité"
+      "quantity_unit": "Unité de la quantité",
+      "persons": "Nombre de personnes",
+      "civil_kind": "Type d'utilisation civile",
+      "err_civil_kind": "Pour la catégorie Civil, le type d'utilisation est requis.",
+      "positions": "Armes / calibres et quantités",
+      "add_position": "Autre arme / calibre",
+      "remove_position": "Supprimer la position",
+      "err_time_quarter": "Heures au quart d'heure (00, 15, 30, 45)."
     },
     "delete": {
       "title_one": "Supprimer l’utilisation ?",
@@ -134,7 +141,13 @@
       "deleted": "{{n}} utilisation(s) supprimée(s).",
       "undo": "Annuler"
     },
-    "unit_kg": "kg"
+    "unit_kg": "kg",
+    "unit_mixed": "pièces / kg",
+    "civil_kind": {
+      "obligatory": "Tir obligatoire",
+      "field_shooting": "Tir en campagne",
+      "other": "Autre"
+    }
   },
   "details": {
     "title": "Détails · Points de réception",
@@ -200,7 +213,10 @@
       "type_facade": "Point de façade",
       "type_reserve": "Point de réserve",
       "es": "Degré de sensibilité",
-      "es_info": "DS II : zones d’habitation · DS III : zones mixtes · DS IV : zones industrielles"
+      "es_info": "DS II : zones d’habitation · DS III : zones mixtes · DS IV : zones industrielles",
+      "type_free_field": "Point en champ libre",
+      "type_building_line": "Point sur la ligne de construction",
+      "sonarms_id": "ID sonARMS"
     },
     "assess_title": "Évaluation · {{name}}",
     "columns": {

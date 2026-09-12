@@ -117,7 +117,14 @@
       "discard_text": "Die Eingaben in diesem Formular wurden noch nicht gespeichert.",
       "keep_editing": "Weiter bearbeiten",
       "discard": "Verwerfen",
-      "quantity_unit": "Einheit der Menge"
+      "quantity_unit": "Einheit der Menge",
+      "persons": "Anzahl Personen",
+      "civil_kind": "Zivile Nutzungsart",
+      "err_civil_kind": "Bei Kategorie Zivil ist die Nutzungsart anzugeben.",
+      "positions": "Waffen / Kaliber und Mengen",
+      "add_position": "Weitere Waffe / Kaliber",
+      "remove_position": "Position entfernen",
+      "err_time_quarter": "Zeiten auf die Viertelstunde (00, 15, 30, 45)."
     },
     "delete": {
       "title_one": "Nutzung löschen?",
@@ -134,7 +141,13 @@
       "deleted": "{{n}} Nutzung(en) gelöscht.",
       "undo": "Rückgängig"
     },
-    "unit_kg": "kg"
+    "unit_kg": "kg",
+    "unit_mixed": "Stück / kg",
+    "civil_kind": {
+      "obligatory": "Obligatorisches Schiessen",
+      "field_shooting": "Feldschiessen",
+      "other": "Anderes"
+    }
   },
   "details": {
     "title": "Details · Empfangspunkte",
@@ -200,7 +213,10 @@
       "type_facade": "Fassadenpunkt",
       "type_reserve": "Reservepunkt",
       "es": "Empfindlichkeitsstufe",
-      "es_info": "ES II: Wohnzonen · ES III: Mischzonen · ES IV: Industriezonen"
+      "es_info": "ES II: Wohnzonen · ES III: Mischzonen · ES IV: Industriezonen",
+      "type_free_field": "Freifeldpunkt",
+      "type_building_line": "Baulinienpunkt",
+      "sonarms_id": "sonARMS-ID"
     },
     "assess_title": "Beurteilung · {{name}}",
     "columns": {

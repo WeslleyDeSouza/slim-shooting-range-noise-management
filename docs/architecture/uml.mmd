@@ -375,15 +375,15 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar sourceLineId FK
-    integer shotsInside
-    integer shotsOutside
-    integer estimated
-    integer year
-    text remark
-    varchar planCategory
+    varchar zustand_id FK
+    text geometrie
+    varchar schusslinie_id FK
+    numeric a9_m1
+    numeric a9_m2
+    integer schaetzung
+    integer jahr
+    text bemerk_daten
+    varchar waffenkat_plan
   }
   quelldaten_anhang7 {
     text tenantId FK
@@ -391,17 +391,18 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar sourceLineId FK
-    real halfDaysWork
-    real halfDaysSunday
-    integer shotsWork
-    integer shotsSunday
-    integer estimated
-    integer year
-    text remark
-    varchar planCategory
+    varchar zustand_id FK
+    text geometrie
+    varchar schusslinie_id FK
+    text waffenkategorie_a7
+    real halbtag_wo
+    real halbtag_so
+    numeric zahl_wo
+    numeric zahl_so
+    integer schaetzung
+    integer jahr
+    text bemerk_daten
+    varchar waffenkat_plan
   }
   schusslinie {
     text tenantId FK
@@ -409,13 +410,13 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar combinationId FK
-    varchar sourceId
-    varchar weaponSystem
-    text remarkGeom
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar kombination_id FK
+    varchar quellen_id
+    varchar waffensystem
+    text bemerk_geom
   }
   zustand_anlageteil {
     text tenantId FK
@@ -423,15 +424,15 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar areaId FK
-    varchar roomId FK
-    varchar coordinationSectionNo
-    varchar name
-    varchar type
-    text remark
-    integer builtAfter1985
+    varchar zustand_id FK
+    text geometrie
+    varchar schiessplatz_id FK
+    varchar stellungsraum_id FK
+    varchar koord_nr
+    varchar bez_spldossier
+    varchar typ
+    text bemerkung
+    integer baujahr_nach_1985
   }
   ausbreitungsberechnung {
     text tenantId FK
@@ -439,19 +440,19 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar model
-    varchar modelVersion
-    text heightModel
-    text buildingDataset
-    integer meteoIncluded
-    integer meteoCount
-    text meteoData
-    integer reflectionIncluded
-    integer forestIncluded
-    varchar primarySurfaces
-    text remark
+    varchar zustand_id FK
+    text geometrie
+    varchar ausbreitungsmodell
+    varchar version
+    text hoehenmodell
+    text gebaeudedatensatz
+    integer meteo_inkl
+    integer meteo_anzahl
+    text meteodaten
+    integer inkl_reflexion
+    integer inkl_wald
+    varchar primaerflaechen
+    text bemerkung
   }
   gebaeude {
     text tenantId FK
@@ -459,15 +460,15 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar propagationId FK
+    varchar zustand_id FK
+    text geometrie
+    varchar berechnung_id FK
     text egid
-    text address
-    varchar surfaceType
-    varchar assessment
-    integer persons
-    text remark
+    text adresse
+    varchar surface_type
+    varchar beurteilung
+    integer personen
+    text bemerkung
   }
   immissionspunkt {
     text tenantId FK
@@ -475,29 +476,29 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar propagationId FK
-    varchar buildingId FK
-    varchar sonarmsId
+    varchar zustand_id FK
+    text geometrie
+    varchar berechnung_id FK
+    varchar gebaeude_id FK
+    varchar sonarms_id
     varchar code
     text egid
     text egrid
-    varchar address
-    text municipality
-    integer pointNo
-    real deliveredLr
-    varchar operation
-    text type
-    varchar deliveredAssessment
-    text remark
-    text sensitivityLevel
-    real east
-    real north
-    real height
-    real mapX
-    real mapY
-    integer sortOrder
+    varchar adresse
+    text gemeinde
+    integer ep_nr
+    real lr
+    varchar betrieb
+    text typ
+    varchar beurteilung
+    text bemerkung
+    text es
+    real ost
+    real nord
+    real hoehe
+    real karte_x
+    real karte_y
+    integer sortierung
   }
   zustand {
     text tenantId FK
@@ -505,15 +506,17 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar calculationId FK
-    text externalId
-    varchar name
-    integer referenceYear
-    text buildYearClass
-    integer isCurrent
-    integer isMgdm
-    integer enabled
+    varchar schiessplatz_id FK
+    varchar immissionsberechnung_id FK
+    text zustand_id_fgdb
+    varchar bezeichnung
+    integer ref_jahr
+    text baujahr_klasse
+    integer aktuell
+    integer stand_mgdm
+    text aktuell_schluessel
+    text mgdm_schluessel
+    integer aktiv
   }
   immissionsberechnung {
     text tenantId FK
@@ -521,19 +524,19 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar name
-    varchar supplier
-    text deliveredAt
-    text fgdbStateMpv
-    text fgdbStateIst
-    integer mpvMeasures
-    integer istObstacles
-    integer istHighScreens
-    integer immissionPointCount
-    integer civilUse
-    integer shootingHousePresent
-    integer enabled
+    varchar schiessplatz_id FK
+    varchar bezeichnung
+    varchar visum
+    text lieferdatum
+    text zustand_mpv
+    text zustand_ist
+    integer mpv_massnahmen
+    integer ist_hindernisse
+    integer ist_hochblenden
+    integer anz_immi_pkte
+    integer nutzung_zivil
+    integer haus_vorhanden
+    integer aktiv
   }
   untersuchungsperimeter {
     text tenantId FK
@@ -541,11 +544,11 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
+    varchar zustand_id FK
+    text geometrie
     varchar name
-    varchar spmNo
-    varchar coordinationSectionNo
+    varchar nr_spm
+    varchar koord_nr
   }
   wlr_pegel {
     text tenantId FK
@@ -553,17 +556,17 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar propagationId FK
-    varchar sourceLineId FK
-    varchar immissionPointId FK
-    text timeGroup
+    varchar zustand_id FK
+    text geometrie
+    varchar berechnung_id FK
+    varchar schusslinie_id FK
+    varchar immissionspunkt_id FK
+    text zeitgruppe
     real lae
     real lafmax
-    real laeMk
-    real laeGk
-    real laeDet
+    real lae_mk
+    real lae_gk
+    real lae_det
     real elevation
   }
   isophonen {
@@ -572,13 +575,13 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar propagationId FK
+    varchar zustand_id FK
+    text geometrie
+    varchar berechnung_id FK
     integer lr
-    real height
-    integer resolution
-    text remark
+    real hoehe
+    integer aufloesung
+    text bemerkung
   }
   betroffene_analyse {
     text tenantId FK
@@ -586,17 +589,17 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar propagationId FK
-    integer personsPwIgw
-    integer personsIgwAw
-    integer personsAw
-    integer year
-    text remark
-    varchar spmNo
-    integer persons55
-    integer persons60
+    varchar zustand_id FK
+    text geometrie
+    varchar berechnung_id FK
+    integer pw_igw
+    integer igw_av
+    integer av
+    integer jahr
+    text bemerkung
+    varchar spm_nr
+    integer pers_55db
+    integer pers_60db
   }
   hindernis {
     text tenantId FK
@@ -604,13 +607,13 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    varchar surfaceType
-    varchar obstacleType
-    text remark
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    varchar surface_type
+    varchar typ_hindernis
+    text bemerkung
   }
   hochblende {
     text tenantId FK
@@ -618,13 +621,13 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    real bottomHeight
-    varchar surfaceType
-    text remark
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    real hoehe_unterkante
+    varchar surface_type
+    text bemerkung
   }
   schuetzenhaus {
     text tenantId FK
@@ -632,22 +635,22 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    real houseHeight
-    real houseDepth
-    real ridgeDistance
-    real ridgeHeight
-    real leftScreenLength
-    real leftScreenHeight
-    real rightScreenLength
-    real rightScreenHeight
-    text houseMaterial
-    text leftScreenMaterial
-    text rightScreenMaterial
-    text remark
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    real haus_hoehe
+    real haus_tiefe
+    real first_abstand
+    real first_hoehe
+    real bl_li_laenge
+    real bl_li_hoehe
+    real bl_re_laenge
+    real bl_re_hoehe
+    text haus_mat
+    text bl_li_mat
+    text bl_re_mat
+    text bemerkung
   }
   massnahmen_punkt {
     text tenantId FK
@@ -655,12 +658,12 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    varchar remark
-    varchar measureType
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    varchar bemerkung
+    varchar massn_typ
   }
   massnahmen_flaeche {
     text tenantId FK
@@ -668,18 +671,18 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    varchar remark
-    real width
-    real length
-    real height
-    real spacingAcross
-    real spacingAlong
-    real depth
-    varchar measureType
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    varchar bemerkung
+    real breite
+    real laenge
+    real hoehe
+    real abstand_quer
+    real abstand_laengs
+    real tiefe
+    varchar massn_typ
   }
   massnahmen_betrieb {
     text tenantId FK
@@ -687,11 +690,11 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar plantPartId FK
-    varchar coordinationSectionNo
-    varchar measureType
+    varchar zustand_id FK
+    text geometrie
+    varchar anlageteil_id FK
+    varchar koord_nr
+    varchar massn_typ
   }
   massnahmen_ssf {
     text tenantId FK
@@ -699,12 +702,12 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustandId FK
-    text geometry
-    varchar buildingId FK
+    varchar zustand_id FK
+    text geometrie
+    varchar gebaeude_id FK
     text egid
-    varchar coordinationSectionNo
-    varchar measureType
+    varchar koord_nr
+    varchar massn_typ
   }
   berechnungslauf {
     text tenantId FK
@@ -712,19 +715,20 @@ OPERATIONS: Broad range of activities related to business operations."
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar zustandId FK
-    text periodFrom
-    text periodTo
-    text years
-    text usageSnapshot
-    text parameters
-    varchar kernelVersion
-    text completeness
-    text results
-    varchar checksum
-    varchar createdBy
-    integer archived
+    varchar schiessplatz_id FK
+    varchar zustand_id FK
+    text zeitraum_von
+    text zeitraum_bis
+    text jahre
+    text nutzungen_kopie
+    text referenz_kopie
+    text parameter
+    varchar kern_version
+    text vollstaendigkeit
+    text ergebnis
+    varchar pruefsumme
+    varchar ersteller
+    integer archiviert
   }
   nutzung_position {
     text tenantId FK
@@ -800,6 +804,7 @@ OPERATIONS: Broad range of activities related to business operations."
   schusslinie }|--|| waffe_kaliber_kombination: combination
   zustand_anlageteil }|--|| zustand: state
   zustand_anlageteil }|--|| stellungsraum: room
+  zustand_anlageteil }|--|| zustand: stateOfArea
   ausbreitungsberechnung }|--|| zustand: state
   gebaeude }|--|| zustand: state
   gebaeude }|--|| ausbreitungsberechnung: propagation

@@ -5,11 +5,11 @@ eine Quelle je Zustand, ein Empfangspunkt, sechs Nutzungen. Jeder Soll-Wert unte
 Formeln B1 Kapitel 7 (Beilage B1.4, Blätter A9X/A7X) von Hand hergeleitet und mit einem
 unabhängigen Python-Nachrechnen bestätigt – **nie** aus der Anwendung übernommen.
 
-Dataset im Format `apps/api/src/mocks/tenant/tenant-dataset.ts` (Stand 12.09.2026):
-`platz-s.dataset.json`. Seeden: entweder als zweiten Schlüssel in `tenant.mock.json` aufnehmen
-(`seedDemoDataset(ds, tenantId, { datasetKey: 'SLIM Testplatz S' })`) oder die Seed-Funktion um einen
-`dataset`-Parameter ergänzen. Die Daten sind auf **2026** ausgelegt (Wochentage!) – bei anderem
-Jahr die Daten der Nutzungen neu setzen (Mo/So/Feiertag müssen stimmen).
+Dataset (Format `apps/api/src/mocks/tenant/tenant-dataset.ts`, Stand 12.09.2026) liegt im gemeinsamen Testbereich
+`libs/api/tests/src/lib/fixtures/testplatz-s.dataset.ts` (`TESTPLATZ_S_DATASET`, dazu `TESTPLATZ_S_REFERENCE` mit den
+vollständigen Werten der unabhängigen Gegenrechnung). Seeden: `seedDemoDataset(ds, tenantId, { dataset: TESTPLATZ_S_DATASET,
+now: new Date(2026, 11, 31) })` – ausführbarer Abgleich in `apps/api/src/modules/calculation/rechenfaelle.spec.ts`.
+Die Daten sind auf **2026** ausgelegt (Wochentage!) – bei anderem Jahr die Nutzungsdaten neu setzen (Mo/So/Feiertag müssen stimmen).
 
 ## 1. Stammdaten
 
@@ -90,6 +90,7 @@ Nur zivile Nutzungen (U2, U3), Gesamtbeurteilung Anhang 7 = nein → Militär bl
 | Simulation ×10 | Z1 | 2026 | **67.1** | rot | – | – |
 | ohne Feiertag (Fehler) | Z1 | 2026 | 56.6 | – | – | – |
 | Grenze 13:00 (Fehler) | Z1 | 2026 | – | – | 37.6 | – |
+| Variante + Zivil 25.12.2026 09–12, 100 Schuss | Z1 | 2026 | 57.1 | orange | **41.4** (41.4176; Sh = 2) – ohne Feiertag 40.0 | – |
 | Mittel 2025+2026 | Z1 | 2025–2026 | stgw90: 605 / 100 je Jahr; pist75 25 und sprengladung **1.25 kg** je Jahr (dezimal, nicht gerundet) → O8 wegen fehlender Quellen | – | – | – |
 
 Prüfregel Rundung (Projekthandbuch B1.2 10.4): der Grenzwertvergleich rundet den **ungerundeten** Pegel direkt auf ganze dB

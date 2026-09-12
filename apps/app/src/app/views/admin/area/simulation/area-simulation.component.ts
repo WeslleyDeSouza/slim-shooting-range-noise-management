@@ -17,7 +17,7 @@ import type {
   SimulationResultReceiverDto,
   SimulationRowDto,
 } from '@ui-slim/apiClient';
-import { SimulationFacade } from '../../../../core/calculation/simulation.facade';
+import { rowKey, SimulationFacade } from '../../../../core/calculation/simulation.facade';
 
 type ShotKey = 'inside' | 'outside';
 type LightState = SimulationReceiverDto['currentState'];
@@ -132,7 +132,7 @@ export class AreaSimulationComponent extends ComponentBase {
   // ----- table -------------------------------------------------------------
 
   protected value(row: SimulationRowDto, key: ShotKey): number {
-    return this.values()[row.weaponId]?.[key] ?? row[key];
+    return this.values()[rowKey(row)]?.[key] ?? row[key];
   }
 
   /** The Ist of a cell (typed access for the template). */
@@ -154,8 +154,8 @@ export class AreaSimulationComponent extends ComponentBase {
   }
 
   protected onInput(row: SimulationRowDto, key: ShotKey, raw: string): void {
-    const digits = String(raw).replace(/[^\d]/g, '');
-    this.facade.setValue(row.weaponId, key, digits ? Number(digits) : 0);
+    const text = String(raw).replace(',', '.').replace(/[^\d.]/g, '');
+    this.facade.setValue(rowKey(row), key, text ? Number(text) : 0);
   }
 
   protected toggleEditing(): void {

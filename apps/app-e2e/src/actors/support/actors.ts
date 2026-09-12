@@ -222,7 +222,7 @@ export const FIXTURE_AREAS = {
   },
   /**
    * Platz S: synthetischer Testplatz mit handgerechneten Soll-Werten
-   * (`../fixtures/platz-s.md`, Dataset `../fixtures/platz-s.dataset.json`).
+   * (`../fixtures/platz-s.md`; Dataset `TESTPLATZ_S_DATASET` in libs/api/tests).
    * 1 Stellungsraum, 2 Berechnungen / 3 Zustände, 6 Nutzungen. Nicht im Demo-Seed.
    */
   S: {

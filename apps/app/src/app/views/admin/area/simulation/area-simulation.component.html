@@ -102,7 +102,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (row of rows(); track row.weaponId) {
+            @for (row of rows(); track row.roomId + '|' + row.combinationId) {
               <tr
                 class="slim-table__row sim__row"
                 [class.sim__row--muted]="!row.hasLevels"

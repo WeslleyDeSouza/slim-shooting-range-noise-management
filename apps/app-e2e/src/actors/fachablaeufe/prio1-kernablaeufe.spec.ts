@@ -44,7 +44,7 @@ test.describe('Prio 1 · Kernabläufe', () => {
     `1.2 dieselben Nutzungen mit zwei Berechnungsständen auswerten (${S.name}: Z1 57.1 / 38.1 → Z2 51.1 / 32.1, E2 nur in Z2)`,
     { annotation: tags({ actor: 'A01', prio: 1, useCase: '4.7', slm: [11, 43, 44] }) },
     async () => {
-      // Ausgangslage: Testplatz S geseedet (fixtures/platz-s.dataset.json), Z1 aktuell, Nutzungen U1–U4 (2026).
+      // Ausgangslage: Testplatz S geseedet (TESTPLATZ_S_DATASET aus @api-slim/tests), Z1 aktuell, Nutzungen U1–U4 (2026).
       // Aktion:       Details → Zustand Z1 → E1 lesen; Zustand Z2 wählen → E1 und E2 lesen; zurück auf Z1.
       // Soll (platz-s.md Abschnitt 6):
       //               Z1: E1 A9 57.1 (orange, 57 vs IGW 60), A7 38.1 (grün); kein E2.

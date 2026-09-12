@@ -82,8 +82,8 @@ apps/app-e2e/src/actors/
     protokoll-vorlage.md            Ausgangslage → Aktion → Soll → Ist → Beleg
     prio1-kernablaeufe.spec.ts      8 Fälle · prio2-datenfluss.spec.ts 6 Fälle · prio3-betrieb.spec.ts 2 Fälle
   fixtures/
-    platz-s.md                      Testplatz S: synthetischer Platz mit Handrechnung (Soll-Tabelle)
-    platz-s.dataset.json            derselbe Platz im Format tenant-dataset.ts (Seed über datasetKey)
+    platz-s.md                      Testplatz S: synthetischer Platz mit Handrechnung (Soll-Tabelle); Dataset + Referenzwerte
+                                    in libs/api/tests (TESTPLATZ_S_DATASET, TESTPLATZ_S_REFERENCE), Seed über `dataset`
     (folgen) Import-Dateien: Stammdaten-CSV, FGDB/WLR/Betriebsdaten aus B1.4, Excel-Schusszahlen B1.6
 ```
 
@@ -137,7 +137,7 @@ Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel �
 Mathematische Randfälle laufen **nicht** durch den Browser: Kernel-Tests in `libs/shared/lsv` (grün) plus die
 vorbereiteten Service-Fälle `apps/api/src/modules/calculation/rechenfaelle.spec.ts` (`it.todo`, Soll aus `platz-s.md`):
 11:00–13:00-Trennung, 2 h / 2 h 01, Werktag vs. Feiertag, ×10 (+10 dB A9 / +3 dB A7), 60.4 / 60.5 gegen 60
-(inkl. Doppelrundungsfalle), Mittelung kleiner kg-Mengen, mehrere Nutzungen im selben Halbtag.
+(Beurteilungswert = ungerundeter Pegel auf ganze dB, Anzeige separat), Mittelung kleiner kg-Mengen, mehrere Nutzungen im selben Halbtag.
 
-Für das persönliche Durchspielen: Testplatz S seeden (`fixtures/platz-s.dataset.json`), Protokoll-Vorlage
+Für das persönliche Durchspielen: Testplatz S seeden (`TESTPLATZ_S_DATASET` aus `@api-slim/tests`), Protokoll-Vorlage
 vorher ausfüllen, mit 1.2 und 1.4 beginnen.

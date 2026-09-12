@@ -23,7 +23,10 @@
  *   zusätzliche Nutzungen, entfernte Feiertage oder geänderte Gewichte eines Falls dürfen keinen anderen Fall beeinflussen.
  * - **Zwischenergebnisse prüfen**, nicht nur die Endampel: Halbtage (`annex7HalfDays`), Mengen je Kombination
  *   (`operatingData` inside/outside), Quellenanteile (Verteilung 7.5), Rohpegel (`level`, ungerundet, Toleranz 1e-3),
- *   Beurteilungswert (`assessedLevel`, ganze dB), Status (`state`). Fehlt ein Zwischenwert im DTO, ist das ein Befund.
+ *   Beurteilungswert (`assessedLevel`, ganze dB), Status (`state`). Ins öffentliche DTO gehören die geforderten
+ *   Betriebsdaten (B1 5.21) und der nachvollziehbare Beurteilungswert; Halbtage, Quellenanteile und andere
+ *   Rechenschritte werden gezielt auf Service-Ebene geprüft (`deriveOperatingData`, `distributeShots`-Ergebnis),
+ *   nicht zwingend über die API.
  * - **Rundung**: Der Grenzwertvergleich rundet den *ungerundeten* Pegel direkt auf ganze dB (B1.2 10.4) – nie zuerst
  *   auf die Anzeige-Dezimale. Anzeige = eine Dezimale (`roundDb`). Soll-Werte hier: ungerundeter Referenzwert → Anzeige.
  * - Soll-Werte aus platz-s.md (Handrechnung, Python-Gegenrechnung), nie aus dem Ist der Anwendung. `it.todo` zählt nicht.
@@ -100,14 +103,17 @@ describe('Rechenfälle durch die Kette (Testplatz S, Vorbereitung)', () => {
   );
 
   it.todo(
-    '6 · Jahresmittel: Rohwert mit Toleranz, Anzeige separat – 2025–2026: 1.25 kg, {2025, 2026, 2028}: 0.8333… kg (Anzeige «0.833 kg»)',
+    '6 · Jahresmittel ohne vorzeitige Rundung: 2.5 kg / 3 Jahre = 2.5/3 exakt (1e-9), 2025–2026: 1.25 kg; Anzeige «0.833 kg» separat',
     // Fixture: Basis + 2028 Mo 2028-03-06 08:00–10:00 Militär stgw90 300 (frisch). Jahre über `years: [2025, 2026, 2028]`.
-    // Rohwerte (operatingData je Kombination, 3 Jahre): sprengladung 2.5/3 = 0.83333… (toBeCloseTo(0.8333, 3)), pist75 16.6667,
-    //   stgw90 inside 503.3333, outside 66.6667. Anzeige (Formatierung getrennt prüfen): «0.833 kg», «16.667», «503.333».
-    // Hinweis Rechengenauigkeit: der Service rundet das Mittel intern auf 3 Dezimalen (operating-data.ts, `avg`) – Wirkung auf den
-    //   Pegel 10·log10(0.833/0.83333) = −0.0017 dB, deshalb Toleranz 1e-3 statt Gleichheit; keine Rundung auf ganze Einheiten (nicht 1, nicht 0).
-    // Zwei Jahre {2025, 2026}: 1.25 kg exakt (toBeCloseTo(1.25, 6)), pist75 25, stgw90 605 / 100.
-    // Status: incomplete (keine Quelle für pist75/sprengladung in Z1) – die Mengen stehen trotzdem im DTO (O8: nichts verschwindet).
+    // Rohwerte (Service-Ebene, `deriveOperatingData` je Kombination): sprengladung toBeCloseTo(2.5 / 3, 9) – NICHT toBeCloseTo(0.8333, 3),
+    //   das liesse den gerundeten Wert 0.833 durch; pist75 toBeCloseTo(50 / 3, 9); stgw90 inside toBeCloseTo(1510 / 3, 9), outside toBeCloseTo(200 / 3, 9).
+    // Voraussetzung: die interne Rundung des Mittels auf 3 Dezimalen in operating-data.ts (`avg`, Math.round(v / years * 1000) / 1000)
+    //   wird entfernt – der Service rechnet mit voller Genauigkeit, gerundet wird nur für die Anzeige. Der Test wird nicht an die Rundung
+    //   angepasst; solange sie drin ist, schlägt er zu Recht fehl (Befund).
+    // Pegel: Toleranz 1e-3 dB gilt wieder, sobald die Rundung weg ist (die 0.0017 dB Abweichung stammten allein aus ihr).
+    // Anzeige (Formatierung getrennt prüfen, drei Dezimalen bleiben möglich): «0.833 kg», «16.667», «503.333».
+    // Zwei Jahre {2025, 2026}: sprengladung toBeCloseTo(1.25, 9), pist75 25, stgw90 605 / 100 (exakt).
+    // Status: incomplete (keine Quelle für pist75/sprengladung in Z1) – die Mengen stehen trotzdem in den Betriebsdaten (O8: nichts verschwindet).
   );
 
   it.todo(

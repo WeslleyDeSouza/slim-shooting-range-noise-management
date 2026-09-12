@@ -25,6 +25,10 @@ export default defineConfig({
       '../../libs/shared/**/*.spec.ts',
     ],
     setupFiles: ['./vitest.setup.ts'],
+    // The demo seed writes every calculation state through the import service
+    // (one transaction per state); under a parallel full run that takes > 5 s.
+    testTimeout: 30_000,
+    hookTimeout: 60_000,
     coverage: {
       provider: 'v8',
       reportsDirectory: '../../coverage/apps/api',

@@ -4,12 +4,18 @@ import {
   AdminCalculationService,
   SimulationBaseDto,
   SimulationResultDto,
+  SimulationRowDto,
 } from '@ui-slim/apiClient';
 import { apiErrorMessage } from '../store/api-error';
 import { SignalStore } from '../store/signal-store';
 
-/** Editable shot counts per source (room × weapon), keyed by weaponId. */
+/** Editable shot counts per Stellungsraum × Kombination, keyed by `rowKey(row)` (roomId|combinationId). */
 export type SimulationValues = Record<string, { inside: number; outside: number }>;
+
+/** Key of a simulation row: the permanent reference pair, not a source of the model. */
+export function rowKey(row: Pick<SimulationRowDto, 'roomId' | 'combinationId'>): string {
+  return `${row.roomId}|${row.combinationId}`;
+}
 
 interface SimulationState {
   areaId: string | null;
@@ -50,7 +56,7 @@ export class SimulationFacade extends SignalStore<SimulationState> {
     const { base, values } = this.state();
     let n = 0;
     for (const row of base?.rows ?? []) {
-      const v = values[row.weaponId];
+      const v = values[rowKey(row)];
       if (!v) continue;
       if (v.inside !== row.inside) n++;
       if (v.outside !== row.outside) n++;
@@ -106,11 +112,12 @@ export class SimulationFacade extends SignalStore<SimulationState> {
     }
   }
 
-  setValue(weaponId: string, key: 'inside' | 'outside', value: number): void {
-    const clean = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+  setValue(id: string, key: 'inside' | 'outside', value: number): void {
+    // Quantities are decimal (kg of explosive, B1 6.2): keep three decimals.
+    const clean = Number.isFinite(value) ? Math.max(0, Math.round(value * 1000) / 1000) : 0;
     this.update((s) => ({
       ...s,
-      values: { ...s.values, [weaponId]: { ...(s.values[weaponId] ?? { inside: 0, outside: 0 }), [key]: clean } },
+      values: { ...s.values, [id]: { ...(s.values[id] ?? { inside: 0, outside: 0 }), [key]: clean } },
     }));
   }
 
@@ -121,7 +128,7 @@ export class SimulationFacade extends SignalStore<SimulationState> {
       values: Object.fromEntries(
         Object.entries(s.values).map(([id, v]) => [
           id,
-          { inside: Math.round(v.inside * factor), outside: Math.round(v.outside * factor) },
+          { inside: Math.round(v.inside * factor * 1000) / 1000, outside: Math.round(v.outside * factor * 1000) / 1000 },
         ]),
       ),
     }));
@@ -143,7 +150,10 @@ export class SimulationFacade extends SignalStore<SimulationState> {
           body: {
             year,
             calculationId: calculationId ?? undefined,
-            rows: Object.entries(values).map(([weaponId, v]) => ({ weaponId, inside: v.inside, outside: v.outside })),
+            rows: Object.entries(values).map(([id, v]) => {
+              const [roomId, combinationId] = id.split('|');
+              return { roomId, combinationId, inside: v.inside, outside: v.outside };
+            }),
           },
         }),
       );
@@ -163,6 +173,6 @@ function copyValues(values: SimulationValues): SimulationValues {
 
 function toValues(base: SimulationBaseDto | null): SimulationValues {
   const values: SimulationValues = {};
-  for (const row of base?.rows ?? []) values[row.weaponId] = { inside: row.inside, outside: row.outside };
+  for (const row of base?.rows ?? []) values[rowKey(row)] = { inside: row.inside, outside: row.outside };
   return values;
 }

@@ -27,6 +27,7 @@ import {
   DatasetMasterData,
   TenantDataset,
   loadDataset,
+  withDates,
 } from './tenant-dataset';
 
 const log = new Logger('DemoDataset');
@@ -117,12 +118,19 @@ export interface DemoSeedResult {
 export async function seedDemoDataset(
   connection: DataSource,
   tenantId: string,
-  options: { now?: Date; force?: boolean; datasetKey?: string } = {},
+  options: {
+    now?: Date;
+    force?: boolean;
+    /** Key in tenant.mock.json (default «SLIM Demo»); ignored when `dataset` is given. */
+    datasetKey?: string;
+    /** A dataset object instead of tenant.mock.json (test fixtures, e.g. «Testplatz S»); dates still raw. */
+    dataset?: TenantDataset;
+  } = {},
 ): Promise<DemoSeedResult> {
   const now = options.now ?? new Date();
-  const key = options.datasetKey ?? DEFAULT_DATASET_KEY;
+  const key = options.dataset ? options.dataset.identifier : (options.datasetKey ?? DEFAULT_DATASET_KEY);
   const year = now.getFullYear();
-  const dataset = loadDataset(key, now);
+  const dataset = options.dataset ? withDates(options.dataset, now) : loadDataset(key, now);
   const markers = connection.getRepository(DemoSeedMarkerEntity);
 
   const marker = await markers.findOne({ where: { tenantId } });

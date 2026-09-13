@@ -40,7 +40,7 @@ export class AreaStatusService {
       noiseStatus: noise.status,
       noiseStatusReason: noise.reason,
       noiseStatusBasis: noise.basis,
-      statusYear: now.getFullYear(),
+      statusYear: this.year(now),
     };
     await this.areas.update({ tenantId, id: areaId }, result);
     return result;
@@ -63,7 +63,8 @@ export class AreaStatusService {
    * B1 5.9/5.18), or a current state but no usages in the year.
    */
   private async noise(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason & { basis: string | null }> {
-    const result = await this.assessment.assess(tenantId, areaId, { now });
+    const year = this.year(now);
+    const result = await this.assessment.assess(tenantId, areaId, { now, from: `${year}-01-01`, to: `${year}-12-31` });
     if (!result.calculation?.isCurrent || !result.receivers.length) return { status: 'none', reason: 'no-calculation', basis: null };
     const basis = result.calculation.name;
     if (!result.operatingData.length) return { status: 'none', reason: 'no-usages', basis };
@@ -78,7 +79,7 @@ export class AreaStatusService {
    * at the first shot — and the light carries «no-quota» so the UI can say why.
    */
   private async quota(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason> {
-    const year = now.getFullYear();
+    const year = this.year(now);
     const [quotas, current, previous1, previous2] = await Promise.all([
       this.quotas.find({ where: { tenantId, areaId } }),
       this.usages.listYear(tenantId, areaId, year),
@@ -104,6 +105,10 @@ export class AreaStatusService {
       states.push(quotaState((three.get(id) ?? 0) / 3, soll));
     }
     return { status: worstState(states), reason: withoutQuota ? 'no-quota' : null };
+  }
+
+  private year(now: Date): number {
+    return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Zurich', year: 'numeric' }).format(now));
   }
 }
 

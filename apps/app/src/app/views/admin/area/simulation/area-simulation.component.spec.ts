@@ -236,8 +236,13 @@ describe('AreaSimulationComponent', () => {
         areaId: 'a1',
         year: 2026,
         calculation: BASE.calculation,
-        receivers: [{ ...BASE.receivers[0], simulated: 59.4, simulatedState: 'warn', delta: 3 }],
-        counts: { total: 1, ok: 0, warn: 1, over: 0, none: 0, incomplete: 0 },
+        receivers: [{ ...BASE.receivers[0], simulated: 59.4, simulatedState: 'over', delta: 3,
+          simulatedRows: [
+            { annex: 9, limitKind: 'igw', limit: 60, applicable: true, level: 59.4, state: 'warn', reserve: 0.6, deltaToCurrent: null },
+            { annex: 9, limitKind: 'pw', limit: 55, applicable: true, level: 57, state: 'over', reserve: -2, deltaToCurrent: null },
+          ],
+        }],
+        counts: { total: 1, ok: 0, warn: 0, over: 1, none: 0, incomplete: 0 },
         totals: { inside: 518194, outside: 53554, baseInside: 259097, baseOutside: 26777 },
         calculatedAt: '2026-09-11T10:00:00.000Z',
       });
@@ -251,8 +256,11 @@ describe('AreaSimulationComponent', () => {
     expect(facade.run).toHaveBeenCalled();
     expect(el('sim-result-row')).toHaveLength(1);
     expect(el('sim-result-row')[0].textContent).toContain('+3');
+    expect(el('sim-result-row')[0].textContent).toContain('IGW');
+    expect(el('sim-result-row')[0].textContent).toContain('PW');
+    expect(el('sim-result-row')[0].textContent).toContain('57');
     expect(fixture.nativeElement.querySelectorAll('.slim-map__ghost')).toHaveLength(1);
-    expect(el('sim-pin')[0].classList).toContain('slim-map__pin--warn');
+    expect(el('sim-pin')[0].classList).toContain('slim-map__pin--over');
     expect(el('sim-state')[0].textContent).toContain('simulation.state.fresh');
   });
 

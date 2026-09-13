@@ -33,10 +33,12 @@ export class CalculationRunService {
 
   async run(tenantId: string, areaId: string, options: AssessmentOptions, createdBy: string): Promise<CalculationRunDto> {
     let captured: AssessmentInputs | undefined;
-    const result = await this.assessment.assess(tenantId, areaId, options, (inputs) => { captured = structuredClone(inputs); });
+    // These are detached query results, retained from the assessment itself.
+    // A subsequent database update cannot change these in-memory inputs.
+    const result = await this.assessment.assess(tenantId, areaId, options, (inputs) => { captured = inputs; });
     if (!captured) throw new Error('Assessment inputs were not captured');
     if (!result.calculation) throw new NotFoundException('No calculation state to run on');
-    const { reference, usages, assignments, model } = captured;
+    const { reference, usages, assignments, model, referenceModel } = captured;
     const period = { from: result.period.from, to: result.period.to, selectedYears: result.period.selectedYears, years: result.period.years };
     const snapshot = usages.map((u) => ({
       id: u.id,
@@ -62,6 +64,7 @@ export class CalculationRunService {
     const quotas = await this.quotas.find({ where: { tenantId, areaId } });
     const referenceSnapshot = {
       state: model ? { ...model, wlr: [...model.wlr].map(([point, values]) => [point, [...values]]) } : null,
+      comparisonState: referenceModel ? { ...referenceModel, wlr: [...referenceModel.wlr].map(([point, values]) => [point, [...values]]) } : null,
       rooms: reference.rooms.map((r) => ({ id: r.id, coordinationSectionNo: r.coordinationSectionNo, name: r.name, enabled: r.enabled })),
       combinations: reference.combinations.map((c) => ({
         id: c.id,

@@ -103,7 +103,8 @@ describe('AreaStatusService (Ampeln mit Grund, Testplatz S)', () => {
   it('refreshes year-dependent cached statuses for the new year', async () => {
     await service.refresh(mockTenantId, areaId, NOW);
     expect((await stored()).statusYear).toBe(2026);
-    await service.refresh(mockTenantId, areaId, new Date(2027, 0, 1));
+    // Already 2027 in Switzerland, while a server running in UTC is in 2026.
+    await service.refresh(mockTenantId, areaId, new Date('2026-12-31T23:00:00Z'));
     expect((await stored()).statusYear).toBe(2027);
   });
 

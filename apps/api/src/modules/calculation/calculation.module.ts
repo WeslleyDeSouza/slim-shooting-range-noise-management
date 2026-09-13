@@ -1,4 +1,4 @@
-import { forwardRef, Module, OnApplicationBootstrap } from '@nestjs/common';
+import { forwardRef, Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RulesModule } from '@app-galaxy/core-api';
 import { Cron } from '@nestjs/schedule';
@@ -45,8 +45,8 @@ export class CalculationModule implements OnApplicationBootstrap {
     try {
       const tenants: { tenantId: string }[] = await this.dataSource.query('select distinct tenantId from schiessplatz');
       for (const t of tenants) await this.status.refreshAll(t.tenantId);
-    } catch {
-      // The schema may not exist yet (first boot with sync); the next change refreshes the lights.
+    } catch (error) {
+      Logger.error('Overview status refresh failed', error instanceof Error ? error.stack : String(error), CalculationModule.name);
     }
   }
 }

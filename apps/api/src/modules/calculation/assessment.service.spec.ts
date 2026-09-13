@@ -16,9 +16,10 @@ import { AreaWlrEntity, SourceLineEntity } from './entities';
 const NOW = new Date(2026, 11, 31);
 const PERIOD = { from: '2026-01-01', to: '2026-12-31', now: NOW };
 
-/** Values of the UI mock `_mocks/area/detail.index.html` the dataset reproduces. */
+/** Demo reference values. E5 A9 independently recalculated with fractional time
+ * shares: 61.84899362915047 dB (previous integer split rounded it to 61.9). */
 const EXPECTED = {
-  initial: { E1: [60.8, 49.1], E2: [54.2, 44.0], E3: [58.6, 47.5], E4: [52.3, 41.8], E5: [61.9, 50.4] },
+  initial: { E1: [60.8, 49.1], E2: [54.2, 44.0], E3: [58.6, 47.5], E4: [52.3, 41.8], E5: [61.8, 50.4] },
   saniert: { E1: [56.4, 46.6], E2: [51.9, 42.3], E3: [57.2, 45.9], E4: [50.1, 40.2], E5: [60.7, 49.2] },
 } as const;
 

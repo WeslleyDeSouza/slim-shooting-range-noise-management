@@ -4,13 +4,9 @@
  * (Schusslinien) of the Zustand in proportion to the weights that come from
  * the Betriebsdaten of the noise model.
  *
- * Edge cases (review T02): a combination whose weights are all zero — the
- * model carries no operating data for it — is spread evenly and flagged,
- * so the import report / the assessment can show it; a single source gets
- * everything; a combination without any source yields nothing (the caller
- * treats it as "keine Berechnung"). Decimal quantities survive: shares are
- * rounded to three decimals and the rounding remainder goes to the largest
- * share, so the shares always add up to the input.
+ * Zero total weight is refused unless an explicitly released substitute rule
+ * is supplied. Derived quantities retain floating-point precision; rounding
+ * belongs to presentation, never to the source distribution.
  */
 export interface SourceWeight {
   sourceId: string;
@@ -27,7 +23,7 @@ export interface Distribution {
   shares: DistributedShare[];
   /**
    * `zero-weights`: every weight of the combination was 0 — the model
-   * carries no operating data for it; spread evenly (default) or refused,
+   * carries no operating data for it; refused by default or explicitly spread evenly,
    * see DistributionOptions. `no-source`: the combination has no source in
    * the Zustand, nothing could be distributed — the quantity must be shown
    * as «nicht zuordenbar», never silently dropped (it would understate Lr).
@@ -67,9 +63,6 @@ export interface DistributionOptions {
   release?: SubstituteRuleRelease;
 }
 
-const DECIMALS = 3;
-const SCALE = 10 ** DECIMALS;
-
 export function distributeShots(
   quantity: number,
   sources: readonly SourceWeight[],
@@ -103,19 +96,10 @@ export function distributeShots(
   const weights = zero ? sources.map(() => 1) : sources.map((s) => s.weight);
   const weightSum = zero ? sources.length : total;
 
-  // Integer arithmetic in thousandths, remainder to the largest share.
-  const units = Math.round(quantity * SCALE);
-  const exact = weights.map((w) => (units * w) / weightSum);
-  const floors = exact.map((e) => Math.floor(e));
-  let remainder = units - floors.reduce((a, b) => a + b, 0);
-  const order = exact
-    .map((e, i) => ({ i, frac: e - floors[i] }))
-    .sort((a, b) => b.frac - a.frac || a.i - b.i);
-  for (const { i } of order) {
-    if (remainder <= 0) break;
-    floors[i] += 1;
-    remainder -= 1;
-  }
-  const shares = sources.map((s, i) => ({ sourceId: s.sourceId, shots: floors[i] / SCALE }));
+  // Preserve derived annual averages, including quantities below 0.001.
+  const shares = sources.map((s, i) => ({ sourceId: s.sourceId, shots: quantity * (weights[i] / weightSum) }));
+  // Correct only floating-point summation error on the largest positive share.
+  const largest = weights.reduce((best, w, i) => w > weights[best] ? i : best, 0);
+  shares[largest].shots += quantity - shares.reduce((sum, s) => sum + s.shots, 0);
   return zero ? { shares, warning: 'zero-weights', substituteRule: true, release: options.release } : { shares };
 }

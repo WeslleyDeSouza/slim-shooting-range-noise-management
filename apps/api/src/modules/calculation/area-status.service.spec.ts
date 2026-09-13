@@ -10,6 +10,7 @@ import { AreaUsageEntity } from '../usage/entities';
 import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import type { TenantDataset } from '../../mocks/tenant/tenant-dataset';
+import { AssessmentService } from './assessment.service';
 import { AreaStatusService } from './area-status.service';
 import { CalculationModule } from './calculation.module';
 import { CalculationService } from './calculation.service';
@@ -89,6 +90,22 @@ describe('AreaStatusService (Ampeln mit Grund, Testplatz S)', () => {
     await quotas.save(rows.map((r) => quotas.create({ tenantId: mockTenantId, areaId, combinationId: r.combinationId, shotsPerYear: r.shotsPerYear, basis: 'Test' })));
   };
   const stored = () => areas.findOneByOrFail({ tenantId: mockTenantId, id: areaId });
+
+  it('invalidates cached colours if recalculation fails', async () => {
+    await areas.update({ id: areaId }, { noiseStatus: 'ok', quotaStatus: 'ok', statusYear: 2025 });
+    const spy = vi.spyOn(module.get(AssessmentService), 'assess').mockRejectedValueOnce(new Error('calculation unavailable'));
+    try {
+      await expect(service.refresh(mockTenantId, areaId, NOW)).rejects.toThrow('calculation unavailable');
+      expect(await stored()).toMatchObject({ noiseStatus: 'incomplete', quotaStatus: 'incomplete', statusYear: null });
+    } finally { spy.mockRestore(); }
+  });
+
+  it('refreshes year-dependent cached statuses for the new year', async () => {
+    await service.refresh(mockTenantId, areaId, NOW);
+    expect((await stored()).statusYear).toBe(2026);
+    await service.refresh(mockTenantId, areaId, new Date(2027, 0, 1));
+    expect((await stored()).statusYear).toBe(2027);
+  });
 
   it('no Kontingent at all, positive usage → over + no-quota (Soll 0, B1 5.10)', async () => {
     await setQuotas([]);

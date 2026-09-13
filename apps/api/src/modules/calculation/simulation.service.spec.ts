@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { mockTenantId, testDbSeedBeforeEach, testDbSetup } from '@api-slim/tests';
 import { AreaModule } from '../area/area.module';
 import { AreaService } from '../area/area.service';
+import { RoomCombinationEntity } from '../area/entities';
 import { UsageModule } from '../usage/usage.module';
 import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
@@ -116,17 +117,24 @@ describe('SimulationService (5.13 Simulation)', () => {
   });
 
   it('moving shots into the evening weighs them 5 dB more', async () => {
+    // Use a combination already used in both groups: sources with zero evening
+    // weights must be refused under O8, not included in a pure penalty test.
+    const both = base.rows.find((r) => r.inside > 0 && r.outside > 0);
+    expect(both).toBeDefined();
+    const selected = (r: SimulationBaseDto['rows'][number]) => r.roomId === both?.roomId && r.combinationId === both?.combinationId;
     const day = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside + r.outside, outside: 0 })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: selected(r) ? 100 : 0, outside: 0 })),
     });
     const eve = await service.run(mockTenantId, geissalpId, {
       year: YEAR,
-      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: 0, outside: r.inside + r.outside })),
+      rows: base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: 0, outside: selected(r) ? 100 : 0 })),
     });
+    expect(day.counts.incomplete).toBe(0);
+    expect(eve.counts.incomplete).toBe(0);
     for (const receiver of day.receivers.filter((r) => r.simulated !== null)) {
       const other = eve.receivers.find((r) => r.id === receiver.id);
-      // LAE_eve ≈ LAE_day + 0.2 in the dataset, plus the +5 dB of Annex 9.
+      // Fixture WLR evening = day + 0.2 dB; A9 adds the 5 dB penalty.
       expect((other?.simulated as number) - (receiver.simulated as number)).toBeCloseTo(5.2, 0);
     }
   });
@@ -147,6 +155,27 @@ describe('SimulationService (5.13 Simulation)', () => {
       rows: [{ roomId: one.roomId, combinationId: one.combinationId, inside: one.inside, outside: one.outside }],
     });
     expect(result.receivers.every((r) => r.simulated === r.current)).toBe(true);
+  });
+
+  it('preserves historical quantities and levels after disabling their assignment in the database', async () => {
+    const used = base.rows.find((r) => r.inside + r.outside > 0);
+    if (!used) throw new Error('Fixture requires a used combination');
+    const repo = dataSource.getRepository(RoomCombinationEntity);
+    const where = { tenantId: mockTenantId, areaId: geissalpId, roomId: used.roomId, combinationId: used.combinationId };
+    await repo.update(where, { enabled: false });
+    try {
+      const current = await service.base(mockTenantId, geissalpId, YEAR);
+      expect(current.rows.some((r) => r.roomId === used.roomId && r.combinationId === used.combinationId)).toBe(false);
+      const result = await service.run(mockTenantId, geissalpId, { year: YEAR, rows: [] });
+      expect(result.totals.inside).toBe(result.totals.baseInside);
+      expect(result.totals.outside).toBe(result.totals.baseOutside);
+      for (const receiver of result.receivers) {
+        expect(receiver.simulated).toBe(receiver.current);
+        expect(receiver.simulatedState).toBe(receiver.currentState);
+      }
+    } finally {
+      await repo.update(where, { enabled: true });
+    }
   });
 
   it('rejects sources that do not belong to the area', async () => {

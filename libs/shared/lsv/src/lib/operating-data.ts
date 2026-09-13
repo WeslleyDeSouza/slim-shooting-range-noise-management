@@ -104,8 +104,8 @@ function overlap(
  * "ausserhalb Werktag". The workday is Mo–Fr 07:00–19:00; Saturday, Sunday
  * and the site's public holidays count entirely as outside; on a half
  * holiday the free hours are outside as well. Inside a workday the shots are
- * split proportionally to the minutes inside / outside the window and rounded
- * to whole shots; the rounding remainder goes to the larger share, so
+ * split proportionally to the minutes inside / outside the window without
+ * quantisation; the outside share is the remainder, so
  * `inside + outside === shots` always holds.
  */
 export function splitAnnex9(
@@ -139,26 +139,9 @@ export function splitAnnex9(
   if (insideShare >= 1) return { inside: shots, outside: 0 };
   if (insideShare <= 0) return { inside: 0, outside: shots };
 
-  // Quantities may be decimal (kg of explosive, B1 6.2/11.2.3): the split
-  // keeps the precision of the input (up to 3 decimals) instead of rounding
-  // decimal quantities away to whole units.
-  const scale = 10 ** decimalsOf(shots);
-  const units = Math.round(shots * scale);
-  const insideExact = units * insideShare;
-  const insideFloor = Math.floor(insideExact);
-  const outsideFloor = Math.floor(units - insideExact);
-  const remainder = units - insideFloor - outsideFloor; // 0 or 1 unit
-  // The larger share takes the remainder; a tie goes to inside (the workday).
-  const insideUnits =
-    insideExact >= units - insideExact ? insideFloor + remainder : insideFloor;
-  return { inside: insideUnits / scale, outside: (units - insideUnits) / scale };
-}
-
-/** Number of decimals of a quantity, capped at 3 (the API's precision). */
-function decimalsOf(value: number): number {
-  const text = String(value);
-  const dot = text.indexOf('.');
-  return dot < 0 ? 0 : Math.min(3, text.length - dot - 1);
+  // Derived quantities keep full precision, independent of input notation/unit.
+  const inside = shots * insideShare;
+  return { inside, outside: shots - inside };
 }
 
 /** Sum of several splits. */
@@ -207,7 +190,7 @@ function emptyHalfDays(): Annex7HalfDays {
  * (before 12:00) and the afternoon (from 12:00) each count 1 when the
  * category's shooting time in that half exceeds 2 h, ½ when it is shorter
  * but not zero, and 0 when nobody shot. Several usages of the same category
- * in the same half add up; a usage spanning 13:00 contributes to both halves.
+ * in the same half add up; a usage spanning 12:00 contributes to both halves.
  */
 export function annex7HalfDays(
   usages: readonly (UsageSlot & { category: Annex7Category })[],

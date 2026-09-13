@@ -424,7 +424,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       const rows = base.rows.map((r) => ({ roomId: r.roomId, combinationId: r.combinationId, inside: r.inside, outside: r.outside }));
       const same = await simulation.run(mockTenantId, areaId, { year: 2026, rows });
       expect(same.receivers.find((r) => r.code === 'E1')).toMatchObject({ simulated: 60.5, simulatedState: 'warn', delta: 0 });
-      const over = await simulation.run(mockTenantId, areaId, { year: 2026, rows: rows.map((r) => ({ ...r, inside: 3990 })) });
+      const over = await simulation.run(mockTenantId, areaId, { year: 2026, rows: rows.map((r) => ({ ...r, inside: r.combinationId === combo.stgw90 ? 3990 : r.inside })) });
       expect(over.receivers.find((r) => r.code === 'E1')).toMatchObject({ simulated: 60.5, simulatedState: 'over' });
     });
   });

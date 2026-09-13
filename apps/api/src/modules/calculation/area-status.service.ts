@@ -31,6 +31,8 @@ export class AreaStatusService {
   ) {}
 
   async refresh(tenantId: string, areaId: string, now = new Date()): Promise<AreaStatusResult> {
+    // Invalidate first: a failed refresh must never leave an old green result.
+    await this.areas.update({ tenantId, id: areaId }, { quotaStatus: 'incomplete', noiseStatus: 'incomplete', quotaStatusReason: null, noiseStatusReason: null, noiseStatusBasis: null, statusYear: null });
     const [noise, quota] = await Promise.all([this.noise(tenantId, areaId, now), this.quota(tenantId, areaId, now)]);
     const result: AreaStatusResult = {
       quotaStatus: quota.status,

@@ -45,26 +45,24 @@ describe('distributeShots (B1 7.5, Verteilung auf Quellen)', () => {
     expect(d.release).toEqual(RELEASE);
     // The parameter alone proves no release: without the decision reference it is refused loudly.
     expect(() => distributeShots(100, [{ sourceId: 'a', weight: 0 }], { onZeroWeights: 'equal' })).toThrow(/release/);
-    expect(d.shares.map((s) => s.shots)).toEqual([33.334, 33.333, 33.333]);
+    for (const share of d.shares) expect(share.shots).toBeCloseTo(100 / 3, 12);
     expect(sum(d.shares)).toBeCloseTo(100, 12);
   });
 
-  it('keeps decimal quantities to three decimals and preserves the total', () => {
+  it('preserves fractional source ratios and the total without presentation rounding', () => {
     const d = distributeShots(1.2, [
       { sourceId: 'a', weight: 2 },
       { sourceId: 'b', weight: 1 },
     ]);
-    expect(d.shares).toEqual([
-      { sourceId: 'a', shots: 0.8 },
-      { sourceId: 'b', shots: 0.4 },
-    ]);
+    expect(d.shares[0].shots).toBeCloseTo(0.8, 12);
+    expect(d.shares[1].shots).toBeCloseTo(0.4, 12);
     const odd = distributeShots(0.01, [
       { sourceId: 'a', weight: 1 },
       { sourceId: 'b', weight: 1 },
       { sourceId: 'c', weight: 1 },
     ]);
     expect(sum(odd.shares)).toBeCloseTo(0.01, 12);
-    expect(odd.shares.map((s) => s.shots)).toEqual([0.004, 0.003, 0.003]);
+    for (const share of odd.shares) expect(share.shots).toBeCloseTo(0.01 / 3, 12);
   });
 
   it('leaves sources with weight 0 empty when others carry weight', () => {

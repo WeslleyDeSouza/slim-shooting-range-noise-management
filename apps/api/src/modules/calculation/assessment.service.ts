@@ -52,6 +52,13 @@ export interface AssessmentOptions {
   now?: Date;
 }
 
+export interface AssessmentInputs {
+  reference: ReferenceData;
+  usages: AreaUsageEntity[];
+  assignments: RoomCombinationEntity[];
+  model: StateModel | null;
+}
+
 /** What one point's levels look like under one calculation state. */
 interface PointLevels {
   annex9All: number | null;
@@ -109,7 +116,7 @@ export class AssessmentService {
     return this.usages.listRange(tenantId, areaId, period.from, period.to);
   }
 
-  async assess(tenantId: string, areaId: string, options: AssessmentOptions = {}): Promise<AssessmentDto> {
+  async assess(tenantId: string, areaId: string, options: AssessmentOptions = {}, capture?: (inputs: AssessmentInputs) => void): Promise<AssessmentDto> {
     const now = options.now ?? new Date();
     const period = resolvePeriod(options.from, options.to, now, options.years);
     const reference = await this.reference(tenantId, areaId);
@@ -125,6 +132,7 @@ export class AssessmentService {
     const selectedModel = selected ? await this.calculations.loadModel(tenantId, selected) : null;
     const referenceModel = current && selected && current.id !== selected.id ? await this.calculations.loadModel(tenantId, current) : null;
 
+    capture?.({ reference, usages, assignments, model: selectedModel });
     const own = selectedModel ? assessModel(operating, reference, selectedModel, labelOf) : new Map<string, PointLevels>();
     const other = referenceModel ? assessModel(operating, reference, referenceModel, labelOf) : null;
     // Points of different states are compared by their sonARMS_ID only (5.12 «Abweichung zum gültigen Zustand»).

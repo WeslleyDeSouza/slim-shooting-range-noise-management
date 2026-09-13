@@ -5,6 +5,7 @@ import { AreaModule } from '../area/area.module';
 import { AreaService } from '../area/area.service';
 import { AreaRoomEntity, WeaponCombinationEntity } from '../area/entities';
 import { UsageModule } from '../usage/usage.module';
+import { UsagePositionEntity } from '../usage/entities';
 import { UsageService } from '../usage/usage.service';
 import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity';
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
@@ -13,7 +14,7 @@ import { CalculationRunService } from './calculation-run.service';
 import { CalculationModule } from './calculation.module';
 import { CalculationService } from './calculation.service';
 import { ReceiverAssessmentDto, StateImportDto } from './dto';
-import { AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
+import { CalculationRunEntity, AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
 import { ImportAbortedException, ImportService } from './import.service';
 
 const NOW = new Date(2026, 11, 31);
@@ -103,6 +104,38 @@ describe('State isolation (B1 Kap. 10, slm 42–45)', () => {
 
   afterAll(async () => {
     await module.close();
+  });
+
+  it('rejects an explicit A7 category conflicting with the weapon master data', async () => {
+    const input = delivery('Invalid A7', '02218_98', 'A');
+    const civil = input.sources.find(s => s.a7);
+    if (!civil?.a7) throw new Error('Missing fixture');
+    civil.a7.category = 'b';
+    const before = await dataSource.getRepository(AreaCalculationEntity).count();
+    await expect(importer.importState(mockTenantId, geissalpId, input)).rejects.toThrow(/Import abgebrochen/);
+    expect(await dataSource.getRepository(AreaCalculationEntity).count()).toBe(before);
+  });
+
+  it('stores the exact inputs used even if a usage changes before the run is persisted', async () => {
+    const repo = dataSource.getRepository(UsagePositionEntity);
+    const victim = await repo.findOneByOrFail({ tenantId: mockTenantId, areaId: geissalpId });
+    const original = assessment.assess.bind(assessment);
+    const spy = vi.spyOn(assessment, 'assess').mockImplementationOnce(async (...args) => {
+      const result = await original(...args);
+      await repo.update({ id: victim.id }, { quantity: Number(victim.quantity) + 100 });
+      return result;
+    });
+    try {
+      const run = await runs.run(mockTenantId, geissalpId, PERIOD, 'concurrency-test');
+      const stored = await dataSource.getRepository(CalculationRunEntity).findOneByOrFail({ id: run.id });
+      const snapshot = JSON.parse(stored.usageSnapshot) as { positions: { id: string; quantity: number }[] }[];
+      expect(snapshot.flatMap(u => u.positions).find(p => p.id === victim.id)?.quantity).toBe(Number(victim.quantity));
+      expect(Number((await repo.findOneByOrFail({ id: victim.id })).quantity)).toBe(Number(victim.quantity) + 100);
+      expect(JSON.parse(stored.referenceSnapshot).state.wlr.length).toBeGreaterThan(0);
+    } finally {
+      spy.mockRestore();
+      await repo.update({ id: victim.id }, { quantity: victim.quantity });
+    }
   });
 
   it('imports two states with the same external ids but different properties, both independent (slm 43)', async () => {

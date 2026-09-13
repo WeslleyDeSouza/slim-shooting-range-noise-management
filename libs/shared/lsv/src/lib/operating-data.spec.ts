@@ -118,22 +118,23 @@ describe('splitAnnex9 — innerhalb / ausserhalb Werktag (B1 7.4.5)', () => {
   it('keeps decimal quantities (kg) at their precision instead of rounding to whole units', () => {
     // 1.2 kg from 06:00 to 08:00: half inside, half outside → 0.6 / 0.6
     expect(splitAnnex9(slot(MON, '06:00', '08:00', 1.2))).toEqual({ inside: 0.6, outside: 0.6 });
-    // 0.125 with 3 decimals over 06:00–07:30 (1/3 inside): 41.67 → 41 units inside, remainder to the larger share
+    // 0.125 with 3 decimals over 06:00–07:30 (1/3 inside): retain the exact one-third ratio
     const s = splitAnnex9(slot(MON, '06:00', '07:30', 0.125));
     expect(s.inside + s.outside).toBeCloseTo(0.125, 12);
-    expect(s).toEqual({ inside: 0.041, outside: 0.084 });
+    expect(s.inside).toBeCloseTo(0.125 / 3, 15);
+    expect(s.outside).toBeCloseTo(0.125 * 2 / 3, 15);
   });
 
-  it('keeps the total when rounding, remainder to the larger share', () => {
-    // 07:30–19:30: 11.5 h inside of 12 h → inside 2.875 of 3 → 3 / 0
+  it('preserves the time ratio and total without rounding', () => {
+    // 07:30–19:30: 11.5 h inside of 12 h → inside 2.875 of 3 → 2.875 / 0.125
     expect(splitAnnex9(slot(MON, '07:30', '19:30', 3))).toEqual({
-      inside: 3,
-      outside: 0,
+      inside: 2.875,
+      outside: 0.125,
     });
-    // 06:00–08:00 with 3 shots: 1.5 / 1.5 → tie goes inside → 2 / 1
+    // 06:00–08:00 with 3 shots: 1.5 / 1.5 remains proportional
     expect(splitAnnex9(slot(MON, '06:00', '08:00', 3))).toEqual({
-      inside: 2,
-      outside: 1,
+      inside: 1.5,
+      outside: 1.5,
     });
     // 06:00–07:30 with 3 shots: inside 1 of 3 → 1 / 2
     expect(splitAnnex9(slot(MON, '06:00', '07:30', 3))).toEqual({

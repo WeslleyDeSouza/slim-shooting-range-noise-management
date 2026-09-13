@@ -1,6 +1,7 @@
 import { forwardRef, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RulesModule } from '@app-galaxy/core-api';
+import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { AreaModule } from '../area/area.module';
 import { AreaEntity, AreaQuotaEntity, AreaRoomEntity, HolidayEntity, RoomCombinationEntity, WeaponCombinationEntity } from '../area/entities';
@@ -35,7 +36,12 @@ export class CalculationModule implements OnApplicationBootstrap {
 
   /** The cached overview lights follow the data, not a seed: refresh them once the app is up. */
   async onApplicationBootstrap(): Promise<void> {
-    if (process.env['APP_ENV'] === 'production' || process.env['AREA_STATUS_REFRESH_ON_BOOT'] === '0') return;
+    await this.refreshStatuses();
+  }
+
+  @Cron('0 0 * * *', { timeZone: 'Europe/Zurich' })
+  async refreshStatuses(): Promise<void> {
+
     try {
       const tenants: { tenantId: string }[] = await this.dataSource.query('select distinct tenantId from schiessplatz');
       for (const t of tenants) await this.status.refreshAll(t.tenantId);

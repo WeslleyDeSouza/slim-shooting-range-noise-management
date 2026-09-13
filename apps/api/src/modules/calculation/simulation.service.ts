@@ -1,12 +1,13 @@
 import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { annex9Level, applicableLimits, LSV_EMPTY_LEVEL, limits, noiseState, roundDb } from '@slim/lsv';
+import { annex9Level, applicableLimits, LSV_EMPTY_LEVEL, limits, noiseState, roundDb, worstState } from '@slim/lsv';
 import { RoomCombinationEntity } from '../area/entities';
 import { UsageService } from '../usage/usage.service';
 import { AssessmentService, countStates, labeller, toReceiverDto } from './assessment.service';
 import { CalculationService, StateModel } from './calculation.service';
 import {
+  AssessmentRowDto,
   SimulationBaseDto,
   SimulationReceiverDto,
   SimulationResultDto,
@@ -56,17 +57,22 @@ export class SimulationService {
     // Rows the client did not send keep their Ist values.
     const simulated: OperatingData = {
       ...operating,
-      annex9: new Map(rows.map((r) => [refKey(r.roomId, r.combinationId), { inside: r.inside, outside: r.outside }])),
+      annex9: new Map([...operating.annex9].map(([key, value]) => [key, { ...value }])),
+      // Simulation assesses A9 only; historical A7 quantities must not keep O8 warnings alive.
+      annex7Shots: new Map(),
     };
     for (const row of dto.rows) simulated.annex9.set(refKey(row.roomId, row.combinationId), { inside: row.inside, outside: row.outside });
 
     const result = receivers.map(({ entity, base }) => {
-      const raw = model ? lr(entity, model, simulated, reference, labelOf) : null;
+      const { raw, incomplete } = model ? evaluate(entity, model, simulated, reference, labelOf) : { raw: null, incomplete: false };
       // State from the raw level (whole-dB rounding happens in noiseState), display rounded separately.
-      const simulatedState = noiseState(raw, base.limit, undefined, undefined, { incomplete: base.incomplete });
+      const simulatedRows = model ? assessmentRows(entity, model, simulated, reference, labelOf) : [];
+      const simulatedState = worstState(simulatedRows.map((r) => r.state));
       const level = raw === null ? null : roundDb(raw);
       return {
         ...base,
+        incomplete,
+        simulatedRows,
         simulated: level,
         simulatedState,
         delta: level !== null && base.current !== null ? roundDb(level - base.current) : null,
@@ -152,34 +158,47 @@ function toSimulationReceiver(
   const kinds = calculation ? applicableLimits(calculation.buildYearClass) : ['igw' as const];
   const limitKind = kinds.includes('igw') ? 'igw' : 'pw';
   const limit = limits(9, point.sensitivityLevel)[limitKind];
-  const raw = lr(point, model, operating, reference, labelOf);
-  // O8: shots of a combination the state cannot attribute (no source, zero
-  // weights, no level at this point) → the assessment is incomplete.
-  const distributed = distributeOntoState(operating, reference, model, labelOf);
-  const incomplete = point.type !== 'reserve' && (distributed.missing.length > 0 || pointSources(distributed, model, point.id, labelOf).missing.length > 0);
+  const { raw, incomplete } = evaluate(point, model, operating, reference, labelOf);
+  const rows = assessmentRows(point, model, operating, reference, labelOf);
   return {
     ...toReceiverDto(point),
+    assessmentRows: rows,
     limitKind,
     limit,
     current: raw === null ? null : roundDb(raw),
     incomplete,
     // Whole-dB comparison from the raw level (B1.2 10.4), never from the displayed value.
-    currentState: noiseState(raw, limit, undefined, undefined, { incomplete }),
+    currentState: worstState(rows.map((r) => r.state)),
   };
 }
 
 /** Raw (unrounded) Annex 9 Lr of a point for the given operating data, null without data. */
-function lr(
+function evaluate(
   point: ImmissionPointEntity,
   model: StateModel,
   operating: OperatingData,
   reference: ReferenceData,
   labelOf: (roomId: string, combinationId: string) => string,
-): number | null {
-  if (point.type === 'reserve') return null;
-  const distributed = distributeOntoState(operating, reference, model, labelOf);
-  const { annex9 } = pointSources(distributed, model, point.id, labelOf);
-  if (!annex9.length) return null;
-  const level = annex9Level(annex9).lr;
-  return Number.isFinite(level) && level > LSV_EMPTY_LEVEL ? level : null;
+  newOnly = false,
+): { raw: number | null; incomplete: boolean } {
+  if (point.type === 'reserve') return { raw: null, incomplete: false };
+  const distributed = distributeOntoState({ ...operating, annex7Shots: new Map() }, reference, model, labelOf);
+  const { annex9, missing } = pointSources(distributed, model, point.id, labelOf);
+  const incomplete = distributed.missing.length > 0 || missing.length > 0;
+  const sources = newOnly ? annex9.filter((s) => s.isNew) : annex9;
+  const level = sources.length ? annex9Level(sources).lr : LSV_EMPTY_LEVEL;
+  const raw = Number.isFinite(level) && level > LSV_EMPTY_LEVEL ? level : null;
+  return { raw, incomplete };
+}
+
+/** Both IGW overall and PW of new parts remain visible in mixed plants. */
+function assessmentRows(point: ImmissionPointEntity, model: StateModel, operating: OperatingData, reference: ReferenceData, labelOf: (roomId: string, combinationId: string) => string): AssessmentRowDto[] {
+  return applicableLimits(model.state.buildYearClass).map((kind) => {
+    const { raw, incomplete } = evaluate(point, model, operating, reference, labelOf, kind === 'pw' && model.state.buildYearClass === 'mixed');
+    const limit = limits(9, point.sensitivityLevel)[kind];
+    const level = raw === null ? null : roundDb(raw);
+    return { annex: 9, limitKind: kind, limit, applicable: true, level,
+      state: noiseState(raw, limit, undefined, undefined, { incomplete }),
+      reserve: level === null ? null : roundDb(limit - level), deltaToCurrent: null };
+  });
 }

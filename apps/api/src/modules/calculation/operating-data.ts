@@ -75,6 +75,7 @@ export function deriveOperatingData(
 
   for (const usage of usages) {
     const civil = countsForAnnex7(usage.usageType, Boolean(reference.area.annex7Overall));
+    const countedCategories = new Set<Annex7Category>();
     for (const position of usage.positions ?? []) {
       const key = refKey(usage.roomId, position.combinationId);
       const split = splitAnnex9({ date: usage.date, from: usage.timeFrom, to: usage.timeTo, shots: position.quantity }, calendar);
@@ -86,7 +87,10 @@ export function deriveOperatingData(
       const category = combinationById.get(position.combinationId)?.weapon?.annex7Category ?? null;
       if (civil && category) {
         annex7Shots.set(key, (annex7Shots.get(key) ?? 0) + position.quantity);
-        categorised.push({ date: usage.date, from: usage.timeFrom, to: usage.timeTo, shots: position.quantity, category, roomId: usage.roomId });
+        if (position.quantity > 0 && !countedCategories.has(category)) {
+          categorised.push({ date: usage.date, from: usage.timeFrom, to: usage.timeTo, shots: position.quantity, category, roomId: usage.roomId });
+          countedCategories.add(category);
+        }
       }
     }
   }
@@ -121,7 +125,7 @@ export interface MissingSource {
   roomId: string;
   combinationId: string;
   label: string;
-  reason: 'no-source' | 'zero-weights' | 'no-level';
+  reason: 'no-source' | 'zero-weights' | 'no-level' | 'category-mismatch';
 }
 
 /** Step 2 result: shots per Schusslinie of the state, plus what could not be attributed. */
@@ -137,7 +141,7 @@ export interface DistributedShots {
  * source with that combination) and spread the shots in proportion to the
  * Quelldaten of the model — Anhang 9 inside by A9_M1, outside by A9_M2,
  * Anhang 7 by the civil shots of the source. A combination with exactly one
- * source gets everything; several sources with Σ weights = 0 are refused
+ * source with positive weight gets everything; Σ weights = 0 is refused
  * (O8 default), a combination without any source is reported — in both
  * cases the shots are never dropped silently: the receiver becomes «nicht
  * beurteilbar».
@@ -191,10 +195,6 @@ export function distributeOntoState(
       missing.push({ roomId, combinationId, label: labelOf(roomId, combinationId), reason: 'no-source' });
       return;
     }
-    if (sources.length === 1) {
-      apply(sources[0], quantity);
-      return;
-    }
     const result = distributeShots(quantity, sources.map((s) => ({ sourceId: s.id, weight: weightOf(s) })));
     if (result.refused) {
       missing.push({ roomId, combinationId, label: labelOf(roomId, combinationId), reason: 'zero-weights' });
@@ -211,6 +211,12 @@ export function distributeOntoState(
     spread(key, shots.outside, (s) => s.dataA9?.shotsOutside ?? 0, (s, n) => { entry(s).outside += n; });
   }
   for (const [key, shots] of operating.annex7Shots) {
+    const [roomId, combinationId] = key.split('|');
+    const expected = reference.combinations.find((c) => c.id === combinationId)?.weapon?.annex7Category ?? null;
+    if (shots > 0 && (sourcesByRef.get(key) ?? []).some((s) => s.dataA7 && s.dataA7.category !== expected)) {
+      missing.push({ roomId, combinationId, label: labelOf(roomId, combinationId), reason: 'category-mismatch' });
+      continue;
+    }
     spread(key, shots, (s) => (s.dataA7?.shotsWork ?? 0) + (s.dataA7?.shotsSunday ?? 0), (s, n) => { entry(s).civil += n; });
   }
 
@@ -238,16 +244,18 @@ export function pointSources(
   const missing: MissingSource[] = [];
   for (const [sourceId, shots] of distributed.bySource) {
     const row = levels.get(sourceId);
-    if (!row?.day) {
-      if (shots.inside + shots.outside + shots.civil > 0) {
-        missing.push({ roomId: shots.roomId, combinationId: shots.combinationId, label: labelOf(shots.roomId, shots.combinationId), reason: 'no-level' });
-      }
-      continue;
+    const missingDay = !row?.day && (shots.inside > 0 || shots.civil > 0);
+    const missingEve = !row?.eve && shots.outside > 0;
+    if (missingDay || missingEve) {
+      missing.push({ roomId: shots.roomId, combinationId: shots.combinationId, label: labelOf(shots.roomId, shots.combinationId), reason: 'no-level' });
     }
-    if (shots.inside + shots.outside > 0) {
-      annex9.push({ sourceId, shotsDay: shots.inside, shotsEve: shots.outside, laeDay: row.day.lae, laeEve: row.eve?.lae ?? row.day.lae, isNew: shots.isNew });
+    // Retain computable partial energy, but never invent a missing time-group level.
+    const shotsDay = row?.day ? shots.inside : 0;
+    const shotsEve = row?.eve ? shots.outside : 0;
+    if (shotsDay + shotsEve > 0) {
+      annex9.push({ sourceId, shotsDay, shotsEve, laeDay: row?.day?.lae ?? 0, laeEve: row?.eve?.lae ?? 0, isNew: shots.isNew });
     }
-    if (shots.civil > 0 && shots.category) {
+    if (shots.civil > 0 && shots.category && row?.day) {
       annex7.push({ sourceId, category: shots.category, shots: shots.civil, lafmaxDay: row.day.lafmax, isNew: shots.isNew });
     }
   }

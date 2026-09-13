@@ -17,6 +17,7 @@ import {
 import { SENSITIVITY_LEVEL, SensitivityLevelCode } from '../entities/immission-point.entity';
 import { RECEIVER_TYPE, ReceiverType } from '../entities/immission-point.entity';
 import { TIME_GROUP, TimeGroup } from '../entities/wlr.entity';
+import { ANNEX7_CATEGORY, Annex7CategoryCode } from '../../area/entities';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -121,6 +122,7 @@ export class ImportSourceDataA9Dto {
 }
 
 export class ImportSourceDataA7Dto {
+  @IsOptional() @IsIn(ANNEX7_CATEGORY) @ApiPropertyOptional({ enum: ANNEX7_CATEGORY }) category?: Annex7CategoryCode;
   @IsNumber() @ApiProperty({ description: 'D5 Halbtag_Wo' }) halfDaysWork: number;
   @IsNumber() @ApiProperty({ description: 'D6 Halbtag_So' }) halfDaysSunday: number;
   @IsInt() @ApiProperty({ description: 'D7 Zahl_Wo' }) shotsWork: number;

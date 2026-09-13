@@ -109,6 +109,9 @@ export class ImportService {
         findings.push(`Quelle ${source.sourceId}: Anlageteil ${source.plantPartNo} ist nicht in der Lieferung`);
       }
       const combination = combinationBySonarms.get(source.weaponSystem) ?? null;
+      if (source.a7?.category && combination && source.a7.category !== combination.weapon?.annex7Category) {
+        findings.push(`Quelle ${source.sourceId}: A7-Kategorie ${source.a7.category} widerspricht den Waffenstammdaten (${combination.weapon?.annex7Category ?? 'fehlt'})`);
+      }
       if (!combination) warnings.push(`Quelle ${source.sourceId}: Waffensystem «${source.weaponSystem}» ist keiner Kombination Waffe/Kaliber zugeordnet (sonARMS-ID fehlt in den Stammdaten)`);
       sourceCombination.set(source.sourceId, combination);
     }
@@ -285,7 +288,7 @@ export class ImportService {
           );
         }
         if (s.a7) {
-          const category = sourceCombination.get(s.sourceId)?.weapon?.annex7Category ?? annex7CategoryOf(s.weaponSystem);
+          const category = s.a7.category ?? sourceCombination.get(s.sourceId)?.weapon?.annex7Category ?? annex7CategoryOf(s.weaponSystem);
           if (!category) {
             warnings.push(`Quelle ${s.sourceId}: zivile Quelldaten ohne Waffenkategorie nach Anhang 7 (D2 «${s.weaponSystem}») – für Anhang 7 nicht verwendbar`);
           }

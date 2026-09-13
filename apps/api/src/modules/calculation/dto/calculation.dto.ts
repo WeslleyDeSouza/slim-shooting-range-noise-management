@@ -145,6 +145,7 @@ export class SimulationRowDto {
 }
 
 export class SimulationReceiverDto extends ReceiverDto {
+  @ApiPropertyOptional({ type: AssessmentRowDto, isArray: true, description: 'A9 assessment of all applicable limits, including PW of new parts in mixed plants' }) assessmentRows?: AssessmentRowDto[];
   @ApiProperty({ enum: LIMIT_KIND }) limitKind: LimitKindCode;
   @ApiProperty() limit: number;
   @ApiProperty({ nullable: true, type: Number, description: 'Ist-Pegel Lr Anhang 9 [dB]' }) current: number | null;
@@ -170,13 +171,13 @@ export class SimulationRunRowDto {
   @ApiProperty()
   combinationId: string;
 
-  @IsNumber({ maxDecimalPlaces: 3 })
+  @IsNumber()
   @Min(0)
   @Max(100_000_000)
   @ApiProperty({ minimum: 0 })
   inside: number;
 
-  @IsNumber({ maxDecimalPlaces: 3 })
+  @IsNumber()
   @Min(0)
   @Max(100_000_000)
   @ApiProperty({ minimum: 0 })
@@ -204,6 +205,7 @@ export class SimulationRunDto {
 }
 
 export class SimulationResultReceiverDto extends SimulationReceiverDto {
+  @ApiPropertyOptional({ type: AssessmentRowDto, isArray: true }) simulatedRows?: AssessmentRowDto[];
   @ApiProperty({ nullable: true, type: Number, description: 'Simulierter Lr [dB]' }) simulated: number | null;
   @ApiProperty({ enum: AREA_STATUS }) simulatedState: AreaStatus;
   @ApiProperty({ nullable: true, type: Number, description: 'simulated − current [dB]' }) delta: number | null;

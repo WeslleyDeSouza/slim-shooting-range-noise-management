@@ -4,12 +4,12 @@ import { createHash } from 'node:crypto';
 import { Repository } from 'typeorm';
 import { AreaQuotaEntity, RoomCombinationEntity } from '../area/entities';
 import { ANNEX7_LIMITS, ANNEX9_LIMITS, NOISE_ROUNDING_DEFAULT, NOISE_WARN_BAND_DB, QUOTA_WARN_FACTOR } from '@slim/lsv';
-import { AssessmentOptions, AssessmentService } from './assessment.service';
+import { AssessmentInputs, AssessmentOptions, AssessmentService } from './assessment.service';
 import { CalculationRunDto } from './dto';
 import { CalculationRunEntity } from './entities';
 
 /** Version of the calculation kernel a run was computed with (bumped with every formula change). */
-export const KERNEL_VERSION = '@slim/lsv 1.1.0 (Halbtag 12:00, AW Anh. 9 LSV, Verteilung 7.5)';
+export const KERNEL_VERSION = '@slim/lsv 1.3.0 (Zeitanteile, gemischte Simulation, A7-Konsistenz)';
 
 /**
  * Berechnungslauf (B1 5.10 «Durchführen und Abspeichern von Immissions-
@@ -32,11 +32,12 @@ export class CalculationRunService {
   ) {}
 
   async run(tenantId: string, areaId: string, options: AssessmentOptions, createdBy: string): Promise<CalculationRunDto> {
-    const result = await this.assessment.assess(tenantId, areaId, options);
+    let captured: AssessmentInputs | undefined;
+    const result = await this.assessment.assess(tenantId, areaId, options, (inputs) => { captured = structuredClone(inputs); });
+    if (!captured) throw new Error('Assessment inputs were not captured');
     if (!result.calculation) throw new NotFoundException('No calculation state to run on');
-    const reference = await this.assessment.reference(tenantId, areaId);
+    const { reference, usages, assignments, model } = captured;
     const period = { from: result.period.from, to: result.period.to, selectedYears: result.period.selectedYears, years: result.period.years };
-    const usages = await this.assessment.usagesOf(tenantId, areaId, period);
     const snapshot = usages.map((u) => ({
       id: u.id,
       roomId: u.roomId,
@@ -58,9 +59,9 @@ export class CalculationRunService {
       annex7Overall: Boolean(reference.area.annex7Overall),
       o8: { onZeroWeights: 'refuse', release: null },
     };
-    const assignments = await this.assignments.find({ where: { tenantId, areaId } });
     const quotas = await this.quotas.find({ where: { tenantId, areaId } });
     const referenceSnapshot = {
+      state: model ? { ...model, wlr: [...model.wlr].map(([point, values]) => [point, [...values]]) } : null,
       rooms: reference.rooms.map((r) => ({ id: r.id, coordinationSectionNo: r.coordinationSectionNo, name: r.name, enabled: r.enabled })),
       combinations: reference.combinations.map((c) => ({
         id: c.id,
@@ -76,7 +77,7 @@ export class CalculationRunService {
     };
     const completeness = result.counts.incomplete > 0 ? 'incomplete' : 'complete';
     const checksum = createHash('sha256')
-      .update(JSON.stringify({ state: result.calculation.id, snapshot, referenceSnapshot, parameters, kernel: KERNEL_VERSION }))
+      .update(JSON.stringify({ state: result.calculation.id, period, snapshot, referenceSnapshot, parameters, result, kernel: KERNEL_VERSION }))
       .digest('hex');
     const saved = await this.runs.save(
       this.runs.create({

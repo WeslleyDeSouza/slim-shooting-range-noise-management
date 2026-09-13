@@ -400,10 +400,22 @@
                     <td [attr.data-label]="'simulation.result.point' | translate">
                       <b>{{ r.code }}</b> <span class="sim__small sim__small--inline sim__result-addr">{{ r.address }}</span>
                     </td>
-                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.limit' | translate">{{ r.limit }} dB</td>
-                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.current' | translate">{{ db(r.current) }}</td>
+                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.limit' | translate">
+                      @for (row of r.simulatedRows; track row.limitKind) {
+                        <div>{{ row.limitKind.toUpperCase() }} {{ row.limit }} dB</div>
+                      } @empty { {{ r.limit }} dB }
+                    </td>
+                    <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.current' | translate">
+                      @for (row of r.assessmentRows; track row.limitKind) {
+                        <div>{{ row.limitKind.toUpperCase() }} {{ db(row.level) }}</div>
+                      } @empty { {{ db(r.current) }} }
+                    </td>
                     <td class="slim-table__cell--num" [attr.data-label]="'simulation.result.simulated' | translate">
-                      <b>{{ stale() ? '–' : db(r.simulated) }}</b>
+                      @for (row of r.simulatedRows; track row.limitKind) {
+                        <div><b>{{ row.limitKind.toUpperCase() }} {{ stale() ? '–' : db(row.level) }}</b>
+                          @if (!stale()) { <span [class]="badge(row.state)">{{ 'status_area.' + row.state | translate }}</span> }
+                        </div>
+                      } @empty { <b>{{ stale() ? '–' : db(r.simulated) }}</b> }
                     </td>
                     <td
                       [class]="'slim-table__cell--num ' + deltaClass(stale() ? null : r.delta)"

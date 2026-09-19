@@ -1,3 +1,4 @@
+export * from './area-master-data.enums';
 export * from './area.entity';
 export * from './area-room.entity';
 export * from './area-user.entity';

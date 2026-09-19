@@ -44,6 +44,11 @@ describe('the SLIM Demo dataset', () => {
     expect(dataset.areas).toHaveLength(9);
     expect(geissalp.coordinationSectionNo).toBe('1104.020');
     expect(geissalp.rooms).toHaveLength(14);
+    // B1 5.15: rooms without a Koordinationsabschnitts-Nr. exist (the states' Anlageteile keep their own number).
+    expect(geissalp.rooms.filter((r) => r.coordinationSectionNo === null)).toHaveLength(2);
+    // Stammdaten of 5.16 as Abbildung 26/27 shows them for Geissalp.
+    expect(geissalp).toMatchObject({ classification: 'unproblematic', spmState: 'completed', planningApproval: 'Militärische Plangenehmigung vom 13.02.2023' });
+    expect(dataset.areas.find((a) => a.name === 'Hinterrhein')?.enabled).toBe(false);
     expect(geissalp.roomCombinations).toHaveLength(17);
     expect(dataset.masterData.combinations.length).toBeGreaterThan(10);
     const states = geissalp.calculations.flatMap((c) => c.states);
@@ -156,7 +161,7 @@ describe('seedDemoDataset', () => {
     expect(await dataSource.getRepository(AreaEntity).count({ where: { tenantId: mockTenantId } })).toBe(9);
     expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(350);
     const marker = await dataSource.getRepository(DemoSeedMarkerEntity).findOneByOrFail({ tenantId: mockTenantId });
-    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 5, year: 2026 });
+    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 6, year: 2026 });
   });
 
   it('rewrites the demo when the year turns, without duplicating rows', async () => {

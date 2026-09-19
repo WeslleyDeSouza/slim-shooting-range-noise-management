@@ -1,0 +1,166 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+// Same horizontal rhythm as the routed `slim-page` below so bar, tabs and
+// page content line up (mirrors the area context of the workspace).
+.dmc {
+  &__crumbs {
+    padding: slim.space(3) slim.space(4) 0;
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
+  }
+
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2) slim.space(3);
+    padding: slim.space(2) slim.space(4) 0;
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(1);
+    min-height: slim.size('control-h-sm');
+    color: slim.color('text-3');
+    font-size: slim.font-size('sm');
+    text-decoration: none;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    @include slim.hover {
+      color: slim.color('ink');
+    }
+  }
+
+  &__area {
+    position: relative;
+    min-width: 0;
+  }
+
+  &__switch {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(2);
+    max-width: 100%;
+    min-height: slim.size('control-h-sm');
+    padding: 0 slim.space(3);
+    border: 1px solid slim.color('line-strong');
+    border-radius: slim.radius('md');
+    background: slim.color('surface');
+    color: slim.color('ink');
+    font: inherit;
+    font-weight: slim.font-weight('semibold');
+    cursor: pointer;
+
+    svg {
+      flex: none;
+      width: 13px;
+      height: 13px;
+      color: slim.color('text-3');
+    }
+
+    @include slim.hover {
+      border-color: slim.color('text-4');
+    }
+  }
+
+  &__chevron {
+    width: 11px;
+    height: 11px;
+  }
+
+  &__no {
+    font-variant-numeric: tabular-nums;
+    color: slim.color('text-3');
+    font-weight: slim.font-weight('medium');
+    white-space: nowrap;
+  }
+
+  &__name {
+    @include slim.truncate;
+    max-width: 40vw;
+  }
+
+  &__hint {
+    color: slim.color('text-4');
+    font-weight: slim.font-weight('regular');
+    font-size: slim.font-size('xs');
+    white-space: nowrap;
+
+    @include slim.mq-down('sm') {
+      display: none;
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: slim.z('raised');
+    width: min(92vw, 380px);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  &__search {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: slim.space(2);
+    background: slim.color('surface');
+    border-bottom: 1px solid slim.color('line');
+  }
+
+  &__item-name {
+    @include slim.truncate;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__item-badge {
+    margin-left: auto;
+  }
+
+  &__empty {
+    color: slim.color('text-3');
+    font-weight: slim.font-weight('regular');
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  &__state {
+    margin-left: auto;
+  }
+
+  &__nav {
+    padding: slim.space(2) slim.space(4);
+    border-bottom: 1px solid slim.color('line');
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
+  }
+}

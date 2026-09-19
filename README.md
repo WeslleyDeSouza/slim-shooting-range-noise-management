@@ -120,6 +120,7 @@ Styling rules for development: `.claude/styleguide.md`, living styleguide at `/s
 
 ```bash
 npm test                 # api: Vitest (NestJS 12 default) · app: Jest
+npm run test:api:http    # only the supertest HTTP specs of the API controllers
 npx nx e2e app-e2e       # Playwright; starts API (tools/serve-api-e2e.js) and app if not running
 ```
 
@@ -132,6 +133,19 @@ with legacy decorators + metadata, tsconfig paths, globals such as `vi`).
 Specs under `libs/api/**` run with the api project; `@api-slim/tests` provides
 the in-memory SQLite setup for service tests. The Angular app keeps Jest with
 `jest-preset-angular`.
+
+**HTTP specs (supertest).** Every admin controller has a
+`controllers/*.controller.spec.ts` that boots the feature modules as a real
+Nest application (`createTestApp` from `@api-slim/tests`: in-memory SQLite,
+global prefix and the same `ValidationPipe` as `main.ts`) and drives it with
+[supertest](https://github.com/ladjs/supertest). `AuthGuard('jwt')` and the
+galaxy `TenantGuard` are replaced by a header-driven `TestAuthGuard`
+(`x-test-user-id` / `x-test-tenant-id`, default: demo user + tenant); the
+`ReplayGuard` stays in the chain but is switched off with its own env switch
+(`API_AUTH_GUARD_REPLAY_DISABLED`, set in `apps/api/vitest.setup.ts`). The
+`AppsRolesGuard` (app rights per role), the `area-scope` rule (W/R-O), pipes,
+controllers and services run for real, so the specs cover status codes, DTO
+validation and the B1 8.1.2 rights matrix end to end.
 
 `.env` is loaded by `apps/api/src/core/env-loader.ts` (imported first in
 `main.ts`) so library modules that read secrets at import time see it.

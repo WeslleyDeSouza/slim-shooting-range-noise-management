@@ -1,5 +1,5 @@
 import './core/env-loader';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import {
@@ -11,7 +11,12 @@ import * as http from 'node:http';
 
 import { AppModule } from './app.module';
 import { setupMermaidUml, setupSwagger } from './common/docs';
-import { applyMiddlewareAppStripeDouble, resolveTrustProxy } from '@api-slim/common';
+import {
+  API_GLOBAL_PREFIX,
+  applyMiddlewareAppStripeDouble,
+  createValidationPipe,
+  resolveTrustProxy,
+} from '@api-slim/common';
 
 env.load();
 
@@ -23,15 +28,11 @@ async function bootstrap() {
   // number of trusted hops is API_TRUST_PROXY (0 when exposed directly).
   app.set('trust proxy', resolveTrustProxy());
 
-  const globalPrefix = 'api';
+  // Prefix + validation pipe are shared with the supertest HTTP specs
+  // (`createTestApp` in @api-slim/tests), so the tests see the real pipeline.
+  const globalPrefix = API_GLOBAL_PREFIX;
   app.setGlobalPrefix(globalPrefix);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      forbidUnknownValues: true,
-      skipUndefinedProperties: true,
-      skipNullProperties: true,
-    }),
-  );
+  app.useGlobalPipes(createValidationPipe());
 
   // Coolify / proxy work-around: collapse a doubled `/api/api` prefix.
   app.use(applyMiddlewareAppStripeDouble());

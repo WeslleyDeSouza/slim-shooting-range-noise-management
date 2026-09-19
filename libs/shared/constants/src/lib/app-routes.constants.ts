@@ -20,12 +20,16 @@ export const ROUTE_SEGMENT = {
   simulation: 'simulation',
 
   dataManagement: 'data-management',
+  /** Datenverwaltung › Schiessplatz › Allgemein (5.15 Übersicht, 5.16 Stammdaten) */
+  general: 'general',
   masterData: 'master-data',
   weaponAssignment: 'weapon-assignment',
   calculations: 'calculations',
   import: 'import',
   export: 'export',
   weapons: 'weapons',
+  /** Datenverwaltung › Waffen › Waffe/Kaliber (5.22) */
+  combination: 'combination',
   caliber: 'caliber',
   weapon: 'weapon',
   weaponCategory: 'weapon-category',
@@ -79,8 +83,12 @@ export const APP_ROUTES = {
           S.weaponAssignment,
         ),
         /** 5.15–5.18 of one Schiessplatz (jumps from the overview 5.14). */
+        /** Allgemein › Übersicht (5.15) */
+        generalOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.general, S.overview),
+        /** Allgemein › Stammdaten (5.16) */
         masterDataOf: (id: string) =>
-          join(S.admin, S.dataManagement, S.area, id, S.masterData),
+          join(S.admin, S.dataManagement, S.area, id, S.general, S.masterData),
         weaponAssignmentOf: (id: string) =>
           join(S.admin, S.dataManagement, S.area, id, S.weaponAssignment),
         calculationsOf: (id: string) =>
@@ -119,6 +127,8 @@ export const APP_ROUTES = {
       },
       weapons: {
         root: join(S.admin, S.dataManagement, S.weapons),
+        /** Waffe/Kaliber (5.22) */
+        combination: join(S.admin, S.dataManagement, S.weapons, S.combination),
         caliber: join(S.admin, S.dataManagement, S.weapons, S.caliber),
         weapon: join(S.admin, S.dataManagement, S.weapons, S.weapon),
         category: join(S.admin, S.dataManagement, S.weapons, S.weaponCategory),

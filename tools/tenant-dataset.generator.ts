@@ -55,15 +55,15 @@ const CATEGORIES = [
 ];
 
 const CALIBERS = [
-  { key: 'gp90', nameDe: '5.6 mm GP 90', alnNo: '5.6-GP90', quantityUnit: 'shots' },
-  { key: 'gp11', nameDe: '7.5 mm GP 11', alnNo: '7.5-GP11', quantityUnit: 'shots' },
-  { key: 'pistpat41', nameDe: '9 mm Pist Pat 41', alnNo: '9-PP41', quantityUnit: 'shots' },
-  { key: 'sprgr81', nameDe: '8.1 cm Spr Gr', alnNo: '81-SG', quantityUnit: 'shots' },
-  { key: 'sprgr12', nameDe: '12 cm Spr Gr', alnNo: '120-SG', quantityUnit: 'shots' },
-  { key: 'sprgr155', nameDe: '15.5 cm Spr Gr', alnNo: '155-SG', quantityUnit: 'shots' },
-  { key: 'mm35', nameDe: '35 mm', alnNo: '35-FLAB', quantityUnit: 'shots' },
-  { key: 'upat92', nameDe: 'Upat 92', alnNo: 'UPAT92', quantityUnit: 'shots' },
-  { key: 'sprengstoff', nameDe: 'Sprengstoff (kg)', alnNo: 'SPR', quantityUnit: 'kg' },
+  { key: 'gp90', nameDe: '5.6 mm GP 90', nameFr: '5,6 mm cart 90', nameIt: '5,6 mm cart 90', alnNo: '594-7005', sapNo: '2000.7073', quantityUnit: 'shots' },
+  { key: 'gp11', nameDe: '7.5 mm GP 11', nameFr: '7,5 mm cart 11', nameIt: '7,5 mm cart 11', alnNo: '550-1100', sapNo: '2410.0011', quantityUnit: 'shots' },
+  { key: 'pistpat41', nameDe: '9 mm Pist Pat 41', nameFr: '9 mm cart pist 41', nameIt: '9 mm cart pist 41', alnNo: '511-0041', sapNo: '2400.0041', quantityUnit: 'shots' },
+  { key: 'sprgr81', nameDe: '8.1 cm Spr Gr', nameFr: '8,1 cm ob expl', nameIt: '8,1 cm gran espl', alnNo: '681-2001', sapNo: '2530.8101', quantityUnit: 'shots' },
+  { key: 'sprgr12', nameDe: '12 cm Spr Gr', nameFr: '12 cm ob expl', nameIt: '12 cm gran espl', alnNo: '712-2001', sapNo: '2530.1201', quantityUnit: 'shots' },
+  { key: 'sprgr155', nameDe: '15.5 cm Spr Gr', nameFr: '15,5 cm ob expl', nameIt: '15,5 cm gran espl', alnNo: '755-2001', sapNo: '2530.1551', quantityUnit: 'shots' },
+  { key: 'mm35', nameDe: '35 mm', nameFr: '35 mm', nameIt: '35 mm', alnNo: '535-3001', sapNo: '2520.0035', quantityUnit: 'shots' },
+  { key: 'upat92', nameDe: 'Upat 92', nameFr: 'Cart ex 92', nameIt: 'Cart es 92', alnNo: '520-9201', sapNo: '2520.0092', quantityUnit: 'shots' },
+  { key: 'sprengstoff', nameDe: 'Sprengstoff (kg)', nameFr: 'Explosif (kg)', nameIt: 'Esplosivo (kg)', alnNo: '800-0001', sapNo: '2600.0001', quantityUnit: 'kg' },
 ] as const;
 
 type Cat = 'artillery' | 'air_defence' | 'handguns' | 'mortar';
@@ -96,6 +96,12 @@ const HOLIDAYS = [
 /** The calendar the tuning uses — the same holidays the seed writes. */
 const CALENDAR = { holidays: HOLIDAYS.map((h) => (h.from ? { date: `${YEAR}-${h.date}`, from: h.from } : `${YEAR}-${h.date}`)) };
 
+/**
+ * Stellungsräume of Geissalp. Two of them carry no Koordinationsabschnitts-Nr.
+ * (`no: null`) — B1 5.15 «In einigen Ausnahmefällen existieren Stellungsräume,
+ * die keine Koordinationsabschnitts-Nr. aufweisen»; the Anlageteile of the
+ * states keep their own number (`partNo`) and are matched by room name.
+ */
 const ROOMS = [
   { no: '01', name: 'Zielrm / Stellungsrm Fendershuus, A 1 links', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
   { no: '02', name: 'Zielrm / Stellungsrm Fendershuus, A 2 rechts', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
@@ -106,11 +112,11 @@ const ROOMS = [
   { no: '09', name: 'Stellungsrm C 2', group: 'Stellungsräume', new: false, type: 'Gefechtsschiessplatz' },
   { no: '05', name: 'Stellungsrm Mw Neuhaus, B 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
   { no: '06', name: 'Stellungsrm Mw Salzmatt, C 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
-  { no: '10', name: 'Stellungsrm Mw Schönenboden, D', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
+  { no: '10', name: 'Stellungsrm Mw Schönenboden, D', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)', noNumber: true },
   { no: '11', name: 'NGST Seeli C rechts', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
   { no: '12', name: 'NGST Seeli C links', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
   { no: '13', name: 'NGST Schönenboden D unten', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
-  { no: '14', name: 'NGST Schönenboden D oben', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
+  { no: '14', name: 'NGST Schönenboden D oben', group: 'NGST', new: false, type: 'Gefechtsschiessplatz', noNumber: true },
 ];
 
 /** Zulässige Kombinationen (room no → weapon type key). */
@@ -399,14 +405,14 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
 // ---------------------------------------------------------------------------
 
 const OTHER_AREAS = [
-  { name: 'Vérolliez', no: '1202.230', sp: 'SP-VS-12', usages: true },
-  { name: 'Gehren', no: '2111.030', sp: null, usages: true },
-  { name: 'Bière', no: '2201.010', sp: 'SP-VD-03', usages: true },
-  { name: 'Thun', no: '3101.020', sp: 'SP-BE-07', usages: true },
-  { name: 'Walenstadt', no: '4102.010', sp: null, usages: true },
-  { name: 'Isone', no: '5101.040', sp: 'SP-TI-02', usages: true },
-  { name: 'Bure', no: '6101.020', sp: null, usages: true },
-  { name: 'Hinterrhein', no: '7102.010', sp: null, usages: false },
+  { name: 'Vérolliez', no: '1202.230', sp: 'SP-VS-12', usages: true, master: { classification: 'problematic', recalculationState: 'completed', remediationProjectState: 'design', spmState: 'completed', noiseRemediationState: 'assessed', projectState: 'ongoing', planningApproval: 'Militärische Plangenehmigung vom 04.07.2019' } },
+  { name: 'Gehren', no: '2111.030', sp: null, usages: true, master: { classification: 'unproblematic', recalculationState: 'not_required', remediationProjectState: 'not_started', spmState: 'open', noiseRemediationState: 'assessed', projectState: 'not_started', planningApproval: null } },
+  { name: 'Bière', no: '2201.010', sp: 'SP-VD-03', usages: true, master: { classification: 'remediation_needed', recalculationState: 'in_progress', remediationProjectState: 'implementation', spmState: 'in_progress', noiseRemediationState: 'reassessment_needed', projectState: 'ongoing', planningApproval: 'Militärische Plangenehmigung vom 21.11.2018' } },
+  { name: 'Thun', no: '3101.020', sp: 'SP-BE-07', usages: true, master: { classification: 'problematic', recalculationState: 'completed', remediationProjectState: 'completed', spmState: 'completed', noiseRemediationState: 'remediated', projectState: 'completed', planningApproval: 'Militärische Plangenehmigung vom 15.03.2016' } },
+  { name: 'Walenstadt', no: '4102.010', sp: null, usages: true, master: { classification: 'unproblematic', recalculationState: 'not_required', remediationProjectState: 'not_started', spmState: 'open', noiseRemediationState: 'assessed', projectState: 'not_started', planningApproval: 'Sanierungsbericht 2018 (ohne Plangenehmigung)' } },
+  { name: 'Isone', no: '5101.040', sp: 'SP-TI-02', usages: true, master: { classification: 'problematic', recalculationState: 'in_progress', remediationProjectState: 'concept', spmState: 'in_progress', noiseRemediationState: 'reassessment_needed', projectState: 'ongoing', planningApproval: 'Militärische Plangenehmigung vom 09.09.2021' } },
+  { name: 'Bure', no: '6101.020', sp: null, usages: true, master: { classification: 'unproblematic', recalculationState: 'completed', remediationProjectState: 'not_started', spmState: 'completed', noiseRemediationState: 'assessed', projectState: 'not_started', planningApproval: 'Militärische Plangenehmigung vom 30.01.2020' } },
+  { name: 'Hinterrhein', no: '7102.010', sp: null, usages: false, enabled: false, master: { classification: null, recalculationState: null, remediationProjectState: null, spmState: null, noiseRemediationState: null, projectState: null, planningApproval: null } },
 ] as const;
 
 function lightArea(a: (typeof OTHER_AREAS)[number]) {
@@ -433,6 +439,8 @@ function lightArea(a: (typeof OTHER_AREAS)[number]) {
     : [];
   return {
     name: a.name, coordinationSectionNo: a.no, sectoralPlanNo: a.sp, annex7Overall: false,
+    enabled: 'enabled' in a ? a.enabled : true,
+    ...a.master,
     rooms, roomCombinations, quotas, calculations: [], usages,
   };
 }
@@ -457,7 +465,15 @@ const geissalp = {
   coordinationSectionNo: AREA_NO,
   sectoralPlanNo: 'SP-BE-11',
   annex7Overall: false,
-  rooms: ROOMS.map((r, i) => ({ coordinationSectionNo: roomNo(r.no), name: r.name, groupName: r.group, sortOrder: i })),
+  // Stammdaten (B1 5.16, Abbildung 26/27)
+  classification: 'unproblematic',
+  recalculationState: 'in_progress',
+  remediationProjectState: 'concept',
+  spmState: 'completed',
+  noiseRemediationState: 'reassessment_needed',
+  projectState: 'not_started',
+  planningApproval: 'Militärische Plangenehmigung vom 13.02.2023',
+  rooms: ROOMS.map((r, i) => ({ coordinationSectionNo: 'noNumber' in r && r.noNumber ? null : roomNo(r.no), name: r.name, groupName: r.group, sortOrder: i })),
   roomCombinations: COMBOS.map(([no, type]) => ({ room: roomName(no), combination: type, entryName: WEAPON_TYPES[type].name })),
   quotas: usedTypes.filter((t) => WEAPON_TYPES[t].quota).map((t) => ({ combination: t, shotsPerYear: WEAPON_TYPES[t].quota as number, basis: 'Plangenehmigung 2019' })),
   calculations: [
@@ -476,7 +492,7 @@ const dataset = {
     name: 'SLIM Demo',
     identifier: 'SLIM_DEMO',
     description: 'Demo-Mandant des Prototyps: Stammdaten Waffen/Kaliber/Kombinationen, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, zulässigen Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.',
-    version: 5,
+    version: 6,
     // One account per role of B1 8.1.1 (roles.mock-data.ts); slim@demo.ch is the
     // galaxy admin the e2e suite and the setup wizard sign in with.
     users: [

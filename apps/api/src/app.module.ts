@@ -35,7 +35,14 @@ import { CoreLoggerModule, RequestOriginMiddleware } from './core/logger';
 import { AuthAuditModule } from './modules/auth-audit/auth-audit.module';
 import { AuthThrottlerGuard } from './core/guards';
 import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA, DemoSeedMarkerEntity } from './mocks';
-import { AreaModule, CalculationModule, UsageModule } from './modules';
+import {
+  AccessModule,
+  AreaModule,
+  CalculationModule,
+  DataAreaModule,
+  DataWeaponsModule,
+  UsageModule,
+} from './modules';
 
 const isProd: boolean = env.isProd();
 
@@ -94,6 +101,9 @@ const isProd: boolean = env.isProd();
         ...(<never[]>AreaModule.DBOptions.entities),
         ...(<never[]>UsageModule.DBOptions.entities),
         ...(<never[]>CalculationModule.DBOptions.entities),
+        ...(<never[]>DataAreaModule.DBOptions.entities),
+        ...(<never[]>DataWeaponsModule.DBOptions.entities),
+        ...(<never[]>AccessModule.DBOptions.entities),
         // Demo dataset marker (mocks/tenant), harmless in production
         DemoSeedMarkerEntity,
       ],
@@ -124,6 +134,10 @@ const isProd: boolean = env.isProd();
     AreaModule,
     UsageModule,
     CalculationModule,
+    // Datenverwaltung (5.15/5.16 Schiessplatz Allgemein, 5.22–5.25 Waffen) + app rights of the session
+    DataAreaModule,
+    DataWeaponsModule,
+    AccessModule,
     // Audit hooks of the galaxy user / role / app lifecycle → logbook
     AuthAuditModule,
   ],

@@ -3,7 +3,7 @@
     "name": "SLIM Demo",
     "identifier": "SLIM_DEMO",
     "description": "Demo-Mandant des Prototyps: Stammdaten Waffen/Kaliber/Kombinationen, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, zulässigen Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.",
-    "version": 5,
+    "version": 6,
     "users": [
       {
         "username": "slim@demo.ch",
@@ -170,55 +170,82 @@
         {
           "key": "gp90",
           "nameDe": "5.6 mm GP 90",
-          "alnNo": "5.6-GP90",
+          "nameFr": "5,6 mm cart 90",
+          "nameIt": "5,6 mm cart 90",
+          "alnNo": "594-7005",
+          "sapNo": "2000.7073",
           "quantityUnit": "shots"
         },
         {
           "key": "gp11",
           "nameDe": "7.5 mm GP 11",
-          "alnNo": "7.5-GP11",
+          "nameFr": "7,5 mm cart 11",
+          "nameIt": "7,5 mm cart 11",
+          "alnNo": "550-1100",
+          "sapNo": "2410.0011",
           "quantityUnit": "shots"
         },
         {
           "key": "pistpat41",
           "nameDe": "9 mm Pist Pat 41",
-          "alnNo": "9-PP41",
+          "nameFr": "9 mm cart pist 41",
+          "nameIt": "9 mm cart pist 41",
+          "alnNo": "511-0041",
+          "sapNo": "2400.0041",
           "quantityUnit": "shots"
         },
         {
           "key": "sprgr81",
           "nameDe": "8.1 cm Spr Gr",
-          "alnNo": "81-SG",
+          "nameFr": "8,1 cm ob expl",
+          "nameIt": "8,1 cm gran espl",
+          "alnNo": "681-2001",
+          "sapNo": "2530.8101",
           "quantityUnit": "shots"
         },
         {
           "key": "sprgr12",
           "nameDe": "12 cm Spr Gr",
-          "alnNo": "120-SG",
+          "nameFr": "12 cm ob expl",
+          "nameIt": "12 cm gran espl",
+          "alnNo": "712-2001",
+          "sapNo": "2530.1201",
           "quantityUnit": "shots"
         },
         {
           "key": "sprgr155",
           "nameDe": "15.5 cm Spr Gr",
-          "alnNo": "155-SG",
+          "nameFr": "15,5 cm ob expl",
+          "nameIt": "15,5 cm gran espl",
+          "alnNo": "755-2001",
+          "sapNo": "2530.1551",
           "quantityUnit": "shots"
         },
         {
           "key": "mm35",
           "nameDe": "35 mm",
-          "alnNo": "35-FLAB",
+          "nameFr": "35 mm",
+          "nameIt": "35 mm",
+          "alnNo": "535-3001",
+          "sapNo": "2520.0035",
           "quantityUnit": "shots"
         },
         {
           "key": "upat92",
           "nameDe": "Upat 92",
-          "alnNo": "UPAT92",
+          "nameFr": "Cart ex 92",
+          "nameIt": "Cart es 92",
+          "alnNo": "520-9201",
+          "sapNo": "2520.0092",
           "quantityUnit": "shots"
         },
         {
           "key": "sprengstoff",
           "nameDe": "Sprengstoff (kg)",
-          "alnNo": "SPR",
+          "nameFr": "Explosif (kg)",
+          "nameIt": "Esplosivo (kg)",
+          "alnNo": "800-0001",
+          "sapNo": "2600.0001",
           "quantityUnit": "kg"
         }
       ],
@@ -358,6 +385,13 @@
         "coordinationSectionNo": "1104.020",
         "sectoralPlanNo": "SP-BE-11",
         "annex7Overall": false,
+        "classification": "unproblematic",
+        "recalculationState": "in_progress",
+        "remediationProjectState": "concept",
+        "spmState": "completed",
+        "noiseRemediationState": "reassessment_needed",
+        "projectState": "not_started",
+        "planningApproval": "Militärische Plangenehmigung vom 13.02.2023",
         "rooms": [
           {
             "coordinationSectionNo": "1104.020.01",
@@ -414,7 +448,7 @@
             "sortOrder": 8
           },
           {
-            "coordinationSectionNo": "1104.020.10",
+            "coordinationSectionNo": null,
             "name": "Stellungsrm Mw Schönenboden, D",
             "groupName": "Stellungsräume",
             "sortOrder": 9
@@ -438,7 +472,7 @@
             "sortOrder": 12
           },
           {
-            "coordinationSectionNo": "1104.020.14",
+            "coordinationSectionNo": null,
             "name": "NGST Schönenboden D oben",
             "groupName": "NGST",
             "sortOrder": 13
@@ -866,8 +900,8 @@
                     "plantPart": "1104.020.01",
                     "weaponSystem": "Stgw90",
                     "a9": {
-                      "shotsInside": 6878,
-                      "shotsOutside": 1322,
+                      "shotsInside": 6879,
+                      "shotsOutside": 1321,
                       "year": 2019
                     },
                     "a7": null
@@ -877,8 +911,8 @@
                     "plantPart": "1104.020.02",
                     "weaponSystem": "Stgw90",
                     "a9": {
-                      "shotsInside": 4578,
-                      "shotsOutside": 3122,
+                      "shotsInside": 4579,
+                      "shotsOutside": 3121,
                       "year": 2019
                     },
                     "a7": null
@@ -1961,238 +1995,238 @@
                     "point": "E5",
                     "source": "B3_Stgw90_m_1104.020_1",
                     "timeGroup": "day",
-                    "lae": 64.2,
+                    "lae": 64.3,
                     "lafmax": 74.9
                   },
                   {
                     "point": "E5",
                     "source": "B3_Stgw90_m_1104.020_1",
                     "timeGroup": "eve",
-                    "lae": 64.4,
+                    "lae": 64.5,
                     "lafmax": 75.1
                   },
                   {
                     "point": "E5",
                     "source": "B3_PzHb74_m_1104.020_2",
                     "timeGroup": "day",
-                    "lae": 92.2,
+                    "lae": 92.3,
                     "lafmax": 102.9
                   },
                   {
                     "point": "E5",
                     "source": "B3_PzHb74_m_1104.020_2",
                     "timeGroup": "eve",
-                    "lae": 92.4,
+                    "lae": 92.5,
                     "lafmax": 103.1
                   },
                   {
                     "point": "E5",
                     "source": "B3_FlzKan92_m_1104.020_3",
                     "timeGroup": "day",
-                    "lae": 73.2,
+                    "lae": 73.3,
                     "lafmax": 83.9
                   },
                   {
                     "point": "E5",
                     "source": "B3_FlzKan92_m_1104.020_3",
                     "timeGroup": "eve",
-                    "lae": 73.4,
+                    "lae": 73.5,
                     "lafmax": 84.1
                   },
                   {
                     "point": "E5",
                     "source": "C3_Stgw90_m_1104.020_4",
                     "timeGroup": "day",
-                    "lae": 63.2,
+                    "lae": 63.3,
                     "lafmax": 73.9
                   },
                   {
                     "point": "E5",
                     "source": "C3_Stgw90_m_1104.020_4",
                     "timeGroup": "eve",
-                    "lae": 63.4,
+                    "lae": 63.5,
                     "lafmax": 74.1
                   },
                   {
                     "point": "E5",
                     "source": "C3_Mw87_m_1104.020_5",
                     "timeGroup": "day",
-                    "lae": 80.2,
+                    "lae": 80.3,
                     "lafmax": 90.9
                   },
                   {
                     "point": "E5",
                     "source": "C3_Mw87_m_1104.020_5",
                     "timeGroup": "eve",
-                    "lae": 80.4,
+                    "lae": 80.5,
                     "lafmax": 91.1
                   },
                   {
                     "point": "E5",
                     "source": "C3_PzHb79_m_1104.020_6",
                     "timeGroup": "day",
-                    "lae": 91.2,
+                    "lae": 91.3,
                     "lafmax": 101.9
                   },
                   {
                     "point": "E5",
                     "source": "C3_PzHb79_m_1104.020_6",
                     "timeGroup": "eve",
-                    "lae": 91.4,
+                    "lae": 91.5,
                     "lafmax": 102.1
                   },
                   {
                     "point": "E5",
                     "source": "B2_Mg51_m_1104.020_7",
                     "timeGroup": "day",
-                    "lae": 59.7,
+                    "lae": 59.8,
                     "lafmax": 70.4
                   },
                   {
                     "point": "E5",
                     "source": "B2_Mg51_m_1104.020_7",
                     "timeGroup": "eve",
-                    "lae": 59.9,
+                    "lae": 60,
                     "lafmax": 70.6
                   },
                   {
                     "point": "E5",
                     "source": "B2_Stgw90_m_1104.020_8",
                     "timeGroup": "day",
-                    "lae": 57.2,
+                    "lae": 57.3,
                     "lafmax": 67.9
                   },
                   {
                     "point": "E5",
                     "source": "B2_Stgw90_m_1104.020_8",
                     "timeGroup": "eve",
-                    "lae": 57.4,
+                    "lae": 57.5,
                     "lafmax": 68.1
                   },
                   {
                     "point": "E5",
                     "source": "B2_Pist75_m_1104.020_9",
                     "timeGroup": "day",
-                    "lae": 51.2,
+                    "lae": 51.3,
                     "lafmax": 61.9
                   },
                   {
                     "point": "E5",
                     "source": "B2_Pist75_m_1104.020_9",
                     "timeGroup": "eve",
-                    "lae": 51.4,
+                    "lae": 51.5,
                     "lafmax": 62.1
                   },
                   {
                     "point": "E5",
                     "source": "C1_Mw12cm_m_1104.020_10",
                     "timeGroup": "day",
-                    "lae": 77.2,
+                    "lae": 77.3,
                     "lafmax": 87.9
                   },
                   {
                     "point": "E5",
                     "source": "C1_Mw12cm_m_1104.020_10",
                     "timeGroup": "eve",
-                    "lae": 77.4,
+                    "lae": 77.5,
                     "lafmax": 88.1
                   },
                   {
                     "point": "E5",
                     "source": "C1_Mg51_m_1104.020_11",
                     "timeGroup": "day",
-                    "lae": 57.7,
+                    "lae": 57.8,
                     "lafmax": 68.4
                   },
                   {
                     "point": "E5",
                     "source": "C1_Mg51_m_1104.020_11",
                     "timeGroup": "eve",
-                    "lae": 57.9,
+                    "lae": 58,
                     "lafmax": 68.6
                   },
                   {
                     "point": "E5",
                     "source": "A3_Mw72_m_1104.020_12",
                     "timeGroup": "day",
-                    "lae": 78.2,
+                    "lae": 78.3,
                     "lafmax": 88.9
                   },
                   {
                     "point": "E5",
                     "source": "A3_Mw72_m_1104.020_12",
                     "timeGroup": "eve",
-                    "lae": 78.4,
+                    "lae": 78.5,
                     "lafmax": 89.1
                   },
                   {
                     "point": "E5",
                     "source": "NGST-CR_FlabKan6390_m_1104.020_13",
                     "timeGroup": "day",
-                    "lae": 70.2,
+                    "lae": 70.3,
                     "lafmax": 80.9
                   },
                   {
                     "point": "E5",
                     "source": "NGST-CR_FlabKan6390_m_1104.020_13",
                     "timeGroup": "eve",
-                    "lae": 70.4,
+                    "lae": 70.5,
                     "lafmax": 81.1
                   },
                   {
                     "point": "E5",
                     "source": "A1L_Stgw90_m_1104.020_14",
                     "timeGroup": "day",
-                    "lae": 61.2,
+                    "lae": 61.3,
                     "lafmax": 71.9
                   },
                   {
                     "point": "E5",
                     "source": "A1L_Stgw90_m_1104.020_14",
                     "timeGroup": "eve",
-                    "lae": 61.4,
+                    "lae": 61.5,
                     "lafmax": 72.1
                   },
                   {
                     "point": "E5",
                     "source": "A2R_Stgw90_m_1104.020_15",
                     "timeGroup": "day",
-                    "lae": 60.2,
+                    "lae": 60.3,
                     "lafmax": 70.9
                   },
                   {
                     "point": "E5",
                     "source": "A2R_Stgw90_m_1104.020_15",
                     "timeGroup": "eve",
-                    "lae": 60.4,
+                    "lae": 60.5,
                     "lafmax": 71.1
                   },
                   {
                     "point": "E5",
                     "source": "D_Mw72_m_1104.020_16",
                     "timeGroup": "day",
-                    "lae": 71.2,
+                    "lae": 71.3,
                     "lafmax": 81.9
                   },
                   {
                     "point": "E5",
                     "source": "D_Mw72_m_1104.020_16",
                     "timeGroup": "eve",
-                    "lae": 71.4,
+                    "lae": 71.5,
                     "lafmax": 82.1
                   },
                   {
                     "point": "E5",
                     "source": "C2_Sprengladung_m_1104.020_17",
                     "timeGroup": "day",
-                    "lae": 88.2,
+                    "lae": 88.3,
                     "lafmax": 98.9
                   },
                   {
                     "point": "E5",
                     "source": "C2_Sprengladung_m_1104.020_17",
                     "timeGroup": "eve",
-                    "lae": 88.4,
+                    "lae": 88.5,
                     "lafmax": 99.1
                   }
                 ]
@@ -2485,8 +2519,8 @@
                     "plantPart": "1104.020.01",
                     "weaponSystem": "Stgw90",
                     "a9": {
-                      "shotsInside": 6878,
-                      "shotsOutside": 1322,
+                      "shotsInside": 6879,
+                      "shotsOutside": 1321,
                       "year": 2019
                     },
                     "a7": null
@@ -2496,8 +2530,8 @@
                     "plantPart": "1104.020.02",
                     "weaponSystem": "Stgw90",
                     "a9": {
-                      "shotsInside": 4578,
-                      "shotsOutside": 3122,
+                      "shotsInside": 4579,
+                      "shotsOutside": 3121,
                       "year": 2019
                     },
                     "a7": null
@@ -5277,6 +5311,14 @@
         "coordinationSectionNo": "1202.230",
         "sectoralPlanNo": "SP-VS-12",
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "problematic",
+        "recalculationState": "completed",
+        "remediationProjectState": "design",
+        "spmState": "completed",
+        "noiseRemediationState": "assessed",
+        "projectState": "ongoing",
+        "planningApproval": "Militärische Plangenehmigung vom 04.07.2019",
         "rooms": [
           {
             "coordinationSectionNo": "1202.230.01",
@@ -5380,6 +5422,14 @@
         "coordinationSectionNo": "2111.030",
         "sectoralPlanNo": null,
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "unproblematic",
+        "recalculationState": "not_required",
+        "remediationProjectState": "not_started",
+        "spmState": "open",
+        "noiseRemediationState": "assessed",
+        "projectState": "not_started",
+        "planningApproval": null,
         "rooms": [
           {
             "coordinationSectionNo": "2111.030.01",
@@ -5483,6 +5533,14 @@
         "coordinationSectionNo": "2201.010",
         "sectoralPlanNo": "SP-VD-03",
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "remediation_needed",
+        "recalculationState": "in_progress",
+        "remediationProjectState": "implementation",
+        "spmState": "in_progress",
+        "noiseRemediationState": "reassessment_needed",
+        "projectState": "ongoing",
+        "planningApproval": "Militärische Plangenehmigung vom 21.11.2018",
         "rooms": [
           {
             "coordinationSectionNo": "2201.010.01",
@@ -5586,6 +5644,14 @@
         "coordinationSectionNo": "3101.020",
         "sectoralPlanNo": "SP-BE-07",
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "problematic",
+        "recalculationState": "completed",
+        "remediationProjectState": "completed",
+        "spmState": "completed",
+        "noiseRemediationState": "remediated",
+        "projectState": "completed",
+        "planningApproval": "Militärische Plangenehmigung vom 15.03.2016",
         "rooms": [
           {
             "coordinationSectionNo": "3101.020.01",
@@ -5689,6 +5755,14 @@
         "coordinationSectionNo": "4102.010",
         "sectoralPlanNo": null,
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "unproblematic",
+        "recalculationState": "not_required",
+        "remediationProjectState": "not_started",
+        "spmState": "open",
+        "noiseRemediationState": "assessed",
+        "projectState": "not_started",
+        "planningApproval": "Sanierungsbericht 2018 (ohne Plangenehmigung)",
         "rooms": [
           {
             "coordinationSectionNo": "4102.010.01",
@@ -5792,6 +5866,14 @@
         "coordinationSectionNo": "5101.040",
         "sectoralPlanNo": "SP-TI-02",
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "problematic",
+        "recalculationState": "in_progress",
+        "remediationProjectState": "concept",
+        "spmState": "in_progress",
+        "noiseRemediationState": "reassessment_needed",
+        "projectState": "ongoing",
+        "planningApproval": "Militärische Plangenehmigung vom 09.09.2021",
         "rooms": [
           {
             "coordinationSectionNo": "5101.040.01",
@@ -5895,6 +5977,14 @@
         "coordinationSectionNo": "6101.020",
         "sectoralPlanNo": null,
         "annex7Overall": false,
+        "enabled": true,
+        "classification": "unproblematic",
+        "recalculationState": "completed",
+        "remediationProjectState": "not_started",
+        "spmState": "completed",
+        "noiseRemediationState": "assessed",
+        "projectState": "not_started",
+        "planningApproval": "Militärische Plangenehmigung vom 30.01.2020",
         "rooms": [
           {
             "coordinationSectionNo": "6101.020.01",
@@ -5998,6 +6088,14 @@
         "coordinationSectionNo": "7102.010",
         "sectoralPlanNo": null,
         "annex7Overall": false,
+        "enabled": false,
+        "classification": null,
+        "recalculationState": null,
+        "remediationProjectState": null,
+        "spmState": null,
+        "noiseRemediationState": null,
+        "projectState": null,
+        "planningApproval": null,
         "rooms": [
           {
             "coordinationSectionNo": "7102.010.01",

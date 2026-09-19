@@ -16,7 +16,16 @@
  * Regenerate it with `tools/tenant-dataset.generator.ts`. The seed writes the
  * states through the same import service the FGDB upload (5.19) uses.
  */
-import type { Annex7CategoryCode, QuantityUnit } from '../../modules/area/entities';
+import type {
+  Annex7CategoryCode,
+  AreaClassification,
+  NoiseRemediationState,
+  ProjectState,
+  QuantityUnit,
+  RecalculationState,
+  RemediationProjectState,
+  SpmState,
+} from '../../modules/area/entities';
 import type { BuildYearClassCode, ReceiverType, SensitivityLevelCode, TimeGroup } from '../../modules/calculation/entities';
 import type { CivilUsageKind, UsageSource, UsageType } from '../../modules/usage/entities';
 import datasetJson from './tenant.mock.json';
@@ -225,6 +234,17 @@ export interface DatasetArea {
   coordinationSectionNo: string;
   sectoralPlanNo: string | null;
   annex7Overall: boolean;
+  /** false = inaktiver Schiessplatz (keine Erfassung von Nutzungen, 5.16). */
+  enabled?: boolean;
+  /** Stammdaten of 5.16 (Abbildung 27); all optional, missing = not maintained yet. */
+  classification?: AreaClassification | null;
+  recalculationState?: RecalculationState | null;
+  remediationProjectState?: RemediationProjectState | null;
+  spmState?: SpmState | null;
+  noiseRemediationState?: NoiseRemediationState | null;
+  projectState?: ProjectState | null;
+  /** Gültige Plangenehmigung, e.g. «Militärische Plangenehmigung vom 13.02.2023». */
+  planningApproval?: string | null;
   rooms: DatasetRoom[];
   roomCombinations: DatasetRoomCombination[];
   quotas: DatasetQuota[];

@@ -340,7 +340,14 @@ async function writeArea(connection: DataSource, tenantId: string, data: Dataset
       quotaStatus: 'none',
       noiseStatus: 'none',
       annex7Overall: data.annex7Overall,
-      enabled: true,
+      enabled: data.enabled ?? true,
+      classification: data.classification ?? null,
+      recalculationState: data.recalculationState ?? null,
+      remediationProjectState: data.remediationProjectState ?? null,
+      spmState: data.spmState ?? null,
+      noiseRemediationState: data.noiseRemediationState ?? null,
+      projectState: data.projectState ?? null,
+      planningApproval: data.planningApproval ?? null,
     }),
   );
 

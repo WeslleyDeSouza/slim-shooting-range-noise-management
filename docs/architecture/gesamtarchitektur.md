@@ -83,6 +83,7 @@ Schichtentscheidung.
 | Datenbank | SQLite (Entwicklung), MariaDB 11.8 (docker-compose); Treiber `sqlite3`, `mysql2`, `pg` installiert | `docker-compose.yml`, `.env` (`DB_TYPE`, `DB_*`) | Auswahl zur Laufzeit über `DB_TYPE`; in Produktion setzt das Docker-Image `DB_TYPE=mysql` |
 | Demo-Daten | Datensatz «SLIM Demo» (JSON, Platzhalter `{{year}}`), Seed beim Start ausserhalb Produktion | `apps/api/src/mocks/tenant` | Mandant, Demo-User, 9 Schiessplätze; Geissalp mit Stellungsräumen, Quellen, Empfangspunkten, zwei Berechnungszuständen und Nutzungen des laufenden Jahres |
 | Betrieb / Werkzeuge | Setup-Wizard, Playwright, Vitest/Jest, pm2, Docker | `setup/`, `apps/app-e2e`, `ecosystem.config.js`, `dockerfile` | siehe [deployment-sicherheit.md](deployment-sicherheit.md) |
+| API-HTTP-Tests | supertest gegen die echte Nest-App (In-Memory-SQLite, globale ValidationPipe); JWT/Mandant-Guards durch Header-Guard ersetzt, App-Rechte und Objektregel echt | `libs/api/tests` (`createTestApp`), `apps/api/src/modules/*/controllers/*.controller.spec.ts` | Statuscodes, DTO-Validierung, Rechtematrix B1 8.1.2 je Route; `npm run test:api:http` |
 
 Genereller Ablauf einer Anfrage: Seite → Facade → generierter Service → HTTP mit
 Bearer-Token, Mandanten-Token und Replay-Header (Interceptoren von auth-ui) → NestJS

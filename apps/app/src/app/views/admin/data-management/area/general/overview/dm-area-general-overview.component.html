@@ -1,0 +1,188 @@
+<div class="slim-page dmo">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dmo-title">
+        {{ prefix + '.overview_title' | translate: { area: area() ? area()!.coordinationSectionNo + ' ' + area()!.name : '…' } }}
+      </h1>
+      <p class="slim-page__subtitle">{{ prefix + '.overview_subtitle' | translate }}</p>
+    </div>
+    <div class="slim-page__actions">
+      <a class="slim-btn slim-btn--secondary" [routerLink]="masterDataLink()" data-testid="dmo-edit">
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M11.5 2.5l2 2L6 12H4v-2l7.5-7.5z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+        </svg>
+        <span class="slim-btn__label">{{ prefix + (canWrite() ? '.edit_master_data' : '.show_master_data') | translate }}</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="dmo__layout">
+    <!-- 1 Detailansicht Schiessplatz (B1 5.15, Abbildung 26) -->
+    <section class="slim-card dmo__card" data-testid="dmo-details">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.details_title' | translate }}</h2>
+        @if (area(); as a) {
+          <span class="slim-badge" [class.slim-badge--success]="a.enabled" data-testid="dmo-active-badge">
+            {{ 'admin.dm_area.' + (a.enabled ? 'active' : 'inactive') | translate }}
+          </span>
+        }
+      </div>
+      <div class="slim-card__body">
+        @if (general(); as g) {
+          <dl class="slim-kv dmo__kv">
+            <dt class="slim-kv__key">{{ prefix + '.fields.name' | translate }}</dt>
+            <dd class="slim-kv__value dmo__strong" data-testid="dmo-name">{{ g.area.name }}</dd>
+            @for (row of details(); track row.key) {
+              <dt class="slim-kv__key">{{ prefix + '.fields.' + row.key | translate }}</dt>
+              <dd class="slim-kv__value" [attr.data-testid]="'dmo-field-' + row.key">
+                @switch (row.kind) {
+                  @case ('text') {
+                    {{ row.value }}
+                  }
+                  @case ('muted') {
+                    <span class="slim-text--muted">{{ prefix + '.' + row.emptyKey | translate }}</span>
+                  }
+                  @case ('yesno') {
+                    <span class="dmo__choice" [class.dmo__choice--on]="row.value === true">
+                      <span class="dmo__radio" aria-hidden="true"></span>{{ 'common.yes' | translate }}
+                    </span>
+                    <span class="dmo__choice" [class.dmo__choice--on]="row.value === false">
+                      <span class="dmo__radio" aria-hidden="true"></span>{{ 'common.no' | translate }}
+                    </span>
+                  }
+                  @case ('check') {
+                    <span class="dmo__choice" [class.dmo__choice--on]="row.value === true">
+                      <span class="dmo__check" aria-hidden="true">
+                        @if (row.value) {
+                          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        }
+                      </span>
+                      {{ prefix + '.annex7_overall' | translate }}
+                    </span>
+                  }
+                  @case ('option') {
+                    @if (row.value) {
+                      {{ prefix + '.options.' + row.group + '.' + row.value | translate }}
+                    } @else {
+                      <span class="slim-text--muted">{{ prefix + '.not_set' | translate }}</span>
+                    }
+                  }
+                }
+              </dd>
+            }
+          </dl>
+          @if (g.currentStateName) {
+            <p class="slim-text--muted slim-text--xs dmo__note">
+              {{ prefix + '.build_year_note' | translate: { state: g.currentStateName } }}
+            </p>
+          }
+        } @else {
+          <div class="slim-empty">
+            @if (loading()) {
+              <span class="slim-spinner"></span>
+            } @else {
+              <div class="slim-empty__text">{{ prefix + '.no_area' | translate }}</div>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- 2 Stellungsraum-Tabelle + 3 Filter (B1 5.15, slm 15) -->
+    <section class="slim-card slim-card--bleed dmo__card" data-testid="dmo-rooms">
+      <div class="slim-card__header dmo__rooms-head">
+        <h2 class="slim-card__title">{{ prefix + '.rooms_title' | translate }}</h2>
+        <span class="slim-badge" data-testid="dmo-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+      </div>
+      <div class="slim-toolbar">
+        <div class="slim-search slim-toolbar__grow">
+          <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <input
+            #search
+            class="slim-search__input"
+            type="search"
+            autocomplete="off"
+            data-testid="dmo-rooms-search"
+            [placeholder]="prefix + '.rooms_search' | translate"
+            [attr.aria-label]="prefix + '.rooms_search' | translate"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+          @if (query()) {
+            <button type="button" class="dmo__clear" [attr.aria-label]="prefix + '.clear_search' | translate" (click)="clearQuery(search)">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="slim-table-wrap dmo__table-wrap">
+        <table class="slim-table slim-table--stack slim-table--compact">
+          <thead>
+            <tr>
+              @for (col of columns; track col.key) {
+                <th [attr.aria-sort]="sortKey() === col.key ? (sortAsc() ? 'ascending' : 'descending') : null">
+                  <button
+                    type="button"
+                    class="dmo__sort"
+                    [class.dmo__sort--active]="sortKey() === col.key"
+                    [attr.title]="prefix + '.sort' | translate: { col: (prefix + '.' + col.label | translate) }"
+                    (click)="sortBy(col.key)"
+                  >
+                    {{ prefix + '.' + col.label | translate }}
+                    <span class="dmo__sort-mark" aria-hidden="true">{{ sortKey() === col.key ? (sortAsc() ? '▴' : '▾') : '' }}</span>
+                  </button>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.room.id) {
+              <tr class="slim-table__row" data-testid="dmo-room-row" [attr.data-room-no]="row.room.coordinationSectionNo ?? ''">
+                <td [attr.data-label]="prefix + '.col_room_no' | translate" class="slim-table__cell--num dmo__num">
+                  @if (row.no; as no) {
+                    {{ no.pre }}<mark class="dmo__mark">{{ no.match }}</mark>{{ no.post }}
+                  } @else {
+                    <span class="slim-text--muted" [attr.title]="prefix + '.no_room_number' | translate">—</span>
+                  }
+                </td>
+                <td [attr.data-label]="prefix + '.col_room_name' | translate">
+                  {{ row.name.pre }}<mark class="dmo__mark">{{ row.name.match }}</mark>{{ row.name.post }}
+                  @if (row.room.groupName) {
+                    <span class="slim-text--muted slim-text--xs dmo__group">{{ row.room.groupName }}</span>
+                  }
+                </td>
+                <td [attr.data-label]="prefix + '.col_active' | translate">
+                  <span class="slim-badge" [class.slim-badge--success]="row.room.enabled">
+                    {{ (row.room.enabled ? 'common.yes' : 'common.no') | translate }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ prefix + (rooms().length ? '.rooms_no_match' : '.rooms_empty') | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot" data-testid="dmo-rooms-foot">
+        <span>{{ prefix + '.rooms_foot' | translate: { n: rows().length, total: rooms().length } }}</span>
+        @if (withoutNumber()) {
+          <span class="slim-text--muted">· {{ prefix + '.rooms_without_number' | translate: { n: withoutNumber() } }}</span>
+        }
+      </div>
+    </section>
+  </div>
+</div>

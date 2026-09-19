@@ -1,0 +1,42 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dmg {
+  &__tabs {
+    padding: slim.space(2) slim.space(4) 0;
+
+    @include slim.mq('md') {
+      padding-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      padding-inline: slim.space(8);
+    }
+
+    svg {
+      width: 14px;
+      height: 14px;
+      margin-right: slim.space(1);
+      vertical-align: -2px;
+    }
+  }
+
+  &__readonly,
+  &__error {
+    margin: slim.space(3) slim.space(4) 0;
+
+    @include slim.mq('md') {
+      margin-inline: slim.space(6);
+    }
+    @include slim.mq('lg') {
+      margin-inline: slim.space(8);
+    }
+  }
+
+  &__readonly .slim-alert__icon {
+    width: 16px;
+    height: 16px;
+  }
+}

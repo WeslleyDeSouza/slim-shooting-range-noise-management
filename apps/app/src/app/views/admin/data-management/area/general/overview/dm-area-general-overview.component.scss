@@ -1,0 +1,164 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dmo {
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      align-items: start;
+    }
+  }
+
+  &__card {
+    min-width: 0;
+  }
+
+  &__kv {
+    // Two columns from tablet on: key left, value right, like the mock.
+    @include slim.mq('sm') {
+      display: grid;
+      grid-template-columns: minmax(180px, 2fr) 3fr;
+      column-gap: slim.space(4);
+      row-gap: slim.space(2);
+    }
+  }
+
+  &__strong {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__note {
+    margin: slim.space(3) 0 0;
+  }
+
+  // Read-only radio / checkbox lookalikes of the Detailansicht (B1 Abbildung 26).
+  &__choice {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(1);
+    margin-right: slim.space(4);
+    color: slim.color('text-3');
+
+    &--on {
+      color: slim.color('ink');
+    }
+  }
+
+  &__radio,
+  &__check {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid slim.color('line-strong');
+    background: slim.color('surface');
+  }
+
+  &__radio {
+    border-radius: 50%;
+  }
+
+  &__check {
+    border-radius: slim.radius('sm');
+    color: slim.color('primary-contrast');
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__choice--on &__radio {
+    border-color: slim.color('primary');
+    box-shadow: inset 0 0 0 3px slim.color('surface'), inset 0 0 0 8px slim.color('primary');
+  }
+
+  &__choice--on &__check {
+    border-color: slim.color('primary');
+    background: slim.color('primary');
+  }
+
+  &__rooms-head {
+    padding-bottom: 0;
+  }
+
+  &__clear {
+    position: absolute;
+    right: slim.space(2);
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: slim.color('text-3');
+    cursor: pointer;
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    @include slim.hover {
+      background: slim.color('hover');
+      color: slim.color('ink');
+    }
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__group {
+    display: block;
+  }
+
+  &__mark {
+    padding: 0 1px;
+    border-radius: 2px;
+    background: slim.color('warning-subtle');
+    color: inherit;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(1);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+
+    &--active {
+      color: slim.color('ink');
+    }
+  }
+
+  &__sort-mark {
+    color: slim.color('text-4');
+  }
+}

@@ -1,0 +1,170 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dco {
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    }
+  }
+
+  &__card {
+    min-width: 0;
+  }
+
+  &__detail {
+    @include slim.mq('lg') {
+      position: sticky;
+      top: calc(#{slim.size('topbar-h')} + #{slim.space(3)});
+    }
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__name {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  // Read-only checkbox lookalike of the table (Akt. Zustand / Stand MGDM).
+  &__flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid slim.color('line-strong');
+    border-radius: slim.radius('sm');
+    background: slim.color('surface');
+    color: slim.color('primary-contrast');
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &--on {
+      border-color: slim.color('primary');
+      background: slim.color('primary');
+    }
+  }
+
+  &__danger {
+    color: slim.color('danger');
+  }
+
+  &__placeholder {
+    padding: slim.space(6) slim.space(2);
+  }
+
+  &__ro {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    min-height: slim.size('control-h');
+    padding: slim.space(2) slim.space(3);
+    border: 1px dashed slim.color('line');
+    border-radius: slim.radius('md');
+    background: slim.color('surface-2');
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: slim.color('text-3');
+    }
+  }
+
+  &__states {
+    margin-top: slim.space(4);
+    padding-top: slim.space(3);
+    border-top: 1px solid slim.color('line');
+  }
+
+  &__states-head {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    margin-bottom: slim.space(2);
+  }
+
+  &__states-table {
+    td,
+    th {
+      vertical-align: middle;
+    }
+  }
+
+  &__state-name {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__badge {
+    margin-left: slim.space(1);
+  }
+
+  // Pointer «radio»: one per Schiessplatz — a click on an unset one asks, the set one is inert.
+  &__pointer {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: slim.size('control-h-sm');
+    height: slim.size('control-h-sm');
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+
+    &:not(:disabled) {
+      @include slim.hover {
+        background: slim.color('hover');
+      }
+    }
+  }
+
+  &__radio {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid slim.color('line-strong');
+    border-radius: 50%;
+    background: slim.color('surface');
+  }
+
+  &__pointer--on &__radio {
+    border-color: slim.color('primary');
+    box-shadow: inset 0 0 0 3px slim.color('surface'), inset 0 0 0 8px slim.color('primary');
+  }
+
+  &__build-year {
+    min-width: 150px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+  }
+
+  &__modal-text {
+    line-height: 1.6;
+  }
+}

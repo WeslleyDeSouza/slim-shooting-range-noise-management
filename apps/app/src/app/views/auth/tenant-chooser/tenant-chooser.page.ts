@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import { AuthFacade, Tenant, toAuthError } from '../auth.facade';
+import { sanitizeAdminReturnUrl, takeReturnUrl } from '../return-url';
 
 const I18N = 'auth';
 
@@ -89,13 +90,14 @@ export class TenantChooserPage implements OnInit {
     try {
       await this.auth.selectTenant(tenant);
       this.success.set(true);
-      // After the login the admin dashboard is the destination — a returnUrl is
-      // honoured only when it points into the admin (deep link from the guard).
-      const requested =
-        this.route.snapshot.queryParamMap.get('returnUrl') || '';
-      const returnUrl = requested.startsWith(APP_ROUTES.admin.root)
-        ? requested
-        : APP_ROUTES.admin.home;
+      // After the login the admin dashboard is the destination — a returnUrl
+      // (deep link from the guard, parked by the login page or still in the
+      // query string) is honoured only when it points into the admin.
+      const returnUrl =
+        takeReturnUrl() ??
+        sanitizeAdminReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')) ??
+        APP_ROUTES.admin.home;
+      // navigateByUrl keeps the deep link's own query string and fragment.
       setTimeout(() => this.router.navigateByUrl(returnUrl), 400);
     } catch (error) {
       this.error.set(

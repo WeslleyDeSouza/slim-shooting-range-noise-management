@@ -40,6 +40,7 @@ import {
   AreaModule,
   CalculationModule,
   DataAreaModule,
+  DataCalculationsModule,
   DataWeaponsModule,
   UsageModule,
 } from './modules';
@@ -103,6 +104,7 @@ const isProd: boolean = env.isProd();
         ...(<never[]>CalculationModule.DBOptions.entities),
         ...(<never[]>DataAreaModule.DBOptions.entities),
         ...(<never[]>DataWeaponsModule.DBOptions.entities),
+        ...(<never[]>DataCalculationsModule.DBOptions.entities),
         ...(<never[]>AccessModule.DBOptions.entities),
         // Demo dataset marker (mocks/tenant), harmless in production
         DemoSeedMarkerEntity,
@@ -137,6 +139,7 @@ const isProd: boolean = env.isProd();
     // Datenverwaltung (5.15/5.16 Schiessplatz Allgemein, 5.22–5.25 Waffen) + app rights of the session
     DataAreaModule,
     DataWeaponsModule,
+    DataCalculationsModule,
     AccessModule,
     // Audit hooks of the galaxy user / role / app lifecycle → logbook
     AuthAuditModule,

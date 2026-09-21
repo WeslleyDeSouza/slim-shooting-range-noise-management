@@ -40,7 +40,8 @@
     "app_config": "App-Konfiguration",
     "ad": "Administration",
     "settings": "Einstellungen",
-    "areas_all": "Alle Schiessplätze"
+    "areas_all": "Alle Schiessplätze",
+    "weapon_combination": "Waffe/Kaliber"
   },
   "common": {
     "save": "Speichern",

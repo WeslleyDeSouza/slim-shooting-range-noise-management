@@ -23,9 +23,10 @@ const SIM = {
 test.describe('area simulation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ROUTES.area);
-    // First row of the overview = Geissalp (lowest Koordinationsabschnitt-Nr.).
+    // First row of the overview = Geissalp (lowest Koordinationsabschnitt-Nr.);
+    // a row click opens the assessment (Details) since the feedback of 12.09.
     await page.locator('.slim-table tbody tr').first().click();
-    await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/overview$/);
+    await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/details$/);
     await page.locator('[data-testid="area-tab-simulation"]').click();
     await expect(page).toHaveURL(/\/simulation$/);
     await expect(page.locator(SIM.row)).toHaveCount(16);

@@ -1,0 +1,307 @@
+<div class="slim-page dco">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dco-title">{{ prefix + '.overview_title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.overview_subtitle' | translate }}</p>
+    </div>
+    @if (!readonly()) {
+      <div class="slim-page__actions">
+        <button type="button" class="slim-btn slim-btn--primary" data-testid="dco-new" (click)="newDelivery()">
+          <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+          <span class="slim-btn__label">{{ prefix + '.new_delivery' | translate }}</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="dco__layout">
+    <!-- 1 Berechnungen-Tabelle (B1 Abbildung 29) -->
+    <section class="slim-card slim-card--bleed dco__card" data-testid="dco-table">
+      <div class="slim-toolbar">
+        <div class="slim-search slim-toolbar__grow">
+          <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <input class="slim-search__input" type="search" autocomplete="off" data-testid="dco-search" [placeholder]="prefix + '.search_placeholder' | translate" [attr.aria-label]="prefix + '.search_placeholder' | translate" [value]="query()" (input)="query.set($any($event.target).value)" />
+        </div>
+        <div class="slim-toolbar__meta" data-testid="dco-count">{{ prefix + '.count' | translate: { n: rows().length, total: all().length } }}</div>
+      </div>
+      <div class="slim-table-wrap dco__table-wrap">
+        <table class="slim-table slim-table--stack slim-table--compact">
+          <thead>
+            <tr>
+              <th>{{ prefix + '.col_name' | translate }}</th>
+              <th>{{ prefix + '.col_supplier' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_states' | translate }}</th>
+              <th>{{ prefix + '.col_delivered' | translate }}</th>
+              <th>{{ prefix + '.col_current' | translate }}</th>
+              <th>{{ prefix + '.col_mgdm' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (d of rows(); track d.id) {
+              <tr
+                class="slim-table__row slim-table__row--clickable"
+                [class.slim-table__row--selected]="selected()?.id === d.id"
+                [attr.aria-selected]="selected()?.id === d.id"
+                tabindex="0"
+                data-testid="dco-row"
+                [attr.data-name]="d.name"
+                (click)="select(d)"
+                (keydown.enter)="select(d)"
+              >
+                <td [attr.data-label]="prefix + '.col_name' | translate" class="dco__name">{{ d.name }}</td>
+                <td [attr.data-label]="prefix + '.col_supplier' | translate">{{ d.supplier || '—' }}</td>
+                <td [attr.data-label]="prefix + '.col_states' | translate" class="slim-table__cell--num">{{ d.stateCount }}</td>
+                <td [attr.data-label]="prefix + '.col_delivered' | translate" class="dco__num">{{ d.deliveredAt | date: 'dd.MM.yyyy' }}</td>
+                <td [attr.data-label]="prefix + '.col_current' | translate">
+                  <span class="dco__flag" [class.dco__flag--on]="d.hasCurrent" [attr.aria-label]="(d.hasCurrent ? 'common.yes' : 'common.no') | translate">
+                    @if (d.hasCurrent) { <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg> }
+                  </span>
+                </td>
+                <td [attr.data-label]="prefix + '.col_mgdm' | translate">
+                  <span class="dco__flag" [class.dco__flag--on]="d.hasMgdm" [attr.aria-label]="(d.hasMgdm ? 'common.yes' : 'common.no') | translate">
+                    @if (d.hasMgdm) { <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg> }
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ prefix + (all().length ? '.no_match' : '.empty') | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (selected(); as d) {
+        @if (!readonly()) {
+          <div class="slim-table-foot">
+            <span class="slim-table-foot__grow"></span>
+            <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm dco__danger" data-testid="dco-delete" (click)="askDelete(d)">
+              <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4h10M6 4V2.5h4V4M5 4l.6 9h4.8L11 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span class="slim-btn__label">{{ prefix + '.delete' | translate }}</span>
+            </button>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- 2 Detailansicht Berechnung -->
+    <section class="slim-card dco__card dco__detail" data-testid="dco-detail">
+      @if (!detailOpen()) {
+        <div class="slim-card__body">
+          <div class="slim-empty dco__placeholder">
+            <div class="slim-empty__title">{{ prefix + '.detail_none_title' | translate }}</div>
+            <p class="slim-empty__text">{{ prefix + '.detail_none_text' | translate }}</p>
+          </div>
+        </div>
+      } @else {
+        <form class="dco__form" [formGroup]="form" (ngSubmit)="save()" novalidate data-testid="dco-form">
+          <div class="slim-card__header">
+            <h2 class="slim-card__title" data-testid="dco-detail-title">
+              {{ isNew() ? (prefix + '.detail_new' | translate) : selected()?.name }}
+            </h2>
+            @if (dirty()) {
+              <span class="slim-badge slim-badge--warning" data-testid="dco-dirty">{{ prefix + '.unsaved' | translate }}</span>
+            }
+          </div>
+          <div class="slim-card__body slim-form">
+            <div class="slim-field" [class.slim-field--invalid]="invalid('name')">
+              <label class="slim-field__label" for="dco-name">{{ prefix + '.field_name' | translate }} <span class="slim-field__required">*</span></label>
+              <input class="slim-input" id="dco-name" formControlName="name" data-testid="dco-name" />
+              <p class="slim-field__error">{{ prefix + '.err_name' | translate }}</p>
+            </div>
+            <div class="slim-form__row">
+              <div class="slim-field">
+                <label class="slim-field__label" for="dco-supplier">{{ prefix + '.field_supplier' | translate }}</label>
+                <input class="slim-input" id="dco-supplier" formControlName="supplier" data-testid="dco-supplier" />
+              </div>
+              <div class="slim-field" [class.slim-field--invalid]="invalid('deliveredAt')">
+                <label class="slim-field__label" for="dco-delivered">{{ prefix + '.field_delivered' | translate }} <span class="slim-field__required">*</span></label>
+                <input class="slim-input" id="dco-delivered" type="date" formControlName="deliveredAt" data-testid="dco-delivered" />
+                <p class="slim-field__error">{{ prefix + '.err_delivered' | translate }}</p>
+              </div>
+            </div>
+            <div class="slim-field">
+              <span class="slim-field__label">{{ prefix + '.field_file' | translate }}</span>
+              <div class="dco__ro" data-testid="dco-file">
+                @if (selected()?.fileName; as file) {
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 2h5l3 3v9H4z M9 2v3h3" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" /></svg>
+                  {{ file }}
+                } @else {
+                  <span class="slim-text--muted">{{ prefix + '.file_none' | translate }}</span>
+                }
+              </div>
+              <p class="slim-field__hint">{{ prefix + '.file_hint' | translate }}</p>
+            </div>
+            <div class="slim-field">
+              <label class="slim-field__label" for="dco-description">{{ prefix + '.field_description' | translate }}</label>
+              <textarea class="slim-textarea" id="dco-description" rows="3" formControlName="description" data-testid="dco-description"></textarea>
+            </div>
+
+            <!-- Zustände der Berechnung -->
+            @if (selected(); as d) {
+              <div class="dco__states">
+                <div class="dco__states-head">
+                  <h3 class="slim-h4">{{ prefix + '.states_title' | translate }}</h3>
+                  <span class="slim-badge">{{ d.states.length }}</span>
+                </div>
+                @if (d.states.length) {
+                  <div class="slim-table-wrap dco__table-wrap">
+                    <table class="slim-table slim-table--compact dco__states-table">
+                      <thead>
+                        <tr>
+                          <th>{{ prefix + '.col_state_id' | translate }}</th>
+                          <th>{{ prefix + '.col_state_name' | translate }}</th>
+                          <th class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
+                          <th>{{ prefix + '.col_current' | translate }}</th>
+                          <th>{{ prefix + '.col_mgdm' | translate }}</th>
+                          <th>{{ prefix + '.col_build_year' | translate }}</th>
+                          <th class="slim-table__cell--actions"><span class="slim-u-sr-only">{{ prefix + '.details_link' | translate }}</span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (s of d.states; track s.id) {
+                          <tr data-testid="dco-state" [attr.data-name]="s.name">
+                            <td class="dco__num">{{ s.externalId ?? '—' }}</td>
+                            <td>
+                              <span class="dco__state-name">{{ s.name }}</span>
+                              @if (!s.hasModel) {
+                                <span class="slim-badge dco__badge" [attr.title]="prefix + '.pointer_no_model' | translate">{{ prefix + '.state_no_model' | translate }}</span>
+                              }
+                            </td>
+                            <td class="slim-table__cell--num dco__num">{{ s.referenceYear }}</td>
+                            <td>
+                              <button
+                                type="button"
+                                class="dco__pointer"
+                                [class.dco__pointer--on]="s.isCurrent"
+                                [disabled]="!pointerAllowed(s, 'current')"
+                                [attr.aria-pressed]="s.isCurrent"
+                                [attr.title]="(s.isCurrent ? prefix + '.pointer_is_current' : prefix + '.pointer_current_set') | translate"
+                                data-testid="dco-pointer-current"
+                                (click)="askPointer(s, 'current')"
+                              >
+                                <span class="dco__radio" aria-hidden="true"></span>
+                                <span class="slim-u-sr-only">{{ (s.isCurrent ? prefix + '.pointer_is_current' : prefix + '.pointer_current_set') | translate }}</span>
+                              </button>
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                class="dco__pointer"
+                                [class.dco__pointer--on]="s.isMgdm"
+                                [disabled]="!pointerAllowed(s, 'mgdm')"
+                                [attr.aria-pressed]="s.isMgdm"
+                                [attr.title]="(s.isMgdm ? prefix + '.pointer_is_mgdm' : prefix + '.pointer_mgdm_set') | translate"
+                                data-testid="dco-pointer-mgdm"
+                                (click)="askPointer(s, 'mgdm')"
+                              >
+                                <span class="dco__radio" aria-hidden="true"></span>
+                                <span class="slim-u-sr-only">{{ (s.isMgdm ? prefix + '.pointer_is_mgdm' : prefix + '.pointer_mgdm_set') | translate }}</span>
+                              </button>
+                            </td>
+                            <td>
+                              <select class="slim-select slim-select--sm dco__build-year" [disabled]="readonly()" [attr.aria-label]="prefix + '.col_build_year' | translate" data-testid="dco-build-year" (change)="changeBuildYear(s, $any($event.target).value)">
+                                @for (o of buildYearOptions; track o) {
+                                  <option [value]="o" [selected]="o === s.buildYearClass">{{ 'admin.dm_area_general.options.build_year.' + o | translate }}</option>
+                                }
+                              </select>
+                            </td>
+                            <td class="slim-table__cell--actions">
+                              <a class="slim-btn slim-btn--ghost slim-btn--sm" [routerLink]="detailsLink(s).link" [queryParams]="detailsLink(s).query" data-testid="dco-state-details">{{ prefix + '.details_link' | translate }}</a>
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <p class="slim-text--muted">{{ prefix + '.state_empty' | translate }}</p>
+                }
+              </div>
+            }
+          </div>
+          @if (!readonly()) {
+            <div class="slim-card__footer dco__actions" data-testid="dco-actions">
+              <span class="slim-u-grow"></span>
+              <button type="button" class="slim-btn slim-btn--ghost" data-testid="dco-cancel" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
+              <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving() || (!dirty() && !isNew())" data-testid="dco-save">{{ 'common.save' | translate }}</button>
+            </div>
+          }
+        </form>
+      }
+    </section>
+  </div>
+
+  <!-- Zeiger setzen? -->
+  @if (pendingPointer(); as p) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dco-pointer-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="pendingPointer.set(null)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header"><div class="slim-sheet__title">{{ prefix + '.pointer_title_' + p.pointer | translate }}</div></header>
+        <div class="slim-sheet__body dco__modal-text">{{ prefix + '.pointer_text_' + p.pointer | translate: { name: p.state.name } }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="pendingPointer.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--primary" [disabled]="saving()" data-testid="dco-pointer-confirm" (click)="confirmPointer()">{{ prefix + '.pointer_confirm' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Berechnung löschen? -->
+  @if (pendingDelete(); as d) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dco-delete-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="pendingDelete.set(null)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header"><div class="slim-sheet__title">{{ prefix + '.delete_title' | translate }}</div></header>
+        <div class="slim-sheet__body dco__modal-text">
+          @if (blocker(); as why) {
+            <div class="slim-alert slim-alert--warning" data-testid="dco-delete-blocked"><div class="slim-alert__body">{{ prefix + '.delete_blocked_' + why | translate }}</div></div>
+          } @else {
+            {{ prefix + '.delete_text' | translate: { name: d.name, n: d.stateCount } }}
+          }
+        </div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="pendingDelete.set(null)">{{ 'common.cancel' | translate }}</button>
+          @if (!blocker()) {
+            <button type="button" class="slim-btn slim-btn--danger" [disabled]="saving()" data-testid="dco-delete-confirm" (click)="confirmDelete()">{{ 'common.delete' | translate }}</button>
+          }
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Änderungen verwerfen? -->
+  @if (confirmDiscard()) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dco-discard">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="resolveDiscard(false)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header"><div class="slim-sheet__title">{{ prefix + '.discard_title' | translate }}</div></header>
+        <div class="slim-sheet__body dco__modal-text">{{ prefix + '.discard_text' | translate }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" data-testid="dco-discard-keep" (click)="resolveDiscard(false)">{{ prefix + '.keep_editing' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" data-testid="dco-discard-confirm" (click)="resolveDiscard(true)">{{ prefix + '.discard' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  @if (toast(); as t) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="dco-toast">
+        <div class="slim-toast__body">{{ t.key | translate: t.params }}</div>
+        <button type="button" class="slim-toast__action" (click)="dismissToast()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  }
+</div>

@@ -68,7 +68,10 @@ export default defineConfig({
     },
     {
       name: 'chromium',
-      testMatch: ['**/src/*.spec.ts'],
+      // Page suite: the auth specs next to the setup and the admin pages
+      // (`src/admin/*.spec.ts`) — a plain `src/*.spec.ts` never matched the
+      // admin folder, so those specs silently stayed out of the run.
+      testMatch: ['**/src/*.spec.ts', '**/src/admin/*.spec.ts'],
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
       dependencies: ['setup'],
     },
@@ -80,6 +83,19 @@ export default defineConfig({
       name: 'criterias',
       testMatch: ['**/src/criterias/*.spec.ts'],
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
+      dependencies: ['setup'],
+    },
+    // Pixel baselines of the home screens (`src/visual`): `npx playwright test
+    // --project=visual`. Kept apart from the page suite because a design
+    // change needs `--update-snapshots` and a commit of the PNGs.
+    {
+      name: 'visual',
+      testMatch: ['**/src/visual/*.spec.ts'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: STORAGE_STATE,
+        viewport: { width: 1280, height: 900 },
+      },
       dependencies: ['setup'],
     },
     // Use cases per actor (B1 4.x, `src/actors/readme.md`):

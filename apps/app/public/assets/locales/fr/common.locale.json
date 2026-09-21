@@ -40,7 +40,8 @@
     "app_config": "Configuration des apps",
     "ad": "Administration",
     "settings": "Paramètres",
-    "areas_all": "Toutes les places de tir"
+    "areas_all": "Toutes les places de tir",
+    "weapon_combination": "Arme/calibre"
   },
   "common": {
     "save": "Enregistrer",

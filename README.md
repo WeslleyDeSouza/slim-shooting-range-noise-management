@@ -152,7 +152,7 @@ validation and the B1 8.1.2 rights matrix end to end.
 
 ## CI/CD (GitHub Actions)
 
-`.github/workflows/build-and-deploy.yml` mirrors ELO: **install** (npm cache, `nx affected`) → **tests** (lint, API build + `ng-swagger`, Vitest + Jest) and **build** (API, app production, service worker → artifact `nXdist`) → **deploy** (only `master`, environment `production`: Docker image from `dockerfile` pushed to the registry). Secrets: `NPM_TOKEN`, optional `NX_CLOUD_ACCESS_TOKEN`, `REGISTRY_URL`, `REGISTRY_URL_PATH`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`. The npm token reaches the Docker build as BuildKit secret `npm_token` and is removed from the image again after `npm install`.
+`.github/workflows/build-and-deploy.yml` mirrors ELO: **install** (npm cache, `nx affected`) → **tests** (lint, API build + `ng-swagger`, Vitest + Jest), **e2e** (Playwright, chromium only: `ng-swagger` from the committed spec, then `nx e2e app-e2e` with `CI=true` — the config starts the e2e API on in-memory SQLite and `nx serve app` itself; the html report and traces are uploaded as artifact `playwright-report`) and **build** (API, app production, service worker → artifact `nXdist`) → **deploy** (only `master`, environment `production`, gated on tests + e2e: Docker image from `dockerfile` pushed to the registry). Linux baselines for the visual specs are recorded on demand (Actions → run workflow → `record_visual`) and downloaded from the artifact `visual-baselines-linux`. Secrets: `NPM_TOKEN`, optional `NX_CLOUD_ACCESS_TOKEN`, `REGISTRY_URL`, `REGISTRY_URL_PATH`, `REGISTRY_USERNAME`, `REGISTRY_PASSWORD`. The npm token reaches the Docker build as BuildKit secret `npm_token` and is removed from the image again after `npm install`.
 
 ## Database
 

@@ -2,6 +2,7 @@ import type { Route, Routes } from '@angular/router';
 import { LocaleResolver } from '@app-galaxy/translate-ui';
 import { ROUTE_SEGMENT as S } from '@slim/shared';
 import { PlaceholderData } from './_components/placeholder.component';
+import { unsavedChangesGuard } from './_common/unsaved-changes.guard';
 import { AppsFacade } from './user-management/apps/_data/apps.facade';
 import { EloAppsOverviewComponent } from './user-management/apps/apps-overview.component';
 import { EloAppFormComponent } from './user-management/apps/form/app-form.component';
@@ -128,19 +129,89 @@ export const ADMIN_ROUTES: Routes = [
                 (c) => c.DmAreaOverviewComponent,
               ),
           },
-          // 5.15–5.18 of one Schiessplatz (targets of the jumps)
-          placeholder(`${S.area}/:areaId/${S.masterData}`, {
-            title: 'menu.area_master_data',
-            crumbs: DM_AREA,
-          }),
-          placeholder(`${S.area}/:areaId/${S.weaponAssignment}`, {
-            title: 'menu.area_weapon_assignment',
-            crumbs: DM_AREA,
-          }),
-          placeholder(`${S.area}/:areaId/${S.calculations}`, {
-            title: 'menu.calculations',
-            crumbs: DM_CALC,
-          }),
+          // 5.15–5.18 of one Schiessplatz (targets of the jumps): context bar
+          // (switcher + Allgemein / Zuordnung Waffen / Berechnungen) around
+          // the pages of the mocks _mocks/data-management/area-detail.index.html.
+          {
+            path: `${S.area}/:areaId`,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            loadComponent: () =>
+              import('./data-management/area/_context/dm-area-context.component').then(
+                (c) => c.DmAreaContextComponent,
+              ),
+            children: [
+              { path: '', pathMatch: 'full', redirectTo: S.general },
+              // Allgemein: tabs Übersicht (5.15) · Stammdaten (5.16)
+              {
+                path: S.general,
+                loadComponent: () =>
+                  import('./data-management/area/general/dm-area-general.component').then(
+                    (c) => c.DmAreaGeneralComponent,
+                  ),
+                children: [
+                  { path: '', pathMatch: 'full', redirectTo: S.overview },
+                  {
+                    path: S.overview,
+                    loadComponent: () =>
+                      import('./data-management/area/general/overview/dm-area-general-overview.component').then(
+                        (c) => c.DmAreaGeneralOverviewComponent,
+                      ),
+                  },
+                  {
+                    path: S.masterData,
+                    canDeactivate: [unsavedChangesGuard],
+                    loadComponent: () =>
+                      import('./data-management/area/general/master-data/dm-area-master-data.component').then(
+                        (c) => c.DmAreaMasterDataComponent,
+                      ),
+                  },
+                ],
+              },
+              placeholder(S.weaponAssignment, {
+                title: 'menu.area_weapon_assignment',
+                crumbs: DM_AREA,
+              }),
+              // Berechnungen: tabs Übersicht (5.18) · Import (5.19) · Export (5.20) · Details (5.21)
+              {
+                path: S.calculations,
+                loadComponent: () =>
+                  import('./data-management/area/calculations/dm-calc.component').then((c) => c.DmCalcComponent),
+                children: [
+                  { path: '', pathMatch: 'full', redirectTo: S.overview },
+                  {
+                    path: S.overview,
+                    canDeactivate: [unsavedChangesGuard],
+                    loadComponent: () =>
+                      import('./data-management/area/calculations/overview/dm-calc-overview.component').then(
+                        (c) => c.DmCalcOverviewComponent,
+                      ),
+                  },
+                  {
+                    path: S.import,
+                    loadComponent: () =>
+                      import('./data-management/area/calculations/import/dm-calc-import.component').then(
+                        (c) => c.DmCalcImportComponent,
+                      ),
+                  },
+                  {
+                    path: S.export,
+                    loadComponent: () =>
+                      import('./data-management/area/calculations/export/dm-calc-export.component').then(
+                        (c) => c.DmCalcExportComponent,
+                      ),
+                  },
+                  {
+                    path: S.details,
+                    loadComponent: () =>
+                      import('./data-management/area/calculations/details/dm-calc-details.component').then(
+                        (c) => c.DmCalcDetailsComponent,
+                      ),
+                  },
+                ],
+              },
+            ],
+          },
           placeholder(`${S.area}/${S.masterData}`, {
             title: 'menu.area_master_data',
             crumbs: DM_AREA,
@@ -171,24 +242,29 @@ export const ADMIN_ROUTES: Routes = [
             title: 'menu.calculations_details',
             crumbs: DM_CALC,
           }),
-          // Waffen
+          // Waffen (5.22–5.25): one mask, four lists (mock _mocks/data-management/weapon.html)
           {
             path: S.weapons,
             pathMatch: 'full',
-            redirectTo: `${S.weapons}/${S.weapon}`,
+            redirectTo: `${S.weapons}/${S.combination}`,
           },
-          placeholder(`${S.weapons}/${S.caliber}`, {
-            title: 'menu.caliber',
-            crumbs: DM_WEAPONS,
-          }),
-          placeholder(`${S.weapons}/${S.weapon}`, {
-            title: 'menu.weapon',
-            crumbs: DM_WEAPONS,
-          }),
-          placeholder(`${S.weapons}/${S.weaponCategory}`, {
-            title: 'menu.weapon_category',
-            crumbs: DM_WEAPONS,
-          }),
+          ...(
+            [
+              [S.combination, 'combination'],
+              [S.caliber, 'caliber'],
+              [S.weapon, 'weapon'],
+              [S.weaponCategory, 'category'],
+            ] as const
+          ).map(
+            ([segment, kind]): Route => ({
+              path: `${S.weapons}/${segment}`,
+              data: { path: 'admin', kind },
+              resolve: LocaleResolver.default,
+              canDeactivate: [unsavedChangesGuard],
+              loadComponent: () =>
+                import('./data-management/weapons/dm-weapons.component').then((c) => c.DmWeaponsComponent),
+            }),
+          ),
           // Benutzer, MGDM, System
           // Benutzerverwaltung (5.26): users, roles and the app catalogue —
           // ELO's native screens over the galaxy admin API (views/admin/user-management).

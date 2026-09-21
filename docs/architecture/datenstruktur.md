@@ -22,6 +22,10 @@ apps/api/src/
 │   └── tenant/              # «SLIM Demo»-Datensatz: tenant.mock.json, tenant-dataset.ts, demo-dataset.seed.ts, Marker-Entity
 └── modules/                 # Geschäftslogik-Module (siehe sitemap.md)
     ├── area/                # Referenzstruktur: Schiessplätze, Stellungsräume, Waffen/Kaliber/Kombinationen, Kontingente, Feiertage
+    ├── data-area/           # Datenverwaltung › Schiessplatz › Allgemein (5.15/5.16): Lesemodell, Stammdaten-Update, Kontingent-CRUD (keine eigenen Tabellen)
+    ├── data-weapons/        # Datenverwaltung › Waffen (5.22–5.25): CRUD mit Löschschutz, XLSX-Export (keine eigenen Tabellen)
+    ├── data-calculations/   # Datenverwaltung › Schiessplatz › Berechnungen (5.18–5.21): Lieferungen / Zustände, Validierung + Import, WLR- und Betriebsdaten-Upload, Exporte, Details (Parser in calculation-files.service.ts)
+    ├── access/              # GET admin/access: App-Rechte der Sitzung aus den galaxy-Tabellen
     ├── usage/               # Schiessplatz-Nutzungen (5.11): overview / create / update / delete / restore
     ├── calculation/         # Zustandsebene (FGDB-Objekte, Quelldaten, WLR), Import 5.19, Zeiger aktuell/MGDM, AssessmentService (5.12), SimulationService (5.13), Berechnungslauf, AreaStatusService
     └── auth-audit/          # galaxy Lifecycle-Hooks (Benutzer/Rollen/Apps) → Logbuch
@@ -96,7 +100,9 @@ Drei Ebenen wie in B1 Kap. 10 (Abb. 43); vollständiges ERD: [uml.mmd](uml.mmd) 
 
 ### Übergeordnete Referenzstruktur (zustandsunabhängig)
 
-- **Schiessplatz** `schiessplatz`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr.), `sectoralPlanNo`
+- **Schiessplatz** `schiessplatz`: `name`, `coordinationSectionNo` (Koordinationsabschnitt-Nr. oder eigener Schlüssel), `sectoralPlanNo`,
+  Stammdaten 5.16 `classification`, `recalculationState`, `remediationProjectState`, `spmState`, `noiseRemediationState`,
+  `projectState` (Codes in `entities/area-master-data.enums.ts`), `planningApproval` (gültige Plangenehmigung),
   (Sachplan-Nr.), `enabled`; `quotaStatus` / `noiseStatus` (`ok | warn | over | incomplete | none`) sind nur ein
   **Cache** der `AreaStatusService`-Berechnung (nach Mutation, Import, Zeigerwechsel und beim Start neu gesetzt,
   nicht schreibbar über die API). Endpunkte `admin/area` (Liste, Summary, Dashboard, CRUD).
@@ -122,7 +128,9 @@ Drei Ebenen wie in B1 Kap. 10 (Abb. 43); vollständiges ERD: [uml.mmd](uml.mmd) 
 
 ### Zustandsebene (alles gehört einem `zustand`)
 
-- **Immissionsberechnung** `immissionsberechnung` (5.18, Lieferung): `name`, `supplier`, `deliveredAt`.
+- **Immissionsberechnung** `immissionsberechnung` (5.18, Lieferung): `name`, `supplier`, `deliveredAt`, `description`,
+  `fileName` (Name der importierten Berechnungsdatei); Löschen = `enabled = false`, nur ohne aktuellen / MGDM-Zustand
+  und ohne Berechnungsläufe.
 - **Zustand** `zustand` (ZustandsID): `calculationId`, `name`, `referenceYear`, `buildYearClass`, `isCurrent`, `isMgdm`;
   «genau ein aktueller / ein MGDM-Zustand je Schiessplatz» erzwingen die Unique-Indizes `uq_zustand_aktuell` /
   `uq_zustand_mgdm` über die Markerspalten `aktuell_schluessel` / `mgdm_schluessel` (= `schiessplatz_id` oder NULL).

@@ -41,6 +41,14 @@ export class ImportCalculationDto {
   @ApiProperty({ description: 'Lieferdatum YYYY-MM-DD (S9)' })
   deliveredAt: string;
 
+  @IsOptional() @IsString() @MaxLength(2000)
+  @ApiPropertyOptional({ nullable: true, description: 'Beschreibung der Lieferung (5.18)' })
+  description?: string | null;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  @ApiPropertyOptional({ nullable: true, description: 'Name der Berechnungsdatei (FGDB / JSON), wie hochgeladen (5.19)' })
+  fileName?: string | null;
+
   @IsOptional() @IsString() @MaxLength(20) @ApiPropertyOptional({ description: 'S1 ZustandMPV' }) fgdbStateMpv?: string | null;
   @IsOptional() @IsString() @MaxLength(20) @ApiPropertyOptional({ description: 'S2 ZustandIST' }) fgdbStateIst?: string | null;
   @IsOptional() @IsBoolean() @ApiPropertyOptional({ description: 'S3' }) mpvMeasures?: boolean | null;
@@ -315,6 +323,21 @@ export class ImportCountsDto {
   @ApiProperty() immissionPoints: number;
   @ApiProperty() wlr: number;
   @ApiProperty() otherObjects: number;
+}
+
+/** Result of the dry run before an import (B1 5.19 «Validieren»): what the import would find, nothing written. */
+export class ImportValidationDto {
+  @ApiProperty({ description: 'true = keine Befunde, der Import würde durchlaufen' })
+  valid: boolean;
+
+  @ApiProperty({ description: 'Befunde, die den Import abbrechen (unbekannter Stellungsraum, doppelte QuellenID, Zustand existiert bereits …)', type: [String] })
+  findings: string[];
+
+  @ApiProperty({ description: 'Warnungen, die der Import protokolliert, aber zulässt (Quelle ohne Kombination, fehlender Tag-Pegel …)', type: [String] })
+  warnings: string[];
+
+  @ApiProperty({ type: () => ImportCountsDto, description: 'Umfang der Lieferung, wie er geschrieben würde' })
+  counts: ImportCountsDto;
 }
 
 /** Prüfbericht of an import (B1 5.19). */

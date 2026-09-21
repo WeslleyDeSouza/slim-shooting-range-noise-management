@@ -1,0 +1,153 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dci {
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+    }
+  }
+
+  &__card {
+    min-width: 0;
+  }
+
+  // Drop zone / file picker: a big, obvious target on every device.
+  &__drop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: slim.space(2);
+    min-height: slim.size('control-h-lg');
+    padding: slim.space(3);
+    border: 2px dashed slim.color('line-strong');
+    border-radius: slim.radius('lg');
+    background: slim.color('surface-2');
+    color: slim.color('text-2');
+    cursor: pointer;
+    transition: border-color slim.transition('fast'), background slim.transition('fast');
+
+    svg {
+      width: 18px;
+      height: 18px;
+      color: slim.color('primary');
+    }
+
+    @include slim.hover {
+      border-color: slim.color('primary');
+      background: slim.color('primary-subtle');
+    }
+
+    &:focus-within {
+      @include slim.focus-visible;
+    }
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__summary {
+    margin: slim.space(2) 0 slim.space(3);
+  }
+
+  &__list {
+    margin: slim.space(1) 0 0;
+    padding-left: slim.space(5);
+  }
+
+  &__warnings {
+    margin-top: slim.space(2);
+    color: slim.color('text-2');
+    font-size: slim.font-size('sm');
+
+    summary {
+      cursor: pointer;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: slim.space(2);
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__strong {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__uploads {
+    border-top: 1px solid slim.color('line');
+  }
+
+  &__upload {
+    padding: slim.space(2) 0;
+    border-bottom: 1px solid slim.color('line');
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__upload-head {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    margin-bottom: slim.space(1);
+  }
+
+  &__upload-label {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__upload-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2);
+  }
+
+  &__group {
+    max-width: 220px;
+  }
+
+  &__pick {
+    cursor: pointer;
+
+    &.slim-btn--disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  &__result {
+    margin-top: slim.space(2);
+
+    details {
+      margin-top: slim.space(1);
+    }
+
+    summary {
+      cursor: pointer;
+    }
+  }
+}

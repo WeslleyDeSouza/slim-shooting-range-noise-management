@@ -74,7 +74,8 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
   protected readonly masterDataLink = computed(() => APP_ROUTES.admin.dataManagement.area.masterDataOf(this.areaId()));
 
   protected readonly query = signal('');
-  protected readonly sortKey = signal<RoomSortKey>('name');
+  /** Default like B1 Abbildung 26: by Koordinationsabschnitts-Nr., rooms without one last. */
+  protected readonly sortKey = signal<RoomSortKey>('coordinationSectionNo');
   protected readonly sortAsc = signal(true);
 
   protected readonly columns: { key: RoomSortKey; label: string }[] = [
@@ -106,7 +107,7 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
   protected readonly rooms = this.facade.rooms;
   protected readonly withoutNumber = computed(() => this.rooms().filter((r) => !r.coordinationSectionNo).length);
 
-  /** Free-text search over Nr., Bezeichnung and Aktiv (`slm 15`), then sort; rooms without a number always last. */
+  /** Free-text search over Nr., Bezeichnung and Aktiv (`slm 15`), then sort; empty numbers always last, ties keep the room order. */
   protected readonly rows = computed<RoomRow[]>(() => {
     const q = this.query().trim().toLowerCase();
     const key = this.sortKey();
@@ -152,7 +153,7 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
 
   /** The Aktiv column is searchable by its label (Ja/Nein in the current language), like the mock. */
   private translateYesNo(value: boolean): string {
-    return this.translate.translate(value ? 'common.yes' : 'common.no');
+    return this.translate.translate(value ? 'common.yes' : 'common.no') ?? (value ? 'ja' : 'nein');
   }
 
   /** The tab host loads the read model; nothing to fetch here. */

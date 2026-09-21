@@ -93,6 +93,15 @@ export const APP_ROUTES = {
           join(S.admin, S.dataManagement, S.area, id, S.weaponAssignment),
         calculationsOf: (id: string) =>
           join(S.admin, S.dataManagement, S.area, id, S.calculations),
+        /** Berechnungen of one Schiessplatz: Übersicht (5.18) · Import (5.19) · Export (5.20) · Details (5.21) */
+        calculationsOverviewOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.calculations, S.overview),
+        calculationsImportOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.calculations, S.import),
+        calculationsExportOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.calculations, S.export),
+        calculationsDetailsOf: (id: string) =>
+          join(S.admin, S.dataManagement, S.area, id, S.calculations, S.details),
       },
       calculations: {
         root: join(S.admin, S.dataManagement, S.area, S.calculations),

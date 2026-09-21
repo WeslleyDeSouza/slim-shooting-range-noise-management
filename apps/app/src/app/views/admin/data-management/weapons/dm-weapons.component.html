@@ -1,0 +1,451 @@
+<div class="slim-page dmw" [class.dmw--detail-open]="detailOpen()">
+  <ol class="slim-breadcrumbs">
+    <li class="slim-breadcrumbs__item"><a [routerLink]="routes.admin.home">{{ 'shell.home' | translate }}</a></li>
+    <li class="slim-breadcrumbs__item"><a [routerLink]="routes.admin.dataManagement.root">{{ 'menu.data_management' | translate }}</a></li>
+    <li class="slim-breadcrumbs__item">{{ 'menu.weapons' | translate }}</li>
+    <li class="slim-breadcrumbs__item slim-breadcrumbs__item--current">{{ prefix + '.kind_' + kind() | translate }}</li>
+  </ol>
+
+  <!-- Reiter Waffen/Kaliber · Kaliber · Waffe · Waffenkategorie (B1 5.22–5.25) -->
+  <nav class="slim-subnav dmw__tabs" role="tablist" [attr.aria-label]="prefix + '.tabs' | translate">
+    @for (tab of tabs(); track tab.kind) {
+      <a
+        class="slim-subnav__tab"
+        role="tab"
+        [routerLink]="tab.link"
+        routerLinkActive="slim-subnav__tab--active"
+        #rla="routerLinkActive"
+        [attr.aria-selected]="rla.isActive"
+        [attr.data-testid]="'dmw-tab-' + tab.kind"
+      >
+        {{ prefix + '.kind_' + tab.kind | translate }}
+        <span class="slim-badge dmw__count">{{ tab.count }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dmw-title">{{ prefix + '.kind_' + kind() | translate }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.lead_' + kind() | translate }}</p>
+    </div>
+    <div class="slim-page__actions dmw__actions">
+      <button type="button" class="slim-btn slim-btn--ghost" data-testid="dmw-export" [disabled]="!loaded()" (click)="exportXlsx()">
+        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M3 12v2h10v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        <span class="slim-btn__label">{{ prefix + '.export' | translate }}</span>
+      </button>
+      @if (!readonly()) {
+        <button type="button" class="slim-btn slim-btn--primary" data-testid="dmw-new" [disabled]="!loaded()" (click)="newRecord()">
+          <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+          <span class="slim-btn__label">{{ prefix + '.new' | translate }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (readonly() && loaded()) {
+    <div class="slim-alert slim-alert--info slim-u-mb-4" role="status" data-testid="dmw-readonly">
+      <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4" />
+      </svg>
+      <div class="slim-alert__body">{{ prefix + '.readonly' | translate }}</div>
+    </div>
+  }
+
+  @if (error() && !pendingDelete()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4" data-testid="dmw-error">
+      <div class="slim-alert__body">{{ error()! | translate }}</div>
+    </div>
+  }
+
+  <div class="dmw__layout">
+    <!-- 1 Tabelle mit Suche, Filtern, Sortierung -->
+    <section class="slim-card slim-card--bleed dmw__table-card" data-testid="dmw-table">
+      <div class="slim-toolbar dmw__toolbar">
+        <div class="slim-search slim-toolbar__grow">
+          <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <input
+            #search
+            class="slim-search__input"
+            type="search"
+            autocomplete="off"
+            data-testid="dmw-search"
+            [placeholder]="prefix + '.search_placeholder' | translate: { kind: (prefix + '.kind_' + kind() | translate) }"
+            [attr.aria-label]="prefix + '.search_placeholder' | translate: { kind: (prefix + '.kind_' + kind() | translate) }"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+          @if (query()) {
+            <button type="button" class="dmw__clear" [attr.aria-label]="prefix + '.clear_search' | translate" (click)="clearQuery(search)">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            </button>
+          }
+        </div>
+        @if (kind() === 'combination') {
+          @for (f of combinationFilters; track f.key) {
+            <label class="slim-filter dmw__filter">
+              <span class="slim-u-sr-only">{{ prefix + '.' + f.label | translate }}</span>
+              <select class="slim-select" [value]="filters()[f.key]" (change)="setFilter(f.key, $any($event.target).value)" [attr.data-testid]="'dmw-filter-' + f.key">
+                <option value="">{{ prefix + '.filter_all' | translate: { col: (prefix + '.' + f.label | translate) } }}</option>
+                @for (o of filterOptions()[f.key]; track o) {
+                  <option [value]="o">{{ o }}</option>
+                }
+              </select>
+            </label>
+          }
+        }
+      </div>
+
+      <div class="slim-table-wrap dmw__table-wrap">
+        <table class="slim-table slim-table--stack slim-table--compact">
+          <thead>
+            <tr>
+              @for (col of columns(); track col.key) {
+                <th [class.slim-table__cell--num]="col.kind === 'number'" [attr.aria-sort]="sortKey() === col.key ? (sortAsc() ? 'ascending' : 'descending') : null">
+                  <button
+                    type="button"
+                    class="dmw__sort"
+                    [class.dmw__sort--active]="sortKey() === col.key"
+                    [attr.title]="prefix + '.sort' | translate: { col: (prefix + '.' + col.label | translate) }"
+                    (click)="sortBy(col.key)"
+                  >
+                    {{ prefix + '.' + col.label | translate }}
+                    <span class="dmw__sort-mark" aria-hidden="true">{{ sortKey() === col.key ? (sortAsc() ? '▴' : '▾') : '' }}</span>
+                  </button>
+                </th>
+              }
+              @if (!readonly()) {
+                <th class="slim-table__cell--actions"><span class="slim-u-sr-only">{{ 'admin.common.actions' | translate }}</span></th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of rows(); track row.record.id) {
+              <tr
+                class="slim-table__row slim-table__row--clickable"
+                [class.slim-table__row--selected]="selected()?.id === row.record.id"
+                [attr.aria-selected]="selected()?.id === row.record.id"
+                tabindex="0"
+                data-testid="dmw-row"
+                [attr.data-name]="row.record.nameDe"
+                (click)="select(row.record)"
+                (keydown.enter)="select(row.record)"
+                (keydown.space)="$event.preventDefault(); select(row.record)"
+              >
+                @for (cell of row.cells; track $index; let i = $index) {
+                  <td
+                    [attr.data-label]="prefix + '.' + columns()[i].label | translate"
+                    [class.slim-table__cell--num]="columns()[i].kind === 'number'"
+                    [class.dmw__num]="columns()[i].kind === 'number'"
+                    [class.dmw__name]="i === 0"
+                  >
+                    @if (columns()[i].kind === 'flag') {
+                      <span class="slim-badge" [class.slim-badge--success]="cell === true">{{ (cell === true ? 'common.yes' : 'common.no') | translate }}</span>
+                    } @else if (cell !== true && cell !== false) {
+                      {{ cell.pre }}<mark class="dmw__mark">{{ cell.match }}</mark>{{ cell.post }}
+                    }
+                  </td>
+                }
+                @if (!readonly()) {
+                  <td class="slim-table__cell--actions">
+                    <button
+                      type="button"
+                      class="slim-btn slim-btn--ghost slim-btn--sm dmw__danger"
+                      [attr.aria-label]="(prefix + '.delete' | translate) + ': ' + row.record.nameDe"
+                      [attr.title]="prefix + '.delete' | translate"
+                      data-testid="dmw-row-delete"
+                      (click)="$event.stopPropagation(); askDelete(row.record)"
+                    >
+                      <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 4h10M6 4V2.5h4V4M5 4l.6 9h4.8L11 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="columns().length + (readonly() ? 0 : 1)" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading() && !loaded()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ prefix + (query() || filters().categoryName || filters().weaponName || filters().caliberName ? '.empty' : '.no_data') | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot" data-testid="dmw-count">
+        {{ prefix + '.count' | translate: { n: rows().length, total: tabs()[kinds.indexOf(kind())].count } }}
+      </div>
+    </section>
+
+    <!-- 2 Detailansicht (Formular); auf dem Telefon als Sheet -->
+    <section class="slim-card dmw__detail" data-testid="dmw-detail">
+      <button type="button" class="dmw__backdrop" [attr.aria-label]="'common.close' | translate" (click)="closeDetail()"></button>
+      <div class="dmw__panel">
+        <div class="dmw__handle"></div>
+        <div class="slim-card__header dmw__detail-head">
+          <div class="dmw__detail-titles">
+            <h2 class="slim-card__title" data-testid="dmw-detail-title">
+              @if (isNew()) {
+                {{ prefix + '.detail_new' | translate: { kind: (prefix + '.kind_' + kind() + '_one' | translate) } }}
+              } @else if (selected(); as s) {
+                {{ s.nameDe }}
+              } @else {
+                {{ prefix + '.kind_' + kind() + '_one' | translate }}
+              }
+            </h2>
+            <p class="slim-card__subtitle">
+              @if (isNew()) {
+                {{ prefix + '.detail_unsaved' | translate }}
+              } @else if (selected()) {
+                {{ prefix + (readonly() ? '.detail_readonly' : '.detail_edit') | translate }}
+              }
+            </p>
+          </div>
+          @if (dirty()) {
+            <span class="slim-badge slim-badge--warning" data-testid="dmw-dirty">{{ prefix + '.unsaved' | translate }}</span>
+          }
+          <button type="button" class="slim-sheet__close dmw__close" [attr.aria-label]="'common.close' | translate" (click)="closeDetail()">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg>
+          </button>
+        </div>
+
+        @if (!detailOpen()) {
+          <div class="slim-card__body">
+            <div class="slim-empty dmw__placeholder">
+              <div class="slim-empty__title">{{ prefix + '.detail_none_title' | translate }}</div>
+              <p class="slim-empty__text">{{ prefix + (readonly() ? '.detail_none_text' : '.detail_none_text_write') | translate }}</p>
+            </div>
+          </div>
+        } @else {
+          <form class="slim-card__body slim-form dmw__form" [formGroup]="form" (ngSubmit)="save()" novalidate data-testid="dmw-form">
+            @if (error()) {
+              <div class="slim-alert slim-alert--danger" data-testid="dmw-form-error"><div class="slim-alert__body">{{ error()! | translate }}</div></div>
+            }
+
+            <!-- Mehrsprachige Bezeichnung (B1 5.22–5.25) -->
+            @for (lang of ['de', 'fr', 'it']; track lang) {
+              <div class="slim-field" [class.slim-field--invalid]="lang === 'de' && invalid('nameDe')">
+                <label class="slim-field__label" [for]="'dmw-name-' + lang">
+                  <span class="dmw__lang">{{ lang.toUpperCase() }}</span> {{ prefix + '.field_name' | translate }}
+                  @if (lang === 'de') { <span class="slim-field__required">*</span> }
+                </label>
+                <input class="slim-input" [id]="'dmw-name-' + lang" [formControlName]="'name' + (lang === 'de' ? 'De' : lang === 'fr' ? 'Fr' : 'It')" [attr.data-testid]="'dmw-name-' + lang" />
+                @if (lang === 'de') { <p class="slim-field__error">{{ prefix + '.err_name' | translate }}</p> }
+              </div>
+            }
+
+            @switch (kind()) {
+              @case ('combination') {
+                <div class="slim-field" [class.slim-field--invalid]="invalid('caliberId')">
+                  <label class="slim-field__label" for="dmw-caliber">{{ prefix + '.field_caliber' | translate }} <span class="slim-field__required">*</span></label>
+                  <select class="slim-select" id="dmw-caliber" formControlName="caliberId" data-testid="dmw-caliber">
+                    <option value="">{{ 'forms.select' | translate }}</option>
+                    @for (c of data().calibers; track c.id) {
+                      <option [value]="c.id">{{ c.nameDe }}{{ c.enabled ? '' : ' (' + ('admin.dm_area.inactive' | translate) + ')' }}</option>
+                    }
+                  </select>
+                  <p class="slim-field__error">{{ prefix + '.err_caliber' | translate }}</p>
+                </div>
+                <div class="slim-field" [class.slim-field--invalid]="invalid('weaponId')">
+                  <label class="slim-field__label" for="dmw-weapon">{{ prefix + '.field_weapon' | translate }} <span class="slim-field__required">*</span></label>
+                  <select class="slim-select" id="dmw-weapon" formControlName="weaponId" data-testid="dmw-weapon">
+                    <option value="">{{ 'forms.select' | translate }}</option>
+                    @for (w of data().weapons; track w.id) {
+                      <option [value]="w.id">{{ w.nameDe }}{{ w.enabled ? '' : ' (' + ('admin.dm_area.inactive' | translate) + ')' }}</option>
+                    }
+                  </select>
+                  <p class="slim-field__error">{{ prefix + '.err_weapon' | translate }}</p>
+                </div>
+                <div class="slim-field">
+                  <label class="slim-field__label" for="dmw-sonarms">{{ prefix + '.field_sonarms' | translate }}</label>
+                  <input class="slim-input" id="dmw-sonarms" formControlName="sonarmsId" list="dmw-sonarms-options" [placeholder]="prefix + '.sonarms_none' | translate" data-testid="dmw-sonarms" />
+                  <datalist id="dmw-sonarms-options">
+                    @for (o of data().sonarmsOptions; track o) { <option [value]="o"></option> }
+                  </datalist>
+                  <p class="slim-field__hint">{{ prefix + '.hint_sonarms' | translate }}</p>
+                </div>
+                <div class="slim-field">
+                  <span class="slim-field__label">{{ prefix + '.field_category' | translate }}</span>
+                  <div class="dmw__ro" data-testid="dmw-derived-category">{{ derivedCategory() || '–' }}</div>
+                  <p class="slim-field__hint">{{ prefix + '.hint_category_derived' | translate }}</p>
+                </div>
+              }
+              @case ('caliber') {
+                <div class="slim-field" [class.slim-field--invalid]="invalid('alnNo')">
+                  <label class="slim-field__label" for="dmw-aln">{{ prefix + '.field_aln' | translate }} <span class="slim-field__required">*</span></label>
+                  <input class="slim-input dmw__num" id="dmw-aln" formControlName="alnNo" data-testid="dmw-aln" />
+                  <p class="slim-field__error">{{ prefix + '.err_aln' | translate }}</p>
+                </div>
+                <div class="slim-field" [class.slim-field--invalid]="invalid('sapNo')">
+                  <label class="slim-field__label" for="dmw-sap">{{ prefix + '.field_sap' | translate }} <span class="slim-field__required">*</span></label>
+                  <input class="slim-input dmw__num" id="dmw-sap" formControlName="sapNo" data-testid="dmw-sap" />
+                  <p class="slim-field__error">{{ prefix + '.err_sap' | translate }}</p>
+                </div>
+                <fieldset class="slim-field dmw__fieldset">
+                  <legend class="slim-field__label">{{ prefix + '.field_unit' | translate }}</legend>
+                  <div class="dmw__choices">
+                    <label class="slim-check"><input class="slim-check__input" type="radio" formControlName="quantityUnit" value="shots" data-testid="dmw-unit-shots" /><span class="slim-check__label">{{ prefix + '.unit_shots' | translate }}</span></label>
+                    <label class="slim-check"><input class="slim-check__input" type="radio" formControlName="quantityUnit" value="kg" data-testid="dmw-unit-kg" /><span class="slim-check__label">{{ prefix + '.unit_kg' | translate }}</span></label>
+                  </div>
+                  <p class="slim-field__hint">{{ prefix + '.hint_unit' | translate }}</p>
+                </fieldset>
+              }
+              @case ('weapon') {
+                <div class="slim-field" [class.slim-field--invalid]="invalid('categoryId')">
+                  <label class="slim-field__label" for="dmw-category">{{ prefix + '.field_category' | translate }} <span class="slim-field__required">*</span></label>
+                  <select class="slim-select" id="dmw-category" formControlName="categoryId" data-testid="dmw-category">
+                    <option value="">{{ 'forms.select' | translate }}</option>
+                    @for (c of data().categories; track c.id) {
+                      <option [value]="c.id">{{ c.nameDe }}{{ c.enabled ? '' : ' (' + ('admin.dm_area.inactive' | translate) + ')' }}</option>
+                    }
+                  </select>
+                  <p class="slim-field__error">{{ prefix + '.err_category' | translate }}</p>
+                </div>
+                <div class="slim-field">
+                  <label class="slim-field__label" for="dmw-annex7">{{ prefix + '.field_annex7' | translate }}</label>
+                  <select class="slim-select" id="dmw-annex7" formControlName="annex7Category" data-testid="dmw-annex7">
+                    <option value="">{{ prefix + '.annex7_none' | translate }}</option>
+                    @for (code of annex7Codes; track code) {
+                      <option [value]="code">{{ code }} · {{ prefix + '.annex7.' + code | translate }}</option>
+                    }
+                  </select>
+                  <p class="slim-field__hint">{{ prefix + '.hint_annex7' | translate }}</p>
+                </div>
+              }
+              @case ('category') {
+                @if (selected(); as s) {
+                  <div class="slim-field">
+                    <span class="slim-field__label">{{ prefix + '.field_code' | translate }}</span>
+                    <div class="dmw__ro dmw__num">{{ $any(s).code }}</div>
+                    <p class="slim-field__hint">{{ prefix + '.hint_code' | translate }}</p>
+                  </div>
+                }
+              }
+            }
+
+            <fieldset class="slim-field dmw__fieldset">
+              <legend class="slim-field__label">{{ prefix + '.field_active' | translate }}</legend>
+              <div class="dmw__choices">
+                <label class="slim-check"><input class="slim-check__input" type="radio" formControlName="enabled" value="yes" data-testid="dmw-active-yes" /><span class="slim-check__label">{{ 'common.yes' | translate }}</span></label>
+                <label class="slim-check"><input class="slim-check__input" type="radio" formControlName="enabled" value="no" data-testid="dmw-active-no" /><span class="slim-check__label">{{ 'common.no' | translate }}</span></label>
+              </div>
+              <p class="slim-field__hint">{{ prefix + '.hint_active' | translate }}</p>
+            </fieldset>
+
+            @if (selectedCombination(); as k) {
+              <div class="slim-field">
+                <span class="slim-field__label">{{ prefix + '.field_usage' | translate }}</span>
+                @if (k.areas.length) {
+                  <table class="slim-table slim-table--compact dmw__usage" data-testid="dmw-usage">
+                    <thead><tr><th>{{ prefix + '.usage_col_no' | translate }}</th><th>{{ prefix + '.usage_col_name' | translate }}</th></tr></thead>
+                    <tbody>
+                      @for (a of k.areas; track a.id) {
+                        <tr><td class="dmw__num">{{ a.coordinationSectionNo }}</td><td>{{ a.name }}</td></tr>
+                      }
+                    </tbody>
+                  </table>
+                } @else {
+                  <div class="dmw__ro slim-text--muted">{{ prefix + '.usage_none' | translate }}</div>
+                }
+                <p class="slim-field__hint">{{ prefix + '.usage_counts' | translate: { usages: k.usageCount, quotas: k.quotaCount, sources: k.sourceCount } }}</p>
+              </div>
+            }
+
+            @if (selected(); as s) {
+              <dl class="slim-kv dmw__meta" data-testid="dmw-meta">
+                <dt class="slim-kv__key">{{ prefix + '.meta_created' | translate }}</dt>
+                <dd class="slim-kv__value">{{ s.createdAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+                <dt class="slim-kv__key">{{ prefix + '.meta_updated' | translate }}</dt>
+                <dd class="slim-kv__value">{{ s.updatedAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+              </dl>
+            }
+
+            @if (!readonly()) {
+              <div class="slim-card__footer dmw__form-actions" data-testid="dmw-form-actions">
+                @if (selected(); as s) {
+                  <button type="button" class="slim-btn slim-btn--ghost dmw__danger" data-testid="dmw-delete" (click)="askDelete(s)">{{ prefix + '.delete' | translate }}</button>
+                }
+                <span class="slim-u-grow"></span>
+                <button type="button" class="slim-btn slim-btn--ghost" data-testid="dmw-cancel" (click)="cancelEdit()">{{ 'common.cancel' | translate }}</button>
+                <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving() || (!dirty() && !isNew())" data-testid="dmw-save">
+                  {{ 'common.save' | translate }}
+                </button>
+              </div>
+            }
+          </form>
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Löschen? / noch verwendet -->
+  @if (pendingDelete(); as record) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dmw-delete-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="cancelDelete()"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title">
+            {{ prefix + (inUse() ? '.in_use_title' : '.delete_title') | translate: { kind: (prefix + '.kind_' + kind() + '_one' | translate) } }}
+          </div>
+        </header>
+        <div class="slim-sheet__body dmw__modal-text">
+          @if (inUse(); as u) {
+            <div class="slim-alert slim-alert--warning" data-testid="dmw-in-use">
+              <div class="slim-alert__body">
+                {{ prefix + '.in_use_text' | translate: { name: record.nameDe, n: u.inUse, where: (prefix + '.in_use_where_' + u.kind | translate) } }}
+              </div>
+            </div>
+          } @else {
+            <b>{{ record.nameDe }}</b> {{ prefix + '.delete_text' | translate }}
+            @if (error()) {
+              <div class="slim-alert slim-alert--danger slim-u-mt-3"><div class="slim-alert__body">{{ error()! | translate }}</div></div>
+            }
+          }
+        </div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="cancelDelete()">{{ 'common.cancel' | translate }}</button>
+          @if (inUse()) {
+            @if (record.enabled) {
+              <button type="button" class="slim-btn slim-btn--primary" [disabled]="saving()" data-testid="dmw-deactivate" (click)="deactivateInstead()">{{ prefix + '.deactivate' | translate }}</button>
+            }
+          } @else {
+            <button type="button" class="slim-btn slim-btn--danger" [disabled]="saving()" data-testid="dmw-delete-confirm" (click)="confirmDelete()">{{ 'common.delete' | translate }}</button>
+          }
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Änderungen verwerfen? -->
+  @if (confirmDiscard()) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dmw-discard">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="resolveDiscard(false)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header"><div class="slim-sheet__title">{{ prefix + '.discard_title' | translate }}</div></header>
+        <div class="slim-sheet__body dmw__modal-text">{{ prefix + '.discard_text' | translate }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" data-testid="dmw-discard-keep" (click)="resolveDiscard(false)">{{ prefix + '.keep_editing' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" data-testid="dmw-discard-confirm" (click)="resolveDiscard(true)">{{ prefix + '.discard' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  @if (toast(); as t) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="dmw-toast">
+        <div class="slim-toast__body">{{ t.key | translate: t.params }}</div>
+        <button type="button" class="slim-toast__action" (click)="dismissToast()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  }
+</div>

@@ -1,4 +1,4 @@
-# CI/CD like ELO (pwa-elo-shot-counting): install → tests + build → deploy.
+# CI/CD like ELO (pwa-elo-shot-counting): install → tests + e2e + build → deploy.
 #
 # Secrets (repository → Settings → Secrets and variables → Actions):
 #   NPM_TOKEN            token of the private @app-galaxy registry (nexus)
@@ -15,6 +15,12 @@ on:
     branches:
       - '**'
   pull_request:
+  workflow_dispatch:
+    inputs:
+      record_visual:
+        description: 'Record the Linux baselines of the visual specs and upload them as artifact'
+        type: boolean
+        default: false
 
 env:
   NODE_VERSION: '24'
@@ -128,6 +134,99 @@ jobs:
           npx nx run-many --target=lint --projects=api,app
           npx nx run api:build && npm run ng-swagger
           npx nx run-many --target=test --projects=api,app --parallel=2
+
+  e2e:
+    needs: install
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Configure npm registry
+        run: |
+          echo "//nexus-repository.revolvit.ch/repository/npm_hosted/:_authToken=${{ secrets.NPM_TOKEN }}" >> .npmrc
+
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ needs.install.outputs.cache-key }}
+          fail-on-cache-miss: false
+
+      - name: Install dependencies (cache miss)
+        run: test -d node_modules/.bin || npm ci --legacy-peer-deps
+
+      # Only chromium: every project in playwright.config.ts uses Desktop Chrome.
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      # The e2e API (tools/serve-api-e2e.js) runs with API_SWAGGER_GENERATE_CLIENT=0,
+      # so the git-ignored @ui-slim/apiClient the app compiles against has to
+      # come from the committed spec here.
+      - name: Generate API client
+        run: npm run ng-swagger
+
+      # `nx e2e app-e2e` is an inferred nx:run-commands target that shells out to
+      # `playwright test` — it is NOT the @nx/playwright executor, so executor
+      # flags such as `--skipInstall` would reach playwright and abort the run.
+      #
+      # playwright.config.ts starts both servers itself (webServer): the API via
+      # tools/serve-api-e2e.js on an in-memory SQLite with the «SLIM Demo» seed,
+      # and `nx serve app`. With CI=true it never reuses an already-running
+      # server. Runs every project (setup, chromium, criterias, visual, actors);
+      # the criteria/actor skeletons are `test.fixme` and the visual spec is
+      # skipped until its baselines are recorded, so they cost nothing yet.
+      - name: Run e2e (Playwright)
+        run: npx nx e2e app-e2e
+        env:
+          CI: 'true'
+
+      # Visual baselines are per platform. The Windows ones are committed from
+      # a developer machine; the Linux ones the pipeline compares against are
+      # recorded here on demand (Actions > run workflow > "record_visual"),
+      # then downloaded from the artifact and committed next to the spec.
+      - name: Record visual baselines (Linux)
+        if: github.event.inputs.record_visual == 'true'
+        run: npx playwright test --config apps/app-e2e/playwright.config.ts --project=visual --update-snapshots
+        env:
+          CI: 'true'
+
+      - name: Upload visual baselines
+        if: github.event.inputs.record_visual == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-baselines-linux
+          path: apps/app-e2e/src/visual/**/*-snapshots/*-linux.png
+          if-no-files-found: error
+          retention-days: 30
+
+      # The html reporter in playwright.config.ts writes next to the config
+      # (apps/app-e2e/playwright-report, traces in test-results); the nx preset
+      # paths under dist/.playwright are kept in case the reporter list changes.
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            apps/app-e2e/playwright-report
+            apps/app-e2e/test-results
+            dist/.playwright/apps/app-e2e
+          if-no-files-found: ignore
+          retention-days: 7
 
   build:
     needs: install

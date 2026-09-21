@@ -1,4 +1,5 @@
-import { criteria, test } from './support/criteria';
+import { ACCOUNTS, criteria, expect, test } from './support/criteria';
+import { LOGIN } from '../support/selectors';
 
 /**
  * Sitemap und Deep Links (B1 5.7, docs/architecture/sitemap.md) — slm 5, 6, 7, Abnahmekriterium K4.
@@ -14,13 +15,27 @@ test.describe('c08-sitemap', () => {
       // Iterate APP_ROUTES (functions with the Geissalp id); expect .slim-page__title visible and no 404 component.
     },
   );
-  test.fixme(
-    "a deep link without session redirects to the login and comes back after signing in",
-    { annotation: criteria({"slm":[5,6]}) },
-    async () => {
-      // Covered partly by login.spec.ts «redirects a visitor without session»; add the returnUrl round trip.
-    },
-  );
+  test.describe('deep link without session', () => {
+    // These drive the login form, so they start signed out (the setup project's storageState would short-circuit them).
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    for (const deepLink of ['/admin/data-management/weapons/caliber', '/admin/test-123']) {
+      test(
+        `${deepLink}: redirects to the login and comes back after signing in`,
+        { annotation: criteria({ slm: [5, 6] }) },
+        async ({ page }) => {
+          await page.goto(deepLink);
+          await expect(page).toHaveURL(`/auth/login?returnUrl=${encodeURIComponent(deepLink)}`);
+          await page.fill(LOGIN.email, ACCOUNTS.admin.email);
+          await page.fill(LOGIN.password, ACCOUNTS.admin.password);
+          await page.click(LOGIN.submit);
+          // The single tenant of the demo continues on its own; the parked deep link wins over /admin.
+          await expect(page).toHaveURL(deepLink, { timeout: 20_000 });
+          await expect(page.locator('app-admin-layout')).toBeVisible();
+        },
+      );
+    }
+  });
   test.fixme(
     "the entry page shows the counts of the tenant",
     { annotation: criteria({"slm":[7]}) },

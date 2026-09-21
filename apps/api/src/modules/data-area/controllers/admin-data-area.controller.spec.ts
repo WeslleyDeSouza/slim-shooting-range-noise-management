@@ -162,6 +162,11 @@ describe('AdminDataAreaController (HTTP)', () => {
     await api.http().post(url(geissalpId, `/quota/${quota.id}/delete`)).expect(404);
     const gone: AreaGeneralDto = (await api.http().get(url(geissalpId)).expect(200)).body;
     expect(gone.quotas.map((q) => q.id)).not.toContain(quota.id);
+
+    // The combination is free again: a new Kontingent for it must not trip over the soft-deleted row.
+    const again = await api.http().post(url(geissalpId, '/quota')).send({ combinationId: free?.id, shotsPerYear: 12.5 }).expect(201);
+    expect(again.body.id).not.toBe(quota.id);
+    await api.http().post(url(geissalpId, `/quota/${again.body.id}/delete`)).expect(204);
   });
 
   it('lets a read-only role look but not touch (B1 8.1.2: Interessent R)', async () => {

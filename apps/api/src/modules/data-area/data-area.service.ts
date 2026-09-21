@@ -144,10 +144,7 @@ export class DataAreaService {
   async createQuota(tenantId: string, areaId: string, dto: AreaQuotaInputDto, userId: string): Promise<AreaQuotaDto> {
     const area = await this.areas.get(tenantId, areaId);
     const combination = await this.combination(tenantId, dto.combinationId);
-    const existing = await this.quotas.findOne({ where: { tenantId, areaId, combinationId: combination.id } });
-    if (existing) {
-      throw new ConflictException(`Für ${combination.nameDe} besteht auf diesem Schiessplatz bereits ein Kontingent`);
-    }
+    await this.assertCombinationFree(tenantId, areaId, combination);
     const saved = await this.quotas.save(
       this.quotas.create({
         tenantId,
@@ -183,8 +180,7 @@ export class DataAreaService {
     const before = { combinationId: quota.combinationId, shotsPerYear: Number(quota.shotsPerYear), basis: quota.basis };
     if (dto.combinationId && dto.combinationId !== quota.combinationId) {
       const combination = await this.combination(tenantId, dto.combinationId);
-      const clash = await this.quotas.findOne({ where: { tenantId, areaId, combinationId: combination.id } });
-      if (clash) throw new ConflictException(`Für ${combination.nameDe} besteht auf diesem Schiessplatz bereits ein Kontingent`);
+      await this.assertCombinationFree(tenantId, areaId, combination);
       quota.combinationId = combination.id;
     }
     if (dto.shotsPerYear !== undefined) quota.shotsPerYear = dto.shotsPerYear;
@@ -206,6 +202,21 @@ export class DataAreaService {
     });
     await this.refreshStatus(tenantId, areaId);
     return this.quotaDto(tenantId, areaId, saved.id);
+  }
+
+  /**
+   * One Kontingent per combination and Schiessplatz (unique index over tenant, area,
+   * combination). A soft-deleted quota still occupies the index, so it is dropped for
+   * good before the combination gets a new one — otherwise «löschen, dann neu erfassen»
+   * would end in a 500.
+   */
+  private async assertCombinationFree(tenantId: string, areaId: string, combination: WeaponCombinationEntity): Promise<void> {
+    const existing = await this.quotas.findOne({ where: { tenantId, areaId, combinationId: combination.id }, withDeleted: true });
+    if (!existing) return;
+    if (!existing.deletedAt) {
+      throw new ConflictException(`Für ${combination.nameDe} besteht auf diesem Schiessplatz bereits ein Kontingent`);
+    }
+    await this.quotas.delete({ id: existing.id, tenantId });
   }
 
   async deleteQuota(tenantId: string, areaId: string, id: string, userId: string): Promise<void> {

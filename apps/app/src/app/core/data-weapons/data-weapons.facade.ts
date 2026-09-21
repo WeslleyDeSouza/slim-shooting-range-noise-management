@@ -16,7 +16,7 @@ import {
   WeaponMasterDataDto,
   WeaponUpdateDto,
 } from '@ui-slim/apiClient';
-import { apiErrorMessage } from '../store/api-error';
+import { apiErrorBody, apiErrorMessage } from '../store/api-error';
 import { SignalStore } from '../store/signal-store';
 
 /** The four lists of Datenverwaltung › Waffen (B1 5.22–5.25), keyed like the API routes. */
@@ -109,7 +109,7 @@ export class DataWeaponsFacade extends SignalStore<DataWeaponsState> {
     }
   }
 
-  async create<K extends WeaponKind>(kind: K, body: WeaponInputByKind[K]): Promise<WeaponRecord | null> {
+  async createRecord<K extends WeaponKind>(kind: K, body: WeaponInputByKind[K]): Promise<WeaponRecord | null> {
     return this.mutate(() => {
       switch (kind) {
         case 'combination':
@@ -124,7 +124,7 @@ export class DataWeaponsFacade extends SignalStore<DataWeaponsState> {
     });
   }
 
-  async update<K extends WeaponKind>(kind: K, id: string, body: WeaponUpdateByKind[K]): Promise<WeaponRecord | null> {
+  async updateRecord<K extends WeaponKind>(kind: K, id: string, body: WeaponUpdateByKind[K]): Promise<WeaponRecord | null> {
     return this.mutate(() => {
       switch (kind) {
         case 'combination':
@@ -140,7 +140,7 @@ export class DataWeaponsFacade extends SignalStore<DataWeaponsState> {
   }
 
   /** Resolves to true when deleted; a 409 «in use» lands in `inUse` (and false), other errors in `error`. */
-  async delete(kind: WeaponKind, id: string): Promise<boolean> {
+  async deleteRecord(kind: WeaponKind, id: string): Promise<boolean> {
     this.patch({ saving: true, error: null, inUse: null });
     try {
       switch (kind) {
@@ -160,8 +160,8 @@ export class DataWeaponsFacade extends SignalStore<DataWeaponsState> {
       this.patch({ saving: false });
       return true;
     } catch (error) {
-      const body = (error as { status?: number; error?: { kind?: WeaponKind; inUse?: number } })?.error;
-      if ((error as { status?: number })?.status === 409 && body?.inUse !== undefined) {
+      const body = apiErrorBody(error) as { kind?: WeaponKind; inUse?: number } | string | null;
+      if ((error as { status?: number })?.status === 409 && body && typeof body === 'object' && body.inUse !== undefined) {
         this.patch({ saving: false, inUse: { kind: body.kind ?? kind, inUse: body.inUse } });
       } else {
         this.patch({ saving: false, error: apiErrorMessage(error) });

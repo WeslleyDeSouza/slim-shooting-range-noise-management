@@ -1,0 +1,196 @@
+<div class="slim-page dce">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dce-title">{{ prefix + '.export_title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.export_subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="dce__layout">
+    <!-- 1 Export Berechnungen-Tabelle (B1 Abbildung 31) -->
+    <section class="slim-card slim-card--bleed dce__card" data-testid="dce-states">
+      <div class="slim-card__header dce__head">
+        <h2 class="slim-card__title">{{ prefix + '.states_export_title' | translate }}</h2>
+        <span class="slim-badge" data-testid="dce-states-selected">{{ prefix + '.selected_count' | translate: { n: selectedStates().length } }}</span>
+      </div>
+      <div class="slim-table-wrap dce__table-wrap">
+        <table class="slim-table slim-table--compact">
+          <thead>
+            <tr>
+              <th class="dce__check-col">
+                <label class="slim-check dce__check">
+                  <input class="slim-check__input" type="checkbox" [checked]="allStatesSelected()" [disabled]="!states().length" [attr.aria-label]="prefix + (allStatesSelected() ? '.select_none' : '.select_all') | translate" data-testid="dce-select-all" (change)="toggleAllStates()" />
+                  <span class="slim-check__label slim-u-sr-only">{{ prefix + '.col_select' | translate }}</span>
+                </label>
+              </th>
+              <th>{{ prefix + '.col_state_id' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
+              <th>{{ prefix + '.col_state_name' | translate }}</th>
+              <th>{{ prefix + '.col_supplier' | translate }}</th>
+              <th>{{ prefix + '.col_delivered' | translate }}</th>
+              <th>{{ prefix + '.col_current' | translate }}</th>
+              <th>{{ prefix + '.col_mgdm' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of states(); track s.id) {
+              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="isSelected(s.id)" data-testid="dce-state" [attr.data-name]="s.name" (click)="toggleState(s.id)">
+                <td class="dce__check-col">
+                  <label class="slim-check dce__check" (click)="$event.stopPropagation()">
+                    <input class="slim-check__input" type="checkbox" [checked]="isSelected(s.id)" [attr.aria-label]="s.name" data-testid="dce-state-check" (change)="toggleState(s.id)" />
+                    <span class="slim-check__label slim-u-sr-only">{{ s.name }}</span>
+                  </label>
+                </td>
+                <td class="dce__num">{{ s.externalId ?? '—' }}</td>
+                <td class="slim-table__cell--num dce__num">{{ s.referenceYear }}</td>
+                <td>
+                  <span class="dce__strong">{{ s.name }}</span>
+                  @if (!s.hasModel) { <span class="slim-badge dce__badge">{{ prefix + '.state_no_model' | translate }}</span> }
+                </td>
+                <td>{{ s.delivery.supplier || '—' }}</td>
+                <td class="dce__num">{{ s.delivery.deliveredAt | date: 'dd.MM.yyyy' }}</td>
+                <td>{{ (s.isCurrent ? 'common.yes' : 'common.no') | translate }}</td>
+                <td>{{ (s.isMgdm ? 'common.yes' : 'common.no') | translate }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="8" class="slim-table__cell--wrap"><div class="slim-empty">@if (loading()) { <span class="slim-spinner"></span> } @else { <div class="slim-empty__text">{{ prefix + '.states_empty' | translate }}</div> }</div></td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot dce__foot">
+        <span class="slim-text--muted slim-text--xs dce__foot-hint">{{ prefix + '.export_geodb_hint' | translate }}</span>
+        <span class="slim-table-foot__grow"></span>
+        @if (!readonly()) {
+          <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dce-new-state" (click)="openStateDialog()">
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            <span class="slim-btn__label">{{ prefix + '.new_state' | translate }}</span>
+          </button>
+          <button type="button" class="slim-btn slim-btn--primary slim-btn--sm" [disabled]="!selectedStates().length" data-testid="dce-export-states" (click)="exportStates()">
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M3 12v2h10v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <span class="slim-btn__label">{{ prefix + '.export_geodb' | translate }}</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    <!-- 2 Export Schusszahlen-Tabelle -->
+    <section class="slim-card slim-card--bleed dce__card" data-testid="dce-years">
+      <div class="slim-card__header dce__head">
+        <h2 class="slim-card__title">{{ prefix + '.shots_export_title' | translate }}</h2>
+        <span class="slim-badge" data-testid="dce-years-selected">{{ prefix + '.selected_count' | translate: { n: selectedYears().length } }}</span>
+      </div>
+      <div class="slim-table-wrap dce__table-wrap">
+        <table class="slim-table slim-table--compact">
+          <thead>
+            <tr>
+              <th class="dce__check-col"><span class="slim-u-sr-only">{{ prefix + '.col_select' | translate }}</span></th>
+              <th>{{ prefix + '.col_year' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_usages' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_shots' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_imported' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (y of years(); track y.year) {
+              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="selectedYears().includes(y.year)" data-testid="dce-year" [attr.data-year]="y.year" (click)="toggleYear(y.year)">
+                <td class="dce__check-col">
+                  <label class="slim-check dce__check" (click)="$event.stopPropagation()">
+                    <input class="slim-check__input" type="checkbox" [checked]="selectedYears().includes(y.year)" [attr.aria-label]="y.year" data-testid="dce-year-check" (change)="toggleYear(y.year)" />
+                    <span class="slim-check__label slim-u-sr-only">{{ y.year }}</span>
+                  </label>
+                </td>
+                <td class="dce__strong dce__num">{{ y.year }}</td>
+                <td class="slim-table__cell--num dce__num">{{ y.usageCount }}</td>
+                <td class="slim-table__cell--num dce__num">{{ y.shots | number: '1.0-3' }}</td>
+                <td class="slim-table__cell--num dce__num">{{ y.importedCount }}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.years_empty' | translate }}</div></div></td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot dce__foot">
+        <span class="slim-text--muted slim-text--xs dce__foot-hint">{{ prefix + '.export_shots_hint' | translate }}</span>
+        <span class="slim-table-foot__grow"></span>
+        @if (!readonly()) {
+          <button type="button" class="slim-btn slim-btn--primary slim-btn--sm" [disabled]="!selectedYears().length" data-testid="dce-export-shots" (click)="exportShots()">
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M3 12v2h10v-2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            <span class="slim-btn__label">{{ prefix + '.export_shots' | translate }}</span>
+          </button>
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Neuen Berechnungszustand anlegen -->
+  @if (stateDialog()) {
+    <div class="slim-sheet slim-sheet--open" role="dialog" aria-modal="true" aria-labelledby="dce-state-title" data-testid="dce-state-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="stateDialog.set(false)"></button>
+      <div class="slim-sheet__panel">
+        <div class="slim-sheet__handle"></div>
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title" id="dce-state-title">{{ prefix + '.new_state_title' | translate }}</div>
+          <button type="button" class="slim-sheet__close" [attr.aria-label]="'common.close' | translate" (click)="stateDialog.set(false)">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg>
+          </button>
+        </header>
+        <form class="slim-sheet__body slim-form" [formGroup]="stateForm" (ngSubmit)="createState()" novalidate>
+          <p class="slim-text--muted slim-text--sm">{{ prefix + '.new_state_hint' | translate }}</p>
+          <div class="slim-field">
+            <label class="slim-field__label" for="dce-delivery">{{ prefix + '.field_delivery' | translate }} <span class="slim-field__required">*</span></label>
+            <select class="slim-select" id="dce-delivery" formControlName="calculationId" data-testid="dce-state-delivery">
+              @for (d of deliveries(); track d.id) { <option [value]="d.id">{{ d.name }}</option> }
+              <option [value]="newDeliveryValue">{{ prefix + '.delivery_new' | translate }}</option>
+            </select>
+          </div>
+          @if (stateForm.controls.calculationId.value === newDeliveryValue) {
+            <div class="slim-form__row">
+              <div class="slim-field" [class.slim-field--invalid]="stateInvalid('deliveryName')">
+                <label class="slim-field__label" for="dce-delivery-name">{{ prefix + '.field_delivery_name' | translate }} <span class="slim-field__required">*</span></label>
+                <input class="slim-input" id="dce-delivery-name" formControlName="deliveryName" data-testid="dce-state-delivery-name" />
+                <p class="slim-field__error">{{ prefix + '.err_delivery' | translate }}</p>
+              </div>
+              <div class="slim-field">
+                <label class="slim-field__label" for="dce-delivered">{{ prefix + '.field_delivered' | translate }}</label>
+                <input class="slim-input" id="dce-delivered" type="date" formControlName="deliveredAt" />
+              </div>
+            </div>
+          }
+          <div class="slim-field" [class.slim-field--invalid]="stateInvalid('name')">
+            <label class="slim-field__label" for="dce-state-name">{{ prefix + '.field_state_name' | translate }} <span class="slim-field__required">*</span></label>
+            <input class="slim-input" id="dce-state-name" formControlName="name" data-testid="dce-state-name" />
+            <p class="slim-field__error">{{ prefix + '.err_state_name' | translate }}</p>
+          </div>
+          <div class="slim-form__row">
+            <div class="slim-field" [class.slim-field--invalid]="stateInvalid('referenceYear')">
+              <label class="slim-field__label" for="dce-ref-year">{{ prefix + '.field_ref_year' | translate }} <span class="slim-field__required">*</span></label>
+              <input class="slim-input" id="dce-ref-year" type="number" min="1900" formControlName="referenceYear" data-testid="dce-state-year" />
+              <p class="slim-field__error">{{ prefix + '.err_ref_year' | translate }}</p>
+            </div>
+            <div class="slim-field">
+              <label class="slim-field__label" for="dce-build-year">{{ prefix + '.field_build_year' | translate }}</label>
+              <select class="slim-select" id="dce-build-year" formControlName="buildYearClass">
+                @for (o of buildYearOptions; track o) { <option [value]="o">{{ 'admin.dm_area_general.options.build_year.' + o | translate }}</option> }
+              </select>
+            </div>
+          </div>
+          <footer class="slim-sheet__footer">
+            <button type="button" class="slim-btn" (click)="stateDialog.set(false)">{{ 'common.cancel' | translate }}</button>
+            <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving()" data-testid="dce-state-save">{{ prefix + '.new_state_create' | translate }}</button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+
+  @if (toast(); as t) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="dce-toast">
+        <div class="slim-toast__body">{{ t.key | translate: t.params }}</div>
+        <button type="button" class="slim-toast__action" (click)="dismissToast()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  }
+</div>

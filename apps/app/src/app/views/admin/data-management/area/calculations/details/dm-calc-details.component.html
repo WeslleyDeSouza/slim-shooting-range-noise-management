@@ -1,0 +1,191 @@
+<div class="slim-page dcd">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dcd-title">{{ prefix + '.details_title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.details_subtitle' | translate }}</p>
+    </div>
+    <div class="slim-page__actions">
+      <label class="slim-filter dcd__state">
+        <span>{{ prefix + '.field_state' | translate }}</span>
+        <!-- `[selected]` per option, not `[value]` on the select: the options of the @for are created after the select's bindings run. -->
+        <select class="slim-select" [disabled]="!states().length" data-testid="dcd-state" (change)="selectState($any($event.target).value)">
+          @for (s of states(); track s.id) {
+            <option [value]="s.id" [selected]="s.id === selectedStateId()">{{ s.delivery.name }} ({{ s.delivery.deliveredAt | date: 'dd.MM.yyyy' }}), {{ s.name }}@if (s.externalId) {, {{ s.externalId }}}</option>
+          }
+        </select>
+      </label>
+    </div>
+  </div>
+
+  @if (!states().length && !loading()) {
+    <div class="slim-card"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.states_empty' | translate }}</div></div></div>
+  } @else {
+    <div class="dcd__layout">
+      <!-- 1 Stellungsräume -->
+      <section class="slim-card slim-card--bleed dcd__rooms" data-testid="dcd-rooms">
+        <div class="slim-card__header"><h2 class="slim-card__title">{{ prefix + '.rooms_title' | translate }}</h2></div>
+        <div class="slim-toolbar">
+          <div class="slim-search slim-toolbar__grow">
+            <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+              <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+            <input class="slim-search__input" type="search" autocomplete="off" data-testid="dcd-room-search" [placeholder]="prefix + '.rooms_search' | translate" [attr.aria-label]="prefix + '.rooms_search' | translate" [value]="roomQuery()" (input)="roomQuery.set($any($event.target).value)" />
+          </div>
+        </div>
+        <div class="slim-table-wrap dcd__table-wrap">
+          <table class="slim-table slim-table--compact">
+            <thead>
+              <tr>
+                <th>{{ prefix + '.col_room_no' | translate }}</th>
+                <th>{{ prefix + '.col_room_name' | translate }}</th>
+                <th class="slim-table__cell--num">{{ prefix + '.col_sources' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of filteredRooms(); track r.id) {
+                <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="selectedRoomId() === r.id" [class.dcd__room--empty]="!r.sourceCount" tabindex="0" data-testid="dcd-room" [attr.data-name]="r.name" (click)="selectRoom(r)" (keydown.enter)="selectRoom(r)">
+                  <td class="dcd__num">{{ r.coordinationSectionNo ?? '—' }}</td>
+                  <td>{{ r.name }}</td>
+                  <td class="slim-table__cell--num dcd__num">{{ r.sourceCount }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="slim-table__cell--wrap"><div class="slim-empty">@if (loading()) { <span class="slim-spinner"></span> } @else { <div class="slim-empty__text">{{ prefix + (rooms().length ? '.rooms_no_match' : '.rooms_empty') | translate }}</div> }</div></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 2 Detailbereich: WLR DAY / WLR NIGHT / Betriebsdaten Anhang 9 / Anhang 7 -->
+      <section class="slim-card slim-card--bleed dcd__detail" data-testid="dcd-detail">
+        <div class="slim-card__header">
+          <h2 class="slim-card__title" data-testid="dcd-detail-title">
+            @if (selectedRoom(); as room) { {{ prefix + '.detail_title' | translate: { room: roomLabel(room) } }} } @else { {{ prefix + '.detail_none' | translate }} }
+          </h2>
+        </div>
+        <nav class="slim-tabs dcd__tabs" role="tablist">
+          @for (t of tabs; track t) {
+            <button type="button" class="slim-tabs__tab" role="tab" [class.slim-tabs__tab--active]="tab() === t" [attr.aria-selected]="tab() === t" [attr.data-testid]="'dcd-tab-' + t" (click)="tab.set(t)">
+              {{ prefix + '.tab_' + t | translate }} <span class="slim-badge dcd__count">{{ counts()[t] }}</span>
+            </button>
+          }
+        </nav>
+
+        <div class="slim-table-wrap dcd__table-wrap">
+          @switch (tab()) {
+            @case ('wlr_day') {
+              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: rows().wlrDay }" />
+            }
+            @case ('wlr_night') {
+              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: rows().wlrNight }" />
+            }
+            @case ('a9') {
+              <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-a9">
+                <thead>
+                  <tr>
+                    <th>{{ prefix + '.col_source' | translate }}</th>
+                    <th>{{ prefix + '.col_weapon' | translate }}</th>
+                    <th>{{ prefix + '.col_combination' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_a9_m1' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_a9_m2' | translate }}</th>
+                    <th>{{ prefix + '.col_estimated' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
+                    <th>{{ prefix + '.col_remark' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (r of rows().a9; track r.sourceId) {
+                    <tr data-testid="dcd-row">
+                      <td class="dcd__num">{{ r.sourceId }}</td>
+                      <td>{{ r.weaponSystem }}</td>
+                      <td [class.slim-text--muted]="!r.combinationName">{{ r.combinationName ?? ('admin.dm_calc.no_combination' | translate) }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.shotsInside | number: '1.0-0' }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.shotsOutside | number: '1.0-0' }}</td>
+                      <td>{{ (r.estimated ? 'common.yes' : 'common.no') | translate }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.year ?? '—' }}</td>
+                      <td [class.slim-text--muted]="!r.remark">{{ r.remark ?? '—' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="8" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+                  }
+                </tbody>
+              </table>
+            }
+            @case ('a7') {
+              <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-a7">
+                <thead>
+                  <tr>
+                    <th>{{ prefix + '.col_source' | translate }}</th>
+                    <th>{{ prefix + '.col_weapon' | translate }}</th>
+                    <th>{{ prefix + '.col_category' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_half_days_work' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_half_days_sunday' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_shots_work' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_shots_sunday' | translate }}</th>
+                    <th>{{ prefix + '.col_estimated' | translate }}</th>
+                    <th class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (r of rows().a7; track r.sourceId) {
+                    <tr data-testid="dcd-row">
+                      <td class="dcd__num">{{ r.sourceId }}</td>
+                      <td>{{ r.weaponSystem }}</td>
+                      <td>{{ r.category }} · {{ 'admin.dm_weapons.annex7.' + r.category | translate }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.halfDaysWork | number: '1.0-1' }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.halfDaysSunday | number: '1.0-1' }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.shotsWork | number: '1.0-0' }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.shotsSunday === null ? '—' : (r.shotsSunday | number: '1.0-0') }}</td>
+                      <td>{{ (r.estimated ? 'common.yes' : 'common.no') | translate }}</td>
+                      <td class="slim-table__cell--num dcd__num">{{ r.year ?? '—' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="9" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+                  }
+                </tbody>
+              </table>
+            }
+          }
+        </div>
+      </section>
+    </div>
+  }
+
+  <ng-template #wlrTable let-rows="rows">
+    <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-wlr">
+      <thead>
+        <tr>
+          <th>{{ prefix + '.col_point' | translate }}</th>
+          <th>{{ prefix + '.col_building' | translate }}</th>
+          <th>{{ prefix + '.col_source' | translate }}</th>
+          <th>{{ prefix + '.col_weapon' | translate }}</th>
+          <th class="slim-table__cell--num">{{ prefix + '.col_elevation' | translate }}</th>
+          <th class="slim-table__cell--num">LAE(MK)</th>
+          <th class="slim-table__cell--num">LAE(GK)</th>
+          <th class="slim-table__cell--num">LAE(Det)</th>
+          <th class="slim-table__cell--num">LAE</th>
+          <th class="slim-table__cell--num">LAFmax</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rows; track r.point + '|' + r.sourceId) {
+          <tr data-testid="dcd-row">
+            <td class="dcd__strong">{{ r.point }}</td>
+            <td class="dcd__num" [class.slim-text--muted]="!r.egid">{{ r.egid ?? '—' }}</td>
+            <td class="dcd__num">{{ r.sourceId }}</td>
+            <td>{{ r.weaponSystem }}</td>
+            <td class="slim-table__cell--num dcd__num">{{ r.elevation === null ? '—' : (r.elevation | number: '1.0-2') }}</td>
+            <td class="slim-table__cell--num dcd__num">{{ r.laeMk === null ? '—' : (r.laeMk | number: '1.1-1') }}</td>
+            <td class="slim-table__cell--num dcd__num">{{ r.laeGk === null ? '—' : (r.laeGk | number: '1.1-1') }}</td>
+            <td class="slim-table__cell--num dcd__num">{{ r.laeDet === null ? '—' : (r.laeDet | number: '1.1-1') }}</td>
+            <td class="slim-table__cell--num dcd__num dcd__strong">{{ r.lae | number: '1.1-1' }}</td>
+            <td class="slim-table__cell--num dcd__num">{{ r.lafmax | number: '1.1-1' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="10" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+        }
+      </tbody>
+    </table>
+  </ng-template>
+</div>

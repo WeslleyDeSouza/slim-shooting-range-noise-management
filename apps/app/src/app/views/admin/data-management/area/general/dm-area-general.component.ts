@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, untracked } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
@@ -81,6 +81,18 @@ export class DmAreaGeneralComponent extends ComponentBase {
       { id: 'master-data', key: 'menu.area_master_data', link: APP_ROUTES.admin.dataManagement.area.masterDataOf(id), icon: ICON.db },
     ];
   });
+
+  constructor() {
+    super();
+    // The switcher keeps this component and only changes `:areaId`: load the
+    // other Schiessplatz (the first value is handled by getData()).
+    effect(() => {
+      const id = this.areaId();
+      untracked(() => {
+        if (id && this.facade.areaId() && this.facade.areaId() !== id) void this.facade.load(id);
+      });
+    });
+  }
 
   /** ComponentBase: on init and on every DATA_RELOAD (tenant switch, saves of the tabs). */
   override getData(): void {

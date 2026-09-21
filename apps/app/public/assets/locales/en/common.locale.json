@@ -40,7 +40,8 @@
     "app_config": "App configuration",
     "ad": "Administration",
     "settings": "Settings",
-    "areas_all": "All shooting ranges"
+    "areas_all": "All shooting ranges",
+    "weapon_combination": "Weapon/caliber"
   },
   "common": {
     "save": "Save",

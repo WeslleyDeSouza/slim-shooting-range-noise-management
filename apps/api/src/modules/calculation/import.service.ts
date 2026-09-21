@@ -9,6 +9,7 @@ import {
 import {
   ImportPlantPartObjectDto,
   ImportReportDto,
+  ImportValidationDto,
   StateImportDto,
 } from './dto/import.dto';
 import {
@@ -40,6 +41,15 @@ import {
  * 5.19: «mindestens eine Warnung … und der Import abgebrochen»). Nothing is
  * written in that case.
  */
+/** What the staging of an import hands to the write step. */
+interface Staging {
+  area: AreaEntity;
+  findings: string[];
+  warnings: string[];
+  partRoom: Map<string, AreaRoomEntity>;
+  sourceCombination: Map<string, WeaponCombinationEntity | null>;
+}
+
 export class ImportAbortedException extends BadRequestException {
   constructor(readonly findings: string[]) {
     super({ message: 'Import abgebrochen', findings });
@@ -65,7 +75,38 @@ export class ImportAbortedException extends BadRequestException {
 export class ImportService {
   constructor(private readonly dataSource: DataSource) {}
 
+  /**
+   * 5.19 «Validieren»: the staging checks of `importState` without the
+   * transaction. Findings abort an import, warnings are written with it.
+   */
+  async validateState(tenantId: string, areaId: string, dto: StateImportDto): Promise<ImportValidationDto> {
+    const { findings, warnings } = await this.stage(tenantId, areaId, dto);
+    return {
+      valid: findings.length === 0,
+      findings,
+      warnings,
+      counts: {
+        plantParts: dto.plantParts.length,
+        sources: dto.sources.length,
+        buildings: dto.buildings?.length ?? 0,
+        immissionPoints: dto.immissionPoints.length,
+        wlr: dto.wlr.length,
+        otherObjects:
+          (dto.obstacles?.length ?? 0) + (dto.highScreens?.length ?? 0) + (dto.shootingHouses?.length ?? 0) +
+          (dto.measuresPoint?.length ?? 0) + (dto.measuresArea?.length ?? 0) + (dto.measuresOperational?.length ?? 0) +
+          (dto.measuresSsf?.length ?? 0) + (dto.isophones?.length ?? 0) + (dto.affectedAnalysis ? 1 : 0),
+      },
+    };
+  }
+
   async importState(tenantId: string, areaId: string, dto: StateImportDto): Promise<ImportReportDto> {
+    const { area, findings, warnings, partRoom, sourceCombination } = await this.stage(tenantId, areaId, dto);
+    if (findings.length) throw new ImportAbortedException(findings);
+    return this.write(tenantId, area, dto, warnings, partRoom, sourceCombination);
+  }
+
+  /** Staging: permanent references, duplicates, WLR completeness, state identity. Reads only. */
+  private async stage(tenantId: string, areaId: string, dto: StateImportDto): Promise<Staging> {
     const area = await this.dataSource.getRepository(AreaEntity).findOne({ where: { tenantId, id: areaId } });
     if (!area) throw new NotFoundException(`Area ${areaId} not found`);
 
@@ -144,9 +185,19 @@ export class ImportService {
       findings.push(`Zustand «${dto.state.name}» existiert bereits auf diesem Schiessplatz`);
     }
 
-    if (findings.length) throw new ImportAbortedException(findings);
+    return { area, findings, warnings, partRoom, sourceCombination };
+  }
 
-    // --- write everything in one transaction ---------------------------------
+  /** Write everything in one transaction (after a clean staging). */
+  private write(
+    tenantId: string,
+    area: AreaEntity,
+    dto: StateImportDto,
+    warnings: string[],
+    partRoom: Map<string, AreaRoomEntity>,
+    sourceCombination: Map<string, WeaponCombinationEntity | null>,
+  ): Promise<ImportReportDto> {
+    const areaId = area.id;
     return this.dataSource.transaction(async (em) => {
       const calcRepo = em.getRepository(ImmissionCalculationEntity);
       let calculation = await calcRepo.findOne({ where: { tenantId, areaId, name: dto.calculation.name } });
@@ -158,6 +209,8 @@ export class ImportService {
             name: dto.calculation.name,
             supplier: dto.calculation.supplier ?? '',
             deliveredAt: dto.calculation.deliveredAt,
+            description: dto.calculation.description ?? null,
+            fileName: dto.calculation.fileName ?? null,
             fgdbStateMpv: dto.calculation.fgdbStateMpv ?? null,
             fgdbStateIst: dto.calculation.fgdbStateIst ?? null,
             mpvMeasures: dto.calculation.mpvMeasures ?? null,

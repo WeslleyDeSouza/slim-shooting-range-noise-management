@@ -1,0 +1,308 @@
+<div class="slim-page dmm">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dmm-title">{{ prefix + '.master_title' | translate: { area: titleArea() } }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.master_subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="dmm__layout">
+    <!-- 1 Detailansicht Schiessplatzverwaltung (B1 5.16, Abbildung 27) -->
+    <form class="slim-card dmm__card" [formGroup]="form" (ngSubmit)="save()" novalidate data-testid="dmm-form">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_general' | translate }}</h2>
+        @if (dirty()) {
+          <span class="slim-badge slim-badge--warning" data-testid="dmm-dirty">{{ prefix + '.unsaved' | translate }}</span>
+        }
+      </div>
+      <div class="slim-card__body slim-form">
+        <div class="slim-field" [class.slim-field--invalid]="invalid('name')">
+          <label class="slim-field__label" for="dmm-name">
+            {{ prefix + '.fields.name' | translate }} <span class="slim-field__required">*</span>
+          </label>
+          <input class="slim-input" id="dmm-name" formControlName="name" data-testid="dmm-name" />
+          <p class="slim-field__error">{{ prefix + '.errors.name' | translate }}</p>
+        </div>
+
+        <div class="slim-field" [class.slim-field--invalid]="invalid('coordinationSectionNo')">
+          <label class="slim-field__label" for="dmm-no">
+            {{ prefix + '.fields.coordination_no' | translate }} <span class="slim-field__required">*</span>
+          </label>
+          <input class="slim-input dmm__mono" id="dmm-no" formControlName="coordinationSectionNo" data-testid="dmm-no" />
+          <p class="slim-field__hint">{{ prefix + '.hints.coordination_no' | translate }}</p>
+          <p class="slim-field__error">{{ prefix + '.errors.coordination_no' | translate }}</p>
+        </div>
+
+        <div class="slim-field">
+          <label class="slim-field__label" for="dmm-sp">{{ prefix + '.fields.sectoral_plan_no' | translate }}</label>
+          <input class="slim-input dmm__mono" id="dmm-sp" formControlName="sectoralPlanNo" [placeholder]="prefix + '.hints.sectoral_plan_no' | translate" data-testid="dmm-sp" />
+        </div>
+
+        <fieldset class="slim-field dmm__fieldset">
+          <legend class="slim-field__label">{{ prefix + '.fields.active' | translate }}</legend>
+          <div class="dmm__choices">
+            <label class="slim-check">
+              <input class="slim-check__input" type="radio" formControlName="enabled" value="yes" data-testid="dmm-active-yes" />
+              <span class="slim-check__label">{{ 'common.yes' | translate }}</span>
+            </label>
+            <label class="slim-check">
+              <input class="slim-check__input" type="radio" formControlName="enabled" value="no" data-testid="dmm-active-no" />
+              <span class="slim-check__label">{{ 'common.no' | translate }}</span>
+            </label>
+          </div>
+          <p class="slim-field__hint">{{ prefix + '.hints.active' | translate }}</p>
+        </fieldset>
+
+        <fieldset class="slim-field dmm__fieldset">
+          <legend class="slim-field__label">{{ prefix + '.fields.calculation_kind' | translate }}</legend>
+          <label class="slim-check">
+            <input class="slim-check__input" type="checkbox" formControlName="annex7Overall" data-testid="dmm-annex7" />
+            <span class="slim-check__label">{{ prefix + '.annex7_overall' | translate }}</span>
+          </label>
+          <p class="slim-field__hint">{{ prefix + '.hints.annex7' | translate }}</p>
+        </fieldset>
+
+        @for (field of selectFields; track field.group) {
+          @if (field.section === 'states' && field.group === 'spm_state') {
+            <div class="slim-form__legend dmm__group">{{ prefix + '.group_states' | translate }}</div>
+          }
+          <div class="slim-field">
+            <label class="slim-field__label" [for]="'dmm-' + field.group">{{ prefix + '.fields.' + field.group | translate }}</label>
+            <select class="slim-select" [id]="'dmm-' + field.group" [formControlName]="field.control" [attr.data-testid]="'dmm-' + field.group">
+              <option value="">{{ prefix + '.not_set' | translate }}</option>
+              @for (code of options[field.group]; track code) {
+                <option [value]="code">{{ prefix + '.options.' + field.group + '.' + code | translate }}</option>
+              }
+            </select>
+          </div>
+        }
+      </div>
+
+      @if (!readonly()) {
+        <div class="slim-card__footer dmm__actions" data-testid="dmm-actions">
+          <span class="slim-u-grow"></span>
+          <button type="button" class="slim-btn slim-btn--ghost" data-testid="dmm-cancel" (click)="cancel()">
+            {{ 'common.cancel' | translate }}
+          </button>
+          <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving() || !dirty()" data-testid="dmm-save">
+            {{ 'common.save' | translate }}
+          </button>
+        </div>
+      }
+    </form>
+
+    <!-- 2 Kontingente gemäss Plangenehmigung (B1 5.16) -->
+    <section class="slim-card dmm__card dmm__quotas" data-testid="dmm-quotas">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.section_quotas' | translate }}</h2>
+        @if (!readonly()) {
+          <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dmm-quota-new" (click)="openQuota(null)">
+            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            <span class="slim-btn__label">{{ prefix + '.quota_new' | translate }}</span>
+          </button>
+        }
+      </div>
+      <div class="slim-card__body">
+        <div class="slim-field" [formGroup]="form">
+          <label class="slim-field__label" for="dmm-pg">{{ prefix + '.fields.planning_approval' | translate }}</label>
+          <input class="slim-input" id="dmm-pg" formControlName="planningApproval" [placeholder]="prefix + '.hints.planning_approval' | translate" data-testid="dmm-pg" />
+          <p class="slim-field__hint">{{ prefix + '.hints.planning_approval_basis' | translate }}</p>
+        </div>
+
+        @if (missingQuotas().length && !readonly()) {
+          <div class="slim-alert slim-alert--warning dmm__missing" data-testid="dmm-quota-missing">
+            <div class="slim-alert__body">
+              <div class="slim-alert__title">{{ prefix + '.quota_missing_title' | translate: { n: missingQuotas().length } }}</div>
+              {{ prefix + '.quota_missing_text' | translate }}
+              <div class="slim-chips dmm__missing-chips">
+                @for (c of missingQuotas(); track c.id) {
+                  <button type="button" class="slim-chip" [attr.title]="prefix + '.quota_missing_add' | translate" (click)="openQuota(null, c.id)">
+                    {{ c.name }}
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="slim-table-wrap dmm__table-wrap">
+        <table class="slim-table slim-table--stack slim-table--compact">
+          <thead>
+            <tr>
+              <th>{{ prefix + '.col_weapon' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_max' | translate }}</th>
+              <th>{{ prefix + '.col_basis' | translate }}</th>
+              @if (!readonly()) {
+                <th class="slim-table__cell--actions">{{ 'admin.common.actions' | translate }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (q of quotas(); track q.id) {
+              <tr class="slim-table__row" data-testid="dmm-quota-row" [attr.data-combination]="q.name">
+                <td [attr.data-label]="prefix + '.col_weapon' | translate">
+                  <span class="dmm__weapon">{{ q.name }}</span>
+                  @if (!q.assigned) {
+                    <span class="slim-badge slim-badge--warning dmm__unassigned" [attr.title]="prefix + '.quota_unassigned_hint' | translate">
+                      {{ prefix + '.quota_unassigned' | translate }}
+                    </span>
+                  }
+                </td>
+                <td [attr.data-label]="prefix + '.col_max' | translate" class="slim-table__cell--num dmm__num">
+                  <b>{{ q.shotsPerYear | number: (q.quantityUnit === 'kg' ? '1.0-3' : '1.0-0') }}</b>
+                  <span class="slim-text--muted slim-text--xs"> {{ prefix + (q.quantityUnit === 'kg' ? '.unit_kg' : '.unit_shots') | translate }}</span>
+                </td>
+                <td [attr.data-label]="prefix + '.col_basis' | translate" [class.slim-text--muted]="!q.basis">
+                  {{ q.basis ?? '—' }}
+                </td>
+                @if (!readonly()) {
+                  <td [attr.data-label]="'admin.common.actions' | translate" class="slim-table__cell--actions">
+                    <div class="slim-row-actions">
+                      <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" [attr.aria-label]="(prefix + '.quota_edit' | translate) + ': ' + q.name" data-testid="dmm-quota-edit" (click)="openQuota(q)">
+                        {{ prefix + '.quota_edit' | translate }}
+                      </button>
+                      <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm dmm__danger" [attr.aria-label]="(prefix + '.quota_delete' | translate) + ': ' + q.name" data-testid="dmm-quota-delete" (click)="askDeleteQuota(q)">
+                        {{ prefix + '.quota_delete' | translate }}
+                      </button>
+                    </div>
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="readonly() ? 3 : 4" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ prefix + '.quota_empty' | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot">
+        <span data-testid="dmm-quota-count">{{ prefix + '.quota_count' | translate: { n: quotas().length } }}</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Kontingent-Dialog -->
+  @if (quotaDialog(); as dialog) {
+    <div class="slim-sheet slim-sheet--open" role="dialog" aria-modal="true" aria-labelledby="dmm-quota-title" data-testid="dmm-quota-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="closeQuota()"></button>
+      <div class="slim-sheet__panel">
+        <div class="slim-sheet__handle"></div>
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title" id="dmm-quota-title">
+            {{ prefix + (dialog.quota ? '.dialog_edit' : '.dialog_create') | translate }}
+          </div>
+          <button type="button" class="slim-sheet__close" [attr.aria-label]="'common.close' | translate" (click)="closeQuota()">
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg>
+          </button>
+        </header>
+        <form class="slim-sheet__body slim-form" [formGroup]="quotaForm" (ngSubmit)="saveQuota()" novalidate>
+          @if (error(); as message) {
+            <div class="slim-alert slim-alert--danger" data-testid="dmm-quota-error">
+              <div class="slim-alert__body">{{ message | translate }}</div>
+            </div>
+          }
+          <div class="slim-field" [class.slim-field--invalid]="quotaInvalid('combinationId')">
+            <label class="slim-field__label" for="dmm-quota-combination">
+              {{ prefix + '.field_combination' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <select class="slim-select" id="dmm-quota-combination" formControlName="combinationId" data-testid="dmm-quota-combination">
+              <option value="">{{ 'forms.select' | translate }}</option>
+              @for (group of quotaOptionGroups(); track group.key) {
+                <optgroup [label]="prefix + '.group_' + group.key | translate">
+                  @for (c of group.options; track c.id) {
+                    <option [value]="c.id">{{ c.name }}{{ c.enabled ? '' : ' (' + ('admin.dm_area.inactive' | translate) + ')' }}</option>
+                  }
+                </optgroup>
+              }
+            </select>
+            <p class="slim-field__hint">{{ prefix + '.hint_combination' | translate }}</p>
+            <p class="slim-field__error">{{ prefix + '.err_combination' | translate }}</p>
+          </div>
+          <div class="slim-field" [class.slim-field--invalid]="quotaInvalid('shotsPerYear')">
+            <label class="slim-field__label" for="dmm-quota-shots">
+              {{ prefix + '.field_shots' | translate }} <span class="slim-field__required">*</span>
+            </label>
+            <div class="slim-field__control">
+              <input class="slim-input dmm__num" id="dmm-quota-shots" type="number" inputmode="decimal" [step]="quotaUnit() === 'kg' ? 0.001 : 1" min="0" formControlName="shotsPerYear" data-testid="dmm-quota-shots" />
+              <span class="slim-field__addon">{{ prefix + (quotaUnit() === 'kg' ? '.unit_kg' : '.unit_shots') | translate }}</span>
+            </div>
+            <p class="slim-field__error">{{ prefix + '.err_shots' | translate }}</p>
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="dmm-quota-basis">{{ prefix + '.field_basis' | translate }}</label>
+            <input class="slim-input" id="dmm-quota-basis" formControlName="basis" [placeholder]="form.controls.planningApproval.value || (prefix + '.basis_placeholder' | translate)" data-testid="dmm-quota-basis" />
+          </div>
+          <footer class="slim-sheet__footer">
+            <button type="button" class="slim-btn" (click)="closeQuota()">{{ 'common.cancel' | translate }}</button>
+            <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving()" data-testid="dmm-quota-save">
+              {{ 'common.save' | translate }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Kontingent löschen? -->
+  @if (pendingDelete(); as q) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dmm-quota-delete-dialog">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="pendingDelete.set(null)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title">{{ prefix + '.delete_title' | translate }}</div>
+        </header>
+        <div class="slim-sheet__body dmm__modal-text">
+          <b>{{ q.name }}</b> {{ prefix + '.delete_with' | translate }}
+          <b>{{ q.shotsPerYear | number: (q.quantityUnit === 'kg' ? '1.0-3' : '1.0-0') }} {{ prefix + (q.quantityUnit === 'kg' ? '.unit_kg' : '.unit_shots') | translate }}</b>
+          {{ prefix + '.delete_text' | translate }}
+          @if (error(); as message) {
+            <div class="slim-alert slim-alert--danger slim-u-mt-3"><div class="slim-alert__body">{{ message | translate }}</div></div>
+          }
+        </div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" (click)="pendingDelete.set(null)">{{ 'common.cancel' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" [disabled]="saving()" data-testid="dmm-quota-delete-confirm" (click)="confirmDeleteQuota()">
+            {{ 'common.delete' | translate }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Änderungen verwerfen? -->
+  @if (confirmDiscard()) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dmm-discard">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="resolveDiscard(false)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header">
+          <div class="slim-sheet__title">{{ prefix + '.discard_title' | translate }}</div>
+        </header>
+        <div class="slim-sheet__body dmm__modal-text">{{ prefix + '.discard_text' | translate }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" data-testid="dmm-discard-keep" (click)="resolveDiscard(false)">{{ prefix + '.keep_editing' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" data-testid="dmm-discard-confirm" (click)="resolveDiscard(true)">{{ prefix + '.discard' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Toast -->
+  @if (toast(); as t) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="dmm-toast">
+        <div class="slim-toast__body">{{ t.key | translate: t.params }}</div>
+        <button type="button" class="slim-toast__action" (click)="dismissToast()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  }
+</div>

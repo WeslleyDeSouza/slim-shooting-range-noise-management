@@ -40,7 +40,8 @@
     "app_config": "Configurazione app",
     "ad": "Amministrazione",
     "settings": "Impostazioni",
-    "areas_all": "Tutte le piazze di tiro"
+    "areas_all": "Tutte le piazze di tiro",
+    "weapon_combination": "Arma/calibro"
   },
   "common": {
     "save": "Salva",

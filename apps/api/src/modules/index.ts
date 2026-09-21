@@ -6,4 +6,5 @@ export * from './usage';
 export * from './calculation';
 export * from './data-area';
 export * from './data-weapons';
+export * from './data-calculations';
 export * from './access';

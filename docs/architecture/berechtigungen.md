@@ -50,7 +50,7 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 | Simulation 5.13 | `ADMIN_AREA_SIMULATION` 46 (zusätzlich zu 40) | write | write (W/R-O)¹ | – | – |
 | DV Schiessplatz Übersicht / Areal / Stammdaten 5.14–5.16 | `ADMIN_DATA_AREA` 41 | write | read | read | read |
 | DV Zuordnung Waffen 5.17 | `ADMIN_DATA_AREA_WEAPONS` 48 | root | write (W/R-O)¹ | – | read |
-| DV Berechnungen 5.18–5.21 | `ADMIN_DATA_CALCULATIONS` 42 | root | – | – | read |
+| DV Berechnungen 5.18–5.21 | `ADMIN_DATA_CALCULATIONS` 42 | root | – | – | read (Lesemodus: Zeiger, Import, Export und Formulare gesperrt) |
 | DV Waffen 5.22–5.25 | `ADMIN_DATA_WEAPONS` 43 | root | read | read | read |
 | DV Benutzer 5.26 | galaxy `APP_ADMIN_USER_LIST` 1 | root | write (W/R-O)¹ | – | read |
 | Administration (Rollen, Apps, System) | galaxy `APP_ADMIN_ROLE_LIST` 2, `APP_ADMIN_APPS_LIST` 4, `ADMIN_DATA_SYSTEM` 45 | read (Rollen) | – | – | root |
@@ -63,7 +63,8 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 `fachspezialist@demo.ch`, `schiessplatz@demo.ch` (Schiessplatz-Verantwortlicher, zugeordnet:
 Geissalp, Thun), `interessent@demo.ch`, `appadmin@demo.ch`. Damit lässt sich jede Spalte der
 Matrix am laufenden System prüfen (das Menü zeigt nur Einträge mit App-Recht der Sitzung —
-`core/access/access.facade.ts` über `GET admin/apps/app/user/:userId`; die API antwortet 403, die
+`core/access/access.facade.ts` über `GET admin/access` (bestes Recht je App; `read` schaltet die Masken der
+Datenverwaltung in den Lesemodus); die API antwortet 403, die
 Seiten zeigen den Fehler).
 
 ## 3. Übernommene Oberfläche (ELO → SLIM)

@@ -1,0 +1,103 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dmm {
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    }
+  }
+
+  &__card {
+    min-width: 0;
+  }
+
+  &__quotas {
+    @include slim.mq('lg') {
+      position: sticky;
+      top: calc(#{slim.size('topbar-h')} + #{slim.space(3)});
+    }
+  }
+
+  &__mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+
+    legend {
+      padding: 0;
+    }
+  }
+
+  &__choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: slim.space(2) slim.space(5);
+  }
+
+  &__group {
+    margin-top: slim.space(2);
+  }
+
+  // Sticky action bar on phones so «Speichern» is always reachable.
+  &__actions {
+    position: sticky;
+    bottom: 0;
+    z-index: slim.z('raised');
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    background: slim.color('surface');
+
+    @include slim.mq('lg') {
+      position: static;
+    }
+  }
+
+  &__missing {
+    margin-top: slim.space(3);
+  }
+
+  &__missing-chips {
+    margin-top: slim.space(2);
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__weapon {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__unassigned {
+    margin-left: slim.space(2);
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__danger {
+    color: slim.color('danger');
+  }
+
+  &__modal-text {
+    line-height: 1.6;
+  }
+}

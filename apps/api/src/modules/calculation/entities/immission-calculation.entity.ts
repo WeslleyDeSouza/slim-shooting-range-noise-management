@@ -34,6 +34,14 @@ export class ImmissionCalculationEntity extends SlimBaseEntity {
   @DbPlatformColumn({ name: 'visum', length: 80, nullable: false, default: '' })
   supplier: string;
 
+  @ApiProperty({ nullable: true, description: 'Beschreibung der Lieferung (5.18 Detailansicht)' })
+  @DbPlatformColumn({ type: 'text', nullable: true })
+  description: string | null;
+
+  @ApiProperty({ nullable: true, description: 'Berechnungsdatei (Name der importierten FGDB / JSON-Datei, 5.18 / 5.19)' })
+  @DbPlatformColumn({ type: 'varchar', length: 200, nullable: true })
+  fileName: string | null;
+
   @ApiProperty({ description: 'Lieferdatum YYYY-MM-DD (S9)' })
   @DbPlatformColumn({ name: 'lieferdatum', type: 'varchar', length: 10, nullable: false })
   deliveredAt: string;

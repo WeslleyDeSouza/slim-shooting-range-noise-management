@@ -145,12 +145,12 @@ const I18N = 'admin.dm_area';
                 <tr
                   class="slim-table__row slim-table__row--clickable"
                   [attr.data-testid]="'dma-row-' + r.id"
-                  [routerLink]="routes.admin.dataManagement.area.masterDataOf(r.id)"
+                  [routerLink]="routes.admin.dataManagement.area.generalOf(r.id)"
                 >
                   <td [attr.data-label]="prefix + '.col_name' | translate">
                     <a
                       class="dma__name"
-                      [routerLink]="routes.admin.dataManagement.area.masterDataOf(r.id)"
+                      [routerLink]="routes.admin.dataManagement.area.generalOf(r.id)"
                       [attr.title]="prefix + '.jump_general_hint' | translate"
                       >{{ r.name }}</a
                     >
@@ -235,7 +235,7 @@ export class DmAreaOverviewComponent extends ComponentBase {
 
   /** Actions of 5.14: Allgemein (5.15/5.16), Waffen-Zuordnung (5.17), Berechnungen (5.18). */
   protected readonly rowActions = [
-    { id: 'general', key: 'jump_general', link: APP_ROUTES.admin.dataManagement.area.masterDataOf, icon: ICON.layers },
+    { id: 'general', key: 'jump_general', link: APP_ROUTES.admin.dataManagement.area.generalOf, icon: ICON.layers },
     { id: 'weapons', key: 'jump_weapons', link: APP_ROUTES.admin.dataManagement.area.weaponAssignmentOf, icon: ICON.weapon },
     { id: 'calculations', key: 'jump_calculations', link: APP_ROUTES.admin.dataManagement.area.calculationsOf, icon: ICON.list },
   ];

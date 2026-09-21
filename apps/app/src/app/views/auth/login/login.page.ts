@@ -11,6 +11,7 @@ import { AUTH_CONSTANTS } from '@app-galaxy/auth-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { AuthFacade, toAuthError } from '../auth.facade';
 import { setRememberSession } from '../remember-session';
+import { rememberReturnUrl } from '../return-url';
 
 const I18N = 'auth';
 
@@ -67,6 +68,10 @@ export class LoginPage implements OnInit {
   });
 
   ngOnInit(): void {
+    // Deep link that bounced into the login (guard / expired session): parked
+    // per tab until the tenant chooser opens the app, so the 2FA / verify /
+    // reset detours cannot lose it.
+    rememberReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
     this.form.patchValue({
       email: this.sampleUser?.email || '',
       password: this.sampleUser?.password || '',

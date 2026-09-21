@@ -307,18 +307,17 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      # Tags: `latest` (what Coolify pulls, same as ELO) plus one immutable
-      # `master-<sha>` per commit. No mutable `master` tag: the Nexus docker
-      # repository only allows redeploying `latest` («blob upload invalid …
-      # manifests/master cannot be updated» on the second push).
+      # Only `latest`, same as ELO: that is what Coolify pulls, and the Nexus
+      # docker repository allows redeploying no other tag («blob upload
+      # invalid … manifests/master cannot be updated» on the second push of a
+      # branch tag). The commit is in the OCI labels of the image.
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.REGISTRY_URL }}/${{ secrets.REGISTRY_URL_PATH }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,prefix={{branch}}-
+            type=raw,value=latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6

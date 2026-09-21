@@ -25,7 +25,8 @@ test.skip(true, 'visual baselines not recorded yet');
 /** Fonts still swapping in would shift every glyph by a pixel. */
 async function settle(page: Page): Promise<void> {
   await page.evaluate(() => document.fonts.ready);
-  await page.waitForLoadState('networkidle').catch(() => undefined);
+  // No `networkidle` (flaky by design, lint rule playwright/no-networkidle):
+  // the specs assert on a visible element first, so only the font swap is left.
 }
 
 test.describe('visual: signed out', () => {

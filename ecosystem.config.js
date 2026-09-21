@@ -10,7 +10,11 @@ const APPS = [
     script: 'dist/api/main.js',
     watch: ['dist/api/**/*'],
     ignore_watch: ['*.ts', '*.log', 'node_modules', 'temp'],
-    io: {},
+    // pm2 7 ships @pm2/io with tracing enabled by default and logs
+    // «[PM2][ERROR] OpenTelemetry packages not installed» on every start when
+    // the optional OTel packages are missing. `tracing: false` does NOT switch
+    // it off (pm2-io-bpm maps it back to the enabled default); the object form does.
+    io: { tracing: { enabled: false } },
     env: { ...process.env },
     restart_delay: 5000,
     post_update: ['yarn'],

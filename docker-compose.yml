@@ -5,7 +5,9 @@ services:
     image: mariadb:11.8
     restart: no
     ports:
-      - '3306:3306'
+      # Host port 3307: the ELO dev container (app-elo-shot-counting-db) already
+      # listens on 3306; .env / .env.example use DB_PORT=3307 accordingly.
+      - '3307:3306'
     environment:
       MYSQL_ROOT_USER: ${DB_USERNAME}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}

@@ -40,7 +40,7 @@ Auftraggeber-Daten geprüft → vom Auftraggeber bestätigt**. Legende: ✅ erf�
 | 4 | Sitemap erreichbar, Kern fachlich, Rest Platzhalter | ✅ | ✅ | – | ☐ | `admin.spec` + drei Schiessplatz-Specs; 5.10, 5.15–5.17, 5.18–5.25, 5.28 sind Platzhalter mit Breadcrumbs. |
 | 5 | Rollen B1 8.1 wirken | ◐ | ◐ | – | ☐ | Vier Rollen + Matrix als Seed, W/R-O in der API erzwungen (`area-scope.spec`); Frontend-Rechte (CASL) und e2e je Demo-Konto fehlen. |
 | 6 | DE/FR/IT, Light/Dark, 375 px | ✅ | ✅ | – | ☐ | de/fr/it/en, Styleguide, e2e Sprache/Theme, Telefon-Screenshots. |
-| 7 | Build, Lint, Tests grün, docs nachgeführt | ✅ | ✅ | – | ☐ | CI (`build-and-deploy.yml`): Vitest 197, Jest 63, Playwright 32; Kriterien-Nachweise `criterias/` noch Skelett. |
+| 7 | Build, Lint, Tests grün, docs nachgeführt | ✅ | ✅ | – | ☐ | CI (`build-and-deploy.yml`, seit 21.09. mit e2e-Job): Vitest 332, Jest 150, Playwright 50 (Seiten-Suite); Kriterien-Nachweise `criterias/` noch Skelett (44 `fixme`). |
 
 «Mit Auftraggeber-Daten geprüft» wird mit dem Seed aus B1.6/B1.7 (126 Schiessplätze, Waffenliste)
 und dem ersten realen WLR-/Betriebsdaten-Import gefüllt (Sprint 1 und 3); «bestätigt» in der

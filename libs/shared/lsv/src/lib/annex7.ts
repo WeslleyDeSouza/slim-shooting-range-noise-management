@@ -23,16 +23,26 @@ export const ANNEX7_SUNDAY_WEIGHT = 3;
  *     Lr    = ESM(Lri_a … Lri_f)
  *
  * A category without shots has `Li = Lri = LSV_EMPTY_LEVEL` and adds no
- * energy. (B1.4 writes 0 dB into those Lri cells and sums them, which lifts
- * a very quiet receiver by a few hundredths — E8: 28.08 instead of the
- * kernel's 28.0. We follow the sonARMS kernel and skip empty categories.)
+ * energy (`emptyCategories: 'skip'`, the default — the sonARMS kernel A7p).
+ * The B1.4 formula sheet A7X instead writes 0 dB into those Lri cells and
+ * sums them, which lifts a very quiet receiver by a few hundredths — E8:
+ * 28.08 instead of 28.05. `emptyCategories: 'zero'` reproduces that sheet
+ * (FAQ 19 names A7X the binding template); which reading applies is the
+ * Fachstelle's decision and a parameter here, not a code change.
  * A category with shots but `Wh + 3·Sh = 0` has no assessable time and is
  * treated as empty as well, rather than producing −∞.
  */
+export interface Annex7Options {
+  /** How categories without shots enter the energetic sum over a–f. */
+  emptyCategories?: 'skip' | 'zero';
+}
+
 export function annex7Level(
   sources: Annex7Source[],
   halfDays: Annex7HalfDays,
+  options: Annex7Options = {},
 ): Annex7Result {
+  const emptyAsZero = options.emptyCategories === 'zero';
   for (const s of sources) {
     if (!(s.shots >= 0)) {
       throw new Error(`annex7Level: invalid shots for source ${s.sourceId}`);
@@ -65,5 +75,8 @@ export function annex7Level(
           ANNEX7_CONSTANT;
   }
 
-  return { li, lri, lr: esm(ANNEX7_CATEGORIES.map((k) => lri[k])) };
+  const terms = ANNEX7_CATEGORIES.map((k) =>
+    emptyAsZero && lri[k] === LSV_EMPTY_LEVEL ? 0 : lri[k],
+  );
+  return { li, lri, lr: esm(terms) };
 }

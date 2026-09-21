@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { API_APPS_MAPPING as GALAXY_APPS } from '@app-galaxy/auth-api';
 import { rawQuery } from '@api-slim/common';
 import { DataSource } from 'typeorm';
@@ -39,6 +40,7 @@ export interface SlimRoleSeed {
   roleId: SLIM_ROLE;
   /** `settings.key`, what the frontend and the seed identify the role by. */
   key: string;
+  /** Shown in the role and user masks; galaxy `app_role.title` is varchar(20) (MariaDB rejects longer values). */
   title: string;
   ownAreasOnly: boolean;
   /** appId → access; apps not listed get no right (X). */
@@ -53,7 +55,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   {
     roleId: SLIM_ROLE.SPECIALIST,
     key: SLIM_ROLE_KEY.specialist,
-    title: 'Fachspezialist KOMZ Lärm',
+    title: 'Fachspezialist KOMZ',
     ownAreasOnly: false,
     rights: {
       [A.ADMIN_AREA]: 'root', // 5.9–5.12 R/W incl. delete of usages
@@ -73,7 +75,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   {
     roleId: SLIM_ROLE.RANGE_OWNER,
     key: SLIM_ROLE_KEY.rangeOwner,
-    title: 'Schiessplatz-Verantwortlicher',
+    title: 'Platzverantwortliche',
     ownAreasOnly: true,
     rights: {
       [A.ADMIN_AREA]: 'root', // W/R-O (scoping open)
@@ -92,7 +94,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   {
     roleId: SLIM_ROLE.INTERESTED,
     key: SLIM_ROLE_KEY.interested,
-    title: 'Interessent Schiessplatznutzung',
+    title: 'Interessent',
     ownAreasOnly: false,
     rights: {
       [A.ADMIN_AREA]: 'read',
@@ -111,7 +113,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
   {
     roleId: SLIM_ROLE.APP_ADMIN,
     key: SLIM_ROLE_KEY.appAdmin,
-    title: 'Applikationsadministrator*in',
+    title: 'Applikationsadmin',
     ownAreasOnly: false,
     rights: {
       [A.ADMIN_AREA]: 'read',
@@ -138,7 +140,15 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
  * galaxy admin role; assign a SLIM role in the user administration to try
  * a restricted view.
  */
+/** galaxy `RoleEntity.title` column length; a longer title fails the seed on MariaDB/MySQL (SQLite does not check). */
+export const ROLE_TITLE_MAX_LENGTH = 20;
+
 export async function fillSlimRoles(connection: DataSource, tenantId: string): Promise<void> {
+  for (const role of SLIM_ROLES) {
+    if (role.title.length > ROLE_TITLE_MAX_LENGTH) {
+      throw new Error(`SLIM role title «${role.title}» exceeds ${ROLE_TITLE_MAX_LENGTH} characters (app_role.title)`);
+    }
+  }
   // The galaxy roles (TestMockTenantMock: 1 = Admin, 2 = User) get a key too,
   // so every row of the role overview identifies itself in code. Only set
   // when missing – this runs with the mock seed, not as a sync on every boot.
@@ -195,7 +205,9 @@ export async function fillSlimRoles(connection: DataSource, tenantId: string): P
       if (!access) continue;
       await rawQuery(connection,
         'insert into app_role_right (id, tenantId, roleId, appId, access) values (?, ?, ?, ?, ?)',
-        [`slim-role-${role.roleId}-app-${appId}`, tenantId, role.roleId, Number(appId), access],
+        // `app_role_right.id` is a native UUID column on MariaDB – a readable key such as
+        // `slim-role-10-app-41` is rejected there and left three roles unseeded.
+        [randomUUID(), tenantId, role.roleId, Number(appId), access],
       );
     }
   }

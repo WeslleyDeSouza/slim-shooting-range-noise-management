@@ -62,6 +62,16 @@ describe('annex7Level — Beilage B1.4 demo project (sheets A7X / A7p)', () => {
     expect(result.lr).toBeCloseTo(28.046311575135064, 6);
   });
 
+  it('reproduces the A7X sheet (0 dB cells of empty categories summed) with emptyCategories: zero (E8 = 28.1)', () => {
+    // 28.046 dB = 637.7 energy units; the five empty categories add 5 × 10^0 → 642.7 units = 28.080 dB.
+    const sheet = annex7Level(sourcesOf('E8'), B14_HALF_DAYS, { emptyCategories: 'zero' });
+    expect(sheet.lr).toBeCloseTo(28.08, 2);
+    expect(roundDb(sheet.lr)).toBe(28.1);
+    // Loud receivers are unaffected at display precision (E1: 73.8 either way).
+    const e1 = annex7Level(sourcesOf('E1'), B14_HALF_DAYS, { emptyCategories: 'zero' });
+    expect(roundDb(e1.lr)).toBe(73.8);
+  });
+
   it('raises Lr by exactly 3 dB when every shot count is multiplied by 10 (3·log M, half-days unchanged)', () => {
     // Metamorphic check per annex: Anhang 7 scales with 3·log(M) — unlike
     // Anhang 9, where tenfold shots add 10 dB (see annex9.spec).

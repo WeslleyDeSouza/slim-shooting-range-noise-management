@@ -390,7 +390,7 @@ function buildState(stateKey: string, usages: Usage[]) {
     plantParts: ROOMS.map((r) => ({ room: r.name, coordinationSectionNo: roomNo(r.no), name: r.name, type: r.type, builtAfter1985: r.new })),
     sources: sourceRows,
     immissionPoints: RECEIVERS.map((r, i) => ({
-      sonarmsId: r.code, code: r.code, egid: r.egid, egrid: r.egid ? null : 'CH 1187 nicht in eGRIS', address: r.address, municipality: 'Sigriswil', type: r.type,
+      sonarmsId: r.code, code: r.code, egid: r.egid, egrid: r.egid ? null : 'nicht in eGRIS', address: r.address, municipality: 'Sigriswil', type: r.type,
       sensitivityLevel: r.es, east: 2618420 + Math.round((r.x - 300) * 3.2), north: 1176900 - Math.round((r.y - 260) * 3.2), height: 4,
       mapX: round1((r.x / 600) * 100), mapY: round1((r.y / 520) * 100), sortOrder: i,
     })),
@@ -491,7 +491,7 @@ const dataset = {
   'SLIM Demo': {
     name: 'SLIM Demo',
     identifier: 'SLIM_DEMO',
-    description: 'Demo-Mandant des Prototyps: Stammdaten Waffen/Kaliber/Kombinationen, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, zulässigen Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.',
+    description: 'Demo-Mandant des Prototyps: Waffenstammdaten, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.',
     version: 6,
     // One account per role of B1 8.1.1 (roles.mock-data.ts); slim@demo.ch is the
     // galaxy admin the e2e suite and the setup wizard sign in with.

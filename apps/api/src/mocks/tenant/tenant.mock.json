@@ -2,7 +2,7 @@
   "SLIM Demo": {
     "name": "SLIM Demo",
     "identifier": "SLIM_DEMO",
-    "description": "Demo-Mandant des Prototyps: Stammdaten Waffen/Kaliber/Kombinationen, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, zulässigen Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.",
+    "description": "Demo-Mandant des Prototyps: Waffenstammdaten, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.",
     "version": 6,
     "users": [
       {
@@ -1025,7 +1025,7 @@
                     "sonarmsId": "E6",
                     "code": "E6",
                     "egid": null,
-                    "egrid": "CH 1187 nicht in eGRIS",
+                    "egrid": "nicht in eGRIS",
                     "address": "Unbebaute Parzelle 1187",
                     "municipality": "Sigriswil",
                     "type": "reserve",
@@ -2644,7 +2644,7 @@
                     "sonarmsId": "E6",
                     "code": "E6",
                     "egid": null,
-                    "egrid": "CH 1187 nicht in eGRIS",
+                    "egrid": "nicht in eGRIS",
                     "address": "Unbebaute Parzelle 1187",
                     "municipality": "Sigriswil",
                     "type": "reserve",

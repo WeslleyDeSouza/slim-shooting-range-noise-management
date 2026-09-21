@@ -18,6 +18,18 @@ gezeigt werden, seine Ist-Aussagen müssen aber stimmen.
 | 3 | Datenmodell nach B1 Kap. 10 korrigieren (Muss-Anforderung slm 43/45), Fachfehler beheben, O8 vollständig anbinden (`validierung-fachlich.md` 4 und 7). |
 | 4 | Finale Word-/PDF-Fassung rendern und Seitenlimit prüfen (Abschnitt 1). |
 
+**Nachtrag 21.09.2026 (C2 v0.3):** Die mit «✔ 21.09.» markierten Befunde sind im Konzept v0.3 behoben: Formel Anhang 9,
+E8-Referenzwerte (Formelblatt A7X 28.1 / Kern 28.0, beide Lesarten als Kernel-Parameter `emptyCategories` mit Test),
+PostgreSQL 17 in allen Diagrammen, Mandant ≠ Umgebung, ERD und Prototyp-Aussagen auf das Datenmodell B1 Kap. 10
+(Datenverwaltung 5.14–5.16, 5.18–5.21, 5.22–5.25, Import 5.19, Berechnungslauf, Ampeln aus der Berechnung), MFA eindeutig
+(2FA vorhanden / in der Demo nicht aktiv, TOTP Ziel), ELO-Authentifizierung als Vorschlag OAuth2, FME-Ablauf B1 9.1 und
+Ausschluss historischer Daten B1 9.2, Messumgebung 4.4, Barrierefreiheit (Vorgabe FAQ 9 ≠ eigener Zielstandard, manuelle
+Prüfung), Testzahlen je Kategorie (Vitest 332, Jest 150, Playwright 50, 44 Kriterien-Skelette), Schulungsumfang FAQ 36/38,
+Demo-Rolle Interessent, Lizenzversionen, Repository-Verweise aus dem Fliesstext, Matrix (slm 14–16, 18–25, 32, 43–45 P;
+slm 55 Z). Weiterhin offen: Seitenlimit (Abschnitt 1, nach dem Render prüfen), die OFFEN-Vermerke zu Firma, Rechten,
+Provider, LP5-Aufwand, Übersetzungsbüro, 3rd-Level-Standort, Repository-Standort, Schulungsannahme, Demo-URL und
+Freeze-Datum sowie die Punkte «nicht prüfbar» in Abschnitt 13.
+
 ## Verwendung
 
 Ein Häkchen bedeutet: Im aktuellen Konzept nachvollziehbar beschrieben, mit der Quelle abgeglichen und ohne Widerspruch zu Matrix, Diagrammen oder anderen Angebotsunterlagen. Es bedeutet nicht automatisch «bereits programmiert». Alle Felder sind absichtlich zunächst offen; dies ist keine neue Bewertung des aktuellen Word-Stands.
@@ -31,24 +43,24 @@ Quellenstand FAQ: Export vom 11.09.2026. Vor Einreichung neuere Antworten/Berich
 
 ## 1. Form und Bewertbarkeit
 
-- [ ] **Vorgabe:** Höchstens 15 A4-Seiten Konzept (A2). — **Befund:** offen. `npm run docs:docx -- … --pages` druckt 18 Vorschauseiten (5 Diagramme, 5 Bilder); die geschätzten «Flussseiten» (Kapitel 1–6 ≈ 9) sind kein Nachweis. Im endgültigen Dokument die 18 Seiten auf Konzept, Matrix, Deckblatt und Inhaltsverzeichnis aufteilen und das Konzept auf ≤ 15 bringen.
-- [ ] **Vorgabe:** Anforderungsmatrix als zusätzliche Beilage höchstens zwei A4-Seiten (FAQ 8). — **Befund:** Matrix mit `<!-- pagebreak -->` abgetrennt, gedruckte Seitenzahl noch nicht ermittelt (siehe oben).
+- [x] ✔ 21.09. **Vorgabe:** Höchstens 15 A4-Seiten Konzept (A2). — **Befund 21.09.:** Vorschau v0.3 (`--pages`, ohne Deckblatt/Inhaltsverzeichnis): 17 Seiten = Konzept Seiten 1–15 (Seite 15 zu ≈ 65 % gefüllt) + Matrix Seiten 16–17. Bilder auf 50 %/15 % Breite, Diagramme 2.1/4.1 auf 90 %/92 %. Reserve zur Word-Paginierung ≈ ⅓ Seite – im Word-Endstand nachzählen; falls es kippt, das Telefon-Bild (5.4) entfernen.
+- [x] ✔ 21.09. **Vorgabe:** Anforderungsmatrix als zusätzliche Beilage höchstens zwei A4-Seiten (FAQ 8). — **Befund 21.09.:** zwei Seiten (16–17) mit der kompakten Tabellenform (`<!-- compact -->`, 8.5 pt) und einzeiligen Status-Zellen.
 - [x] **Vorgabe:** Deckblatt und Inhaltsverzeichnis enthalten keine bewertungsrelevanten Aussagen, wenn sie ausserhalb des Seitenlimits bleiben (FAQ 8). — Deckblatt als HTML-Kommentar «nicht bewertungsrelevant».
 - [x] **Vorgabe:** Management Summary höchstens eine halbe A4-Seite (A2). — Flussseiten 1.0–1.3.
 - [x] **Vorgabe:** Gesamtlösung einschliesslich der funktionalen und nichtfunktionalen Anforderungen nachvollziehbar beschrieben (Teil A Z2). — Kapitel 2–6 plus Matrix.
 - [x] **Vorgabe:** Auch angebotene KANN-Funktionen schlüssig als künftige Umsetzung beschreiben; nicht einfach weglassen (FAQ 10). — slm 46–49 in 5.4, Matrix Status O.
-- [ ] **Qualität:** Konzept vollständig ohne Aufruf einer Demo oder externer Repository-Links verständlich. — **Befund:** Management Summary verweist auf «Testbericht im Repository», Deckblatt-Kommentar auf `docs/architecture`; 6.5 erklärt die Demo als nicht nötig. Verweise auf das Repository aus dem Fliesstext nehmen.
-- [ ] **Qualität:** Word-Endstand rendern; Seitenzahl, Lesbarkeit der Diagramme, Tabellenumbrüche und Bilder prüfen. — **Befund:** nicht geprüft; Vorschau meldet 18 gedruckte Seiten bei ≈ 10.5 Flussseiten, 5 Diagramme, 5 Bilder.
-- [ ] **Qualität:** Alle OFFEN-/PLACEHOLDER-Vermerke vor der Abgabe auflösen oder durch eine klar abgegrenzte, zulässige Aussage ersetzen. — **Befund:** 9 Vermerke offen (Firma/ELO-Verhältnis, Rechtekette/OSS, Provider, Formulierung Firma, LP5-Aufwand, IT-Übersetzungsbüro, 3rd-Level-Standort, Demo-URL, Freeze-Datum).
-- [ ] **Qualität:** Kapitelverweise, FAQ-Nummern, Begriffe und Zahlen im gesamten Angebot vereinheitlichen. — **Befund:** PostgreSQL «17» (2.1, 2.2) gegen «16» (Diagramm 2.5). FAQ-Verweise geprüft: «Forum 120» (5.2, swisstopo-Nutzungsbedingungen) und «Forum 128» (5.4, Barrierefreiheit) existieren im Export (132 Fragen) und sind beide unbeantwortet – Verweise stimmen. Testzahlen: «275 Tests» (11.09.) und «95 der 180 API-Tests» (4.3) sind überholt; zutreffend am 12.09.: 197 Vitest erfolgreich, Jest erfolgreich (63 Fälle laut Doku), 32 Playwright-Fälle nicht ausgeführt, 46 Kriterien-Skelette (`test.fixme`). Diese Kategorien getrennt nennen, keine Summe bilden.
+- [x] ✔ 21.09. **Qualität:** Konzept vollständig ohne Aufruf einer Demo oder externer Repository-Links verständlich. — **Befund:** Management Summary verweist auf «Testbericht im Repository», Deckblatt-Kommentar auf `docs/architecture`; 6.5 erklärt die Demo als nicht nötig. Verweise auf das Repository aus dem Fliesstext nehmen.
+- [ ] **Qualität:** Word-Endstand rendern; Seitenzahl, Lesbarkeit der Diagramme, Tabellenumbrüche und Bilder prüfen. — **Befund 21.09.:** `C2-Loesungskonzept-SLIM.docx` v0.3 gerendert (17 Vorschauseiten, ≈ 10.1 Flussseiten, 5 Diagramme, 5 Bilder); Sichtprüfung in Word (Seitenumbrüche, ERD-Lesbarkeit bei 82 %) steht aus.
+- [ ] **Qualität:** Alle OFFEN-/PLACEHOLDER-Vermerke vor der Abgabe auflösen oder durch eine klar abgegrenzte, zulässige Aussage ersetzen. — **Befund 21.09.:** 11 Vermerke offen (Firma/ELO-Verhältnis, Rechtekette/OSS, Provider, Formulierung Firma, LP5-Aufwand, IT-Übersetzungsbüro, 3rd-Level-Standort, Repository-Standort, Schulungsannahme LP3, Demo-URL, Freeze-Datum) – alles Entscheide der Firma, keine fachlichen Lücken.
+- [x] ✔ 21.09. **Qualität:** Kapitelverweise, FAQ-Nummern, Begriffe und Zahlen im gesamten Angebot vereinheitlichen. — **Befund:** PostgreSQL «17» (2.1, 2.2) gegen «16» (Diagramm 2.5). FAQ-Verweise geprüft: «Forum 120» (5.2, swisstopo-Nutzungsbedingungen) und «Forum 128» (5.4, Barrierefreiheit) existieren im Export (132 Fragen) und sind beide unbeantwortet – Verweise stimmen. Testzahlen: «275 Tests» (11.09.) und «95 der 180 API-Tests» (4.3) sind überholt; zutreffend am 12.09.: 197 Vitest erfolgreich, Jest erfolgreich (63 Fälle laut Doku), 32 Playwright-Fälle nicht ausgeführt, 46 Kriterien-Skelette (`test.fixme`). Diese Kategorien getrennt nennen, keine Summe bilden.
 
 ## 2. Management Summary
 
 - [x] **Vorgabe:** Aufgabe und zentrale Merkmale der angebotenen Lösung knapp zusammenfassen.
 - [x] **Qualität:** Nutzen für Fachspezialisten, Platzverantwortliche und weitere Rollen konkret erklären. — kurz, aber je Rolle benannt.
 - [x] **Qualität:** SLIM als neue Fachapplikation, ELO als separates angebundenes System darstellen.
-- [ ] **Qualität:** Keine Gleichsetzung von erprobten ELO-Komponenten mit bereits nachgewiesener SLIM-Funktionalität. — **Befund:** «Zwei-Faktor-Anmeldung … aus erprobten Komponenten» und 6.5 «Anmeldung mit 2FA umgesetzt»: im Prototyp ist 2FA per Konfiguration ausgeschaltet (`APP_AUTH_2FA_ENABLED` fehlt in `.env`/`.env.example`), die e2e-Suite umgeht den Schritt. Formulieren als «vorhanden, im Prototyp nicht aktiviert» oder aktivieren.
-- [ ] **Qualität:** Prototypvorteile nur mit belegbaren Aussagen nennen; verbleibende Fach- und Integrationsarbeit nicht verharmlosen. — **Befund:** Testzahl veraltet und als Summe irreführend (Kategorien siehe Abschnitt 1); «Berechnungskern gegen Empa-Referenzdaten geprüft» stimmt; die sieben fachlichen Abweichungen aus `validierung-fachlich.md` (Halbtagsgrenze 13:00, gemischte Baujahre Anhang 7, Feiertage nicht angebunden, …) sind im Konzept nirgends als Restarbeit erwähnt.
+- [x] ✔ 21.09. **Qualität:** Keine Gleichsetzung von erprobten ELO-Komponenten mit bereits nachgewiesener SLIM-Funktionalität. — **Befund:** «Zwei-Faktor-Anmeldung … aus erprobten Komponenten» und 6.5 «Anmeldung mit 2FA umgesetzt»: im Prototyp ist 2FA per Konfiguration ausgeschaltet (`APP_AUTH_2FA_ENABLED` fehlt in `.env`/`.env.example`), die e2e-Suite umgeht den Schritt. Formulieren als «vorhanden, im Prototyp nicht aktiviert» oder aktivieren.
+- [x] ✔ 21.09. **Qualität:** Prototypvorteile nur mit belegbaren Aussagen nennen; verbleibende Fach- und Integrationsarbeit nicht verharmlosen. — **Befund:** Testzahl veraltet und als Summe irreführend (Kategorien siehe Abschnitt 1); «Berechnungskern gegen Empa-Referenzdaten geprüft» stimmt; die sieben fachlichen Abweichungen aus `validierung-fachlich.md` (Halbtagsgrenze 13:00, gemischte Baujahre Anhang 7, Feiertage nicht angebunden, …) sind im Konzept nirgends als Restarbeit erwähnt.
 
 ## 3. Gesamtarchitektur und Technologie
 
@@ -58,16 +70,16 @@ Quellenstand FAQ: Export vom 11.09.2026. Vor Einreichung neuere Antworten/Berich
 - [x] **Qualität:** Technologieentscheidungen begründen, insbesondere Angular, NestJS, PostgreSQL/PostGIS, GIS-Viewer und GDAL. — 2.2 Tabelle.
 - [x] **Qualität:** Eigene Entscheidungen nicht als Vorgabe der Auftraggeberin bezeichnen. — «Wahl der Anbieterin», «Entscheid der Anbieterin gemäss FAQ 27».
 - [x] **Entscheid:** Zielarchitektur von Prototyparchitektur unterscheiden; SQLite/MariaDB nicht als bereits erprobten PostgreSQL-Betrieb darstellen. — 2.1 gestrichelt, 2.2/2.3 «Prototyp: SQLite/MariaDB», Boot-Blocker benannt.
-- [ ] **Qualität:** Worker-Container, API-Container und Datenbank in allen Diagrammen konsistent einzeichnen. — **Befund:** Worker in 2.1 und 2.5 vorhanden; Datenbankversion 17 (2.1) gegen 16 (2.5).
+- [x] ✔ 21.09. **Qualität:** Worker-Container, API-Container und Datenbank in allen Diagrammen konsistent einzeichnen. — **Befund:** Worker in 2.1 und 2.5 vorhanden; Datenbankversion 17 (2.1) gegen 16 (2.5).
 - [x] **Entscheid:** NGINX als Webserver/Reverse-Proxy und Coolify als Deployment-Verwaltung klar zuordnen. — 2.2, 2.5.
 - [x] **Entscheid:** ELO und SLIM mit getrennten Applikationsinstanzen, Datenhaltung und Secrets darstellen, entsprechend der gewählten Architektur. — Summary, 2.3.
-- [ ] **Qualität:** Mandantenkennung und Umgebungstrennung unterscheiden; tenantId ersetzt keine getrennten Umgebungen. — **Befund:** 2.3 sagt «der Mandant trennt Umgebungen innerhalb von SLIM (Demo, Akzeptanz, Produktion)», 2.5 sagt «drei getrennte Umgebungen mit identischen Container-Images». Widerspruch auflösen: Umgebungen = getrennte Instanzen, Mandant = fachliche Trennung.
+- [x] ✔ 21.09. **Qualität:** Mandantenkennung und Umgebungstrennung unterscheiden; tenantId ersetzt keine getrennten Umgebungen. — **Befund:** 2.3 sagt «der Mandant trennt Umgebungen innerhalb von SLIM (Demo, Akzeptanz, Produktion)», 2.5 sagt «drei getrennte Umgebungen mit identischen Container-Images». Widerspruch auflösen: Umgebungen = getrennte Instanzen, Mandant = fachliche Trennung.
 - [x] **Vorgabe:** Wartbare, modular dokumentierte Architektur und konfigurierbare Fachparameter beschreiben (slm 55). — 6.1; zum Prototyp-Status siehe Abschnitt 11.
 
 ## 4. Fachliches Datenmodell
 
 - [x] **Vorgabe:** Zeitunabhängige Referenzstruktur für Schiessplätze und Stellungsräume beschreiben (slm 42). — 2.3.
-- [ ] **Vorgabe:** Immissionsberechnungen und deren versionierte Zustände nachvollziehbar modellieren (slm 18/43). — **Befund:** Text 2.3 stimmt («die Zustände tragen Quellen, Empfangspunkte und WLR-Werte»), das ERD in 2.3 widerspricht ihm: `AREA ||--o{ AREA_RECEIVER` hängt die Empfangspunkte am Schiessplatz, ein Anlageteil je Zustand fehlt, Untersuchungsperimeter und Gebäude fehlen. **Stand Prototyp 12.09.2026:** Das Datenmodell ist nach B1 Kap. 10 umgebaut (`validierung-fachlich.md` 7.3, `umsetzungsstand.md`): Anlageteile, Schusslinien mit Quelldaten, Perimeter, Gebäude, Immissionspunkte und WLR hängen am Zustand, Composite-FKs verhindern Verknüpfungen über Zustände hinweg; Matrix slm 43 kann damit auf «P» bleiben. **Offen im C2:** ERD 2.3 und der *Prototyp:*-Satz in 2.3 beschreiben noch den alten Stand («genau eine Quelle je Kombination», «Spalten noch englisch», Berechnungsstand als Zielzustand) und sind nachzuführen, damit Text, Diagramm und Matrix dasselbe Zielbild zeigen.
+- [x] ✔ 21.09. **Vorgabe:** Immissionsberechnungen und deren versionierte Zustände nachvollziehbar modellieren (slm 18/43). — **Befund:** Text 2.3 stimmt («die Zustände tragen Quellen, Empfangspunkte und WLR-Werte»), das ERD in 2.3 widerspricht ihm: `AREA ||--o{ AREA_RECEIVER` hängt die Empfangspunkte am Schiessplatz, ein Anlageteil je Zustand fehlt, Untersuchungsperimeter und Gebäude fehlen. **Stand Prototyp 12.09.2026:** Das Datenmodell ist nach B1 Kap. 10 umgebaut (`validierung-fachlich.md` 7.3, `umsetzungsstand.md`): Anlageteile, Schusslinien mit Quelldaten, Perimeter, Gebäude, Immissionspunkte und WLR hängen am Zustand, Composite-FKs verhindern Verknüpfungen über Zustände hinweg; Matrix slm 43 kann damit auf «P» bleiben. **Offen im C2:** ERD 2.3 und der *Prototyp:*-Satz in 2.3 beschreiben noch den alten Stand («genau eine Quelle je Kombination», «Spalten noch englisch», Berechnungsstand als Zielzustand) und sind nachzuführen, damit Text, Diagramm und Matrix dasselbe Zielbild zeigen.
 - [x] **Vorgabe:** Jeweils eindeutigen aktuell gültigen Zustand und Stand MGDM verwalten (slm 18). — 2.3 «Datenbank-Constraint» (Prototyp seit 12.09.2026: Unique-Indizes `uq_zustand_aktuell` / `uq_zustand_mgdm` über Markerspalten, `PATCH …/calculation/:stateId/pointer`).
 - [x] **Vorgabe:** Schiessplatznutzungen von Berechnungszuständen entkoppeln; beliebige vorgesehene Perioden und Zustände kombinieren (slm 44). — 2.3, 4.1.
 - [x] **Vorgabe:** Quellen-/Schusslinienzuordnung aus FGDB, WLR und Betriebsdaten beschreiben (slm 32). — 2.3, 4.2 (3).
@@ -77,14 +89,14 @@ Quellenstand FAQ: Export vom 11.09.2026. Vor Einreichung neuere Antworten/Berich
 - [x] **Qualität:** Interne Schlüssel, externe Koordinationsnummern und sonARMS-IDs eindeutig abbilden. — 2.3.
 - [x] **Entscheid:** Ergebnis-Snapshots von importierten Berechnungszuständen unterscheiden; vollständige Eingaben, Parameter, Kernversion und Fachentscheidreferenzen aufbewahren. — 2.3 «Berechnungsstand».
 - [x] **Qualität:** Unveränderbare Nutzdaten und veränderbare Auswahlzeiger/Archivstatus technisch konsistent beschreiben. — 2.3.
-- [ ] **Vorgabe:** Strukturen für späteren historischen Import vorbereiten; historischen Vollimport nicht ungeprüft in den Grundauftrag aufnehmen (B1 9.2). — **Befund:** 3.2 zählt in der Probemigration «Nutzungen je Jahr» mit; B1 9.2 nimmt historische Nutzungen und Berechnungen ausdrücklich aus. Abgrenzung ergänzen.
+- [x] ✔ 21.09. **Vorgabe:** Strukturen für späteren historischen Import vorbereiten; historischen Vollimport nicht ungeprüft in den Grundauftrag aufnehmen (B1 9.2). — **Befund:** 3.2 zählt in der Probemigration «Nutzungen je Jahr» mit; B1 9.2 nimmt historische Nutzungen und Berechnungen ausdrücklich aus. Abgrenzung ergänzen.
 
 ## 5. Schnittstelle zu ELO
 
 - [x] **Vorgabe:** GET Anlageninformationen mit Schiessplätzen, Stellungsräumen und zulässigen Waffen/Kalibern (slm 28). — 3.1.
 - [x] **Vorgabe:** POST einer Schiessplatznutzung mit synchroner Rückmeldung (slm 29/30). — 3.1.
 - [x] **Vorgabe:** JSON/UTF-8, HTTPS/TLS, Zeitformate, Viertelstundenraster, Feldlängen, Dezimalmengen und Statuscodes gemäss B1 Kapitel 6. — 3.1, 2.3.
-- [ ] **Entscheid:** Maschinen-Authentifizierung, technische Berechtigungen und Schlüsselverwaltung konkretisieren. — **Befund:** 3.1 lässt «OAuth2 Client Credentials oder mTLS» offen; Entscheid treffen oder als Abstimmungspunkt mit Vorschlag formulieren.
+- [x] ✔ 21.09. **Entscheid:** Maschinen-Authentifizierung, technische Berechtigungen und Schlüsselverwaltung konkretisieren. — **Befund:** 3.1 lässt «OAuth2 Client Credentials oder mTLS» offen; Entscheid treffen oder als Abstimmungspunkt mit Vorschlag formulieren.
 - [x] **Qualität:** Wiederholte Übermittlungen und Doppelbuchungen behandeln; Replay-Schutz nicht mit fachlicher Idempotenz gleichsetzen. — 3.1 Idempotenz-Schlüssel, getrennt vom Replay-Header (2.1).
 - [x] **Vorgabe:** Vorgehen mit AG und ELO-Entwicklerfirma sowie Verantwortlichkeiten gemäss FAQ 17 korrekt beschreiben. — 3.1.
 - [x] **Qualität:** ELO-seitige Anpassungen von SLIM-Leistungen abgrenzen. — 3.1 (FAQ 17: Aufwände ELO trägt AG; kann ergänzt werden).
@@ -99,7 +111,7 @@ Hinweis zum Prototyp (Abschnitt 12): 3.1 «Validierungsregeln des Nutzungs-Servi
 - [x] **Vorgabe:** Excel-Schusszahlenimport nach B1.6 / B1 9.3 (slm 37). — 3.2.
 - [x] **Vorgabe:** FGDB-Import sowie WLR- und Betriebsdatenübernahme beschreiben (slm 19). — 3.2.
 - [x] **Vorgabe:** Unbekannte Stellungsräume mit Warnung und Importabbruch behandeln (slm 45). — 3.2/3.3 («Import mit Fehlern übernimmt nichts»; Prototyp seit 12.09.2026: `ImportService` bricht mit Befunden ab, eine Transaktion, `state-isolation.spec`).
-- [ ] **Vorgabe:** Externe fachliche FME-Validierung von SLIM-internen Struktur-/Zuordnungsprüfungen unterscheiden (B1 9.1). — **Befund:** FME erscheint nur in der Risikotabelle 6.5 als Rückfall; der Ablauf «Export → Ingenieurbüro → FME-Validierung durch KOMZ → Import» aus B1 9.1 fehlt in 3.2.
+- [x] ✔ 21.09. **Vorgabe:** Externe fachliche FME-Validierung von SLIM-internen Struktur-/Zuordnungsprüfungen unterscheiden (B1 9.1). — **Befund:** FME erscheint nur in der Risikotabelle 6.5 als Rückfall; der Ablauf «Export → Ingenieurbüro → FME-Validierung durch KOMZ → Import» aus B1 9.1 fehlt in 3.2.
 - [x] **Qualität:** Staging, Prüfbericht, vollständige Übernahme oder Rücknahme und Fehlerbehebung erklären. — 3.2, 3.3.
 - [x] **Qualität:** FGDB-Roundtrip mit den tatsächlichen Objektstrukturen und Geometrien als Nachweis vorsehen. — 2.2, 6.5 («vor Abgabe»); noch nicht durchgeführt (GDAL lokal nicht installiert, `umsetzungsstand.md`).
 - [x] **Vorgabe:** Datenbereitstellung, Qualitätsverantwortung des AG und etwa drei Monate Aufbereitung gemäss FAQ 28 berücksichtigen. — 3.2.
@@ -121,13 +133,13 @@ Hinweis zum Prototyp (Abschnitt 12): 3.1 «Validierungsregeln des Nutzungs-Servi
 - [x] **Vorgabe:** Benutzerwahl von drei repräsentativen, auch nicht zusammenhängenden Jahren und beliebigem Betrachtungszeitraum ermöglichen (B1 7.4.5). — 4.2 (2); Prototyp: nur zusammenhängender Zeitraum.
 - [x] **Vorgabe:** Quellengewichte gemäss Betriebsdaten, getrennt nach erforderlichen Kategorien/Zeitgruppen, anwenden (B1 7.5). — 2.3, 4.2 (3).
 - [x] **Vorgabe:** LAFmax aus WLR_Day für A7; LAE aus den betreffenden WLR-Zeitgruppen für A9 eindeutig zuordnen. — 4.1.
-- [ ] **Vorgabe:** Formeln und energetische Aggregation je Anhang nachvollziehbar erklären. — **Befund:** 4.2 (4) schreibt `Lr = 10·log(10^(0.1·LAE1) + 10^(0.1·(LAE2 + K2))) − 10·log(T)`; LSV Anhang 9 Ziff. 31 lautet `Lr = 10·log(10^(0.1·LAE1) + 10^(0.1·(LAE2 + K1))) − 10·log(T) + K2` mit K1 = 5, K2 = 15. Der Code (`annex9.ts`) ist korrekt, der Konzepttext nicht.
+- [x] ✔ 21.09. **Vorgabe:** Formeln und energetische Aggregation je Anhang nachvollziehbar erklären. — **Befund:** 4.2 (4) schreibt `Lr = 10·log(10^(0.1·LAE1) + 10^(0.1·(LAE2 + K2))) − 10·log(T)`; LSV Anhang 9 Ziff. 31 lautet `Lr = 10·log(10^(0.1·LAE1) + 10^(0.1·(LAE2 + K1))) − 10·log(T) + K2` mit K1 = 5, K2 = 15. Der Code (`annex9.ts`) ist korrekt, der Konzepttext nicht.
 - [x] **Vorgabe:** Stichtag 01.01.1985 und gemischte Anlagen mit getrennter Datenmenge neuerer Stellungsräume berücksichtigen. — 4.2 (5); Prototyp: Anhang 7 nimmt die Halbtage aller Stellungsräume (Abschnitt 12).
 - [x] **Vorgabe:** Anlagenabgrenzung gemäss B1 7.3 korrekt wiedergeben; verbleibende fachliche Klärungen ausweisen. — 2.3, 6.5 Risikotabelle.
 - [x] **Vorgabe:** Rundung zur Beurteilung gemäss B1.2 10.4 von interner Rechengenauigkeit und Teilpegelanzeige unterscheiden. — 4.2 (5).
 - [x] **Vorgabe:** Grenzwerte, Empfindlichkeitsstufen, Kontingentvergleich und konfigurierbare Schwellen erklären; Sollwert null und Betrachtungsbasis klären. — 4.2 (5); Prototyp: `quotaState` ohne Soll → «keine Daten» statt rot.
-- [ ] **Qualität:** A7-/A9-Referenzwerte getrennt und mit einheitlicher Genauigkeit ausweisen. — **Befund:** Tabelle 4.3 mischt eine Dezimale (60.7) mit zwei Dezimalen (28.08 / 28.05) und Klammerwerten mit vier Dezimalen; einheitlich «gerundet / ungerundet» in zwei Spalten.
-- [ ] **Qualität:** E8-Sonderfall mit ungerundeten Werten, Referenzmodus und dokumentierter Fachfreigabe behandeln. — **Befund:** 4.3 behauptet «der Kern hält beide Varianten als getesteten Parameter bereit» — `annex7Level` hat keinen solchen Parameter (leere Kategorien werden immer ausgelassen). Parameter bauen oder Satz streichen.
+- [x] ✔ 21.09. **Qualität:** A7-/A9-Referenzwerte getrennt und mit einheitlicher Genauigkeit ausweisen. — **Befund:** Tabelle 4.3 mischt eine Dezimale (60.7) mit zwei Dezimalen (28.08 / 28.05) und Klammerwerten mit vier Dezimalen; einheitlich «gerundet / ungerundet» in zwei Spalten.
+- [x] ✔ 21.09. **Qualität:** E8-Sonderfall mit ungerundeten Werten, Referenzmodus und dokumentierter Fachfreigabe behandeln. — **Befund:** 4.3 behauptet «der Kern hält beide Varianten als getesteten Parameter bereit» — `annex7Level` hat keinen solchen Parameter (leere Kategorien werden immer ausgelassen). Parameter bauen oder Satz streichen.
 - [x] **Qualität:** Skalierungstests korrekt trennen: A9 +10 dB, A7 +3 dB bei zehnfacher Menge und sonst gleichen Voraussetzungen. — 4.3; Tests `annex9.spec`, `annex7.spec`.
 
 ### Festgelegter Entwurfsentscheid O8
@@ -137,10 +149,10 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Entscheid:** Bei positiven Schusszahlen und Gewichtssumme null gilt `refuse` als Default. — 4.2 (3); `distribution.ts`.
 - [x] **Entscheid:** Teilweise Nullgewichte bei positiver Gewichtssumme behalten das definierte Verhältnis; keine Gleichverteilung. — `distribution.spec.ts`; im Konzept implizit («im Verhältnis dieser Gewichte»).
 - [x] **Entscheid:** Fehlende Quelle separat ausweisen; Mengen niemals still verwerfen. — 4.2 (3), `missingSources` im DTO.
-- [ ] **Entscheid:** Unvollständigkeit bis zur Gesamtbeurteilung, Anzeige und Export weitergeben; keine gültige Gesamtampel aus Restdaten. — **Befund:** Detailmaske, Simulation, Zähler und Legende tragen «nicht beurteilbar»; die Ampeln der Übersicht 5.9 und der Kontextleiste kommen aus dem Seed und kennen den Status faktisch nicht; ein Export existiert nicht. 4.2 (3) «bis in Detailmaske, Zähler und Export umgesetzt und getestet» ist für den Export falsch.
+- [x] ✔ 21.09. **Entscheid:** Unvollständigkeit bis zur Gesamtbeurteilung, Anzeige und Export weitergeben; keine gültige Gesamtampel aus Restdaten. — **Befund:** Detailmaske, Simulation, Zähler und Legende tragen «nicht beurteilbar»; die Ampeln der Übersicht 5.9 und der Kontextleiste kommen aus dem Seed und kennen den Status faktisch nicht; ein Export existiert nicht. 4.2 (3) «bis in Detailmaske, Zähler und Export umgesetzt und getestet» ist für den Export falsch.
 - [x] **Entscheid:** Gleichverteilung nur mit expliziter dokumentierter KOMZ-Freigabe; Datum/Dokumentreferenz und angewandte Regel im Berechnungsstand speichern. — 4.2 (3); Kernel verlangt `release`; Berechnungsstand ist Zielzustand.
 - [x] **Entscheid:** Keine Untergrenzenfunktion als Bestandteil dieses Angebots zusagen. — nicht zugesagt (Konzept), bewusst nicht gebaut (`laermberechnung.md`).
-- [ ] **Qualität:** Kern-, Aufrufer-, Anzeige- und Exporttests getrennt nachweisen, sofern bereits als umgesetzt behauptet. — **Befund:** Kern (`distribution.spec`, 7 Tests) ✅, Aufrufer (`assessment.service.spec` O8) ✅, Anzeige (Jest Details/Simulation) ✅, Export ❌ (nicht vorhanden). `distributeShots` ist zudem nicht angebunden; der Aufrufer behandelt nur «keine Quelle».
+- [x] ✔ 21.09. **Qualität:** Kern-, Aufrufer-, Anzeige- und Exporttests getrennt nachweisen, sofern bereits als umgesetzt behauptet. — **Befund:** Kern (`distribution.spec`, 7 Tests) ✅, Aufrufer (`assessment.service.spec` O8) ✅, Anzeige (Jest Details/Simulation) ✅, Export ❌ (nicht vorhanden). `distributeShots` ist zudem nicht angebunden; der Aufrufer behandelt nur «keine Quelle».
 
 ## 8. Performance und Skalierung
 
@@ -150,7 +162,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Vorgabe:** Rechenintensive Prozesse von anderen Nutzern ressourcenisolieren (slm 54). — 4.4; Prototyp synchron im API-Prozess (so ausgewiesen).
 - [x] **Entscheid:** Worker, Warteschlange, Prioritäten, Ressourcenlimits, Abbruch und Wiederanlauf beschreiben. — 4.4, 6.2.
 - [x] **Qualität:** Wartezeit, DB-Zugriff und Netzwerk zur gemessenen Gesamtantwortzeit zählen. — 4.4.
-- [ ] **Qualität:** Rechenkern-Benchmark klar von vollständigem Lasttest unterscheiden; Datum, Datenmenge und Umgebung angeben. — **Befund:** 4.4 nennt Datum und Datenmenge, nicht die Umgebung (Rechner, SQLite in-memory). Ergänzen; aktuelle Service-Messung vom 12.09. in `validierung-technisch.md` 1.1 (Beurteilung 4 572 Nutzungen: Ø 146 ms).
+- [x] ✔ 21.09. **Qualität:** Rechenkern-Benchmark klar von vollständigem Lasttest unterscheiden; Datum, Datenmenge und Umgebung angeben. — **Befund:** 4.4 nennt Datum und Datenmenge, nicht die Umgebung (Rechner, SQLite in-memory). Ergänzen; aktuelle Service-Messung vom 12.09. in `validierung-technisch.md` 1.1 (Beurteilung 4 572 Nutzungen: Ø 146 ms).
 - [x] **Qualität:** Keine lineare Durchsatzverdopplung oder garantierte Vollständigkeit aus einem kleinen Benchmark ableiten. — 4.4 «Nachweis unter Last folgt im Lasttest».
 
 ## 9. Oberfläche und Fachfunktionen
@@ -169,7 +181,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Vorgabe:** DE/FR/IT ab Start, Browsersprache, persistente Wahl und lokalisierte Berichte (slm 51). — 5.4.
 - [x] **Vorgabe:** FR-Übersetzungen durch AG gemäss B1 korrekt zuordnen; EN als eigene Zusatzleistung kennzeichnen. — 5.4, Summary «Englisch zusätzlich».
 - [x] **Vorgabe:** Ergonomie sowie Barrierefreiheitsantwort aus FAQ 9 korrekt berücksichtigen; FAQ 128 im Export unbeantwortet. — 5.4 «Prüfstandard gemäss FAQ 9, Forum 128 offen» entspricht dem Export (128 offen, Barrierefreiheit im Grundauftrag inkl. Karte/PDF).
-- [ ] **Qualität:** Selbst zugesagten WCAG-Zielstandard von einer bestätigten Vergabevorgabe unterscheiden; manuelle Prüfungen neben automatisierten Tests vorsehen. — **Befund:** 5.4 «Barrierefreiheit nach eCH-0059 / WCAG 2.1 AA … Prüfstandard gemäss FAQ 9» vermischt eigene Zusage (2.1 AA) und Vorgabe (FAQ 9: keine speziellen Anforderungen, Anlehnung an ar.admin.ch); nur axe im Build, keine manuelle Prüfung genannt.
+- [x] ✔ 21.09. **Qualität:** Selbst zugesagten WCAG-Zielstandard von einer bestätigten Vergabevorgabe unterscheiden; manuelle Prüfungen neben automatisierten Tests vorsehen. — **Befund:** 5.4 «Barrierefreiheit nach eCH-0059 / WCAG 2.1 AA … Prüfstandard gemäss FAQ 9» vermischt eigene Zusage (2.1 AA) und Vorgabe (FAQ 9: keine speziellen Anforderungen, Anlehnung an ar.admin.ch); nur axe im Build, keine manuelle Prüfung genannt.
 
 ### Optionale direkte Erfassung in SLIM
 
@@ -204,7 +216,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 
 ## 11. Wartbarkeit, Dokumentation und Rechte
 
-- [ ] **Vorgabe:** Modularität, Änderbarkeit und administrativ konfigurierbare Fachparameter erklären (A2 / slm 55). — **Befund:** 6.1 beschrieben; die Matrix führt slm 55 als «P» (im Prototyp nachgewiesen). Im Prototyp sind Grenzwerte, Ampelschwellen, Rundung, Werktagsfenster und Halbtagsgrenze Konstanten, Feiertage/Sperrdatum fehlen (`validierung-technisch.md` 2.2). Status auf «Z (Architektur P)» setzen.
+- [x] ✔ 21.09. **Vorgabe:** Modularität, Änderbarkeit und administrativ konfigurierbare Fachparameter erklären (A2 / slm 55). — **Befund:** 6.1 beschrieben; die Matrix führt slm 55 als «P» (im Prototyp nachgewiesen). Im Prototyp sind Grenzwerte, Ampelschwellen, Rundung, Werktagsfenster und Halbtagsgrenze Konstanten, Feiertage/Sperrdatum fehlen (`validierung-technisch.md` 2.2). Status auf «Z (Architektur P)» setzen.
 - [x] **Vorgabe:** Vollständiges deutsches Benutzerhandbuch online/PDF, Pflege mit jedem Release und kontextsensitive Hilfe bis maximal zwei Sekunden (slm 53). — 6.4.
 - [x] **Vorgabe:** Schulung/Train-the-Trainer gemäss Teil B und FAQ 36–38 beschreiben. — 6.4 per Verweis; Umfang (10 initial, 2 wiederkehrend, Annahme für Erweiterungen) ausschreiben.
 - [x] **Qualität:** Technische Dokumentation, reproduzierbarer Build, Tests, Migrationen und Übergabe an einen anderen Betreiber erläutern. — 2.2, 6.4.
@@ -212,7 +224,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [ ] **Entscheid:** Private Entwicklung durch Weslley als Herkunftsangabe festhalten; Rechtekette, fremde Beiträge und Rechte an die einreichende GmbH klären. — **Befund:** Herkunft in 2.2 genannt, Rechtekette [OFFEN].
 - [ ] **Entscheid:** Lizenz an die Auftraggeberin, Änderungen, Betrieb durch Dritte sowie Quellcode-Lieferung verbindlich mit Vertrag abgleichen. — **Befund:** [OFFEN] Lizenztext/OSS; nicht prüfbar (Vertrag).
 - [x] **Qualität:** Quellcode-Lieferung und Escrow nicht als gleichwertig darstellen; keine nicht beschlossene OSS-Freigabe behaupten. — 2.2 «wird geprüft».
-- [ ] **Qualität:** Lizenzliste mit Versionen/Notices; GPL-Komponenten nicht pauschal als permissiv bezeichnen. — **Befund:** 2.2 nennt Lizenzen ohne Versionen und ohne Notices; PostGIS korrekt als GPL nur serverseitig.
+- [x] ✔ 21.09. **Qualität:** Lizenzliste mit Versionen/Notices; GPL-Komponenten nicht pauschal als permissiv bezeichnen. — **Befund:** 2.2 nennt Lizenzen ohne Versionen und ohne Notices; PostGIS korrekt als GPL nur serverseitig.
 
 ## 12. Matrix und Prototypnachweise
 
@@ -221,9 +233,9 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Qualität:** Eine Zeile je ID für gute Prüfbarkeit; dies ist keine hier nachgewiesene Formpflicht.
 - [x] **Qualität:** Status unterscheiden: vorhanden, teilweise vorhanden, verbindlicher Zielzustand, angebotene Option, echte offene Klärung. — P/Z/O/K mit Klammern.
 - [x] **Qualität:** FAQ 13/27 nicht weiterhin als offene Entscheidung der Vergabestelle markieren; offene FAQ 117/128 korrekt behandeln. — FAQ 13 (LP5) und 27 (MFA-Wahl) eingearbeitet; 117 (LP1b/Simulation) als Matrix-Status K bei slm 12, 128 als offen in 5.4 – beide im Export unbeantwortet, Verweise stimmen.
-- [ ] **Qualität:** Tests mit einem gemeinsamen Datum/Commit zählen; Testgerüste, übersprungene Tests und erfolgreiche Tests trennen. — **Befund:** «275 automatisierte Tests» ist eine Summe über ungleiche Kategorien. Stand 12.09.: 197 Vitest-Tests erfolgreich; Jest erfolgreich (63 Fälle laut Doku); 32 Playwright-Fälle vorhanden, in dieser Prüfung nicht ausgeführt; 46 Kriterien-Fälle sind `test.fixme`-Skelette. 6.4 «automatisierte End-to-End-Fälle je slm-Nummer» als Skelett ausweisen.
+- [x] ✔ 21.09. **Qualität:** Tests mit einem gemeinsamen Datum/Commit zählen; Testgerüste, übersprungene Tests und erfolgreiche Tests trennen. — **Befund:** «275 automatisierte Tests» ist eine Summe über ungleiche Kategorien. Stand 12.09.: 197 Vitest-Tests erfolgreich; Jest erfolgreich (63 Fälle laut Doku); 32 Playwright-Fälle vorhanden, in dieser Prüfung nicht ausgeführt; 46 Kriterien-Fälle sind `test.fixme`-Skelette. 6.4 «automatisierte End-to-End-Fälle je slm-Nummer» als Skelett ausweisen.
 - [x] **Qualität:** Aktuellen PostgreSQL-Boot-/Migrationstest, Berechnungstests und erforderliche Integrationsnachweise referenzieren, soweit als vorhanden behauptet. — 2.2 nennt den offenen Boot-Blocker ehrlich; Berechnungstests belegt.
-- [ ] **Qualität:** Seed-Ampeln, schematische Karten und deaktivierte Exportknöpfe nicht als vollständige Fachfunktionen ausweisen. — **Befund:** Matrix slm 8 «P» und 5.1 «Übersicht Schiessplätze mit Kontingent- und Lärm-Ampel» verschweigen, dass beide Ampeln aus dem Seed kommen (8 von 9 Plätzen ohne Berechnungsgrundlage tragen trotzdem eine Lärm-Ampel). Karte und Exporte sind korrekt als Zielzustand markiert. Zusätzlich zu prüfende Prototyp-Aussagen: 3.1 Validierungsregeln (Viertelstunden, 256 Zeichen, Personen fehlen), 4.2 (3) «Export» (fehlt), 4.3 «beide Varianten als Parameter» (fehlt), 4.3 «halbe Feiertage umgesetzt» (Kern ja, Anwendung nein), 4.2 (5) «PW-Teilbetrachtung» (Anhang 7 unvollständig), 6.5 «Anmeldung mit 2FA» (deaktiviert), Matrix slm 55 «P».
+- [x] ✔ 21.09. **Qualität:** Seed-Ampeln, schematische Karten und deaktivierte Exportknöpfe nicht als vollständige Fachfunktionen ausweisen. — **Befund:** Matrix slm 8 «P» und 5.1 «Übersicht Schiessplätze mit Kontingent- und Lärm-Ampel» verschweigen, dass beide Ampeln aus dem Seed kommen (8 von 9 Plätzen ohne Berechnungsgrundlage tragen trotzdem eine Lärm-Ampel). Karte und Exporte sind korrekt als Zielzustand markiert. Zusätzlich zu prüfende Prototyp-Aussagen: 3.1 Validierungsregeln (Viertelstunden, 256 Zeichen, Personen fehlen), 4.2 (3) «Export» (fehlt), 4.3 «beide Varianten als Parameter» (fehlt), 4.3 «halbe Feiertage umgesetzt» (Kern ja, Anwendung nein), 4.2 (5) «PW-Teilbetrachtung» (Anhang 7 unvollständig), 6.5 «Anmeldung mit 2FA» (deaktiviert), Matrix slm 55 «P».
 - [x] **Qualität:** Alle Screenshots und Demo-Aussagen eindeutig SLIM zuordnen; Wiederverwendung aus ELO separat gekennzeichnet. — Bilder aus `docs/architecture/images`; galaxy/ELO-Herkunft in 2.2.
 - [x] **Qualität:** Synthetische Daten, echte Stammdaten und Empa-Referenzdaten korrekt unterscheiden. — 6.5.
 - [ ] **Qualität:** Demo-URL und eingeschränkte Konten testen, wenn eine Demo angeboten wird; keine Demo als formelle Pflicht darstellen. — **Befund:** URL [PLACEHOLDER]; Demo-Konto «nur Lesen und Simulation» widerspricht der Matrix 8.1.2 (Interessent hat für die Simulation X) – Rolle benennen.

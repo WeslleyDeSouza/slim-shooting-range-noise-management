@@ -82,10 +82,10 @@ describe('AreaScope (B1 8.1.2 «W/R-O», galaxy rule)', () => {
       [mockTenantId],
     );
     expect(roles.map((r) => r.title)).toEqual([
-      'Fachspezialist KOMZ Lärm',
-      'Schiessplatz-Verantwortlicher',
-      'Interessent Schiessplatznutzung',
-      'Applikationsadministrator*in',
+      'Fachspezialist KOMZ',
+      'Platzverantwortliche',
+      'Interessent',
+      'Applikationsadmin',
     ]);
     expect(JSON.parse(roles[1].settings)).toMatchObject({ key: 'slim_range_owner', ownAreasOnly: true, slim: true });
     expect(roles.map((r) => JSON.parse(r.settings).key)).toEqual(['slim_specialist', 'slim_range_owner', 'slim_interested', 'slim_admin']);

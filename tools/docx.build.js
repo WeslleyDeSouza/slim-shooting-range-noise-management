@@ -13,7 +13,8 @@
  * The first `# Title` becomes the cover title; a TOC field follows the cover.
  * Extras: `![alt](img.png){width=60%}` and ````mermaid width=60%` scale a
  * figure to a share of the text width, `<!-- pagebreak -->` forces a new page,
- * other HTML comments are dropped.
+ * `<!-- compact -->` right before a pipe table renders it in 8.5 pt with tight
+ * cell padding (the two-page requirement matrix), other HTML comments are dropped.
  *
  * A4, 2 cm margins, Arial 10.5 pt, footer «<title> · Seite X von Y».
  *
@@ -49,6 +50,7 @@ const SIZE = 21; // half-points → 10.5 pt
 function parseBlocks(md) {
   const lines = md.replace(/\r\n/g, '\n').split('\n');
   const blocks = [];
+  let compactNext = false;
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -65,6 +67,7 @@ function parseBlocks(md) {
       continue;
     }
     if (/^<!--\s*pagebreak\s*-->\s*$/.test(line)) { blocks.push({ type: 'pagebreak' }); i++; continue; }
+    if (/^<!--\s*compact\s*-->\s*$/.test(line)) { compactNext = true; i++; continue; }
     if (/^<!--.*-->\s*$/.test(line)) { i++; continue; }
     const heading = /^(#{1,4})\s+(.*)$/.exec(line);
     if (heading) { blocks.push({ type: 'heading', level: heading[1].length, text: heading[2].trim() }); i++; continue; }
@@ -75,7 +78,8 @@ function parseBlocks(md) {
       const rows = [];
       // Tables may sit indented inside a list item – trim before parsing.
       while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++].trim());
-      blocks.push({ type: 'table', rows: rows.filter((r) => !/^\|\s*:?-{2,}/.test(r)).map(splitRow) });
+      blocks.push({ type: 'table', rows: rows.filter((r) => !/^\|\s*:?-{2,}/.test(r)).map(splitRow), compact: compactNext });
+      compactNext = false;
       continue;
     }
     if (/^>\s?/.test(line)) {
@@ -255,15 +259,17 @@ async function toDocx(blocks, baseDir, stats) {
         children.push(new Paragraph({ children: [new PageBreak()] }));
         break;
       case 'table':
-        children.push(table(b.rows), new Paragraph({ spacing: { after: 120 }, children: [] }));
+        children.push(table(b.rows, b.compact), new Paragraph({ spacing: { after: 120 }, children: [] }));
         break;
     }
   }
   return children;
 }
 
-function table(rows) {
+function table(rows, compact = false) {
   const cols = Math.max(...rows.map((r) => r.length));
+  const size = compact ? SIZE - 4 : SIZE - 2;
+  const margins = compact ? { top: 20, bottom: 20, left: 60, right: 60 } : { top: 60, bottom: 60, left: 90, right: 90 };
   const border = { style: BorderStyle.SINGLE, size: 4, color: 'BFBFBF' };
   return new Table({
     width: { size: 100, type: WidthType.PERCENTAGE },
@@ -272,8 +278,8 @@ function table(rows) {
       tableHeader: r === 0,
       children: Array.from({ length: cols }, (_, c) => new TableCell({
         shading: r === 0 ? { type: ShadingType.CLEAR, fill: 'E7E6E6' } : undefined,
-        margins: { top: 60, bottom: 60, left: 90, right: 90 },
-        children: [new Paragraph({ spacing: { after: 0 }, children: runs(cells[c] ?? '', { size: SIZE - 2, bold: r === 0 || undefined }) })],
+        margins,
+        children: [new Paragraph({ spacing: { after: 0 }, children: runs(cells[c] ?? '', { size, bold: r === 0 || undefined }) })],
       })),
     })),
   });
@@ -312,7 +318,7 @@ async function toHtml(blocks, baseDir) {
       case 'image': fig(fs.readFileSync(path.resolve(baseDir, b.src)), b.width, 2, b.alt); break;
       case 'mermaid': fig(await renderMermaid(b.code), b.width, 1, ''); break;
       case 'pagebreak': parts.push('<div class="pb"></div>'); break;
-      case 'table': parts.push('<table>' + b.rows.map((r, i) => '<tr>' + r.map((c) => `<${i ? 'td' : 'th'}>${inlineHtml(c)}</${i ? 'td' : 'th'}>`).join('') + '</tr>').join('') + '</table>'); break;
+      case 'table': parts.push(`<table${b.compact ? ' class="compact"' : ''}>` + b.rows.map((r, i) => '<tr>' + r.map((c) => `<${i ? 'td' : 'th'}>${inlineHtml(c)}</${i ? 'td' : 'th'}>`).join('') + '</tr>').join('') + '</table>'); break;
     }
   }
   return parts.join('\n');
@@ -329,6 +335,7 @@ pre { font: 9pt Consolas, monospace; background: #f5f5f5; margin: 0 0 6pt; paddi
 code { font: 9.5pt Consolas, monospace; background: #f2f2f2; }
 table { border-collapse: collapse; width: 100%; margin: 0 0 6pt; font-size: 9.5pt; }
 th, td { border: 1px solid #bfbfbf; padding: 3pt 4.5pt; vertical-align: top; text-align: left; } th { background: #e7e6e6; }
+table.compact { font-size: 8.5pt; } table.compact th, table.compact td { padding: 1pt 3pt; }
 figure { margin: 6pt 0 8pt; text-align: center; } figure div { display: inline-block; background: #eee; } figcaption { font-size: 9pt; font-style: italic; color: #555; margin-top: 2pt; }
 hr { border: 0; border-top: 1px solid #bbb; margin: 0 0 8pt; }
 .pb { break-before: page; }

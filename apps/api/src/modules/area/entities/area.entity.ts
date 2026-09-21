@@ -61,7 +61,7 @@ export class AreaEntity extends SlimBaseEntity {
   @ApiProperty({ enum: AREA_STATUS, description: 'Kontingent-Einhaltung' })
   @DbPlatformColumn({
     type: 'varchar',
-    length: 8,
+    length: 12, // longest value: 'incomplete' (MariaDB enforces the length, SQLite does not)
     nullable: false,
     default: 'none',
   })
@@ -70,7 +70,7 @@ export class AreaEntity extends SlimBaseEntity {
   @ApiProperty({ enum: AREA_STATUS, description: 'Lärmbelastung' })
   @DbPlatformColumn({
     type: 'varchar',
-    length: 8,
+    length: 12, // longest value: 'incomplete' (MariaDB enforces the length, SQLite does not)
     nullable: false,
     default: 'none',
   })

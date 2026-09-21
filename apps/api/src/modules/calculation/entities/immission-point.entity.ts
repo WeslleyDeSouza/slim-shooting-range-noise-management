@@ -126,7 +126,11 @@ export class ImmissionPointEntity extends StateObjectEntity {
   propagation: PropagationEntity;
 
   /** Same state enforced through the composite key of the building. */
-  @ManyToOne(() => BuildingEntity, { onDelete: 'SET NULL', nullable: true })
+  // Composite FK (tenantId, zustand_id, gebaeude_id): only the last column is
+  // nullable, so MariaDB/MySQL refuse ON DELETE SET NULL (errno 150 «SET NULL
+  // condition but column 'tenantId' is defined as NOT NULL»). Buildings are
+  // only ever removed together with their Zustand, which cascades here anyway.
+  @ManyToOne(() => BuildingEntity, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn([
     { name: 'tenantId', referencedColumnName: 'tenantId' },
     { name: 'zustand_id', referencedColumnName: 'zustandId' },

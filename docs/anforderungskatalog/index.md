@@ -56,7 +56,8 @@ für den Prototyp und das Lösungskonzept:
   einem produktiven VBS-Umfeld läuft, ist ein Argument für Z2 (Architektur, Sicherheit, Wartbarkeit).
 - **Option Kapitel 11** (Ablösung ELO durch eine QR-Code-Erfassungsmaske in SLIM, `slm 46`–
   `slm 49`): entspricht dem ELO-Wizard `/w` (QR-Einstieg, Schiessplatz/Stellungsraum vorbelegt,
-  responsive, ohne Login). Wir können das als bereits gelöst offerieren.
+  responsive, ohne Login). Das Muster ist in ELO erprobt; für SLIM wird die Option als eigene
+  Umsetzung angeboten (C2 Kapitel 5.4, Matrix Status O), nicht als bereits vorhandene Funktion.
 
 ---
 

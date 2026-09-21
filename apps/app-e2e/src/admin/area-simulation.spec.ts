@@ -3,7 +3,7 @@ import { ROUTES } from '../support/selectors';
 
 /**
  * «Schiessplatz – Simulation» (5.13) on the demo area 1104.020 Geissalp
- * (dataset: 16 room × weapon combinations, 6 receivers). Signed in via
+ * (dataset v6: 17 room × weapon combinations, 6 receivers). Signed in via
  * auth.setup.ts. Nothing is written by the simulation, so the spec leaves the
  * database as it found it.
  */
@@ -29,7 +29,7 @@ test.describe('area simulation', () => {
     await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/details$/);
     await page.locator('[data-testid="area-tab-simulation"]').click();
     await expect(page).toHaveURL(/\/simulation$/);
-    await expect(page.locator(SIM.row)).toHaveCount(16);
+    await expect(page.locator(SIM.row)).toHaveCount(17);
   });
 
   test('starts from the Ist with the run disabled', async ({ page }) => {

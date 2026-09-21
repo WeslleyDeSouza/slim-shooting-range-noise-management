@@ -1,785 +1,785 @@
 erDiagram
   tenant {
-    varchar tenantId PK
-    text identifier
-    text workspaceName
-    text workspaceLocationCode
-    text tenantName
-    text tenantDescription
-    text tenantDomain
-    integer enabled
-    integer createdYear
+    uuid tenantId PK
+    varchar identifier
+    varchar workspaceName
+    varchar workspaceLocationCode
+    varchar tenantName
+    varchar tenantDescription
+    varchar tenantDomain
+    tinyint enabled
+    smallint createdYear
     datetime deletedAt
     datetime createdAt
   }
   tenant_email {
-    text tenantId
-    integer id PK
-    integer emailId
-    text email
-    text password
-    integer hash
-    integer isDefaultOut
-    integer isDefaultIn
-    text hostOut
-    integer portOut
-    integer tlsOut
-    text hostIn
-    integer portIn
-    integer tlsIn
-    integer createdAt
+    uuid tenantId
+    int id PK
+    int emailId
+    varchar email
+    varchar password
+    tinyint hash
+    tinyint isDefaultOut
+    tinyint isDefaultIn
+    varchar hostOut
+    smallint portOut
+    smallint tlsOut
+    varchar hostIn
+    smallint portIn
+    smallint tlsIn
+    smallint createdAt
   }
   auth_login {
-    varchar id PK
-    integer authCreatedAt
+    uuid id PK
+    smallint authCreatedAt
     datetime createdAt
-    text uuId
-    varchar userId FK
-    text info
-    text tenantId
-    text sourceType
-    text type
-    text deviceInfo
-    text value
-    text updatedAt
-    text expiresAt
-    text ipAddress
-    text userAgent
-    text lastUsedAt
+    varchar uuId
+    uuid userId FK
+    varchar info
+    uuid tenantId
+    varchar sourceType
+    varchar type
+    varchar deviceInfo
+    varchar value
+    timestamp updatedAt
+    timestamp expiresAt
+    varchar ipAddress
+    varchar userAgent
+    timestamp lastUsedAt
   }
   auth_user {
-    varchar userId PK
-    text iamId
-    text iamSource
+    uuid userId PK
+    uuid iamId
+    varchar iamSource
     varchar email
     varchar username
-    text host
-    text password
-    text salt
-    integer authCreatedAt
-    text permissionsUpdatedAt
-    integer isIntern "Internal User, User is owned by Organisation"
-    text deleted
-    text loginLast
-    text loginFirst
-    text passwordResetLink
-    text emailVerificationToken
-    integer emailVerificationAttempts
-    text emailVerifiedAt
-    text avatar
-    text gender
-    text firstName
-    text lastName
-    text phone
-    text birthDay
-    text preferredLanguage
+    varchar host
+    varchar password
+    varchar salt
+    smallint authCreatedAt
+    timestamp permissionsUpdatedAt
+    tinyint isIntern "Internal User, User is owned by Organisation"
+    date deleted
+    timestamp loginLast
+    timestamp loginFirst
+    varchar passwordResetLink
+    varchar emailVerificationToken
+    int emailVerificationAttempts
+    timestamp emailVerifiedAt
+    varchar avatar
+    char gender
+    varchar firstName
+    varchar lastName
+    varchar phone
+    date birthDay
+    char preferredLanguage
     datetime createdAt
-    text pin
-    integer pinAttempt
-    integer loginAttempt
-    integer lockedUntil
+    varchar pin
+    smallint pinAttempt
+    smallint loginAttempt
+    bigint lockedUntil
   }
   auth_password_history {
-    varchar id PK
-    text userId
-    text passwordHash
+    uuid id PK
+    uuid userId
+    varchar passwordHash
     datetime createdAt
   }
   app_category {
-    integer categoryId PK
-    text domain
-    integer parentCategoryId
-    real orderIdx
-    text tenantId
-    text title
+    int categoryId PK
+    varchar domain
+    int parentCategoryId
+    double orderIdx
+    uuid tenantId
+    varchar title
   }
   app_user_setting {
-    integer id PK
-    integer settingId
-    text domain
-    text tenantId FK
-    text userId
-    integer appId FK
-    text section
-    text platform
-    text settings
+    int id PK
+    int settingId
+    varchar domain
+    uuid tenantId FK
+    uuid userId
+    int appId FK
+    varchar section
+    varchar platform
+    json settings
   }
   app_feature_definition {
-    varchar id PK
-    integer appId FK
-    text featureKey
-    text title
+    uuid id PK
+    int appId FK
+    varchar featureKey
+    varchar title
     text description
-    text category
-    integer isActive
-    real orderIdx
+    varchar category
+    tinyint isActive
+    double orderIdx
     text config
-    integer actionRead
-    integer actionModify
-    integer actionDelete
-    integer actionDownload
-    integer actionOthers
+    tinyint actionRead
+    tinyint actionModify
+    tinyint actionDelete
+    tinyint actionDownload
+    tinyint actionOthers
   }
   app_role_feature {
-    varchar id PK
-    text tenantId FK
-    integer roleId FK
-    integer appId FK
-    varchar featureDefinitionId FK
-    text feature
-    integer enabled
+    uuid id PK
+    uuid tenantId FK
+    int roleId FK
+    int appId FK
+    uuid featureDefinitionId FK
+    varchar feature
+    tinyint enabled
   }
   app_app {
-    integer appId PK
-    text domain
-    text tenantId
-    integer categoryId FK
-    text title
-    text roleKey
-    text path
-    text pathMobile
-    text img
-    text icon
-    real orderIdx
-    text imgDashboard
-    integer hiddenInMenu
-    integer supportsGranularPermissions
+    int appId PK
+    varchar domain
+    uuid tenantId
+    int categoryId FK
+    varchar title
+    varchar roleKey
+    varchar path
+    varchar pathMobile
+    varchar img
+    varchar icon
+    double orderIdx
+    varchar imgDashboard
+    tinyint hiddenInMenu
+    tinyint supportsGranularPermissions
   }
   app_role_right {
-    varchar id PK
-    text tenantId FK
-    integer roleId FK
-    integer appId FK
-    text access
+    uuid id PK
+    uuid tenantId FK
+    int roleId FK
+    int appId FK
+    varchar access
   }
   app_role {
-    integer roleId PK
-    text tenantId
-    text type
-    text domain
-    text title
-    integer state
-    integer isDefault
-    integer hasAdminRights
-    integer hasOnBoardingRights
-    integer hasPaymentRights
-    integer sensitiveDataDisplay
-    text permissionMode
-    text settings
+    int roleId PK
+    uuid tenantId
+    enum type
+    varchar domain
+    varchar title
+    tinyint state
+    tinyint isDefault
+    tinyint hasAdminRights
+    tinyint hasOnBoardingRights
+    tinyint hasPaymentRights
+    tinyint sensitiveDataDisplay
+    enum permissionMode
+    json settings
   }
   app_user_right {
-    integer id PK
-    varchar userId FK
-    text tenantId FK
-    integer roleId FK
+    int id PK
+    uuid userId FK
+    uuid tenantId FK
+    int roleId FK
   }
   auth_template {
-    integer id PK
-    integer tenantId
-    text lang
-    text name "KEY identifier"
-    text title
-    text subject
+    int id PK
+    int tenantId
+    char lang
+    char name "KEY identifier"
+    char title
+    varchar subject
     text template
     text settings
   }
   tenant_user_role {
-    varchar tenantId FK
-    integer id PK
-    varchar userId FK
-    text roles "user,admin,contributor,ect"
-    integer userCreatedAt
+    uuid tenantId FK
+    int id PK
+    uuid userId FK
+    varchar roles "user,admin,contributor,ect"
+    smallint userCreatedAt
   }
   tenant_structure_user_role {
-    varchar id PK
-    varchar userId FK
-    text tenantId
-    text structureItemId
-    text type "DIVISIONS: Part of a tenant that operates within the entire organization.
+    uuid id PK
+    uuid userId FK
+    uuid tenantId
+    varchar structureItemId
+    enum type "DIVISIONS: Part of a tenant that operates within the entire organization.
 DEPARTMENTS: Independent structural unit of the organization.
 TEAMS: Method of organizing employees based on their qualities.
 LOCATIONS: Physical locations where the tenant operates.
 OPERATIONS: Broad range of activities related to business operations."
-    text role "Possible values: manager, member, admin, observer"
-    integer createdYear
+    varchar role "Possible values: manager, member, admin, observer"
+    smallint createdYear
   }
   tenant_app_config {
-    varchar configId PK
-    text tenantId
-    text domainName
-    text domainTopLevel
-    text configKey
-    text config
-    integer enabled
-    integer createdYear
+    uuid configId PK
+    uuid tenantId
+    varchar domainName
+    varchar domainTopLevel
+    varchar configKey
+    longtext config
+    tinyint enabled
+    smallint createdYear
   }
   user_config {
-    integer configId PK
-    text ownerId
-    text metaSection
-    text metaKey
+    int configId PK
+    uuid ownerId
+    varchar metaSection
+    varchar metaKey
     text metaValue
   }
   tenant_config {
-    integer configId PK
-    text tenantId
-    text ownerId
-    text metaSection
-    text metaKey
+    int configId PK
+    uuid tenantId
+    uuid ownerId
+    varchar metaSection
+    varchar metaKey
     text metaValue
     datetime createdAt
   }
   logbuch {
-    text tenantId
-    varchar logId PK
-    varchar userId FK
-    integer isSystem
-    text section
-    text action
-    text refType
-    text refId
-    text message
+    uuid tenantId
+    uuid logId PK
+    uuid userId FK
+    tinyint isSystem
+    varchar section
+    varchar action
+    varchar refType
+    varchar refId
+    varchar message
     text data
-    text ip
-    text device
+    varchar ip
+    varchar device
     datetime createdAt
   }
   stellungsraum {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    text coordinationSectionNo
+    uuid areaId FK
+    varchar coordinationSectionNo
     varchar name
-    text groupName
-    integer sortOrder
-    integer enabled
+    varchar groupName
+    int sortOrder
+    tinyint enabled
   }
   kaliber {
-    text tenantId
-    varchar id PK
+    uuid tenantId
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar nameDe
-    text nameFr
-    text nameIt
-    text alnNo
-    text sapNo
-    text quantityUnit
-    integer enabled
+    varchar nameFr
+    varchar nameIt
+    varchar alnNo
+    varchar sapNo
+    varchar quantityUnit
+    tinyint enabled
   }
   waffenkategorie {
-    text tenantId
-    varchar id PK
+    uuid tenantId
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar code
     varchar nameDe
-    text nameFr
-    text nameIt
-    integer sortOrder
-    integer enabled
+    varchar nameFr
+    varchar nameIt
+    int sortOrder
+    tinyint enabled
   }
   waffe {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar nameDe
-    text nameFr
-    text nameIt
-    varchar categoryId FK
-    text annex7Category
-    integer enabled
+    varchar nameFr
+    varchar nameIt
+    uuid categoryId FK
+    varchar annex7Category
+    tinyint enabled
   }
   waffe_kaliber_kombination {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar weaponId FK
-    varchar caliberId FK
+    uuid weaponId FK
+    uuid caliberId FK
     varchar nameDe
-    text nameFr
-    text nameIt
-    text sonarmsId
-    integer enabled
+    varchar nameFr
+    varchar nameIt
+    varchar sonarmsId
+    tinyint enabled
   }
   stellungsraum_kombination {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar roomId FK
-    varchar combinationId FK
+    uuid areaId FK
+    uuid roomId FK
+    uuid combinationId FK
     varchar entryName
-    integer enabled
+    tinyint enabled
   }
   schiessplatz {
-    text tenantId
-    varchar id PK
+    uuid tenantId
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
     varchar name
     varchar coordinationSectionNo
-    text sectoralPlanNo
-    text quotaStatus
-    text noiseStatus
-    text quotaStatusReason
-    text noiseStatusReason
-    text noiseStatusBasis
-    integer statusYear
-    integer annex7Overall
-    integer enabled
-    text classification
-    text recalculationState
-    text remediationProjectState
-    text spmState
-    text noiseRemediationState
-    text projectState
-    text planningApproval
+    varchar sectoralPlanNo
+    varchar quotaStatus
+    varchar noiseStatus
+    varchar quotaStatusReason
+    varchar noiseStatusReason
+    varchar noiseStatusBasis
+    int statusYear
+    tinyint annex7Overall
+    tinyint enabled
+    varchar classification
+    varchar recalculationState
+    varchar remediationProjectState
+    varchar spmState
+    varchar noiseRemediationState
+    varchar projectState
+    varchar planningApproval
   }
   schiessplatz_benutzer {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    text userId
+    uuid areaId FK
+    varchar userId
   }
   kontingent {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar combinationId FK
-    numeric shotsPerYear
-    text basis
+    uuid areaId FK
+    uuid combinationId FK
+    decimal shotsPerYear
+    varchar basis
   }
   feiertag {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    text date
-    text from
-    text to
+    uuid areaId FK
+    varchar date
+    varchar from
+    varchar to
     varchar name
   }
   quelldaten_anhang9 {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar schusslinie_id FK
-    numeric a9_m1
-    numeric a9_m2
-    integer schaetzung
-    integer jahr
-    text bemerk_daten
+    uuid schusslinie_id FK
+    decimal a9_m1
+    decimal a9_m2
+    tinyint schaetzung
+    int jahr
+    varchar bemerk_daten
     varchar waffenkat_plan
   }
   quelldaten_anhang7 {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar schusslinie_id FK
-    text waffenkategorie_a7
-    real halbtag_wo
-    real halbtag_so
-    numeric zahl_wo
-    numeric zahl_so
-    integer schaetzung
-    integer jahr
-    text bemerk_daten
+    uuid schusslinie_id FK
+    varchar waffenkategorie_a7
+    float halbtag_wo
+    float halbtag_so
+    decimal zahl_wo
+    decimal zahl_so
+    tinyint schaetzung
+    int jahr
+    varchar bemerk_daten
     varchar waffenkat_plan
   }
   schusslinie {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
-    varchar kombination_id FK
+    uuid anlageteil_id FK
+    uuid kombination_id FK
     varchar quellen_id
     varchar waffensystem
-    text bemerk_geom
+    varchar bemerk_geom
   }
   zustand_anlageteil {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar schiessplatz_id FK
-    varchar stellungsraum_id FK
+    uuid schiessplatz_id FK
+    uuid stellungsraum_id FK
     varchar koord_nr
     varchar bez_spldossier
     varchar typ
-    text bemerkung
-    integer baujahr_nach_1985
+    varchar bemerkung
+    tinyint baujahr_nach_1985
   }
   ausbreitungsberechnung {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
     varchar ausbreitungsmodell
     varchar version
-    text hoehenmodell
-    text gebaeudedatensatz
-    integer meteo_inkl
-    integer meteo_anzahl
-    text meteodaten
-    integer inkl_reflexion
-    integer inkl_wald
+    varchar hoehenmodell
+    varchar gebaeudedatensatz
+    tinyint meteo_inkl
+    int meteo_anzahl
+    varchar meteodaten
+    tinyint inkl_reflexion
+    tinyint inkl_wald
     varchar primaerflaechen
-    text bemerkung
+    varchar bemerkung
   }
   gebaeude {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar berechnung_id FK
-    text egid
-    text adresse
+    uuid berechnung_id FK
+    varchar egid
+    varchar adresse
     varchar surface_type
     varchar beurteilung
-    integer personen
-    text bemerkung
+    int personen
+    varchar bemerkung
   }
   immissionspunkt {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar berechnung_id FK
-    varchar gebaeude_id FK
+    uuid berechnung_id FK
+    uuid gebaeude_id FK
     varchar sonarms_id
     varchar code
-    text egid
-    text egrid
+    varchar egid
+    varchar egrid
     varchar adresse
-    text gemeinde
-    integer ep_nr
-    real lr
+    varchar gemeinde
+    int ep_nr
+    float lr
     varchar betrieb
-    text typ
+    varchar typ
     varchar beurteilung
-    text bemerkung
-    text es
-    real ost
-    real nord
-    real hoehe
-    real karte_x
-    real karte_y
-    integer sortierung
+    varchar bemerkung
+    varchar es
+    float ost
+    float nord
+    float hoehe
+    float karte_x
+    float karte_y
+    int sortierung
   }
   zustand {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar schiessplatz_id FK
-    varchar immissionsberechnung_id FK
-    text zustand_id_fgdb
+    uuid schiessplatz_id FK
+    uuid immissionsberechnung_id FK
+    varchar zustand_id_fgdb
     varchar bezeichnung
-    integer ref_jahr
-    text baujahr_klasse
-    integer aktuell
-    integer stand_mgdm
-    text aktuell_schluessel
-    text mgdm_schluessel
-    integer aktiv
+    int ref_jahr
+    varchar baujahr_klasse
+    tinyint aktuell
+    tinyint stand_mgdm
+    uuid aktuell_schluessel
+    uuid mgdm_schluessel
+    tinyint aktiv
   }
   immissionsberechnung {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar schiessplatz_id FK
+    uuid schiessplatz_id FK
     varchar bezeichnung
     varchar visum
     text description
-    text fileName
-    text lieferdatum
-    text zustand_mpv
-    text zustand_ist
-    integer mpv_massnahmen
-    integer ist_hindernisse
-    integer ist_hochblenden
-    integer anz_immi_pkte
-    integer nutzung_zivil
-    integer haus_vorhanden
-    integer aktiv
+    varchar fileName
+    varchar lieferdatum
+    varchar zustand_mpv
+    varchar zustand_ist
+    tinyint mpv_massnahmen
+    tinyint ist_hindernisse
+    tinyint ist_hochblenden
+    int anz_immi_pkte
+    tinyint nutzung_zivil
+    tinyint haus_vorhanden
+    tinyint aktiv
   }
   untersuchungsperimeter {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
     varchar name
     varchar nr_spm
     varchar koord_nr
   }
   wlr_pegel {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar berechnung_id FK
-    varchar schusslinie_id FK
-    varchar immissionspunkt_id FK
-    text zeitgruppe
-    real lae
-    real lafmax
-    real lae_mk
-    real lae_gk
-    real lae_det
-    real elevation
+    uuid berechnung_id FK
+    uuid schusslinie_id FK
+    uuid immissionspunkt_id FK
+    varchar zeitgruppe
+    float lae
+    float lafmax
+    float lae_mk
+    float lae_gk
+    float lae_det
+    float elevation
   }
   isophonen {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar berechnung_id FK
-    integer lr
-    real hoehe
-    integer aufloesung
-    text bemerkung
+    uuid berechnung_id FK
+    int lr
+    float hoehe
+    int aufloesung
+    varchar bemerkung
   }
   betroffene_analyse {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar berechnung_id FK
-    integer pw_igw
-    integer igw_av
-    integer av
-    integer jahr
-    text bemerkung
+    uuid berechnung_id FK
+    int pw_igw
+    int igw_av
+    int av
+    int jahr
+    varchar bemerkung
     varchar spm_nr
-    integer pers_55db
-    integer pers_60db
+    int pers_55db
+    int pers_60db
   }
   hindernis {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
     varchar surface_type
     varchar typ_hindernis
-    text bemerkung
+    varchar bemerkung
   }
   hochblende {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
-    real hoehe_unterkante
+    float hoehe_unterkante
     varchar surface_type
-    text bemerkung
+    varchar bemerkung
   }
   schuetzenhaus {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
-    real haus_hoehe
-    real haus_tiefe
-    real first_abstand
-    real first_hoehe
-    real bl_li_laenge
-    real bl_li_hoehe
-    real bl_re_laenge
-    real bl_re_hoehe
-    text haus_mat
-    text bl_li_mat
-    text bl_re_mat
-    text bemerkung
+    float haus_hoehe
+    float haus_tiefe
+    float first_abstand
+    float first_hoehe
+    float bl_li_laenge
+    float bl_li_hoehe
+    float bl_re_laenge
+    float bl_re_hoehe
+    varchar haus_mat
+    varchar bl_li_mat
+    varchar bl_re_mat
+    varchar bemerkung
   }
   massnahmen_punkt {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
     varchar bemerkung
     varchar massn_typ
   }
   massnahmen_flaeche {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
     varchar bemerkung
-    real breite
-    real laenge
-    real hoehe
-    real abstand_quer
-    real abstand_laengs
-    real tiefe
+    float breite
+    float laenge
+    float hoehe
+    float abstand_quer
+    float abstand_laengs
+    float tiefe
     varchar massn_typ
   }
   massnahmen_betrieb {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar anlageteil_id FK
+    uuid anlageteil_id FK
     varchar koord_nr
     varchar massn_typ
   }
   massnahmen_ssf {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar zustand_id FK
+    uuid zustand_id FK
     text geometrie
-    varchar gebaeude_id FK
-    text egid
+    uuid gebaeude_id FK
+    varchar egid
     varchar koord_nr
     varchar massn_typ
   }
   berechnungslauf {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar schiessplatz_id FK
-    varchar zustand_id FK
-    text zeitraum_von
-    text zeitraum_bis
+    uuid schiessplatz_id FK
+    uuid zustand_id FK
+    varchar zeitraum_von
+    varchar zeitraum_bis
     text jahre
     text nutzungen_kopie
     text referenz_kopie
     text parameter
     varchar kern_version
-    text vollstaendigkeit
+    varchar vollstaendigkeit
     text ergebnis
     varchar pruefsumme
     varchar ersteller
-    integer archiviert
+    tinyint archiviert
   }
   nutzung_position {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar usageId FK
-    text areaId
-    varchar combinationId FK
-    numeric quantity
-    text quantityUnit
+    uuid usageId FK
+    uuid areaId
+    uuid combinationId FK
+    decimal quantity
+    varchar quantityUnit
   }
   nutzung {
-    text tenantId FK
-    varchar id PK
+    uuid tenantId FK
+    uuid id PK
     datetime createdAt
     datetime updatedAt
     datetime deletedAt
-    varchar areaId FK
-    varchar roomId FK
+    uuid areaId FK
+    uuid roomId FK
     varchar unit
-    text date
-    text timeFrom
-    text timeTo
-    text usageType
-    text civilUsageKind
-    integer personCount
+    varchar date
+    varchar timeFrom
+    varchar timeTo
+    varchar usageType
+    varchar civilUsageKind
+    int personCount
     varchar recordedBy
-    text source
-    text externalId
+    varchar source
+    varchar externalId
     text note
   }
   demo_datensatz {
     varchar tenantId PK
     varchar datasetKey
-    integer version
-    integer year
+    int version
+    int year
     datetime seededAt
   }
   auth_login }|--|| auth_user: user

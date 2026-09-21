@@ -54,12 +54,16 @@ test.describe('entry page', () => {
     await page.goto(ROUTES.home);
     const html = page.locator('html');
 
+    // `getAttribute` does not retry: reading it right after the click raced
+    // the toggle on CI (read «light», reload showed «dark»). Derive the
+    // expected value from the state before the click and assert with retry.
+    const before = await html.getAttribute('data-theme');
+    const theme = before === 'dark' ? 'light' : 'dark';
     await page.getByRole('button', { name: /Design/ }).click();
-    const theme = await html.getAttribute('data-theme');
-    expect(['light', 'dark']).toContain(theme);
+    await expect(html).toHaveAttribute('data-theme', theme);
 
     await page.reload();
-    await expect(html).toHaveAttribute('data-theme', theme as string);
+    await expect(html).toHaveAttribute('data-theme', theme);
   });
 
   test('navigates to the area overview and filters it', async ({ page }) => {

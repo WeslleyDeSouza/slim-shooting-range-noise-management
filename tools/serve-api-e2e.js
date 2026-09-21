@@ -7,6 +7,12 @@ const env = {
   APP_DEFAULT_PASSWORD: '1234',
   PORT: process.env.PORT || '3333',
   API_PORT: process.env.API_PORT || process.env.PORT || '3333',
+  // Every spec opens a fresh browser context that restores the shared session
+  // through /api/auth/*. On a fast CI runner that is 20+ calls per minute — the
+  // production limit (20/min, app.module.ts) then answers 429, the app drops to
+  // the login page and every spec in that minute fails (retries keep the
+  // window exhausted). Not a security setting here: the e2e API is throwaway.
+  API_RATE_LIMIT_AUTH: process.env.API_RATE_LIMIT_AUTH || '1000',
 
   ...process.env,
 

@@ -17,6 +17,8 @@ import {
   createValidationPipe,
   resolveTrustProxy,
 } from '@api-slim/common';
+import { DataSource } from "typeorm";
+import {staticFileMiddleware} from "./core";
 
 env.load();
 
@@ -34,10 +36,13 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(createValidationPipe());
 
-  // Coolify / proxy work-around: collapse a doubled `/api/api` prefix.
+  const dataSource = app.get(DataSource);
+
+  // Coolify WorkAround
   app.use(applyMiddlewareAppStripeDouble());
   app.use(MiddlewareCors());
   app.use(MiddlewareSecurityHeaders());
+  app.use(staticFileMiddleware(dataSource));
 
   if (env.isSwaggerEnabled) {
     setupSwagger(app);

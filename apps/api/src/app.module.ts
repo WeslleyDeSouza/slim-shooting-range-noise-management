@@ -45,6 +45,7 @@ import {
   UsageModule,
 } from './modules';
 import { AreaStatusService } from './modules/calculation/area-status.service';
+import { CoreStaticFileModule } from "./core";
 
 const isProd: boolean = env.isProd();
 
@@ -123,8 +124,8 @@ const isPrimaryInstance = (process.env['NODE_APP_INSTANCE'] ?? '0') === '0';
 
     CoreConfigModule,
     HealthModule,
-    // Logbook (logbuch) + AUTH_API_LOGGER bridge, global (slm 56)
     CoreLoggerModule,
+    CoreStaticFileModule,
 
     // Auth & admin section (galaxy)
     AuthRoleWithRoutingModule,

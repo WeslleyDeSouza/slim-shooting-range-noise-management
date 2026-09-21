@@ -125,16 +125,16 @@ export class ImmissionPointEntity extends StateObjectEntity {
   ])
   propagation: PropagationEntity;
 
-  /** Same state enforced through the composite key of the building. */
-  // Composite FK (tenantId, zustand_id, gebaeude_id): only the last column is
-  // nullable, so MariaDB/MySQL refuse ON DELETE SET NULL (errno 150 «SET NULL
-  // condition but column 'tenantId' is defined as NOT NULL»). Buildings are
-  // only ever removed together with their Zustand, which cascades here anyway.
-  @ManyToOne(() => BuildingEntity, { onDelete: 'CASCADE', nullable: true })
-  @JoinColumn([
-    { name: 'tenantId', referencedColumnName: 'tenantId' },
-    { name: 'zustand_id', referencedColumnName: 'zustandId' },
-    { name: 'gebaeude_id', referencedColumnName: 'id' },
-  ])
+  /**
+   * A point outlives its building (Freifeld- and Baulinienpunkte have none;
+   * a removed building must not take the point and its WLR rows with it), so
+   * the link is SET NULL. MariaDB allows SET NULL only when every FK column is
+   * nullable, hence a single-column key on the uuid `id` instead of the
+   * composite `(tenantId, zustand_id, id)` used elsewhere. «Same state» is
+   * enforced by the import (both rows written per state in one transaction)
+   * and tested in `state-isolation.spec.ts`.
+   */
+  @ManyToOne(() => BuildingEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'gebaeude_id', referencedColumnName: 'id' })
   building: BuildingEntity | null;
 }

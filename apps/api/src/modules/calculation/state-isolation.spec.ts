@@ -14,7 +14,7 @@ import { CalculationRunService } from './calculation-run.service';
 import { CalculationModule } from './calculation.module';
 import { CalculationService } from './calculation.service';
 import { ReceiverAssessmentDto, StateImportDto } from './dto';
-import { CalculationRunEntity, AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
+import { BuildingEntity, CalculationRunEntity, AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
 import { ImportAbortedException, ImportService } from './import.service';
 
 const NOW = new Date(2026, 11, 31);
@@ -239,6 +239,31 @@ describe('State isolation (B1 Kap. 10, slm 42–45)', () => {
     await expect(
       wlr.save(wlr.create({ tenantId: mockTenantId, zustandId: stateA, propagationId: pointB.propagationId, sourceLineId: sourceA.id, immissionPointId: pointB.id, timeGroup: 'day', lae: 1, lafmax: 1, geometry: null })),
     ).rejects.toThrow(/FOREIGN KEY|constraint/i);
+  });
+
+  it('keeps an Immissionspunkt (and its WLR rows) when its Gebäude is deleted, and never links across states', async () => {
+    // Fassadenpunkt E1 of state A carries a building; the building link is
+    // SET NULL on purpose (a point outlives its building), so a hard delete of
+    // the building must leave the point and its delivered levels intact.
+    const points = dataSource.getRepository(ImmissionPointEntity);
+    const buildings = dataSource.getRepository(BuildingEntity);
+    const wlr = dataSource.getRepository(AreaWlrEntity);
+    const pointA = await points.findOneByOrFail({ tenantId: mockTenantId, zustandId: stateA, sonarmsId: 'E1' });
+    expect(pointA.buildingId).toBeTruthy();
+    const wlrBefore = await wlr.countBy({ tenantId: mockTenantId, immissionPointId: pointA.id });
+    expect(wlrBefore).toBeGreaterThan(0);
+
+    // The importer writes building and point of one state together: the point
+    // of state A references a building of state A, never one of state B.
+    const building = await buildings.findOneByOrFail({ tenantId: mockTenantId, id: pointA.buildingId as string });
+    expect(building.zustandId).toBe(stateA);
+    const buildingB = await buildings.findOneByOrFail({ tenantId: mockTenantId, zustandId: stateB });
+    expect(buildingB.id).not.toBe(building.id);
+
+    await buildings.delete({ tenantId: mockTenantId, id: building.id });
+    const after = await points.findOneByOrFail({ tenantId: mockTenantId, id: pointA.id });
+    expect(after.buildingId).toBeNull();
+    expect(await wlr.countBy({ tenantId: mockTenantId, immissionPointId: pointA.id })).toBe(wlrBefore);
   });
 
   it('refuses an Anlageteil that points at a Stellungsraum of another Schiessplatz', async () => {

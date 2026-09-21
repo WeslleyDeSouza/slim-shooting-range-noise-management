@@ -34,7 +34,7 @@
           </thead>
           <tbody>
             @for (s of states(); track s.id) {
-              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="isSelected(s.id)" data-testid="dce-state" [attr.data-name]="s.name" (click)="toggleState(s.id)">
+              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="isSelected(s.id)" tabindex="0" data-testid="dce-state" [attr.data-name]="s.name" (click)="toggleState(s.id)" (keydown.enter)="toggleState(s.id)">
                 <td class="dce__check-col">
                   <label class="slim-check dce__check" (click)="$event.stopPropagation()">
                     <input class="slim-check__input" type="checkbox" [checked]="isSelected(s.id)" [attr.aria-label]="s.name" data-testid="dce-state-check" (change)="toggleState(s.id)" />
@@ -93,7 +93,7 @@
           </thead>
           <tbody>
             @for (y of years(); track y.year) {
-              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="selectedYears().includes(y.year)" data-testid="dce-year" [attr.data-year]="y.year" (click)="toggleYear(y.year)">
+              <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="selectedYears().includes(y.year)" tabindex="0" data-testid="dce-year" [attr.data-year]="y.year" (click)="toggleYear(y.year)" (keydown.enter)="toggleYear(y.year)">
                 <td class="dce__check-col">
                   <label class="slim-check dce__check" (click)="$event.stopPropagation()">
                     <input class="slim-check__input" type="checkbox" [checked]="selectedYears().includes(y.year)" [attr.aria-label]="y.year" data-testid="dce-year-check" (change)="toggleYear(y.year)" />

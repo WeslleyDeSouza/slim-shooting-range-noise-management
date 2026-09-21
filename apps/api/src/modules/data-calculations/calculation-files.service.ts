@@ -28,7 +28,7 @@ export class CalculationFilesService {
   /** Splits a text file into header + rows; the delimiter (tab, `;`, `,`) is detected on the header. */
   parseDelimited(text: string): ParsedTable {
     const lines = text
-      .replace(/^﻿/, '')
+      .replace(/^\uFEFF/, '') // strip a UTF-8 BOM
       .split(/\r?\n/)
       .map((l) => l.replace(/\s+$/, ''))
       .filter((l) => l.trim() !== '' && !l.trim().startsWith('#'));
@@ -207,7 +207,7 @@ export class CalculationFilesService {
           .join(';'),
       );
     }
-    return '﻿' + lines.join('\r\n') + '\r\n';
+    return '\uFEFF' + lines.join('\r\n') + '\r\n';
   }
 
   /**

@@ -258,8 +258,8 @@
       "error_delete": "The app could not be deleted."
     },
     "logs": {
-      "integrity": "Tamper-proof · retained 10 years",
-      "integrity_title": "Entries are stored immutably (append-only) and retained for 10 years.",
+      "subtitle": "Sign-ins, changes to users, roles and master data",
+      "subtitle_title": "Who changed what and when – with filters and Excel export.",
       "stat_entries": "Entries (filter)",
       "stat_writes": "Write actions",
       "stat_users": "Users involved",

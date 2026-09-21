@@ -258,8 +258,8 @@
       "error_delete": "Impossibile eliminare l'app."
     },
     "logs": {
-      "integrity": "A prova di manomissione · conservazione 10 anni",
-      "integrity_title": "Le voci sono salvate in modo immutabile (append-only) e conservate per 10 anni.",
+      "subtitle": "Accessi, modifiche a utenti, ruoli e dati anagrafici",
+      "subtitle_title": "Chi ha modificato cosa e quando – con filtri ed esportazione Excel.",
       "stat_entries": "Voci (filtro)",
       "stat_writes": "Azioni di scrittura",
       "stat_users": "Utenti coinvolti",

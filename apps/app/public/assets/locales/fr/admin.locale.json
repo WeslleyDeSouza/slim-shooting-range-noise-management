@@ -258,8 +258,8 @@
       "error_delete": "L'app n'a pas pu être supprimée."
     },
     "logs": {
-      "integrity": "Infalsifiable · conservation 10 ans",
-      "integrity_title": "Les entrées sont stockées de manière immuable (append-only) et conservées 10 ans.",
+      "subtitle": "Connexions, modifications des utilisateurs, rôles et données de base",
+      "subtitle_title": "Qui a modifié quoi et quand – avec filtres et export Excel.",
       "stat_entries": "Entrées (filtre)",
       "stat_writes": "Actions d'écriture",
       "stat_users": "Utilisateurs impliqués",

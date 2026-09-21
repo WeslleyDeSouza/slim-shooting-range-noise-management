@@ -258,8 +258,8 @@
       "error_delete": "App konnte nicht gelöscht werden."
     },
     "logs": {
-      "integrity": "Manipulationssicher · Aufbewahrung 10 Jahre",
-      "integrity_title": "Einträge werden unveränderlich gespeichert (Append-only) und 10 Jahre aufbewahrt.",
+      "subtitle": "Anmeldungen, Änderungen an Benutzern, Rollen und Stammdaten",
+      "subtitle_title": "Wer hat wann was geändert – mit Filtern und Excel-Export.",
       "stat_entries": "Einträge (Filter)",
       "stat_writes": "Schreibende Aktionen",
       "stat_users": "Beteiligte Benutzer",

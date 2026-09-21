@@ -150,7 +150,9 @@ export namespace API_MOCK_DATA {
    * role mapping, and the demo data of every feature module. Users / roles
    * come from the galaxy tables (ELO pattern), so the app has no mocks.
    */
-  export const initMockData = async (connection: DataSource) => {
+  /** `seeded` = the demo dataset was (re)written: the caller refreshes the cached overview lights. */
+  export const initMockData = async (connection: DataSource): Promise<{ seeded: boolean; tenantId: string }> => {
+    let seeded = false;
     // Swallowing these would make a broken seed look like a healthy boot.
     const fill = (what: string, run: Promise<unknown>) =>
       run.catch((error) =>
@@ -186,6 +188,7 @@ export namespace API_MOCK_DATA {
         force: process.env['DEMO_RESEED'] === '1',
       })
         .then((r) => {
+          seeded = !r.skipped;
           if (!r.skipped) {
             console.log(
               `[seed] SLIM Demo ${r.year}: ${r.areas} areas, ${r.rooms} rooms, ${r.combinations} room combinations, ${r.calculations} states (${r.sources} sources, ${r.receivers} points, ${r.wlr} WLR rows), ${r.usages} usages`,
@@ -198,6 +201,7 @@ export namespace API_MOCK_DATA {
     } else {
       console.log('[seed] demo dataset skipped (DEMO_SEED=0)');
     }
+    return { seeded, tenantId: TestMockTenantMock.tenantId };
   };
 
   /** Demo credentials as the dataset declares them (setup wizard, e2e). */

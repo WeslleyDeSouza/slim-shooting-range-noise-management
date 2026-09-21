@@ -156,15 +156,11 @@ validation and the B1 8.1.2 rights matrix end to end.
 
 ## Database
 
-Local development runs on the production engine, MariaDB 11.8: `docker compose up -d app-db`
-(container `app-slim-db`, host port **3307** so it can run next to the ELO container on 3306) and the
-`DB_*` block in `.env` (`DB_TYPE='mariadb'`, `DB_PORT=3307`, credentials from the compose file). The
-schema is synced on every start (`DB_SYNC=1`) and the «SLIM Demo» seed runs once. SQLite
-(`DB_TYPE='sqlite'`, `local.database.sqlite`) remains the docker-free fallback and the engine of the
-tests and the e2e API — but SQLite does not enforce what MariaDB rejects (composite foreign keys with
-`ON DELETE SET NULL`, varchar lengths such as the galaxy `app_role.title` = 20), so boot against
-MariaDB before shipping entity or seed changes. `docker-compose.yml` also ships the PostGIS target
-(`app-postgis`, see `.env.example`).
+Local default is MariaDB 11.8 like production: `docker compose up -d app-db` (host port 3307, next to
+the ELO container on 3306) and the `DB_*` block in `.env`. `DB_SYNC=1` syncs the schema, the demo seed
+runs once. SQLite stays the docker-free fallback and the test/e2e engine, but it does not enforce what
+MariaDB rejects (`ON DELETE SET NULL` on composite keys, varchar lengths) — boot against MariaDB before
+shipping entity or seed changes. `app-postgis` in the compose file is the PostGIS target.
 
 ## Production
 

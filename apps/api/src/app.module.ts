@@ -44,8 +44,18 @@ import {
   DataWeaponsModule,
   UsageModule,
 } from './modules';
+import { AreaStatusService } from './modules/calculation/area-status.service';
 
 const isProd: boolean = env.isProd();
+
+/**
+ * pm2 cluster mode boots every instance at once; with DB_SYNC=1 they would all
+ * run the schema sync (and the demo seed) against the same database and race
+ * each other («errno 121 Duplicate key on write or update» on MariaDB until the
+ * retries settle). Only the first instance (NODE_APP_INSTANCE=0, or none in
+ * fork mode / `nx serve`) syncs and seeds; the others just connect.
+ */
+const isPrimaryInstance = (process.env['NODE_APP_INSTANCE'] ?? '0') === '0';
 
 /**
  * Same backend base as ELO / alco-map: galaxy auth (users, roles, sessions,
@@ -80,7 +90,7 @@ const isProd: boolean = env.isProd();
       logging: +(process.env['DB_LOG'] || process.env['LOG_DB'] || 0) >= 1,
       logger: 'simple-console',
       autoLoadEntities: false,
-      synchronize: process.env['DB_SYNC'] === '1',
+      synchronize: process.env['DB_SYNC'] === '1' && isPrimaryInstance,
       ssl: false,
       extra: {
         connectionLimit: 20,
@@ -150,9 +160,24 @@ const isProd: boolean = env.isProd();
   ],
 })
 export class AppModule implements NestModule {
-  constructor(protected dataSource: DataSource) {
-    if (!isProd) {
-      setTimeout(() => API_MOCK_DATA.initMockData(dataSource), 2000);
+  constructor(
+    protected dataSource: DataSource,
+    private readonly areaStatus: AreaStatusService,
+  ) {
+    if (!isProd && isPrimaryInstance) {
+      // The seed runs after CalculationModule.onApplicationBootstrap has already
+      // refreshed the overview lights: on a fresh database they would stay «none»
+      // until the midnight cron, so refresh once more when the dataset was written.
+      setTimeout(() => {
+        void API_MOCK_DATA.initMockData(dataSource)
+          .then(async ({ seeded, tenantId }) => {
+            if (seeded) {
+              await this.areaStatus.refreshAll(tenantId);
+              console.log('[seed] overview statuses refreshed');
+            }
+          })
+          .catch((error) => console.warn(`[seed] status refresh failed: ${error?.message ?? error}`));
+      }, 2000);
     }
   }
 

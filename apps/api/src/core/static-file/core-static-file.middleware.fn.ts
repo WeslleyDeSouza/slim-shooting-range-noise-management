@@ -63,7 +63,7 @@ function extractDomainWithSubdomain(fullDomain: string): string {
 function tryParseJson(str: any): any {
   if (typeof str !== 'string') return str;
   try {
-    let json = JSON.parse(str);
+    const json = JSON.parse(str);
     return typeof json === 'string' ? JSON.parse(json) : json;
   } catch (error) {
     return null;
@@ -138,7 +138,7 @@ class DomainConfigService {
  */
 class CacheManager {
   private htmlCache: string | null = null;
-  private htmlCacheTimestamp: number = 0;
+  private htmlCacheTimestamp = 0;
   private domainCache = new Map<string, CacheEntry>();
 
   /**

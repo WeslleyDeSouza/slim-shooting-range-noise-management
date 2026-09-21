@@ -75,12 +75,17 @@ const WIPE = [
 ];
 
 /**
- * The switch. The demo is written on every non-production boot unless
- * `DEMO_SEED=0`; `DEMO_RESEED=1` forces a fresh copy right now (a stale
- * marker, hand-edited rows).
+ * The switch. Outside production the demo is written on every boot unless
+ * `DEMO_SEED=0`. With `APP_ENV=production` nothing is seeded unless
+ * `DEMO_SEED=1` is set explicitly — that is the hosted demo instance
+ * (Lösungskonzept 6.5): production hardening, synthetic dataset. Missing
+ * `DEMO_SEED` in production stays off, so a real installation never gets
+ * the demo tenant by accident. `DEMO_RESEED=1` forces a fresh copy right
+ * now (a stale marker, hand-edited rows).
  */
-export function demoSeedEnabled(): boolean {
-  return process.env['DEMO_SEED'] !== '0';
+export function demoSeedEnabled(isProd = false): boolean {
+  const flag = process.env['DEMO_SEED'];
+  return isProd ? flag === '1' : flag !== '0';
 }
 
 export interface DemoSeedResult {

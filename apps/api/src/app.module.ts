@@ -35,6 +35,7 @@ import { CoreLoggerModule, RequestOriginMiddleware } from './core/logger';
 import { AuthAuditModule } from './modules/auth-audit/auth-audit.module';
 import { AuthThrottlerGuard } from './core/guards';
 import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA, DemoSeedMarkerEntity } from './mocks';
+import { demoSeedEnabled } from './mocks/tenant/demo-dataset.seed';
 import {
   AccessModule,
   AreaModule,
@@ -165,12 +166,14 @@ export class AppModule implements NestModule {
     protected dataSource: DataSource,
     private readonly areaStatus: AreaStatusService,
   ) {
-    if (!isProd && isPrimaryInstance) {
+    // Outside production the demo tenant is always seeded; in production only
+    // the hosted demo instance asks for it with DEMO_SEED=1 (demoSeedEnabled).
+    if (isPrimaryInstance && (!isProd || demoSeedEnabled(isProd))) {
       // The seed runs after CalculationModule.onApplicationBootstrap has already
       // refreshed the overview lights: on a fresh database they would stay «none»
       // until the midnight cron, so refresh once more when the dataset was written.
       setTimeout(() => {
-        void API_MOCK_DATA.initMockData(dataSource)
+        void API_MOCK_DATA.initMockData(dataSource, isProd)
           .then(async ({ seeded, tenantId }) => {
             if (seeded) {
               await this.areaStatus.refreshAll(tenantId);

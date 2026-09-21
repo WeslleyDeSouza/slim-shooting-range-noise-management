@@ -151,7 +151,7 @@ export namespace API_MOCK_DATA {
    * come from the galaxy tables (ELO pattern), so the app has no mocks.
    */
   /** `seeded` = the demo dataset was (re)written: the caller refreshes the cached overview lights. */
-  export const initMockData = async (connection: DataSource): Promise<{ seeded: boolean; tenantId: string }> => {
+  export const initMockData = async (connection: DataSource, isProd = false): Promise<{ seeded: boolean; tenantId: string }> => {
     let seeded = false;
     // Swallowing these would make a broken seed look like a healthy boot.
     const fill = (what: string, run: Promise<unknown>) =>
@@ -183,7 +183,7 @@ export namespace API_MOCK_DATA {
     // plus the demo user's name. Rolled to the current year and rewritten
     // when the year turns, the dataset version changes, or DEMO_RESEED=1
     // asks for a fresh copy. DEMO_SEED=0 leaves the tenant alone.
-    if (demoSeedEnabled()) {
+    if (demoSeedEnabled(isProd)) {
       await seedDemoDataset(connection, TestMockTenantMock.tenantId, {
         force: process.env['DEMO_RESEED'] === '1',
       })
@@ -199,7 +199,7 @@ export namespace API_MOCK_DATA {
           console.warn(`[seed] demo dataset failed: ${error?.message ?? error}`),
         );
     } else {
-      console.log('[seed] demo dataset skipped (DEMO_SEED=0)');
+      console.log(isProd ? '[seed] demo dataset skipped (production; set DEMO_SEED=1 for the demo instance)' : '[seed] demo dataset skipped (DEMO_SEED=0)');
     }
     return { seeded, tenantId: TestMockTenantMock.tenantId };
   };

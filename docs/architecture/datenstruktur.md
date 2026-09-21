@@ -50,7 +50,7 @@ seedet Mandant, Demo-User, App-Katalog + Rollen und schreibt danach den Datensat
 zulässigen Waffen (= Quellen), Empfangspunkten, Berechnungszuständen (WLR-Pegel) und den
 Nutzungen des laufenden Jahres (`{{year}}`-Platzhalter). Ein Marker (`demo_datensatz`) merkt sich
 Version und Jahr; Jahreswechsel, Versionssprung oder `DEMO_RESEED=1` schreiben den Mandanten neu,
-`DEMO_SEED=0` lässt ihn in Ruhe. Generator: `tools/tenant-dataset.generator.ts`.
+`DEMO_SEED=0` lässt ihn in Ruhe; mit `APP_ENV=production` wird nur bei explizitem `DEMO_SEED=1` geseedet (gehostete Demo-Instanz). Generator: `tools/tenant-dataset.generator.ts`.
 
 ### Frontend (apps/app) – Angular 22
 

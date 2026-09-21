@@ -77,7 +77,8 @@ ERD of the live schema: http://localhost:3333/erd (Mermaid, also written to
 demo tenant: nine areas, Geissalp with rooms, allowed weapons (= noise sources),
 receivers, two calculation states and a year of usages. The API writes it on
 every non-production start, rolled to the current year (`DEMO_RESEED=1` forces a
-rewrite, `DEMO_SEED=0` skips it). Regenerate the file with the generator, which
+rewrite, `DEMO_SEED=0` skips it); with `APP_ENV=production` only an explicit
+`DEMO_SEED=1` seeds — the switch of the hosted demo instance. Regenerate the file with the generator, which
 tunes the sonARMS levels to the UI mock targets:
 
 ```bash

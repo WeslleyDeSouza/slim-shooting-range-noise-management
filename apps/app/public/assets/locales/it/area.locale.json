@@ -18,9 +18,9 @@
     "ka": "N. settore di coordinamento",
     "sp": "N. piano settoriale",
     "quota": "Contingente",
-    "quota_info": "Rispetto del contingente secondo l'approvazione dei piani; semaforo come nella valutazione del rumore della piazza",
+    "quota_info": "Numero di colpi registrati rispetto al contingente autorizzato (approvazione dei piani), in percentuale: verde ≤ 100 %, arancione > 100 % fino al 125 %, rosso > 125 %",
     "noise": "Immissioni di rumore",
-    "noise_info": "Immissioni di rumore attuali secondo il calcolo; semaforo come nella valutazione del rumore della piazza",
+    "noise_info": "Livello di valutazione rispetto al valore limite OIF, in dB: verde con almeno 5 dB di riserva, arancione con meno di 5 dB di riserva, rosso oltre il valore limite",
     "nav": "Navigazione"
   },
   "actions": {

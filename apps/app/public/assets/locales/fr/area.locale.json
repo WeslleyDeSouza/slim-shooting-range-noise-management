@@ -18,9 +18,9 @@
     "ka": "N° secteur de coordination",
     "sp": "N° plan sectoriel",
     "quota": "Contingent",
-    "quota_info": "Respect du contingent selon l'approbation des plans ; feu comme dans l'évaluation du bruit de la place",
+    "quota_info": "Nombre de coups saisis par rapport au contingent autorisé (approbation des plans), en pour cent : vert ≤ 100 %, orange > 100 % jusqu’à 125 %, rouge > 125 %",
     "noise": "Nuisances sonores",
-    "noise_info": "Nuisances sonores actuelles selon le calcul ; feu comme dans l'évaluation du bruit de la place",
+    "noise_info": "Niveau d’évaluation par rapport à la valeur limite OPB, en dB : vert avec au moins 5 dB de réserve, orange avec moins de 5 dB de réserve, rouge au-dessus de la valeur limite",
     "nav": "Navigation"
   },
   "actions": {

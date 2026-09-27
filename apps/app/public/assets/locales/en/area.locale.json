@@ -18,9 +18,9 @@
     "ka": "Coordination section no.",
     "sp": "Sectoral plan no.",
     "quota": "Quota",
-    "quota_info": "Quota compliance according to the plan approval; traffic light as in the noise assessment of the range",
+    "quota_info": "Recorded shot counts against the approved quota (plan approval), in percent: green ≤ 100 %, orange > 100 % up to 125 %, red > 125 %",
     "noise": "Noise exposure",
-    "noise_info": "Current noise exposure according to the calculation; traffic light as in the noise assessment of the range",
+    "noise_info": "Assessment level against the LSV limit, in dB: green with at least 5 dB reserve, orange with less than 5 dB reserve, red above the limit",
     "nav": "Navigation"
   },
   "actions": {

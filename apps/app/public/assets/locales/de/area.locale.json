@@ -18,9 +18,9 @@
     "ka": "Koordinationsabschnitt-Nr.",
     "sp": "Sachplan-Nr.",
     "quota": "Kontingent",
-    "quota_info": "Einhaltung Kontingent gemäss Plangenehmigung, Ampel wie in der Beurteilung Lärmbelastung des Schiessplatzes",
+    "quota_info": "Erfasste Schusszahlen gegenüber dem bewilligten Kontingent (Plangenehmigung), in Prozent: grün ≤ 100 %, orange > 100 % bis 125 %, rot > 125 %",
     "noise": "Lärmbelastung",
-    "noise_info": "Aktuelle Lärmbelastung gemäss Berechnung, Ampel wie in der Beurteilung Lärmbelastung des Schiessplatzes",
+    "noise_info": "Beurteilungspegel gegenüber dem LSV-Grenzwert, in dB: grün mit mindestens 5 dB Reserve, orange mit weniger als 5 dB Reserve, rot über dem Grenzwert",
     "nav": "Navigation"
   },
   "actions": {

@@ -1,8 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { labelOf, SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { fakeSelectionLists, testListValue } from '../../../../core/settings/selection-lists.testing';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableExportData } from '../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { DmSelectionListsComponent } from './dm-selection-lists.component';
 
 @Pipe({ name: 'translate' })
@@ -15,10 +18,20 @@ class TranslateStubPipe implements PipeTransform {
 describe('DmSelectionListsComponent — Pflege der Auswahllisten (B1 5.3, slm 1)', () => {
   let fixture: ComponentFixture<DmSelectionListsComponent>;
   let lists: ReturnType<typeof fakeSelectionLists>;
+  let exportFacade: { download: jest.Mock };
 
   async function setup(readonly = false): Promise<void> {
     lists = fakeSelectionLists();
-    await TestBed.configureTestingModule({ imports: [DmSelectionListsComponent], providers: [{ provide: SelectionListsFacade, useValue: lists }] })
+    exportFacade = { download: jest.fn().mockResolvedValue(true) };
+    await TestBed.configureTestingModule({
+      imports: [DmSelectionListsComponent],
+      providers: [
+        { provide: SelectionListsFacade, useValue: lists },
+        { provide: TableExportFacade, useValue: exportFacade },
+        { provide: TranslateService, useValue: { translate: (key: string) => key, lang: 'de' } },
+      ],
+    })
+      .overrideComponent(TableExportComponent, { remove: { imports: [TranslatePipe] }, add: { imports: [TranslateStubPipe] } })
       .overrideComponent(DmSelectionListsComponent, { remove: { imports: [TranslatePipe] }, add: { imports: [TranslateStubPipe] } })
       .compileComponents();
     fixture = TestBed.createComponent(DmSelectionListsComponent);
@@ -132,6 +145,28 @@ describe('DmSelectionListsComponent — Pflege der Auswahllisten (B1 5.3, slm 1)
       { kind: 'update', key: 'spm_state', code: 'in_progress', body: { sortOrder: 3 } },
     ]);
     expect(codes()).toEqual(['open', 'completed', 'in_progress']);
+  });
+
+  it('exports the values of the chosen list in their order (B1 5.5.5)', async () => {
+    await setup();
+    await choose('civil_usage_kind');
+    el<HTMLButtonElement>('dlist-export').click();
+    fixture.detectChanges();
+    el<HTMLButtonElement>('dlist-export-xlsx').click();
+    await settle();
+    const data = exportFacade.download.mock.calls[0][0] as TableExportData;
+    expect(exportFacade.download).toHaveBeenCalledWith(data, 'xlsx');
+    expect(data.table).toBe('auswahlliste');
+    expect(data.subtitle).toBe('admin.dm_lists.lists.civil_usage_kind');
+    expect(data.header).toEqual(['admin.dm_lists.label_de', 'admin.dm_lists.label_fr', 'admin.dm_lists.label_it', 'admin.dm_lists.label_en', 'admin.dm_lists.status']);
+    expect(data.rows.map((row) => row[0])).toEqual(['obligatory (DE)', 'field_shooting (DE)', 'other (DE)']);
+    expect(data.rows[0][4]).toBe('admin.dm_lists.active');
+  });
+
+  it('offers the export also without the right to write', async () => {
+    await setup(true);
+    expect(el('dlist-export')).not.toBeNull();
+    expect(el('dlist-add')).toBeNull();
   });
 
   it('only shows the lists without the right to write', async () => {

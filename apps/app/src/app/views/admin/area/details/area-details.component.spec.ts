@@ -10,6 +10,8 @@ import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { AssessmentFacade } from '../../../../core/calculation/assessment.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
+import { TableExportData } from '../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { AreaDetailsComponent } from './area-details.component';
 
 const CALC_INITIAL = {
@@ -111,6 +113,9 @@ const ACCESS_STUB = { can: () => canOpenCalculations };
 
 const AREA_STUB = { byId: () => ({ id: 'area-1', name: 'Geissalp', coordinationSectionNo: '1104.020' }) };
 
+/** What the export button hands to the API. */
+const exportFacade = { download: jest.fn().mockResolvedValue(true) };
+
 describe('AreaDetailsComponent', () => {
   let fixture: ComponentFixture<AreaDetailsComponent>;
   let facade: FacadeStub;
@@ -124,6 +129,7 @@ describe('AreaDetailsComponent', () => {
         { provide: MapFacade, useValue: new MapFacadeStub() },
         { provide: AreaFacade, useValue: AREA_STUB },
         { provide: AccessFacade, useValue: ACCESS_STUB },
+        { provide: TableExportFacade, useValue: exportFacade },
         DataEmitter,
         {
           provide: TranslateService,
@@ -153,6 +159,27 @@ describe('AreaDetailsComponent', () => {
     fixture.nativeElement.querySelector(selector) as T;
   const all = (selector: string): HTMLElement[] =>
     Array.from(fixture.nativeElement.querySelectorAll(selector));
+
+  it('exports the assessment: one line per Empfangspunkt and comparison, in the order of the list (B1 5.5.5)', async () => {
+    exportFacade.download.mockClear();
+    const host = fixture.nativeElement as HTMLElement;
+    (host.querySelector('[data-testid="details-export"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    (host.querySelector('[data-testid="details-export-xlsx"]') as HTMLButtonElement).click();
+    await Promise.resolve();
+    const data = exportFacade.download.mock.calls[0][0] as TableExportData;
+    expect(data.table).toBe('empfangspunkte');
+    expect(data.subtitle).toBe('1104.020 Geissalp');
+    expect(data.header).toHaveLength(9);
+    // Every applicable comparison of every point is a line.
+    expect(data.rows).toHaveLength(RECEIVERS.reduce((n, r) => n + Math.max(1, r.rows.filter((row) => row.applicable).length), 0));
+    // The worst point comes first, as in the list; limit and level are numbers.
+    expect(data.rows[0][0]).toBe('E1');
+    expect(data.rows[0][3]).toBe('details.state.over');
+    expect(typeof data.rows[0][5]).toBe('number');
+    expect(data.rows[0][6]).toBe(60.8);
+    expect(data.filters).toEqual(expect.arrayContaining([{ label: 'details.calc.basis', value: 'Initiale Aufnahme' }]));
+  });
 
   it('loads the assessment of the parent route area once', fakeAsync(() => {
     tick(20); // ComponentBase calls getData() after 10 ms
@@ -296,6 +323,7 @@ describe('AreaDetailsComponent — GIS-Kartenviewer (slm 2)', () => {
         { provide: MapFacade, useValue: maps },
         { provide: AreaFacade, useValue: AREA_STUB },
         { provide: AccessFacade, useValue: ACCESS_STUB },
+        { provide: TableExportFacade, useValue: exportFacade },
         ...fakeMap.providers,
         DataEmitter,
         { provide: TranslateService, useValue: { translate: (key: string) => key, sectionChanged$: of(null), languageChanged$: of(null) } },

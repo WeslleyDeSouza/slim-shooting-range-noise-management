@@ -8,6 +8,8 @@ import { provideFakeMap } from '@ui-slim/map';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
 import { SimulationFacade } from '../../../../core/calculation/simulation.facade';
+import { TableExportData } from '../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { AreaSimulationComponent } from './area-simulation.component';
 
 const BASE: SimulationBaseDto = {
@@ -137,6 +139,9 @@ function mockMaps() {
 }
 const AREAS = { byId: () => ({ id: 'a1', name: 'Geissalp', coordinationSectionNo: '1104.020' }) };
 
+/** What the export buttons hand to the API. */
+const exportFacade = { download: jest.fn().mockResolvedValue(true) };
+
 describe('AreaSimulationComponent', () => {
   let fixture: ComponentFixture<AreaSimulationComponent>;
   let facade: ReturnType<typeof mockFacade>;
@@ -151,6 +156,7 @@ describe('AreaSimulationComponent', () => {
         { provide: SimulationFacade, useValue: facade },
         { provide: MapFacade, useValue: mockMaps() },
         { provide: AreaFacade, useValue: AREAS },
+        { provide: TableExportFacade, useValue: exportFacade },
         {
           provide: ActivatedRoute,
           useValue: { parent: { paramMap: of(paramMap), snapshot: { paramMap } }, paramMap: of(paramMap), snapshot: { paramMap } },
@@ -275,6 +281,31 @@ describe('AreaSimulationComponent', () => {
     expect(el('sim-state')[0].textContent).toContain('simulation.state.fresh');
   });
 
+  it('exports the Schusszahlen as shown: the Ist and the values the simulation runs with (B1 5.5.5)', async () => {
+    exportFacade.download.mockClear();
+    const host = fixture.nativeElement as HTMLElement;
+    (host.querySelector('[data-testid="sim-export"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    (host.querySelector('[data-testid="sim-export-csv"]') as HTMLButtonElement).click();
+    await Promise.resolve();
+    const data = exportFacade.download.mock.calls[0][0] as TableExportData;
+    expect(exportFacade.download).toHaveBeenCalledWith(data, 'csv');
+    expect(data.table).toBe('simulation_schusszahlen');
+    expect(data.header).toEqual([
+      'simulation.columns.room', 'simulation.columns.room_no', 'simulation.columns.weapon',
+      'simulation.export.inside_current', 'simulation.export.inside_simulated', 'simulation.export.outside_current', 'simulation.export.outside_simulated',
+    ]);
+    expect(data.rows).toHaveLength(host.querySelectorAll('[data-testid="sim-row"]').length);
+    // Nothing overridden yet: the simulated values are the Ist.
+    for (const row of data.rows) {
+      expect(row[4]).toBe(row[3]);
+      expect(row[6]).toBe(row[5]);
+      expect(typeof row[3]).toBe('number');
+    }
+    // The result is exported from its own button, which only exists once a simulation ran.
+    expect(host.querySelector('[data-testid="sim-result-export"]')).toBeNull();
+  });
+
   it('opens the popover of a pin', () => {
     el('sim-pin')[0].click();
     fixture.detectChanges();
@@ -314,6 +345,7 @@ describe('AreaSimulationComponent — GIS-Kartenviewer (slm 2)', () => {
         { provide: SimulationFacade, useValue: facade },
         { provide: MapFacade, useValue: maps },
         { provide: AreaFacade, useValue: AREAS },
+        { provide: TableExportFacade, useValue: exportFacade },
         ...fakeMap.providers,
         {
           provide: ActivatedRoute,

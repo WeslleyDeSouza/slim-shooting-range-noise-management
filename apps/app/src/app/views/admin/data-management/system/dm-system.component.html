@@ -216,6 +216,9 @@
     }
   </form>
 
+  <!-- Pflege der Auswahllisten (B1 5.3, slm 1): saved value by value, independent of the form above. -->
+  <app-dm-selection-lists class="dsys__lists" [readonly]="readonly()" />
+
   <!-- Änderungen verwerfen? -->
   @if (confirmDiscard()) {
     <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dsys-discard">

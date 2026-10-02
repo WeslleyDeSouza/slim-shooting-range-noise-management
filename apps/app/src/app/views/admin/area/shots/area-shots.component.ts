@@ -26,12 +26,14 @@ import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import type {
+  SelectionListValueDto,
   UsageCombinationDto,
   UsageCreateDto,
   UsageResultDto,
   UsageRoomDto,
 } from '@ui-slim/apiClient';
 import { AreaFacade } from '../../../../core/area/area.facade';
+import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 
@@ -138,7 +140,12 @@ export class AreaShotsComponent extends ComponentBase {
   protected readonly categories = WEAPON_CATEGORIES;
   /** Nutzungskategorien of B1 Tabelle 2 (API enum USAGE_TYPE). */
   protected readonly types = ['military', 'civil', 'blue_light', 'sat'] as const;
-  protected readonly civilKinds = CIVIL_USAGE_KINDS;
+  protected readonly lists = inject(SelectionListsFacade);
+  /** Zivile Nutzungsarten the form offers (Auswahlliste, slm 1). */
+  protected civilKinds(): SelectionListValueDto[] {
+    this.lists.lists(); // re-evaluate when the lists change
+    return this.lists.options('civil_usage_kind', this.form.controls.civilUsageKind.value);
+  }
 
   /** The area id is a param of the parent route (`/admin/area/:id/shots`). */
   readonly areaId = toSignal(

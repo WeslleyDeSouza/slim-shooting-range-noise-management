@@ -8,6 +8,7 @@ import type { SystemSettingsDto, SystemSettingsUpdateDto } from '@ui-slim/apiCli
 import { AccessFacade } from '../../../../core/access/access.facade';
 import { saveBlob, SettingsFacade } from '../../../../core/settings/settings.facade';
 import { HasUnsavedChanges } from '../../_common/unsaved-changes.guard';
+import { DmSelectionListsComponent } from './dm-selection-lists.component';
 
 const I18N = 'admin.dm_system';
 const TOAST_MS = 6000;
@@ -40,13 +41,14 @@ function thresholdOrder(group: AbstractControl): ValidationErrors | null {
  * Datenverwaltung › Erweiterte Konfiguration (B1 5.28, Abbildung 40, slm 27):
  * Sperrdatum der Schusszahlenerfassung, Benutzerhandbuch (PDF), Schwellenwerte
  * und Farben der Ampeln — Kontingent Plangenehmigung in Prozent, Empfangspunkte
- * in dB (FAQ 166) — and the contacts of the main menu (B1 5.9). Only the
+ * in dB (FAQ 166) — the contacts of the main menu (B1 5.9) and the
+ * Auswahllisten (B1 5.3, slm 1; `DmSelectionListsComponent`). Only the
  * Applikationsadministrator may change it. Data: SettingsFacade.
  */
 @Component({
   selector: 'app-dm-system',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DatePipe, DmSelectionListsComponent],
   templateUrl: './dm-system.component.html',
   styleUrl: './dm-system.component.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },

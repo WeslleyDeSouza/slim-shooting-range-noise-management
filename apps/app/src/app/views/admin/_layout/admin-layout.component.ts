@@ -23,6 +23,7 @@ import { APP_ROUTES, GALAXY_APP_ID, ROUTE_SEGMENT, SLIM_APP_ID } from '@slim/sha
 import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
 import { AccessFacade } from '../../../core/access/access.facade';
+import { SelectionListsFacade } from '../../../core/settings/selection-lists.facade';
 import { saveBlob, SettingsFacade } from '../../../core/settings/settings.facade';
 import { HelpDrawerComponent } from './help-drawer.component';
 import { AreaSwitcherComponent } from './area-switcher.component';
@@ -659,6 +660,7 @@ export class AdminLayoutComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
   private readonly access = inject(AccessFacade);
   private readonly settings = inject(SettingsFacade);
+  private readonly selectionLists = inject(SelectionListsFacade);
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
@@ -904,6 +906,8 @@ export class AdminLayoutComponent extends ComponentBase {
     void this.access.load();
     // Sperrdatum, Ampel colours, contacts and Benutzerhandbuch of the erweiterte Konfiguration (5.28).
     void this.settings.load();
+    // Auswahllisten (slm 1): values and labels of the pick lists of the masks.
+    void this.selectionLists.load();
     // The Schiessplatz picker and the bookmarks need the list; the facade deduplicates loads.
     void this.area.load();
   }

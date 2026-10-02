@@ -16,8 +16,9 @@ import { map } from 'rxjs';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
-import type { AreaQuotaDto, AreaResultDto, AreaUpdateDto, QuotaCombinationOptionDto } from '@ui-slim/apiClient';
+import type { AreaQuotaDto, AreaResultDto, AreaUpdateDto, QuotaCombinationOptionDto, SelectionListValueDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
+import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { HasUnsavedChanges } from '../../../../_common/unsaved-changes.guard';
 import { areaIdSignal } from '../../_context/area-id';
@@ -30,17 +31,8 @@ export function notBlank(control: AbstractControl<string>): ValidationErrors | n
   return control.value?.trim() ? null : { required: true };
 }
 
-/** Pick lists of the Stammdaten mask (B1 Abbildung 27) — codes of the API enums, labels in `options.<group>.<code>`. */
-export const MASTER_DATA_OPTIONS = {
-  classification: ['unproblematic', 'problematic', 'remediation_needed'],
-  recalculation_state: ['not_required', 'in_progress', 'completed'],
-  remediation_project_state: ['not_started', 'concept', 'design', 'implementation', 'completed'],
-  spm_state: ['open', 'in_progress', 'completed'],
-  noise_remediation_state: ['reassessment_needed', 'assessed', 'remediated'],
-  project_state: ['not_started', 'ongoing', 'completed'],
-} as const;
-
-type OptionGroup = keyof typeof MASTER_DATA_OPTIONS;
+/** The Auswahllisten (slm 1) the selects of the Stammdaten mask (B1 Abbildung 27) pick from. */
+type OptionGroup = Exclude<SelectionListKey, 'civil_usage_kind'>;
 
 /** Select fields of the mask in the order of the mock, with the form control they bind to. */
 export const SELECT_FIELDS: { group: OptionGroup; control: keyof MasterDataForm; section: 'general' | 'states' }[] = [
@@ -105,7 +97,7 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly prefix = I18N;
-  protected readonly options = MASTER_DATA_OPTIONS;
+  protected readonly lists = inject(SelectionListsFacade);
   protected readonly selectFields = SELECT_FIELDS;
   readonly areaId = areaIdSignal(this.route);
 
@@ -200,7 +192,14 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   }
 
   /** The tab host loads the read model; nothing to fetch here. */
+  /** Values a select offers: the active ones of its list plus the value the Schiessplatz already has. */
+  protected optionsOf(field: (typeof SELECT_FIELDS)[number]): SelectionListValueDto[] {
+    this.lists.lists(); // re-evaluate when the lists change
+    return this.lists.options(field.group, this.form.controls[field.control].value as string | null);
+  }
+
   override getData(): void {
+    void this.lists.load();
     // intentionally empty — DataAreaFacade is loaded by DmAreaGeneralComponent
   }
 

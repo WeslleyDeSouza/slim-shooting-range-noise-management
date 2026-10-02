@@ -70,8 +70,9 @@
             <label class="slim-field__label" [for]="'dmm-' + field.group">{{ prefix + '.fields.' + field.group | translate }}</label>
             <select class="slim-select" [id]="'dmm-' + field.group" [formControlName]="field.control" [attr.data-testid]="'dmm-' + field.group">
               <option value="">{{ prefix + '.not_set' | translate }}</option>
-              @for (code of options[field.group]; track code) {
-                <option [value]="code">{{ prefix + '.options.' + field.group + '.' + code | translate }}</option>
+              <!-- Auswahlliste (slm 1): the active values, and the stored one when it is inactive by now. -->
+              @for (option of optionsOf(field); track option.code) {
+                <option [value]="option.code">{{ lists.label(field.group, option.code) }}</option>
               }
             </select>
           </div>

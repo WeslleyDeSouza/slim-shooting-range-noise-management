@@ -61,7 +61,9 @@
                     </span>
                   }
                   @case ('option') {
-                    @if (row.value) {
+                    @if (row.value && row.list) {
+                      {{ lists.label(row.list, $any(row.value)) }}
+                    } @else if (row.value) {
                       {{ prefix + '.options.' + row.group + '.' + row.value | translate }}
                     } @else {
                       <span class="slim-text--muted">{{ prefix + '.not_set' | translate }}</span>

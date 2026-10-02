@@ -143,6 +143,10 @@
     font-variant-numeric: tabular-nums;
   }
 
+  &__lists {
+    margin-top: slim.space(4);
+  }
+
   &__actions {
     display: flex;
     flex-wrap: wrap;

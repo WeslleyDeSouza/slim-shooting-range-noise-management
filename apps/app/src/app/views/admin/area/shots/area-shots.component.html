@@ -552,8 +552,9 @@
               </label>
               <select class="slim-select" id="shots-civil-kind" formControlName="civilUsageKind" data-testid="shots-civil-kind">
                 <option value="">{{ 'forms.select' | translate }}</option>
-                @for (k of civilKinds; track k) {
-                  <option [value]="k">{{ 'shots.civil_kind.' + k | translate }}</option>
+                <!-- Auswahlliste «civil_usage_kind» (slm 1): the active values, and the stored one when it is inactive by now. -->
+                @for (k of civilKinds(); track k.code) {
+                  <option [value]="k.code">{{ lists.label('civil_usage_kind', k.code) }}</option>
                 }
               </select>
               <p class="slim-field__error">{{ 'shots.form.err_civil_kind' | translate }}</p>

@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { AreaRoomDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
+import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { areaIdSignal } from '../../_context/area-id';
 
@@ -39,6 +40,8 @@ interface DetailRow {
   value: string | boolean | null;
   /** Locale group of the option label (`options.<group>.<value>`). */
   group?: string;
+  /** Auswahlliste (slm 1) the value comes from; its label is the label of the list value. */
+  list?: SelectionListKey;
   emptyKey?: string;
 }
 
@@ -58,6 +61,7 @@ interface DetailRow {
   styleUrl: './dm-area-general-overview.component.scss',
 })
 export class DmAreaGeneralOverviewComponent extends ComponentBase {
+  protected readonly lists = inject(SelectionListsFacade);
   private readonly facade = inject(DataAreaFacade);
   private readonly access = inject(AccessFacade);
   private readonly route = inject(ActivatedRoute);
@@ -94,13 +98,13 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
       { key: 'sectoral_plan_no', kind: a.sectoralPlanNo ? 'text' : 'muted', value: a.sectoralPlanNo, emptyKey: 'not_in_sectoral_plan' },
       { key: 'active', kind: 'yesno', value: a.enabled },
       { key: 'calculation_kind', kind: 'check', value: a.annex7Overall },
-      { key: 'classification', kind: 'option', value: a.classification, group: 'classification' },
+      { key: 'classification', kind: 'option', value: a.classification, group: 'classification', list: 'classification' },
       { key: 'build_year', kind: g.buildYearClass ? 'option' : 'muted', value: g.buildYearClass, group: 'build_year', emptyKey: 'no_state' },
-      { key: 'recalculation_state', kind: 'option', value: a.recalculationState, group: 'recalculation_state' },
-      { key: 'remediation_project_state', kind: 'option', value: a.remediationProjectState, group: 'remediation_project_state' },
-      { key: 'spm_state', kind: 'option', value: a.spmState, group: 'spm_state' },
-      { key: 'noise_remediation_state', kind: 'option', value: a.noiseRemediationState, group: 'noise_remediation_state' },
-      { key: 'project_state', kind: 'option', value: a.projectState, group: 'project_state' },
+      { key: 'recalculation_state', kind: 'option', value: a.recalculationState, group: 'recalculation_state', list: 'recalculation_state' },
+      { key: 'remediation_project_state', kind: 'option', value: a.remediationProjectState, group: 'remediation_project_state', list: 'remediation_project_state' },
+      { key: 'spm_state', kind: 'option', value: a.spmState, group: 'spm_state', list: 'spm_state' },
+      { key: 'noise_remediation_state', kind: 'option', value: a.noiseRemediationState, group: 'noise_remediation_state', list: 'noise_remediation_state' },
+      { key: 'project_state', kind: 'option', value: a.projectState, group: 'project_state', list: 'project_state' },
     ];
   });
 

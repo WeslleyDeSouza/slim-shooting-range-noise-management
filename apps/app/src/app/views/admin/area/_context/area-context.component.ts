@@ -107,8 +107,13 @@ import { AreaFacade } from '../../../../core/area/area.facade';
             <div class="slim-alert__body">{{ message | translate }}</div>
           </div>
         }
+      }
 
-        <router-outlet />
+      <!-- The pages of the Schiessplatz. The outlet needs an HTML element as parent inside the block: Angular
+           creates the routed page in the namespace of the outlet's parent node, and without one that is the
+           block itself, which inherits «SVG» from the last icon before it — the page would render nothing. -->
+      @if (!notFound()) {
+        <div data-testid="area-page"><router-outlet /></div>
       }
     </div>
   `,

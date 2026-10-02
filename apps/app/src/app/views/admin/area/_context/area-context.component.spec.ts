@@ -49,6 +49,12 @@ describe('AreaContextComponent', () => {
     expect(el('[data-testid="area-tab-details"]')?.getAttribute('href')).toBe('/admin/area/area-1/details');
     expect(el('router-outlet')).not.toBeNull();
     expect(el('[data-testid="area-not-found"]')).toBeNull();
+    // Regression 02.10.2026: Angular creates the routed page in the namespace of the outlet's parent node.
+    // Directly inside the block that was the block's own node, which inherited «SVG» from the icon before
+    // it — every page of a Schiessplatz was an SVG element and showed nothing. The outlet needs an HTML parent.
+    const parent = el('router-outlet')?.parentElement;
+    expect(parent?.getAttribute('data-testid')).toBe('area-page');
+    expect(parent?.namespaceURI).toBe('http://www.w3.org/1999/xhtml');
   });
 
   it('keeps the pages while the list of Schiessplätze is still loading', async () => {

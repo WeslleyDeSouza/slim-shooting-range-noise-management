@@ -65,7 +65,14 @@
     "language": "Sprache",
     "theme_dark": "Dunkles Design",
     "theme_light": "Helles Design",
-    "no_results": "Keine Einträge"
+    "no_results": "Keine Einträge",
+    "export": {
+      "label": "Exportieren",
+      "xlsx": "Excel (.xlsx)",
+      "csv": "CSV (.csv)",
+      "rows_shown": "{{n}} angezeigte Zeilen",
+      "rows_selected": "{{n}} ausgewählte Zeilen"
+    }
   },
   "status": {
     "api": "API",

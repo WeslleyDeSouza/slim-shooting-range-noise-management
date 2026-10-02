@@ -95,6 +95,9 @@ getestet» (C2 4.3) stimmt für den Kern, nicht für die Anwendung.
 
 ## 4. Abweichungen zur B1 (nummeriert)
 
+> Stand 12.09.2026 und überholt: Die sieben Punkte sind seither behoben. Die heute gültigen, bewussten Abweichungen
+> mit Begründung stehen in [fachliche-abweichungen.md](fachliche-abweichungen.md).
+
 1. **Halbtagsgrenze 13:00 statt 12:00** – `libs/shared/lsv/src/lib/operating-data.ts` (`ANNEX7_NOON_MINUTE`); B1 7.4.3.
    Wirkung auf Lri/Lr Anhang 7. Korrektur: Konstante auf `12 * 60`, Tests `operating-data.spec.ts` anpassen.
 2. **Gemischtes Baujahr, Anhang 7** – Halbtage für die PW-Sicht müssen nur aus den Nutzungen der Stellungsräume nach

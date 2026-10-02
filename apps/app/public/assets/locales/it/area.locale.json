@@ -3,7 +3,6 @@
   "subtitle": "Contingenti e immissioni di rumore a colpo d'occhio.",
   "year": "Anno",
   "export": "Esporta",
-  "export_pending": "L’esportazione della tabella (Excel/CSV) è ancora in fase di realizzazione.",
   "search_placeholder": "Cerca piazza di tiro o n. settore di coordinamento",
   "filter": {
     "all": "Tutti",
@@ -22,7 +21,8 @@
     "quota_info": "Numero di colpi registrati rispetto al contingente autorizzato (approvazione dei piani), in percentuale: verde ≤ 100 %, arancione > 100 % fino al 125 %, rosso > 125 %",
     "noise": "Immissioni di rumore",
     "noise_info": "Livello di valutazione rispetto al valore limite OIF, in dB: verde con almeno 5 dB di riserva, arancione con meno di 5 dB di riserva, rosso oltre il valore limite",
-    "nav": "Navigazione"
+    "nav": "Navigazione",
+    "noise_basis": "Stato di calcolo del semaforo «rumore»"
   },
   "actions": {
     "overview": "Panoramica",

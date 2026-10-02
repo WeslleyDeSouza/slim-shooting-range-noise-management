@@ -65,7 +65,14 @@
     "language": "Language",
     "theme_dark": "Dark theme",
     "theme_light": "Light theme",
-    "no_results": "No entries"
+    "no_results": "No entries",
+    "export": {
+      "label": "Export",
+      "xlsx": "Excel (.xlsx)",
+      "csv": "CSV (.csv)",
+      "rows_shown": "{{n}} rows shown",
+      "rows_selected": "{{n}} rows selected"
+    }
   },
   "status": {
     "api": "API",

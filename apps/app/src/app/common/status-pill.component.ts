@@ -20,6 +20,14 @@ const MODIFIER: Record<AreaStatus, string> = {
   incomplete: 'slim-badge--outline',
 };
 
+/** Locale key of the text of a light; «Keine Daten» is said precisely when the API names the reason. */
+export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | null | undefined): string {
+  if (status === 'none' && (reason === 'no-calculation' || reason === 'no-usages')) {
+    return `status_area.none_${reason.replace('-', '_')}`;
+  }
+  return `status_area.${status}`;
+}
+
 /**
  * Traffic-light pill for quota / noise status (mock: .pill). Icon + label,
  * label from `status_area.*` in the common section. «Keine Daten» is said
@@ -105,14 +113,7 @@ export class StatusPillComponent {
 
   protected readonly modifier = computed(() => MODIFIER[this.status()]);
 
-  protected readonly label = computed(() => {
-    const status = this.status();
-    const reason = this.reason();
-    if (status === 'none' && (reason === 'no-calculation' || reason === 'no-usages')) {
-      return `status_area.none_${reason.replace('-', '_')}`;
-    }
-    return `status_area.${status}`;
-  });
+  protected readonly label = computed(() => statusLabelKey(this.status(), this.reason()));
 
   protected readonly tooltip = computed(() => {
     const parts: (string | undefined)[] = [];

@@ -13,27 +13,30 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AreaResultDto } from '@ui-slim/apiClient';
-import { StatusPillComponent } from '../../../common/status-pill.component';
+import { statusLabelKey, StatusPillComponent } from '../../../common/status-pill.component';
+import { TableExportComponent } from '../../../common/table-export.component';
 import {
   AreaFacade,
   AreaStatus,
   needsAttention,
 } from '../../../core/area/area.facade';
+import { tableExport, TableExportData } from '../../../core/table/table-export';
 
 type StatusFilter = '' | AreaStatus;
 
-/** How long a toast stays. */
-const NOTICE_MS = 6000;
+/** File name of the export (date and extension are added). */
+const EXPORT_FILE = 'schiessplaetze';
 
 /**
  * "Übersicht Schiessplätze" (mock view-plaetze, chapters 5.8 / 5.9):
- * breadcrumbs, year + export, search + status filter, table with
- * traffic-light pills and row actions, pager, legend. Data: AreaFacade.
+ * breadcrumbs, year + export (Excel/CSV of the rows shown, 5.5.5), search +
+ * status filter, table with traffic-light pills and row actions, pager,
+ * legend. Data: AreaFacade.
  */
 @Component({
   selector: 'app-area-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, StatusPillComponent],
+  imports: [RouterLink, TranslatePipe, StatusPillComponent, TableExportComponent],
   styleUrl: './area-overview.component.scss',
   template: `
     <div class="slim-page area">
@@ -70,23 +73,7 @@ const NOTICE_MS = 6000;
               }
             </select>
           </label>
-          <button type="button" class="slim-btn" data-testid="area-export" (click)="exportTable()">
-            <svg
-              class="slim-btn__icon"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M8 2v8M8 10l-3-3M8 10l3-3M2.5 13.5h11"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <span class="slim-btn__label">{{ 'export' | translate }}</span>
-          </button>
+          <app-table-export testId="area-export" [source]="exportSource" [disabled]="!filtered().length" />
         </div>
       </div>
 
@@ -342,14 +329,6 @@ const NOTICE_MS = 6000;
         <span class="slim-legend__item slim-text--muted">{{ 'legend_note' | translate }}</span>
       </div>
     </div>
-
-    @if (notice(); as key) {
-      <div class="slim-toasts">
-        <div class="slim-toast" role="status" data-testid="area-toast">
-          <div class="slim-toast__body">{{ key | translate }}</div>
-        </div>
-      </div>
-    }
   `,
 })
 export class AreaOverviewComponent extends ComponentBase {
@@ -371,9 +350,6 @@ export class AreaOverviewComponent extends ComponentBase {
 
   protected readonly year = signal(this.years[0]);
   protected readonly query = signal('');
-  /** Locale key of the message shown as toast. */
-  protected readonly notice = signal<string | null>(null);
-  private noticeTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly attentionFromUrl = toSignal(
     this.route.queryParamMap.pipe(map((p) => p.get('status') === 'attention')),
@@ -421,12 +397,24 @@ export class AreaOverviewComponent extends ComponentBase {
     return this.translate.translate('basis.noise', { state: r.noiseStatusBasis, year: r.statusYear ?? '' }) ?? null;
   }
 
-  /** Excel-/CSV-Export of the table (slm 9, B1 5.5.5) is not built yet: the button says so. */
-  protected exportTable(): void {
-    this.notice.set('export_pending');
-    if (this.noticeTimer) clearTimeout(this.noticeTimer);
-    this.noticeTimer = setTimeout(() => this.notice.set(null), NOTICE_MS);
-  }
+  /** The table as shown (search and filters applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<AreaResultDto>({
+      fileName: EXPORT_FILE,
+      sheet: t('title'),
+      columns: [
+        { header: t('columns.name'), value: (r) => r.name },
+        { header: t('columns.ka'), value: (r) => r.coordinationSectionNo },
+        { header: t('columns.sp'), value: (r) => r.sectoralPlanNo ?? null },
+        { header: t('columns.quota'), value: (r) => t(statusLabelKey(r.quotaStatus, r.quotaStatusReason)) },
+        { header: t('columns.noise'), value: (r) => t(statusLabelKey(r.noiseStatus, r.noiseStatusReason)) },
+        { header: t('columns.noise_basis'), value: (r) => r.noiseStatusBasis ?? null },
+        { header: t('year'), value: (r) => r.statusYear ?? null },
+      ],
+      rows: this.filtered(),
+    });
+  };
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
   override getData(): void {

@@ -3,7 +3,6 @@
   "subtitle": "Contingents et nuisances sonores en un coup d'œil.",
   "year": "Année",
   "export": "Exporter",
-  "export_pending": "L’export du tableau (Excel/CSV) est encore en cours de réalisation.",
   "search_placeholder": "Rechercher une place de tir ou un n° de secteur de coordination",
   "filter": {
     "all": "Tous",
@@ -22,7 +21,8 @@
     "quota_info": "Nombre de coups saisis par rapport au contingent autorisé (approbation des plans), en pour cent : vert ≤ 100 %, orange > 100 % jusqu’à 125 %, rouge > 125 %",
     "noise": "Nuisances sonores",
     "noise_info": "Niveau d’évaluation par rapport à la valeur limite OPB, en dB : vert avec au moins 5 dB de réserve, orange avec moins de 5 dB de réserve, rouge au-dessus de la valeur limite",
-    "nav": "Navigation"
+    "nav": "Navigation",
+    "noise_basis": "État de calcul du feu « bruit »"
   },
   "actions": {
     "overview": "Aperçu",

@@ -3,7 +3,6 @@
   "subtitle": "Kontingente und Lärmbelastung im Blick.",
   "year": "Jahr",
   "export": "Exportieren",
-  "export_pending": "Der Export der Tabelle (Excel/CSV) ist noch in Bearbeitung.",
   "search_placeholder": "Schiessplatz oder Koordinationsabschnitt-Nr. suchen",
   "filter": {
     "all": "Alle",
@@ -22,7 +21,8 @@
     "quota_info": "Erfasste Schusszahlen gegenüber dem bewilligten Kontingent (Plangenehmigung), in Prozent: grün ≤ 100 %, orange > 100 % bis 125 %, rot > 125 %",
     "noise": "Lärmbelastung",
     "noise_info": "Beurteilungspegel gegenüber dem LSV-Grenzwert, in dB: grün mit mindestens 5 dB Reserve, orange mit weniger als 5 dB Reserve, rot über dem Grenzwert",
-    "nav": "Navigation"
+    "nav": "Navigation",
+    "noise_basis": "Berechnungsstand der Lärmampel"
   },
   "actions": {
     "overview": "Übersicht",

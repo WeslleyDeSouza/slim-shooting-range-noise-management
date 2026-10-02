@@ -95,6 +95,9 @@ eingebunden.
 
 ## 3. Bewusste Vereinfachungen im Prototyp
 
+Die fachlichen Abweichungen zu B1 mit Begründung und Einstufung stehen gesammelt in
+[fachliche-abweichungen.md](fachliche-abweichungen.md).
+
 | Thema | Prototyp | Zielbild (B1) |
 |---|---|---|
 | Karte | GIS-Kartenviewer `@ui-slim/map` (`slm 2`, 02.10.2026): swisstopo «Light Base Map» (Vector Tiles) und «Imagery Base Map», Landeskarte; Anlagenteile und Empfangspunkte aus LV95; Massstab 1:x mit Balken, 12 Zoomstufen, Koordinaten der Maus in LV95, Ebenen, Export PDF/Bild, Vollansicht; Konfiguration `assets/config/map.config.json`. Schematische SVG-Karte bleibt als Rückfall | Weitere Layer (Gebäude, Isophonen, Untersuchungsperimeter; FAQ 13), massstabstreuer Druck über einen Server-Druckdienst, Karte in den Masken der Datenverwaltung |

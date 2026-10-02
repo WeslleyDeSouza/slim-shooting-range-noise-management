@@ -112,6 +112,59 @@ export class AreaGeneralDto {
   combinations: QuotaCombinationOptionDto[];
 }
 
+/** Stellungsraum of the «Zuordnung Waffen» mask (5.17, left table) with the size of its assignment. */
+export class WeaponAssignmentRoomDto extends AreaRoomDto {
+  @ApiProperty({ description: 'Anzahl der diesem Stellungsraum zugeordneten Kombinationen Waffe/Kaliber (aktive und inaktive)' })
+  assignmentCount: number;
+}
+
+/** One zulässige Kombination Waffe/Kaliber of a Stellungsraum (5.17 «Zugeordnete Waffen»). */
+export class RoomWeaponAssignmentDto {
+  @ApiProperty({ description: 'Id der Zuordnung (uuid)' })
+  id: string;
+
+  @ApiProperty({ description: 'Id des Stellungsraums, dem die Kombination zugeordnet ist' })
+  roomId: string;
+
+  @ApiProperty({ description: 'Id der Kombination Waffe/Kaliber (übergeordnete Stammdaten, 5.22)' })
+  combinationId: string;
+
+  @ApiProperty({ description: 'Waffenname für die Erfassung — in der Regel eine Gruppenbezeichnung, unter der der Schiessplatznutzer die Kombination erfasst, z. B. «Stgw 90 · 5.6 mm»' })
+  entryName: string;
+
+  @ApiProperty({ description: 'Bezeichnung der Waffe, z. B. «Stgw 90»' })
+  weapon: string;
+
+  @ApiProperty({ description: 'Bezeichnung des Kalibers, z. B. «5.6 mm GP 90»' })
+  caliber: string;
+
+  @ApiProperty({ description: 'Code der Waffenkategorie (5.25), z. B. «infantry»' })
+  category: string;
+
+  @ApiProperty({ description: 'Bezeichnung der Waffenkategorie, z. B. «Infanteriewaffen»' })
+  categoryName: string;
+
+  @ApiProperty({ description: 'Zuordnung aktiv — eine inaktive Zuordnung nimmt keine neuen Nutzungen an, bestehende Nutzungen bleiben erhalten' })
+  enabled: boolean;
+}
+
+/**
+ * Read model of «Datenverwaltung › Schiessplatz › Zuordnung Waffen» (5.17,
+ * B1 Abbildung 28): the Stellungsräume of the Schiessplatz and, per room, the
+ * zulässigen Kombinationen Waffe/Kaliber. Display only (FAQ 52) — the
+ * assignments are maintained by the import and the DB administration.
+ */
+export class AreaWeaponAssignmentDto {
+  @ApiProperty({ type: AreaResultDto, description: 'Der Schiessplatz (Koordinationsabschnitts-Nr. und Bezeichnung für den Titel der Maske)' })
+  area: AreaResultDto;
+
+  @ApiProperty({ type: WeaponAssignmentRoomDto, isArray: true, description: 'Stellungsräume des Schiessplatzes, nach Sortierung, mit der Anzahl ihrer Zuordnungen' })
+  rooms: WeaponAssignmentRoomDto[];
+
+  @ApiProperty({ type: RoomWeaponAssignmentDto, isArray: true, description: 'Zugeordnete Kombinationen Waffe/Kaliber aller Stellungsräume, nach Waffenname für die Erfassung' })
+  assignments: RoomWeaponAssignmentDto[];
+}
+
 export class AreaQuotaInputDto {
   @IsUUID()
   @ApiProperty({ description: 'Id der Kombination Waffe/Kaliber (übergeordnete Stammdaten, 5.22); je Schiessplatz höchstens ein Kontingent pro Kombination' })

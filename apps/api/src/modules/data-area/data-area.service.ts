@@ -24,7 +24,9 @@ import {
   AreaQuotaInputDto,
   AreaQuotaUpdateDto,
   AreaRoomDto,
+  AreaWeaponAssignmentDto,
   QuotaCombinationOptionDto,
+  RoomWeaponAssignmentDto,
 } from './dto';
 
 /** Fields of the Stammdaten mask (5.16) whose change is written to the logbook as before/after. */
@@ -101,6 +103,40 @@ export class DataAreaService {
         enabled: Boolean(c.enabled),
         assigned: assigned.has(c.id),
         hasQuota: withQuota.has(c.id),
+      })),
+    };
+  }
+
+  /**
+   * 5.17 read model (`slm 17`, B1 Abbildung 28): every Stellungsraum with its
+   * zulässigen Kombinationen. Read only — FAQ 52 dropped the maintenance in
+   * the UI; the rows come from the import (9.2) and the DB administration.
+   */
+  async weaponAssignment(tenantId: string, areaId: string): Promise<AreaWeaponAssignmentDto> {
+    const area = await this.areas.get(tenantId, areaId);
+    const [rooms, assignments] = await Promise.all([
+      this.rooms.find({ where: { tenantId, areaId }, order: { sortOrder: 'ASC', name: 'ASC' } }),
+      this.assignments.find({
+        where: { tenantId, areaId },
+        relations: { combination: { weapon: { category: true }, caliber: true } },
+        order: { entryName: 'ASC' },
+      }),
+    ]);
+    const countByRoom = new Map<string, number>();
+    for (const a of assignments) countByRoom.set(a.roomId, (countByRoom.get(a.roomId) ?? 0) + 1);
+    return {
+      area: toAreaDto(area),
+      rooms: rooms.map((r) => ({ ...toRoomDto(r), assignmentCount: countByRoom.get(r.id) ?? 0 })),
+      assignments: assignments.map<RoomWeaponAssignmentDto>((a) => ({
+        id: a.id,
+        roomId: a.roomId,
+        combinationId: a.combinationId,
+        entryName: a.entryName,
+        weapon: a.combination.weapon.nameDe,
+        caliber: a.combination.caliber.nameDe,
+        category: a.combination.weapon.category.code,
+        categoryName: a.combination.weapon.category.nameDe,
+        enabled: Boolean(a.enabled),
       })),
     };
   }

@@ -70,7 +70,7 @@ flowchart TB
     KPI["KPIs: n Empfangspunkte · überschritten · zu prüfen · eingehalten · ohne Berechnung"]
     subgraph Split["zweispaltig ab md, gestapelt auf dem Telefon"]
       direction LR
-      MAP["Karte / Liste umschaltbar<br/>schematische SVG-Karte mit farbigen Pins E1…E6<br/>Legende: eingehalten, zu prüfen, überschritten, keine Berechnung"]
+      MAP["Karte / Liste umschaltbar<br/>GIS-Karte (swisstopo) mit farbigen Pins E1…E6 und Anlagenteilen<br/>Legende: eingehalten, zu prüfen, überschritten, keine Berechnung"]
       DET["Detailbereich des gewählten Punkts<br/>Nr., EGID, Typ, Empfindlichkeitsstufe<br/>Tabelle: Anhang 9 IGW/PW, Anhang 7 IGW/PW · Grenzwert · Pegel · Reserve-Balken<br/>Delta zum gültigen Zustand"]
     end
     CTX --> HEAD --> CALC --> KPI --> Split
@@ -80,9 +80,15 @@ flowchart TB
 Elemente: Pin-Farbe = schlechteste anwendbare Beurteilung des Punkts; Planungswert
 nur für Anlageteile nach 1985 (gemischt: nur diese Stellungsräume); Reservepunkte ohne
 Gebäude erscheinen grau. Die Liste ist die barrierefreie Alternative zur Karte
-(Sortierung rot → orange → grün → grau). Die Karte ist heute schematisch (SVG,
-Positionen in Prozent); die swisstopo-Karte mit Vollansicht ist geplant, nicht
-umgesetzt.
+(Sortierung rot → orange → grün → grau). Die Karte ist der GIS-Kartenviewer (`slim-map-viewer`, B1 5.4): swisstopo-Hintergrund
+(«Light Base Map», umschaltbar auf «Imagery Base Map» und Landeskarte), Anlagenteile
+und Empfangspunkte des Zustands, Massstab mit Balken, Zoomstufen, Koordinaten der
+Maus in LV95, Ebenen, Export (PDF/Bild) und Vollansicht in einem neuen Tab
+(`/admin/area/:id/map?state=<id>`). Dieselbe Komponente zeigt in der Simulation die
+Pins im simulierten Zustand, den Ist-Zustand als Punkt daneben und das Popover des
+gewählten Empfangspunkts. Kann die Kartenbibliothek nicht geladen werden oder hat
+ein Zustand keine Koordinaten, erscheint die schematische SVG-Karte (Positionen in
+Prozent).
 
 ![Details mit Empfangspunkten](images/area-details.png)
 

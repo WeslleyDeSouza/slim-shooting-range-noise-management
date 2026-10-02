@@ -32,25 +32,10 @@
     />
 
     <!-- Apply the stored theme before the first paint (no light→dark flash).
-         Same key and attributes as SlimThemeService (@ui-slim/design-system). -->
-    <script>
-      (function () {
-        try {
-          var mode = localStorage.getItem('slim.theme');
-          // Default is light; 'system' follows the OS only when chosen explicitly.
-          var dark =
-            mode === 'dark' ||
-            (mode === 'system' &&
-              matchMedia('(prefers-color-scheme: dark)').matches);
-          var root = document.documentElement;
-          if (mode !== 'system')
-            root.setAttribute('data-theme', dark ? 'dark' : 'light');
-          root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
-        } catch (e) {
-          /* private mode: CSS falls back to prefers-color-scheme */
-        }
-      })();
-    </script>
+         A file, not an inline script: the Content-Security-Policy of the API
+         (`securityHeaders()` in @api-slim/common) allows scripts from the own
+         origin only. -->
+    <script src="theme-init.js"></script>
   </head>
   <body>
     <app-root></app-root>

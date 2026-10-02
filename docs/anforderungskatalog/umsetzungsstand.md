@@ -40,7 +40,7 @@ der Rechenfälle durch die Kette ([nachweis-rechenfaelle.md](nachweis-rechenfael
 | Menü | Sidebar/Tabbar mit den Gruppen Arbeitsbereich, Datenverwaltung, **Benutzerverwaltung** (Benutzer, Rollen, Apps) | `views/admin/_layout` |
 | **Schusszahlen (5.11)** | Stellungsräume mit Zählern, Nutzungstabelle (Filter Jahr/Datum/Freitext/Nutzung/Kategorie, Sortierung, Gruppierung, Mehrfachauswahl), Erfassen/Bearbeiten im Drawer: **n Positionen** (Kombination Waffe/Kaliber + Menge, Einheit aus dem Kaliber, nur zulässige Kombinationen des Stellungsraums), Viertelstundenraster, Personenzahl, Art der zivilen Nutzung (Pflicht bei Zivil), Löschen mit «Rückgängig», ELO-Kennzeichnung, Idempotenz über `externalId` | API `usage.service.spec` (10 Tests), Jest + e2e `area-shots.spec` |
 | **Lärmberechnung (7.4–7.7)** | `@slim/lsv`: GEMW/ESM, Anhang 9 (LAE1/LAE2/Lr), Anhang 7 (Li/Lri/Lr, Halbtage mit **Grenze 12:00**, B1 7.4.3), Werktag-Split Mo–Fr 07–19 Uhr, Feiertage ganz/halb aus `feiertag`, Grenzwerte je Empfindlichkeitsstufe (**Alarmwerte Anhang 9 korrigiert**: ES III 70, ES IV 75), Baujahr-Regel (IGW/PW/gemischt, je Anlageteil des Zustands), Ampel-Regeln (Lärm −5 dB, Kontingent 125 %, Soll 0) | Unit-Tests gegen B1.4 (`libs/shared/lsv`), Rechenfälle Testplatz S (`rechenfaelle.spec`, 25); [laermberechnung.md](../architecture/laermberechnung.md), [nachweis-rechenfaelle.md](nachweis-rechenfaelle.md) |
-| **Details Empfangspunkte (5.12)** | Beurteilung je Immissionspunkt: 4 Zeilen (Anh. 9 IGW/PW, Anh. 7 IGW/PW) mit Pegel, Reserve, Ampel; schematische Karte mit Pins, Listenansicht, Wechsel der Berechnungsgrundlage mit Abweichung zum aktuellen Zustand (Vergleich über sonARMS-ID), Betrachtungszeitraum bzw. repräsentative Jahre (`years=`), Typ Fassade/Freifeld/Baulinie | API `assessment.service.spec` (17 Tests), Jest + e2e `area-details.spec` |
+| **Details Empfangspunkte (5.12)** | Beurteilung je Immissionspunkt: 4 Zeilen (Anh. 9 IGW/PW, Anh. 7 IGW/PW) mit Pegel, Reserve, Ampel; GIS-Kartenviewer (swisstopo, Anlagenteile und Empfangspunkte, Vollansicht) mit schematischer Karte als Rückfall, Listenansicht, Wechsel der Berechnungsgrundlage mit Abweichung zum aktuellen Zustand (Vergleich über sonARMS-ID), Betrachtungszeitraum bzw. repräsentative Jahre (`years=`), Typ Fassade/Freifeld/Baulinie | API `assessment.service.spec` (17 Tests), Jest + e2e `area-details.spec` |
 | **Simulation (5.13)** | Tabelle Stellungsraum × Kombination mit «innerhalb/ausserhalb Werktag» (aus den Nutzungen des Jahres, Mengen mit 3 Dezimalen), Werte überschreiben, Schnellfaktoren, Berechnung nach Anhang 9 über dieselbe Verteilung 7.5, Resultat je Immissionspunkt mit Differenz und Ampelwechsel, Karte mit Ist-Schatten | API `simulation.service.spec` (×10 = +10 dB, Abend +5 dB, …), Jest + e2e `area-simulation.spec` |
 | **Datenmodell B1 Kap. 10 (Muss)** | Drei Ebenen wie Abb. 43: **übergeordnet** `schiessplatz`, `stellungsraum`, `waffe`/`kaliber`/`waffenkategorie`, `waffe_kaliber_kombination`, `stellungsraum_kombination`, `kontingent`, `feiertag`; **Nutzungen** `nutzung` + `nutzung_position` ohne Zustandsbezug (`slm 44`); **Zustandsebene** `immissionsberechnung` → `zustand` → `zustand_anlageteil` (→ Stellungsraum, Baujahr je Zustand), `schusslinie` + `quelldaten_anhang9/7` (optional je Quelle), `untersuchungsperimeter`, `ausbreitungsberechnung`, `gebaeude`, `immissionspunkt`, `wlr_pegel` je Zeitgruppe, `isophonen`, `betroffene_analyse`, `hindernis`, `hochblende`, `schuetzenhaus`, `massnahmen_*`; `berechnungslauf`. Deutsche Tabellen; deutsche Spalten in der Zustandsebene und im Berechnungslauf, Referenzstruktur und Nutzungen noch mit englischen Spalten (B1 12.2, siehe unten). Zustandskonsistenz per Composite-FK `(tenantId, zustand_id, …)` – keine Verknüpfung über Zustände oder Schiessplätze hinweg; «genau ein aktueller / MGDM-Zustand» als Unique-Index (`aktuell_schluessel`/`mgdm_schluessel`). Geometrien im Prototyp als Text (SQLite), Ziel PostGIS. ERD automatisch (`docs/architecture/uml.mmd`, `/erd`) | `state-isolation.spec` (10 Tests: zwei Zustände mit gleichen externen IDs, unterschiedlicher Geometrie/Pegel, Änderung am neuen lässt alten Zustand und gespeicherten Lauf unverändert), [datenstruktur.md](../architecture/datenstruktur.md), [validierung-fachlich.md](validierung-fachlich.md) §7 |
 | **Import Berechnungsgrundlage (5.19, `slm 45`)** | `POST admin/area/:areaId/calculation/import` (`ImportService`, Rolle Datenverwaltung Berechnungen): Staging-Prüfungen, unbekannter Stellungsraum oder doppelter Anlageteil → `ImportAbortedException` mit Befunden, **nichts wird geschrieben**; eine Transaktion; Quellen werden über die sonARMS-ID mit den Kombinationen verknüpft (Warnung bei fehlender Zuordnung); Seed und Tests laufen über denselben Import | `state-isolation.spec`, `import.service` (Seed) |
@@ -97,7 +97,7 @@ eingebunden.
 
 | Thema | Prototyp | Zielbild (B1) |
 |---|---|---|
-| Karte | Schematische SVG-Karte mit Pins (Prozent-Koordinaten), LV95 pro Empfangspunkt gespeichert | GIS-Viewer swisstopo, Zoom, PDF (`slm 2`) |
+| Karte | GIS-Kartenviewer `@ui-slim/map` (`slm 2`, 02.10.2026): swisstopo «Light Base Map» (Vector Tiles) und «Imagery Base Map», Landeskarte; Anlagenteile und Empfangspunkte aus LV95; Massstab 1:x mit Balken, 12 Zoomstufen, Koordinaten der Maus in LV95, Ebenen, Export PDF/Bild, Vollansicht; Konfiguration `assets/config/map.config.json`. Schematische SVG-Karte bleibt als Rückfall | Weitere Layer (Gebäude, Isophonen, Untersuchungsperimeter; FAQ 13), massstabstreuer Druck über einen Server-Druckdienst, Karte in den Masken der Datenverwaltung |
 | Verteilung auf Quellen (7.5) | Schusslinien je Zustand mit Quelldaten Anhang 9/7 als Gewichte; Zuordnung Kombination ↔ Schusslinie über die sonARMS-ID | identisch; zusätzlich Fachentscheid-Freigabe der Ersatzregel in einer Maske |
 | Betrachtungszeitraum | Zeitraum oder repräsentative Jahre (`years=`), Ø ohne vorzeitige Rundung | Auswahl der 3 Jahre in der Maske (heute nur API) |
 | Feiertage | Kalender je Schiessplatz (`feiertag`) im Seed, keine Pflegemaske | Pflege in der Datenverwaltung |
@@ -120,7 +120,7 @@ eingebunden.
    ist bereit (`source = 'elo'`).
 4. **Berechnungen verwalten** (5.18–5.21 sind umgesetzt): FGDB direkt über GDAL statt JSON, Maske für
    Berechnungsläufe und Fachentscheide – die API-Endpunkte bestehen.
-5. **GIS-Karte** (swisstopo, LV95) an Stelle der schematischen Karte; Vollansicht.
+5. ~~**GIS-Karte** (swisstopo, LV95) an Stelle der schematischen Karte; Vollansicht.~~ umgesetzt 02.10.2026 (Details, Simulation, Vollansicht `/admin/area/:id/map`).
 6. **Produktion**: Auslieferung des Frontends fehlt heute (das Docker-Image kopiert `dist/app`,
    aber niemand serviert es) – nginx oder Static-Serving in der API festlegen; Hosting, Backup,
    Monitoring gemäss [deployment-sicherheit.md](../architecture/deployment-sicherheit.md).
@@ -131,9 +131,11 @@ eingebunden.
    Grenzwert-Konfiguration, Rollen-Zuschnitt, GIS-Format.
 9. **Willkommensbanner, Lesezeichen und Sidebar-Zustand** je Benutzer in den galaxy-Benutzereinstellungen
    merken (heute Sitzung bzw. Browser); PostgreSQL/PostGIS-Betrieb sobald `@app-galaxy/*` die Postgres-Typen mappt.
-10. **Karte**: Details und Simulation zeichnen je eine eigene schematische SVG-Karte (`slim-map`, Prozent-
-    Koordinaten) – keine gemeinsame Komponente, kein GIS. Nächster Schritt: eine `app-area-map`-Komponente
-    (`views/admin/area/_components`) für beide Seiten, danach der swisstopo-Viewer (`slm 2`).
+10. **Karte**: erledigt 02.10.2026 – Details, Simulation und Vollansicht verwenden die gemeinsame Komponente
+    `slim-map-viewer` aus `libs/app/map` (`@ui-slim/map`, OpenLayers hinter dem Token `MAP_ENGINE`). Die beiden
+    schematischen SVG-Karten (`slim-map`, Prozent-Koordinaten) sind nur noch der Rückfall, wenn die
+    Kartenbibliothek nicht geladen werden kann oder ein Zustand keine Koordinaten hat; sie sind weiterhin je
+    Seite gezeichnet.
 
 ### Kriterien-Nachweise
 

@@ -5,9 +5,13 @@
   <!-- Empfangspunkte: real buttons in a layer above the map, positioned by the engine on every frame. -->
   <div class="gis__pins">
     @for (p of pins(); track p.id) {
+      @if (p.previousState) {
+        <span #ghost [class]="'slim-map__ghost slim-map__ghost--' + p.previousState" [attr.data-point]="p.id" [attr.title]="p.previousLabel"></span>
+      }
       <button
         #pin
         type="button"
+        [attr.data-point]="p.id"
         [class]="'slim-map__pin slim-map__pin--' + p.state + (p.id === selectedId() ? ' slim-map__pin--active' : '')"
         [attr.data-testid]="pinTestId()"
         [attr.data-code]="p.code"
@@ -17,6 +21,12 @@
       >
         {{ p.code }}
       </button>
+    }
+    <!-- Popover of the chosen point: the host page projects what it shows (`slimMapPopup`). -->
+    @if (popup() && selectedPin(); as p) {
+      <div #pop class="slim-map__pop gis__pop" data-testid="map-popup" [attr.data-point]="p.id">
+        <ng-content select="[slimMapPopup]" />
+      </div>
     }
   </div>
 

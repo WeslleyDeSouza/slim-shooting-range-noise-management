@@ -172,7 +172,7 @@ den Ist-Zeichnungen oben bewusst weggelassen.
 flowchart LR
   API["NestJS API · Ist"]
   ELO["ELO REST-Schnittstelle<br/>B1 Kap. 6, slm 28–30"]:::planned
-  GIS["GIS-Karte swisstopo<br/>heute: schematische SVG-Karte mit Pins"]:::planned
+  GIS["GIS-Karte: weitere Layer, Server-Druckdienst<br/>Viewer mit swisstopo-Hintergrund ist umgesetzt"]:::planned
   IMP["Import Berechnungsgrundlage<br/>FGDB / WLR / Betriebsdaten, 5.19"]:::planned
   EXP["MGDM-Export, Excel-Exporte<br/>B1 Kap. 9"]:::planned
   WRK["Asynchrone Berechnung / Worker<br/>NFA slm 54 erlaubt es; heute synchron"]:::planned
@@ -192,7 +192,7 @@ flowchart LR
 | Baustein | Stand heute | Anforderung |
 | --- | --- | --- |
 | ELO-Schnittstelle | Nutzungen tragen `source: 'elo'` als Kennzeichen; der Demo-Datensatz enthält importierte Zeilen. Kein Endpunkt, keine Anbindung. | B1 Kapitel 6, `slm 28`–`slm 30` |
-| GIS-Karte | Schematische SVG-Karte mit Empfangspunkt-Pins, Positionen als Prozentwerte (`mapX`/`mapY`); LV95-Koordinaten (`east`/`north`) sind gespeichert, aber nicht dargestellt. | 5.10, 5.12 (swisstopo-Hintergrund, Vollansicht) |
+| GIS-Karte | Kartenviewer `@ui-slim/map` (`libs/app/map`, OpenLayers): swisstopo «Light Base Map» / «Imagery Base Map» (Vector Tiles, live von `vectortiles.geo.admin.ch` und `wmts.geo.admin.ch`), Anlagenteile (WKT) und Empfangspunkte (`east`/`north`) aus LV95, Massstab, Zoomstufen, Koordinatenanzeige, Export PDF/Bild im Browser, Vollansicht. Die Ansicht rechnet in Web Mercator (Projektion der Vector Tiles), angezeigt und gespeichert wird LV95. Schematische SVG-Karte (`mapX`/`mapY`) als Rückfall. | Weitere Layer (FAQ 13), Server-Druckdienst für massstabstreue Ausgaben |
 | Import Berechnungsgrundlage | Zustände und WLR-Werte kommen nur aus dem Demo-Datensatz. | 5.19, `slm 36`ff. |
 | Exporte | Schaltflächen «Exportieren» / «Bericht PDF» sind in den Mocks, nicht angebunden. | B1 Kapitel 9, MGDM |
 | Worker / Queue / Cache | Berechnung synchron im Request; ausreichend für das Mengengerüst des Prototyps. | `slm 54` (Ø 5 s, max. 10 s; asynchron zulässig) |

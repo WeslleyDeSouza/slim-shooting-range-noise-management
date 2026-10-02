@@ -7,16 +7,20 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type {
   SimulationReceiverDto,
   SimulationResultReceiverDto,
   SimulationRowDto,
 } from '@ui-slim/apiClient';
+import { MapPoint, MapViewerComponent } from '@ui-slim/map';
+import { AreaFacade } from '../../../../core/area/area.facade';
+import { MapFacade } from '../../../../core/calculation/map.facade';
 import { rowKey, SimulationFacade } from '../../../../core/calculation/simulation.facade';
 
 type ShotKey = 'inside' | 'outside';
@@ -38,17 +42,22 @@ const BADGE: Record<LightState, string> = {
  * the year's military shot counts per Stellungsraum × Waffe are the Ist; the
  * user overwrites them, runs the Annex 9 calculation on the API and compares
  * the Beurteilungspegel per Empfangspunkt on the map and in the result
- * table. A sandbox — nothing is written. Data: SimulationFacade.
+ * table. The map is the GIS-Kartenviewer (`slm 2`), the schematic map stays
+ * as fallback. A sandbox — nothing is written. Data: SimulationFacade,
+ * MapFacade (Anlagenteile of the state).
  */
 @Component({
   selector: 'app-area-simulation',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent],
   styleUrl: './area-simulation.component.scss',
   templateUrl: './area-simulation.component.html',
 })
 export class AreaSimulationComponent extends ComponentBase {
   private readonly facade = inject(SimulationFacade);
+  private readonly maps = inject(MapFacade);
+  private readonly areas = inject(AreaFacade);
+  private readonly translate = inject(TranslateService);
   private readonly route = inject(ActivatedRoute);
   private readonly numberFormat = new Intl.NumberFormat('de-CH');
   private readonly dbFormat = new Intl.NumberFormat('de-CH', {
@@ -120,6 +129,15 @@ export class AreaSimulationComponent extends ComponentBase {
       if (!this.ready || !areaId) return;
       untracked(() => void this.facade.load(areaId, year));
     });
+
+    // The Anlagenteile of the map belong to the state the simulation runs on.
+    effect(() => {
+      const areaId = this.areaId();
+      const state = this.calculation()?.id ?? null;
+      untracked(() => {
+        if (areaId && state) void this.maps.load(areaId, state);
+      });
+    });
   }
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
@@ -181,6 +199,32 @@ export class AreaSimulationComponent extends ComponentBase {
   }
 
   // ----- map / result ------------------------------------------------------
+
+  /** False once the map library could not be loaded: the schematic map takes over. */
+  protected readonly gisAvailable = signal(true);
+  protected readonly useGis = computed(
+    () => this.gisAvailable() && this.receivers().some((r) => r.east !== null && r.north !== null),
+  );
+  protected readonly plantParts = this.maps.plantParts;
+  /** Pins in the simulated state once a fresh result exists; the Ist then stays visible as a dot next to the pin. */
+  protected readonly mapPoints = computed<MapPoint[]>(() => {
+    const simulated = this.showSim();
+    return this.receivers().map((r) => ({
+      id: r.id,
+      code: r.code,
+      east: r.east,
+      north: r.north,
+      state: this.pinState(r),
+      label: this.translate.translate('simulation.pin_label', { code: r.code }) ?? r.code,
+      previousState: simulated ? r.currentState : null,
+      previousLabel: simulated ? (this.translate.translate('simulation.ghost_title', { value: this.db(r.current) }) ?? '') : undefined,
+    }));
+  });
+  /** Title of the map export. */
+  protected readonly mapTitle = computed(() => {
+    const area = this.areas.byId(this.areaId());
+    return area ? `${area.coordinationSectionNo} ${area.name}` : '';
+  });
 
   /** Pin colour: the simulated state once a fresh result exists, else the Ist. */
   protected pinState(receiver: SimulationReceiverDto): LightState {

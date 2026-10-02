@@ -70,22 +70,27 @@ function tryParseJson(str: any): any {
   }
 }
 
+/** Extensions of the files the build of the app consists of — such a request is a file, never a page. */
+const ASSET_EXTENSION =
+  /\.(?:js|mjs|css|map|json|webmanifest|txt|xml|ico|png|jpe?g|gif|svg|webp|avif|woff2?|ttf|otf|eot|pdf|wasm)$/i;
+
 /**
- * Checks if the request path should be handled by static file middleware
- * @param req - Express request object
- * @returns True if path should be handled statically
+ * Checks if the request is a page of the app, i.e. answered with index.html
+ * (the router of the app takes it from there).
+ *
+ * A dot alone does not make a request a file: addresses of the app carry
+ * e-mail addresses (`/auth/reset/<e-mail>/<token>` from the reset mail,
+ * `/auth/two-fa-login?email=…`, the verification link). Only the path counts
+ * — not the query — and only a known file extension at its end.
+ *
+ * @param req - Express request object (only `url` is read)
+ * @returns True if index.html is to be served
  */
-function isStaticIndexPath(req: Request): boolean {
-  const url = req.url;
-
-  // must be compatible with index.html and / path
-  const isStaticIndexPath =
-    !url?.startsWith('/api') &&
-    !url?.startsWith('/docs') &&
-    !url?.startsWith('/assets') &&
-    (!url?.includes('.') || url.includes('index.html')); // If path will ever have a dot, this needs to be adapted
-
-  return isStaticIndexPath;
+export function isStaticIndexPath(req: Pick<Request, 'url'>): boolean {
+  const path = (req.url ?? '').split(/[?#]/)[0];
+  if (path.startsWith('/api') || path.startsWith('/docs') || path.startsWith('/assets')) return false;
+  if (path.endsWith('index.html')) return true;
+  return !ASSET_EXTENSION.test(path);
 }
 
 /**

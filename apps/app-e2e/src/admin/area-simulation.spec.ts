@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { mockMapTiles } from '../support/map';
 import { ROUTES } from '../support/selectors';
 
 /**
@@ -22,6 +23,7 @@ const SIM = {
 
 test.describe('area simulation', () => {
   test.beforeEach(async ({ page }) => {
+    await mockMapTiles(page); // the map is the GIS-Kartenviewer (slm 2)
     await page.goto(ROUTES.area);
     // First row of the overview = Geissalp (lowest Koordinationsabschnitt-Nr.);
     // a row click opens the assessment (Details) since the feedback of 12.09.
@@ -79,6 +81,13 @@ test.describe('area simulation', () => {
 
     await page.locator(SIM.run).click();
     await expect(page.locator(SIM.state)).toContainText(/aktuell|up to date|à jour|aggiornata/);
+  });
+
+  test('shows the receivers on the GIS map (slm 2)', async ({ page }) => {
+    const viewer = page.locator('[data-testid="sim-map"] [data-testid="map-viewer"]');
+    await expect(viewer).toHaveAttribute('data-status', 'ready');
+    await expect(viewer.locator(SIM.pin)).toHaveCount(6);
+    await expect(viewer.locator('[data-testid="map-scale"]')).toHaveText(/^1:/);
   });
 
   test('shows the popover of a receiver pin', async ({ page }) => {

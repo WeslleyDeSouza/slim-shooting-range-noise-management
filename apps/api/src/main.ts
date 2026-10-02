@@ -16,6 +16,7 @@ import {
   applyMiddlewareAppStripeDouble,
   createValidationPipe,
   resolveTrustProxy,
+  securityHeaders,
 } from '@api-slim/common';
 import { DataSource } from "typeorm";
 import {staticFileMiddleware} from "./core";
@@ -38,10 +39,17 @@ async function bootstrap() {
 
   const dataSource = app.get(DataSource);
 
+  // No product banner in the responses (express default and the galaxy CORS default).
+  app.disable('x-powered-by');
+
   // Coolify WorkAround
   app.use(applyMiddlewareAppStripeDouble());
-  app.use(MiddlewareCors());
+  // Security headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Permissions-Policy) on every
+  // response, also the CORS preflight: SLIM's own list goes in as custom headers of the CORS middleware and
+  // is therefore set last — it does not depend on the galaxy opt-in (API_CONFIG_HEADERS_SECURITY) and wins
+  // over the galaxy defaults when that is set. See `securityHeaders()` in @api-slim/common.
   app.use(MiddlewareSecurityHeaders());
+  app.use(MiddlewareCors({ customHeaders: securityHeaders() }));
   app.use(staticFileMiddleware(dataSource));
 
   if (env.isSwaggerEnabled) {

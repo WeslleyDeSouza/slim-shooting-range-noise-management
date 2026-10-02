@@ -44,6 +44,11 @@
     "weapon_combination": "Arme/calibre"
   },
   "common": {
+    "area_not_found": {
+      "title": "Place de tir introuvable",
+      "text": "Il n’existe aucune place de tir à cette adresse, ou vous n’y avez pas accès.",
+      "back": "Vers la vue d’ensemble des places de tir"
+    },
     "save": "Enregistrer",
     "cancel": "Annuler",
     "delete": "Supprimer",

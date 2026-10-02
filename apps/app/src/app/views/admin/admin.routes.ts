@@ -119,7 +119,8 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: S.dataManagement,
         children: [
-          { path: '', pathMatch: 'full', redirectTo: S.area },
+          // Straight to the page: the router does not follow a second relative redirect (`area` → `area/overview`).
+          { path: '', pathMatch: 'full', redirectTo: `${S.area}/${S.overview}` },
           // Schiessplatz › Allgemein
           {
             path: S.area,

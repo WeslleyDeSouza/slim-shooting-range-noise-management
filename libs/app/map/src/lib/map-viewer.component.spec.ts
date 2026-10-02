@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Component, Pipe, PipeTransform, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { FakeMap, provideFakeMap } from './map-testing';
@@ -233,10 +233,73 @@ describe('MapViewerComponent (slm 2, B1 5.4 / Abbildung 16)', () => {
     expect(el('map-zoom-in')).toBeNull();
   });
 
+  it('shows the state before a change as a dot next to the pin (simulation)', async () => {
+    await setup();
+    expect(fixture.nativeElement.querySelector('.slim-map__ghost')).toBeNull();
+    fixture.componentRef.setInput('points', [{ ...POINTS[0], state: 'ok', previousState: 'over', previousLabel: 'Ist: 60.8 dB' }, POINTS[1]]);
+    await settle();
+    const ghost = fixture.nativeElement.querySelector('.slim-map__ghost') as HTMLElement;
+    expect(ghost.classList).toContain('slim-map__ghost--over');
+    expect(ghost.title).toBe('Ist: 60.8 dB');
+    // The map positions the dot at the coordinate of its point, after the pins.
+    expect(fake.engine?.pins.map((p) => [p.id, p.element.tagName])).toEqual([
+      ['p1', 'BUTTON'],
+      ['p2', 'BUTTON'],
+      ['p1', 'SPAN'],
+    ]);
+  });
+
   it('releases the map when the viewer is destroyed', async () => {
     await setup();
     const engine = fake.engine;
     fixture.destroy();
     expect(engine?.destroyed).toBe(true);
+  });
+});
+
+@Component({
+  imports: [MapViewerComponent],
+  template: `
+    <slim-map-viewer [points]="points" [selectedId]="selected()" [popup]="true">
+      <p slimMapPopup data-testid="host-popup">Grenzwert {{ selected() }}</p>
+    </slim-map-viewer>
+  `,
+})
+class PopupHostComponent {
+  readonly points = POINTS;
+  readonly selected = signal<string | null>(null);
+}
+
+describe('MapViewerComponent — popover of the selected point', () => {
+  it('projects the content of the host at the selected point and keeps it inside the map', async () => {
+    const fake = provideFakeMap();
+    await TestBed.configureTestingModule({
+      imports: [PopupHostComponent],
+      providers: [...fake.providers, { provide: TranslateService, useValue: { translate: (key: string) => key } }],
+    })
+      .overrideComponent(MapViewerComponent, { remove: { imports: [TranslatePipe] }, add: { imports: [TranslateStubPipe] } })
+      .compileComponents();
+    const fixture = TestBed.createComponent(PopupHostComponent);
+    const settle = async () => {
+      for (let i = 0; i < 4; i++) {
+        fixture.detectChanges();
+        await fixture.whenStable();
+      }
+    };
+    await settle();
+    const popup = () => fixture.nativeElement.querySelector('[data-testid="map-popup"]') as HTMLElement | null;
+    expect(popup()).toBeNull();
+
+    fixture.componentInstance.selected.set('p2');
+    await settle();
+    expect(popup()?.textContent).toContain('Grenzwert p2');
+    const placed = fake.engine?.pins.find((p) => p.keepInside);
+    expect(placed).toMatchObject({ id: 'p2', east: 2618836, north: 1176894 });
+    expect(placed?.element).toBe(popup());
+
+    // A point without coordinates has no pin, so no popover either.
+    fixture.componentInstance.selected.set('p3');
+    await settle();
+    expect(popup()).toBeNull();
   });
 });

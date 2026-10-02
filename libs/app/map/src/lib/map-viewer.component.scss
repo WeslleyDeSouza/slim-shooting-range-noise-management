@@ -15,6 +15,8 @@
   border: 1px solid slim.color('line');
   border-radius: slim.radius('md');
   background: slim.color('surface-2');
+  // The viewer adapts to its own width (a narrow card on a wide screen), not to the window.
+  container-type: inline-size;
 
   &__map {
     position: absolute;
@@ -36,6 +38,11 @@
     > * {
       pointer-events: auto;
     }
+  }
+
+  // Popover of a point in the lower half: opens upwards, above the pin, so it stays inside the map.
+  &__pop[data-half='lower'] {
+    transform: translate(-50%, calc(-100% - #{slim.space(12)}));
   }
 
   &__state {
@@ -304,5 +311,21 @@
     border-radius: slim.radius('sm');
     background: slim.alpha('surface', 0.8);
     color: slim.color('text-2');
+  }
+
+  // Narrow viewer: the map keeps the room — no coordinates under the mouse, a smaller switcher.
+  @container (max-width: 30rem) {
+    &__chip--coords {
+      display: none;
+    }
+
+    &__base-item {
+      width: slim.space(12);
+      height: slim.space(12);
+    }
+
+    &__base-label {
+      display: none;
+    }
   }
 }

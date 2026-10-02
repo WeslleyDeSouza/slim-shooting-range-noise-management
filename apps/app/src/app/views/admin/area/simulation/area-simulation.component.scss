@@ -187,7 +187,8 @@
     padding-top: 0;
   }
 
-  &__map {
+  &__map,
+  &__gis {
     aspect-ratio: 600 / 480;
   }
 

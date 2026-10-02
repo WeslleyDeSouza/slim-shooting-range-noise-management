@@ -44,6 +44,11 @@
     "weapon_combination": "Waffe/Kaliber"
   },
   "common": {
+    "area_not_found": {
+      "title": "Schiessplatz nicht gefunden",
+      "text": "Unter dieser Adresse gibt es keinen Schiessplatz, oder Sie haben keinen Zugriff darauf.",
+      "back": "Zur Übersicht der Schiessplätze"
+    },
     "save": "Speichern",
     "cancel": "Abbrechen",
     "delete": "Löschen",

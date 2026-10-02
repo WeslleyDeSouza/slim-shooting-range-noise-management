@@ -44,6 +44,11 @@
     "weapon_combination": "Weapon/caliber"
   },
   "common": {
+    "area_not_found": {
+      "title": "Shooting range not found",
+      "text": "There is no shooting range at this address, or you do not have access to it.",
+      "back": "To the overview of the shooting ranges"
+    },
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",

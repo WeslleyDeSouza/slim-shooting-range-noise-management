@@ -77,6 +77,33 @@ test.describe('entry page', () => {
     await expect(page.locator('.slim-table tbody tr')).toHaveCount(1);
   });
 
+  test('says that the export of the table is not available yet', async ({ page }) => {
+    await page.goto(ROUTES.area);
+    await page.locator('[data-testid="area-export"]').click();
+    await expect(page.locator('[data-testid="area-toast"]')).toContainText('Der Export der Tabelle (Excel/CSV) ist noch in Bearbeitung.');
+  });
+
+  test('opens the Schiessplatz overview of the Datenverwaltung from its root address', async ({ page }) => {
+    await page.goto('/admin/data-management');
+    await expect(page).toHaveURL(/\/admin\/data-management\/area\/overview$/);
+    await expect(page.locator('.slim-table tbody tr').first()).toBeVisible();
+  });
+
+  test('says so when the address names a Schiessplatz that does not exist', async ({ page }) => {
+    const unknown = '00000000-0000-4000-8000-000000000000';
+    for (const [address, back] of [
+      [`/admin/area/${unknown}/details`, /\/admin\/area$/],
+      [`/admin/data-management/area/${unknown}/general/overview`, /\/admin\/data-management\/area\/overview$/],
+    ] as const) {
+      await page.goto(address);
+      await expect(page.locator('[data-testid="area-not-found"]')).toContainText('Schiessplatz nicht gefunden');
+      // Neither the pages of the Schiessplatz nor an untranslated API message.
+      await expect(page.getByText(/not found/i)).toHaveCount(0);
+      await page.locator('[data-testid="area-not-found-back"]').click();
+      await expect(page).toHaveURL(back);
+    }
+  });
+
   test('switches the language', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(ROUTES.area);

@@ -341,9 +341,6 @@ const NOTICE_MS = 6000;
         }
         <span class="slim-legend__item slim-text--muted">{{ 'legend_note' | translate }}</span>
       </div>
-      <p class="slim-text--muted slim-text--xs slim-u-text-right">
-        {{ 'sample_note' | translate }}
-      </p>
     </div>
 
     @if (notice(); as key) {

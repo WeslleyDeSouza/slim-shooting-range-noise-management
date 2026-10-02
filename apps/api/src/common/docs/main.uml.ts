@@ -30,7 +30,9 @@ export async function setupMermaidUml(
     router.get('/erd/mermaid.mmd', (_req: unknown, res: { type: (t: string) => { send: (b: string) => void } }) => {
       res.type('text/plain').send(mermaid);
     });
-    router.get('/erd', (_req: unknown, res: { type: (t: string) => { send: (b: string) => void } }) => {
+    router.get('/erd', (_req: unknown, res: { setHeader: (k: string, v: string) => void; type: (t: string) => { send: (b: string) => void } }) => {
+      // Development page with its own policy: mermaid comes from a CDN and is started inline.
+      res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline'");
       res.type('text/html').send(`<!doctype html>
 <html lang="en">
 <head>

@@ -3,7 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of, Subject } from 'rxjs';
 import { TranslateService } from '@app-galaxy/translate-ui';
-import type { SimulationBaseDto, SimulationResultDto } from '@ui-slim/apiClient';
+import type { MapPlantPartDto, SimulationBaseDto, SimulationResultDto } from '@ui-slim/apiClient';
+import { provideFakeMap } from '@ui-slim/map';
+import { AreaFacade } from '../../../../core/area/area.facade';
+import { MapFacade } from '../../../../core/calculation/map.facade';
 import { SimulationFacade } from '../../../../core/calculation/simulation.facade';
 import { AreaSimulationComponent } from './area-simulation.component';
 
@@ -128,6 +131,12 @@ function mockFacade() {
   };
 }
 
+/** Anlagenteile of the state, as the map shows them. */
+function mockMaps() {
+  return { plantParts: signal<MapPlantPartDto[]>([]), load: jest.fn().mockResolvedValue(undefined) };
+}
+const AREAS = { byId: () => ({ id: 'a1', name: 'Geissalp', coordinationSectionNo: '1104.020' }) };
+
 describe('AreaSimulationComponent', () => {
   let fixture: ComponentFixture<AreaSimulationComponent>;
   let facade: ReturnType<typeof mockFacade>;
@@ -140,6 +149,8 @@ describe('AreaSimulationComponent', () => {
       imports: [AreaSimulationComponent],
       providers: [
         { provide: SimulationFacade, useValue: facade },
+        { provide: MapFacade, useValue: mockMaps() },
+        { provide: AreaFacade, useValue: AREAS },
         {
           provide: ActivatedRoute,
           useValue: { parent: { paramMap: of(paramMap), snapshot: { paramMap } }, paramMap: of(paramMap), snapshot: { paramMap } },
@@ -271,5 +282,106 @@ describe('AreaSimulationComponent', () => {
     expect(pop).not.toBeNull();
     expect(pop.textContent).toContain('E1');
     expect(pop.textContent).toContain('56.4');
+  });
+});
+
+describe('AreaSimulationComponent — GIS-Kartenviewer (slm 2)', () => {
+  let fixture: ComponentFixture<AreaSimulationComponent>;
+  let facade: ReturnType<typeof mockFacade>;
+  let maps: ReturnType<typeof mockMaps>;
+  let fakeMap: ReturnType<typeof provideFakeMap>;
+
+  /** The receiver of the suite, now with LV95 coordinates as a sonARMS delivery brings them. */
+  const LOCATED: SimulationBaseDto = { ...BASE, receivers: [{ ...BASE.receivers[0], east: 2618180, north: 1176916 }] };
+
+  async function settle(): Promise<void> {
+    for (let i = 0; i < 4; i++) {
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+  }
+
+  async function setup(options: { fail?: boolean } = {}): Promise<void> {
+    facade = mockFacade();
+    facade.base.set(LOCATED);
+    maps = mockMaps();
+    fakeMap = provideFakeMap();
+    fakeMap.fail = Boolean(options.fail);
+    const paramMap = convertToParamMap({ id: 'a1' });
+    await TestBed.configureTestingModule({
+      imports: [AreaSimulationComponent],
+      providers: [
+        { provide: SimulationFacade, useValue: facade },
+        { provide: MapFacade, useValue: maps },
+        { provide: AreaFacade, useValue: AREAS },
+        ...fakeMap.providers,
+        {
+          provide: ActivatedRoute,
+          useValue: { parent: { paramMap: of(paramMap), snapshot: { paramMap } }, paramMap: of(paramMap), snapshot: { paramMap } },
+        },
+        {
+          provide: TranslateService,
+          useValue: { translate: (key: string) => key, sectionChanged$: new Subject<void>(), languageChanged$: new Subject<void>() },
+        },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(AreaSimulationComponent);
+    await settle();
+  }
+
+  const all = (selector: string): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll(selector));
+  const pins = () => all('[data-testid="sim-pin"]');
+
+  it('shows the Empfangspunkte and the Anlagenteile of the state on the map', async () => {
+    await setup();
+    expect(all('slim-map-viewer[data-testid="sim-map"]')).toHaveLength(1);
+    expect(all('[data-kind="schematic"]')).toHaveLength(0);
+    expect(maps.load).toHaveBeenCalledWith('a1', 'c1');
+    expect(fakeMap.engine?.pins.map((p) => [p.id, p.east, p.north])).toEqual([['e1', 2618180, 1176916]]);
+    expect(pins().map((p) => p.textContent?.trim())).toEqual(['E1']);
+    // Ist: the pin has the current state, no «before» dot.
+    expect(pins()[0].classList).toContain('slim-map__pin--warn');
+    expect(all('.slim-map__ghost')).toHaveLength(0);
+  });
+
+  it('colours the pin by the simulated state and keeps the Ist as a dot next to it', async () => {
+    await setup();
+    facade.result.set({
+      areaId: 'a1',
+      year: 2026,
+      calculation: LOCATED.calculation,
+      receivers: [{ id: 'e1', code: 'E1', current: 56.4, simulated: 60.8, delta: 4.4, limitKind: 'igw', limit: 60, simulatedState: 'over', incomplete: false, simulatedRows: [] }],
+      counts: { total: 1, ok: 0, warn: 0, over: 1, none: 0, incomplete: 0 },
+      totals: { inside: 518194, outside: 53554, baseInside: 259097, baseOutside: 26777 },
+      calculatedAt: '2026-09-11T10:00:00.000Z',
+    } as unknown as SimulationResultDto);
+    await settle();
+    expect(pins()[0].classList).toContain('slim-map__pin--over');
+    const ghost = all('.slim-map__ghost');
+    expect(ghost).toHaveLength(1);
+    expect(ghost[0].classList).toContain('slim-map__ghost--warn');
+    // The map keeps the dot at the coordinate of its point.
+    expect(fakeMap.engine?.pins.map((p) => p.element.tagName)).toEqual(['BUTTON', 'SPAN']);
+  });
+
+  it('opens the popover of a pin on the map and closes it again', async () => {
+    await setup();
+    expect(all('[data-testid="map-popup"]')).toHaveLength(0);
+    pins()[0].click();
+    await settle();
+    const popup = all('[data-testid="map-popup"]')[0];
+    expect(popup.textContent).toContain('E1');
+    expect(popup.textContent).toContain('56.4');
+    expect(pins()[0].classList).toContain('slim-map__pin--active');
+    (popup.querySelector('.sim__pop-close') as HTMLButtonElement).click();
+    await settle();
+    expect(all('[data-testid="map-popup"]')).toHaveLength(0);
+  });
+
+  it('falls back to the schematic map when the map library cannot be loaded', async () => {
+    await setup({ fail: true });
+    expect(all('slim-map-viewer')).toHaveLength(0);
+    expect(all('[data-kind="schematic"]')).toHaveLength(1);
+    expect(pins().map((p) => p.textContent?.trim())).toEqual(['E1']);
   });
 });

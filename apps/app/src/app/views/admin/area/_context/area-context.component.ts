@@ -18,6 +18,7 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
+import { AreaNotFoundComponent } from '../../_components/area-not-found.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
 
 /**
@@ -30,7 +31,7 @@ import { AreaFacade } from '../../../../core/area/area.facade';
 @Component({
   selector: 'app-area-context',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, StatusPillComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, TranslatePipe, StatusPillComponent, AreaNotFoundComponent],
   styleUrl: './area-context.component.scss',
   template: `
     <div class="area-ctx">
@@ -82,29 +83,33 @@ import { AreaFacade } from '../../../../core/area/area.facade';
         }
       </div>
 
-      <nav class="slim-subnav area-ctx__nav" [attr.aria-label]="'context.nav' | translate">
-        @for (tab of tabs(); track tab.key) {
-          <a
-            class="slim-subnav__tab"
-            [routerLink]="tab.link"
-            routerLinkActive="slim-subnav__tab--active"
-            [attr.data-testid]="'area-tab-' + tab.id"
-          >
-            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path [attr.d]="tab.icon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span>{{ tab.key | translate }}</span>
-          </a>
+      @if (notFound()) {
+        <app-area-not-found [back]="routes.admin.area.root" />
+      } @else {
+        <nav class="slim-subnav area-ctx__nav" [attr.aria-label]="'context.nav' | translate">
+          @for (tab of tabs(); track tab.key) {
+            <a
+              class="slim-subnav__tab"
+              [routerLink]="tab.link"
+              routerLinkActive="slim-subnav__tab--active"
+              [attr.data-testid]="'area-tab-' + tab.id"
+            >
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path [attr.d]="tab.icon" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>{{ tab.key | translate }}</span>
+            </a>
+          }
+        </nav>
+
+        @if (error(); as message) {
+          <div class="slim-alert slim-alert--danger slim-u-mb-4">
+            <div class="slim-alert__body">{{ message | translate }}</div>
+          </div>
         }
-      </nav>
 
-      @if (error(); as message) {
-        <div class="slim-alert slim-alert--danger slim-u-mb-4">
-          <div class="slim-alert__body">{{ message | translate }}</div>
-        </div>
+        <router-outlet />
       }
-
-      <router-outlet />
     </div>
   `,
   host: { '(document:click)': 'onDocumentClick($event)' },
@@ -123,6 +128,8 @@ export class AreaContextComponent extends ComponentBase {
 
   protected readonly areas = this.facade.areas;
   protected readonly error = this.facade.error;
+  /** The list is there and the Schiessplatz of the address is not in it (unknown id, or outside the user's scope). */
+  protected readonly notFound = computed(() => this.facade.loaded() && !this.error() && !!this.areaId() && !this.area());
   readonly area = computed(() => this.facade.areas().find((a) => a.id === this.areaId()) ?? null);
 
   protected readonly tabs = computed(() => {

@@ -136,10 +136,10 @@ test.describe('area: shot counts', () => {
     await drawer.locator(SHOTS.category).selectOption({ index: 1 });
     await drawer.locator(SHOTS.weapon).selectOption({ index: 1 });
     await drawer.locator(SHOTS.quantity).fill('100');
+    await expect(drawer.locator(SHOTS.weapon)).not.toHaveValue('');
     const room = await drawer.locator('#shots-room').inputValue();
     const category = await drawer.locator(SHOTS.category).inputValue();
     const weapon = await drawer.locator(SHOTS.weapon).inputValue();
-    expect(weapon).not.toBe('');
     await drawer.locator(SHOTS.save).click();
     await expect(drawer).toBeHidden();
     const created = page.locator(SHOTS.row).filter({ hasText: unit });

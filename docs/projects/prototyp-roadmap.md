@@ -120,9 +120,9 @@ Status: ☐ offen · ◐ teilweise / in Arbeit · ☑ erledigt (Stand 12.09.2026
 
 | # | Arbeitspaket | slm | PT | Status |
 |---|---|---|---:|---|
-| 4.1 | Kartenkomponente im Design System: swisstopo Light/Imagery Base Map, LV95-Koordinatenanzeige, Massstab, Zoomstufen, Layer-Konfiguration als JSON, Marker mit Popup, Vollansicht in neuem Tab, PDF-Export (Basisvariante) | 2 | 1.5 | ☐ |
+| 4.1 | Kartenkomponente im Design System: swisstopo Light/Imagery Base Map, LV95-Koordinatenanzeige, Massstab, Zoomstufen, Layer-Konfiguration als JSON, Marker mit Popup, Vollansicht in neuem Tab, PDF-Export (Basisvariante) | 2 | 1.5 | ☑ 02.10.2026 (`libs/app/map`, `@ui-slim/map`) |
 | 4.2 | Schiessplatz – Übersicht 5.10: Beurteilung Lärmbelastung (beide Ampeln, Regelwerk), Stand SPM/MPV/Projekt, Kontingent-Tabelle (Soll, Ist laufendes Jahr, Ist Ø 3 Jahre, Farben 100 %/125 %), Karte mit Empfangspunkten; `quotaStatus` wird berechnet statt gespeichert | 9, 8 | 1 | ☐ |
-| 4.3 | Schiessplatz – Details 5.12: Karte + Detailbereich pro Empfangspunkt (Lr vs. PW/IGW je Anhang) | 11 | 0.5 | ☑ (schematische Karte; GIS in 4.1) |
+| 4.3 | Schiessplatz – Details 5.12: Karte + Detailbereich pro Empfangspunkt (Lr vs. PW/IGW je Anhang) | 11 | 0.5 | ☑ (GIS-Karte seit 02.10.2026) |
 | 4.4 | Simulation 5.13: Tabelle Stellungsraum × Kombination mit Schuss innerhalb/ausserhalb Werktag, überschreiben, zurücksetzen, «Simulation ausführen» (Anh. 9) → Karte | 12 | 1 | ☑ |
 | 4.5 | Erweiterte Konfiguration 5.28 komplett: Handbuch-Upload (PDF, im Hauptmenü verlinkt), Ampel-Schwellenwerte und -Farben (Plangenehmigung, Empfangspunkte) | 27, 53 | 0.5 | ☐ |
 | 4.6 | Startseite mit echten Zahlen (Anzahl Plätze nach Ampel, Datenverwaltung-Zähler inkl. Waffen) und Hinweis «Handlungsbedarf» | 7 | 0.5 | ◐ (Kacheln mit Zählern aus dem Seed, Ampel-Zahlen noch nicht aus der Berechnung) |
@@ -189,7 +189,7 @@ Die Playwright-Nachweise je Kriterium werden in `apps/app-e2e/src/criterias/` ge
 | 8 | Übersicht Schiessplätze mit Ampeln, nur berechtigte | ☑ (Seed-Status) → S4 (berechnet), S5 (Rechte) |
 | 9 | Schiessplatz-Übersicht (Lärm, Kontingent, Karte) | S4 |
 | 10 | Schusszahlen anzeigen/erfassen/bearbeiten | ☑ Maske 5.11 (Erfassen/Bearbeiten/Löschen mit Rückgängig) · S1 Excel-Import |
-| 11 | Details Empfangspunkte | ☑ Maske 5.12 (schematische Karte) · S4 GIS |
+| 11 | Details Empfangspunkte | ☑ Maske 5.12 mit GIS-Karte |
 | 12 | Simulation | ☑ Maske 5.13 |
 | 13–15 | Datenverwaltung Schiessplatz Übersicht/Allgemein/Stellungsräume | S1 |
 | 16 | Stammdaten + Kontingente | S1 |

@@ -44,6 +44,11 @@
     "weapon_combination": "Arma/calibro"
   },
   "common": {
+    "area_not_found": {
+      "title": "Piazza di tiro non trovata",
+      "text": "A questo indirizzo non esiste alcuna piazza di tiro, oppure non vi avete accesso.",
+      "back": "Alla panoramica delle piazze di tiro"
+    },
     "save": "Salva",
     "cancel": "Annulla",
     "delete": "Elimina",

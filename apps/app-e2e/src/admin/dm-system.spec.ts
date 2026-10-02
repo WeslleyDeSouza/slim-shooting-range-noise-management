@@ -156,7 +156,8 @@ test.describe('erweiterte Konfiguration (5.28)', () => {
     await save(page);
 
     try {
-      await page.goto(ROUTES.home);
+      // Any other page (the entry page would greet with the welcome banner of the demo).
+      await page.goto(ROUTES.area);
       await page.locator(SYS.menu).click();
       await expect(page.locator(SYS.menuSpecialist)).toContainText('KOMZ Lärm');
       await expect(page.locator(`${SYS.menuSpecialist} a`)).toHaveAttribute('href', 'mailto:laerm@example.org');

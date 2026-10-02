@@ -824,10 +824,10 @@
         "upload": "Téléverser un PDF",
         "replace": "Remplacer le PDF",
         "remove": "Supprimer",
-        "hint": "Document PDF, 20 Mo au maximum. Les utilisatrices et utilisateurs l’ouvrent dans le menu principal sous « Aide & contact »."
+        "hint": "Document PDF, 15 Mo au maximum. Les utilisatrices et utilisateurs l’ouvrent dans le menu principal sous « Aide & contact »."
       },
       "manual_not_pdf": "Le manuel d’utilisation doit être un document PDF.",
-      "manual_too_large": "Le fichier dépasse 20 Mo.",
+      "manual_too_large": "Le fichier dépasse 15 Mo.",
       "thresholds": {
         "title": "Seuils et couleurs des feux",
         "defaults": "Rétablir les valeurs par défaut",

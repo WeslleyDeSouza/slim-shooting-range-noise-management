@@ -824,10 +824,10 @@
         "upload": "Upload PDF",
         "replace": "Replace PDF",
         "remove": "Remove",
-        "hint": "PDF document, 20 MB at most. Users open it in the main menu under “Help & contact”."
+        "hint": "PDF document, 15 MB at most. Users open it in the main menu under “Help & contact”."
       },
       "manual_not_pdf": "The user manual must be a PDF document.",
-      "manual_too_large": "The file is larger than 20 MB.",
+      "manual_too_large": "The file is larger than 15 MB.",
       "thresholds": {
         "title": "Thresholds and colours of the traffic lights",
         "defaults": "Restore defaults",

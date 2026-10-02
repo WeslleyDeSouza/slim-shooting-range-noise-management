@@ -12,7 +12,7 @@ import { HasUnsavedChanges } from '../../_common/unsaved-changes.guard';
 const I18N = 'admin.dm_system';
 const TOAST_MS = 6000;
 /** Largest Benutzerhandbuch the API stores (`MANUAL_MAX_BYTES`). */
-const MANUAL_MAX_BYTES = 20 * 1024 * 1024;
+const MANUAL_MAX_BYTES = 15 * 1024 * 1024;
 
 /** Thresholds of B1 5.10 — what «Standard wiederherstellen» puts back. */
 export const THRESHOLD_DEFAULTS = { quotaGreenMaxPercent: 100, quotaOrangeMaxPercent: 125, noiseGreenMaxDb: -5, noiseOrangeMaxDb: 0 } as const;

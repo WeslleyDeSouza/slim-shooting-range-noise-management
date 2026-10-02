@@ -328,19 +328,18 @@
     padding-bottom: 0;
     border-bottom: 0;
   }
+}
 
-  // Frozen by the Sperrdatum: a lock in place of the row actions.
-  &__locked {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: slim.size('control-h-sm');
-    height: slim.size('control-h-sm');
-    color: slim.color('text-3');
+// Frozen by the Sperrdatum (B1 5.28): a lock in place of the row actions.
+.shots__locked {
+  display: inline-grid;
+  place-items: center;
+  width: slim.size('control-h-sm');
+  height: slim.size('control-h-sm');
+  color: slim.color('text-3');
 
-    svg {
-      width: slim.space(4);
-      height: slim.space(4);
-    }
+  svg {
+    width: slim.space(4);
+    height: slim.space(4);
   }
 }

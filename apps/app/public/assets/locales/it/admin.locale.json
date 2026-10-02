@@ -824,10 +824,10 @@
         "upload": "Caricare un PDF",
         "replace": "Sostituire il PDF",
         "remove": "Rimuovere",
-        "hint": "Documento PDF, al massimo 20 MB. Le utenti e gli utenti lo aprono nel menu principale sotto «Aiuto & contatto»."
+        "hint": "Documento PDF, al massimo 15 MB. Le utenti e gli utenti lo aprono nel menu principale sotto «Aiuto & contatto»."
       },
       "manual_not_pdf": "Il manuale d’uso deve essere un documento PDF.",
-      "manual_too_large": "Il file supera i 20 MB.",
+      "manual_too_large": "Il file supera i 15 MB.",
       "thresholds": {
         "title": "Valori soglia e colori dei semafori",
         "defaults": "Ripristinare i valori predefiniti",

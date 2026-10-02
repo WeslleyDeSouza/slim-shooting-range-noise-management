@@ -117,6 +117,17 @@ Drei Ebenen wie in B1 Kap. 10 (Abb. 43); vollständiges ERD: [uml.mmd](uml.mmd) 
 - **Kontingent** `kontingent`: je Schiessplatz × Kombination `shotsPerYear`, `basis` (Plangenehmigung).
 - **Feiertag** `feiertag`: je Schiessplatz `date`, optional `from`/`to` (halber Feiertag), wird an Anhang 9/7 übergeben.
 
+### Erweiterte Konfiguration (B1 5.28, `slm 27`)
+
+- **Systemeinstellung** `systemeinstellung` (`modules/settings`): eine Zeile je Mandant. `sperrdatum_nutzungen`
+  (Nutzungen bis und mit diesem Datum sind gesperrt), Schwellenwerte der Kontingent-Ampel in Prozent des Solls
+  (`kontingent_gruen_bis_prozent`, `kontingent_orange_bis_prozent`) und der Empfangspunkt-Ampel in dB Abweichung vom
+  Grenzwert (`laerm_gruen_bis_db`, `laerm_orange_bis_db`; FAQ 166), Ampelfarben (`farbe_gruen/orange/rot`) und die
+  Kontaktangaben des Hauptmenüs (`fachkontakt_*`, `systemkontakt_*`). Jede Spalte ist nullbar: leer heisst «Standard»
+  (B1 5.10: 100 % / 125 %, −5 dB / 0 dB, Farben des Designs).
+- **Benutzerhandbuch** `benutzerhandbuch`: das hochgeladene PDF je Mandant (`dateiname`, `groesse`, `inhalt` als BLOB,
+  `hochgeladen_von`); ein Upload ersetzt das bisherige Dokument.
+
 ### Nutzungen (Betriebsdaten, ohne Zustandsbezug – `slm 44`)
 
 - **Schiessplatz-Nutzung** `nutzung` (5.11): `roomId`, `unit`, `date`, `timeFrom`/`timeTo` (Viertelstundenraster),

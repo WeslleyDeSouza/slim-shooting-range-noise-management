@@ -824,10 +824,10 @@
         "upload": "PDF hochladen",
         "replace": "PDF ersetzen",
         "remove": "Entfernen",
-        "hint": "PDF-Dokument, höchstens 20 MB. Die Benutzerinnen und Benutzer öffnen es im Hauptmenü unter «Hilfe & Kontakt»."
+        "hint": "PDF-Dokument, höchstens 15 MB. Die Benutzerinnen und Benutzer öffnen es im Hauptmenü unter «Hilfe & Kontakt»."
       },
       "manual_not_pdf": "Das Benutzerhandbuch muss ein PDF-Dokument sein.",
-      "manual_too_large": "Die Datei ist grösser als 20 MB.",
+      "manual_too_large": "Die Datei ist grösser als 15 MB.",
       "thresholds": {
         "title": "Schwellenwerte und Farben der Ampeln",
         "defaults": "Standard wiederherstellen",

@@ -301,7 +301,7 @@ Zuordnung jeder B1-Anforderung zum Umsetzungskapitel (FAQ 8: Beilage ausserhalb 
 | slm 24 | Waffe 5.24 inkl. Kategorie Anhang 7 | 5.1, 4.2 | P |
 | slm 25 | Waffenkategorie 5.25 | 5.1 | P |
 | slm 26 | Benutzerverwaltung 5.26 | 2.4 | T (Benutzerverwaltung vorhanden; Platz-Zuordnung, Rechte-Schaltflächen ausstehend) |
-| slm 27 | Erweiterte Konfiguration 5.28 (Sperrdatum, Handbuch, Ampel-Schwellen Lärm in dB / Kontingent in %) | 4.2, 6.1 | Z |
+| slm 27 | Erweiterte Konfiguration 5.28 (Sperrdatum, Handbuch, Ampel-Schwellen Lärm in dB / Kontingent in %) | 4.2, 6.1 | P (Maske, Sperrdatum, Handbuch-Upload, Schwellenwerte und Farben umgesetzt und getestet) |
 | slm 28 | ELO-Schnittstelle: Anlageninformationen (GET) | 3.1 | T (Modell vorhanden; GET-Endpunkt ausstehend) |
 | slm 29 | ELO-Schnittstelle: Nutzung melden (POST) mit Validierung | 3.1 | T (Validierungsregeln vorhanden; POST-Endpunkt ausstehend) |
 | slm 30 | ELO-Schnittstelle: Sicherheit, Fehlerbehandlung | 3.1 | Z |

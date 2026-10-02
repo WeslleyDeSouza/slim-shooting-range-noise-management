@@ -7,7 +7,6 @@ import {
   MiddlewareCors,
   MiddlewareSecurityHeaders,
 } from '@app-galaxy/core-api';
-import { json } from 'express';
 import * as http from 'node:http';
 
 import { AppModule } from './app.module';
@@ -20,7 +19,7 @@ import {
   securityHeaders,
 } from '@api-slim/common';
 import { DataSource } from "typeorm";
-import { staticFileMiddleware, TABLE_EXPORT_BODY_LIMIT } from "./core";
+import { staticFileMiddleware, TABLE_EXPORT_ROUTE, tableExportBodyParser } from "./core";
 
 env.load();
 
@@ -53,8 +52,8 @@ async function bootstrap() {
   app.use(MiddlewareCors({ customHeaders: securityHeaders() }));
   app.use(staticFileMiddleware(dataSource));
   // The table export receives the rows of a mask (B1 5.5.5): only this route takes a larger body than the
-  // default of 100 kB. Registered before Nest's own parser, which then leaves the parsed body alone.
-  app.use(`/${globalPrefix}/admin/export/table`, json({ limit: TABLE_EXPORT_BODY_LIMIT }));
+  // default of 100 kB (see `tableExportBodyParser` for why it is wired this way).
+  app.use(`/${globalPrefix}/${TABLE_EXPORT_ROUTE}`, tableExportBodyParser());
 
   if (env.isSwaggerEnabled) {
     setupSwagger(app);

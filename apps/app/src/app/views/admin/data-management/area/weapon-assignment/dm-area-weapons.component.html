@@ -1,0 +1,204 @@
+<div class="slim-page dwa">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dwa-title">{{ prefix + '.title' | translate: { area: areaLabel() } }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  <div class="slim-alert slim-alert--info dwa__note" role="note" data-testid="dwa-readonly">
+    <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.4" />
+      <path d="M8 7.2v4M8 4.8v.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    </svg>
+    <div class="slim-alert__body">{{ prefix + '.readonly' | translate }}</div>
+  </div>
+
+  @if (error(); as message) {
+    <div class="slim-alert slim-alert--danger dwa__note" data-testid="dwa-error">
+      <div class="slim-alert__body">{{ message | translate }}</div>
+      <button type="button" class="slim-alert__close" [attr.aria-label]="'common.close' | translate" (click)="facade.clearError()">×</button>
+    </div>
+  }
+
+  <div class="dwa__layout">
+    <!-- 1 Stellungsraum-Tabelle + 2 Suchfeld (B1 5.17, Abbildung 28) -->
+    <section class="slim-card slim-card--bleed dwa__rooms" data-testid="dwa-rooms">
+      <div class="slim-card__header dwa__head">
+        <h2 class="slim-card__title">{{ prefix + '.rooms_title' | translate }}</h2>
+        <span class="slim-badge" data-testid="dwa-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+      </div>
+      <div class="slim-toolbar">
+        <div class="slim-search slim-toolbar__grow">
+          <svg class="slim-search__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.6" />
+            <path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <input
+            #search
+            class="slim-search__input"
+            type="search"
+            autocomplete="off"
+            data-testid="dwa-room-search"
+            [placeholder]="prefix + '.rooms_search' | translate"
+            [attr.aria-label]="prefix + '.rooms_search' | translate"
+            [value]="query()"
+            (input)="query.set($any($event.target).value)"
+          />
+          @if (query()) {
+            <button type="button" class="dwa__clear" [attr.aria-label]="prefix + '.clear_search' | translate" (click)="clearQuery(search)">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="slim-table-wrap dwa__table-wrap">
+        <table class="slim-table slim-table--compact">
+          <thead>
+            <tr>
+              @for (col of roomColumns; track col.key) {
+                <th [attr.aria-sort]="roomSort().key === col.key ? (roomSort().asc ? 'ascending' : 'descending') : null">
+                  <button
+                    type="button"
+                    class="dwa__sort"
+                    [class.dwa__sort--active]="roomSort().key === col.key"
+                    [attr.title]="prefix + '.sort' | translate: { col: (prefix + '.' + col.label | translate) }"
+                    (click)="sortRoomsBy(col.key)"
+                  >
+                    {{ prefix + '.' + col.label | translate }}
+                    <span class="dwa__sort-mark" aria-hidden="true">{{ roomSort().key === col.key ? (roomSort().asc ? '▴' : '▾') : '' }}</span>
+                  </button>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of visibleRooms(); track r.id) {
+              <tr
+                class="slim-table__row slim-table__row--clickable"
+                [class.slim-table__row--selected]="selectedRoomId() === r.id"
+                [class.dwa__room--empty]="!r.assignmentCount"
+                tabindex="0"
+                data-testid="dwa-room"
+                [attr.data-name]="r.name"
+                [attr.aria-selected]="selectedRoomId() === r.id"
+                (click)="selectRoom(r)"
+                (keydown.enter)="selectRoom(r)"
+              >
+                <td class="dwa__num">
+                  @if (r.coordinationSectionNo) {
+                    {{ r.coordinationSectionNo }}
+                  } @else {
+                    <span class="slim-text--muted" [attr.title]="prefix + '.no_room_number' | translate">—</span>
+                  }
+                </td>
+                <td>{{ r.name }}</td>
+                <td>
+                  <span class="slim-badge" [class.slim-badge--success]="r.enabled">{{ (r.enabled ? 'common.yes' : 'common.no') | translate }}</span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text">{{ prefix + (rooms().length ? '.rooms_no_match' : '.rooms_empty') | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="slim-table-foot" data-testid="dwa-rooms-foot">
+        <span>{{ prefix + '.rooms_foot' | translate: { n: visibleRooms().length, total: rooms().length } }}</span>
+      </div>
+    </section>
+
+    <!-- 3 Zugeordnete Waffen des gewählten Stellungsraums -->
+    <section class="slim-card slim-card--bleed dwa__detail" data-testid="dwa-detail">
+      <div class="slim-card__header dwa__head">
+        <h2 class="slim-card__title" data-testid="dwa-detail-title">
+          @if (selectedRoom()) {
+            {{ prefix + '.detail_title' | translate: { room: selectedLabel() } }}
+          } @else {
+            {{ prefix + '.detail_none' | translate }}
+          }
+        </h2>
+        @if (selectedRoom(); as room) {
+          <span class="slim-badge" data-testid="dwa-count">{{ prefix + '.assignments_count' | translate: { n: room.assignmentCount } }}</span>
+        }
+      </div>
+
+      @if (selectedRoom(); as room) {
+        <dl class="slim-kv dwa__kv">
+          <dt class="slim-kv__key">{{ prefix + '.field_room_no' | translate }}</dt>
+          <dd class="slim-kv__value dwa__num" data-testid="dwa-room-no">
+            @if (room.coordinationSectionNo) {
+              {{ room.coordinationSectionNo }}
+            } @else {
+              <span class="slim-text--muted">{{ prefix + '.no_room_number' | translate }}</span>
+            }
+          </dd>
+          <dt class="slim-kv__key">{{ prefix + '.col_active' | translate }}</dt>
+          <dd class="slim-kv__value">{{ (room.enabled ? 'common.yes' : 'common.no') | translate }}</dd>
+        </dl>
+      }
+
+      <h3 class="dwa__subtitle">{{ prefix + '.assignments_title' | translate }}</h3>
+      <div class="slim-table-wrap dwa__table-wrap">
+        <table class="slim-table slim-table--stack slim-table--compact" data-testid="dwa-assignments">
+          <thead>
+            <tr>
+              @for (col of assignmentColumns; track col.key) {
+                <th [attr.aria-sort]="assignmentSort().key === col.key ? (assignmentSort().asc ? 'ascending' : 'descending') : null">
+                  <button
+                    type="button"
+                    class="dwa__sort"
+                    [class.dwa__sort--active]="assignmentSort().key === col.key"
+                    [attr.title]="prefix + '.sort' | translate: { col: (prefix + '.' + col.label | translate) }"
+                    (click)="sortAssignmentsBy(col.key)"
+                  >
+                    {{ prefix + '.' + col.label | translate }}
+                    <span class="dwa__sort-mark" aria-hidden="true">{{ assignmentSort().key === col.key ? (assignmentSort().asc ? '▴' : '▾') : '' }}</span>
+                  </button>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of assignments(); track a.id) {
+              <tr class="slim-table__row" [class.dwa__assignment--inactive]="!a.enabled" data-testid="dwa-row">
+                <td [attr.data-label]="prefix + '.col_entry_name' | translate" class="dwa__strong">
+                  {{ a.entryName }}
+                  @if (!a.enabled) {
+                    <span class="slim-badge dwa__inactive">{{ prefix + '.inactive' | translate }}</span>
+                  }
+                </td>
+                <td [attr.data-label]="prefix + '.col_weapon' | translate">{{ a.weapon }}</td>
+                <td [attr.data-label]="prefix + '.col_caliber' | translate">{{ a.caliber }}</td>
+                <td [attr.data-label]="prefix + '.col_category' | translate">{{ a.categoryName }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="slim-table__cell--wrap">
+                  <div class="slim-empty">
+                    @if (loading()) {
+                      <span class="slim-spinner"></span>
+                    } @else {
+                      <div class="slim-empty__text" data-testid="dwa-empty">{{ prefix + (selectedRoom() ? '.assignments_empty' : '.detail_none_text') | translate }}</div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

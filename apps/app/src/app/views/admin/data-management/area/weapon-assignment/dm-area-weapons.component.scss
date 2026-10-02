@@ -1,0 +1,133 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.dwa {
+  &__note {
+    margin-bottom: slim.space(4);
+  }
+
+  // Phone: rooms above the detail; desktop: master–detail like B1 Abbildung 28.
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(320px, 5fr) minmax(0, 7fr);
+    }
+  }
+
+  &__rooms,
+  &__detail {
+    min-width: 0;
+  }
+
+  &__rooms {
+    @include slim.mq('lg') {
+      position: sticky;
+      top: calc(#{slim.size('topbar-h')} + #{slim.space(3)});
+    }
+  }
+
+  &__head {
+    padding-bottom: 0;
+  }
+
+  &__room--empty {
+    color: slim.color('text-3');
+  }
+
+  &__assignment--inactive {
+    color: slim.color('text-3');
+  }
+
+  &__inactive {
+    margin-left: slim.space(2);
+  }
+
+  &__kv {
+    padding: slim.space(3) slim.space(4) 0;
+
+    @include slim.mq('sm') {
+      display: grid;
+      grid-template-columns: minmax(180px, 2fr) 3fr;
+      column-gap: slim.space(4);
+      row-gap: slim.space(2);
+    }
+  }
+
+  &__subtitle {
+    margin: 0;
+    padding: slim.space(4) slim.space(4) slim.space(2);
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('semibold');
+    color: slim.color('text-2');
+  }
+
+  &__table-wrap {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  &__num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &__strong {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__clear {
+    position: absolute;
+    right: slim.space(2);
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: slim.space(6);
+    height: slim.space(6);
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: slim.color('text-3');
+    cursor: pointer;
+
+    svg {
+      width: slim.space(3);
+      height: slim.space(3);
+    }
+
+    @include slim.hover {
+      background: slim.color('hover');
+      color: slim.color('ink');
+    }
+  }
+
+  &__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: slim.space(1);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+
+    &--active {
+      color: slim.color('ink');
+    }
+  }
+
+  &__sort-mark {
+    color: slim.color('text-4');
+  }
+}

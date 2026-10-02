@@ -28,7 +28,8 @@ export function scaleBar(resolution: number, maxPx = 120): ScaleBar {
   return { meters, px: Math.round(meters / resolution), label: meters >= 1000 ? `${meters / 1000} km` : `${meters} m` };
 }
 
-const integer = new Intl.NumberFormat('de-CH', { maximumFractionDigits: 0 });
+/** Whole number with the Swiss thousands separator «’» — fixed here, because Intl gives ' or ’ depending on the runtime. */
+const integer = { format: (value: number): string => String(Math.round(value)).replace(/\B(?=(\d{3})+(?!\d))/g, '’') };
 
 /** «2’618’420, 1’176’900» — LV95 east, north in whole metres (B1 5.4.4). */
 export function formatLv95(coordinate: readonly [number, number] | null): string {

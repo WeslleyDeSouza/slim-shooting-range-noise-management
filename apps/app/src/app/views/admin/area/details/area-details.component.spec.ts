@@ -4,8 +4,11 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
 import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
-import type { AssessmentDto, ReceiverAssessmentDto } from '@ui-slim/apiClient';
+import type { AssessmentDto, MapPlantPartDto, ReceiverAssessmentDto } from '@ui-slim/apiClient';
+import { FakeMap, provideFakeMap } from '@ui-slim/map';
+import { AreaFacade } from '../../../../core/area/area.facade';
 import { AssessmentFacade } from '../../../../core/calculation/assessment.facade';
+import { MapFacade } from '../../../../core/calculation/map.facade';
 import { AreaDetailsComponent } from './area-details.component';
 
 const CALC_INITIAL = {
@@ -96,6 +99,13 @@ class FacadeStub {
   readonly select = jest.fn(async () => undefined);
 }
 
+class MapFacadeStub {
+  readonly plantParts = signal<MapPlantPartDto[]>([]);
+  readonly load = jest.fn(async () => undefined);
+}
+
+const AREA_STUB = { byId: () => ({ id: 'area-1', name: 'Geissalp', coordinationSectionNo: '1104.020' }) };
+
 describe('AreaDetailsComponent', () => {
   let fixture: ComponentFixture<AreaDetailsComponent>;
   let facade: FacadeStub;
@@ -106,6 +116,8 @@ describe('AreaDetailsComponent', () => {
       imports: [AreaDetailsComponent],
       providers: [
         { provide: AssessmentFacade, useValue: facade },
+        { provide: MapFacade, useValue: new MapFacadeStub() },
+        { provide: AreaFacade, useValue: AREA_STUB },
         DataEmitter,
         {
           provide: TranslateService,
@@ -224,5 +236,102 @@ describe('AreaDetailsComponent', () => {
     fixture.detectChanges();
     expect(el('[data-testid="details-map"]')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('details.no_calculation.text');
+  });
+});
+
+describe('AreaDetailsComponent — GIS-Kartenviewer (slm 2)', () => {
+  let fixture: ComponentFixture<AreaDetailsComponent>;
+  let facade: FacadeStub;
+  let maps: MapFacadeStub;
+  let fakeMap: FakeMap;
+
+  /** The receivers of the suite with LV95 coordinates, E6 without (as a delivery may leave them out). */
+  const LOCATED: ReceiverAssessmentDto[] = [
+    { ...RECEIVERS[0], east: 2618180, north: 1176916 },
+    { ...RECEIVERS[1], east: 2618836, north: 1176894 },
+    RECEIVERS[2],
+  ];
+  const PART: MapPlantPartDto = {
+    id: 'part-1',
+    roomId: 'room-1',
+    coordinationSectionNo: '1104.020.07',
+    name: 'Stellungsrm B 2',
+    type: 'Schiessanlage (300m)',
+    builtAfter1985: false,
+    geometry: 'POLYGON((2618540 1176683, 2618620 1176683, 2618620 1176733, 2618540 1176733, 2618540 1176683))',
+  };
+
+  async function setup(options: { fail?: boolean } = {}): Promise<void> {
+    facade = new FacadeStub();
+    facade.receivers.set(LOCATED);
+    facade.assessment.set(assessment({ receivers: LOCATED }));
+    maps = new MapFacadeStub();
+    maps.plantParts.set([PART]);
+    fakeMap = provideFakeMap();
+    fakeMap.fail = Boolean(options.fail);
+    await TestBed.configureTestingModule({
+      imports: [AreaDetailsComponent],
+      providers: [
+        { provide: AssessmentFacade, useValue: facade },
+        { provide: MapFacade, useValue: maps },
+        { provide: AreaFacade, useValue: AREA_STUB },
+        ...fakeMap.providers,
+        DataEmitter,
+        { provide: TranslateService, useValue: { translate: (key: string) => key, sectionChanged$: of(null), languageChanged$: of(null) } },
+        {
+          provide: ActivatedRoute,
+          useValue: { parent: { paramMap: of(convertToParamMap({ id: 'area-1' })), snapshot: { paramMap: convertToParamMap({ id: 'area-1' }) } } },
+        },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(AreaDetailsComponent);
+    for (let i = 0; i < 4; i++) {
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+  }
+
+  const el = <T extends Element = HTMLElement>(selector: string): T => fixture.nativeElement.querySelector(selector) as T;
+  const pins = (): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll('[data-testid="details-pin"]'));
+
+  it('shows the receivers with coordinates and the Anlagenteile of the state on the map', async () => {
+    await setup();
+    expect(el('slim-map-viewer[data-testid="details-map"]')).not.toBeNull();
+    expect(el('[data-kind="schematic"]')).toBeNull();
+    // The Anlagenteile are loaded for the area and the state the assessment shows.
+    expect(maps.load).toHaveBeenCalledWith('area-1', 'calc-initial');
+    expect(fakeMap.engine?.plantParts.map((p) => p.coordinationSectionNo)).toEqual(['1104.020.07']);
+    expect(fakeMap.engine?.pins.map((p) => [p.east, p.north])).toEqual([
+      [2618180, 1176916],
+      [2618836, 1176894],
+    ]);
+    expect(pins().map((p) => p.textContent?.trim())).toEqual(['E1', 'E2']);
+    expect(pins()[0].getAttribute('aria-label')).toBe('E1, details.state.over');
+  });
+
+  it('selects a receiver from its pin and shows it in the aside', async () => {
+    await setup();
+    expect(el('[data-testid="details-aside"]').textContent).toContain('E1 Strasse 1');
+    pins()[1].click();
+    fixture.detectChanges();
+    expect(el('[data-testid="details-aside"]').textContent).toContain('E2 Strasse 1');
+    expect(pins()[1].classList).toContain('slim-map__pin--active');
+  });
+
+  it('links the Vollansicht of the shown state in a new tab (B1 5.10)', async () => {
+    await setup();
+    const link = el<HTMLAnchorElement>('[data-testid="details-fullscreen"]');
+    expect(link.getAttribute('href')).toBe('/admin/area/area-1/map?state=calc-initial');
+    expect(link.target).toBe('_blank');
+    expect(el('[data-testid="map-fullscreen"]').getAttribute('href')).toBe('/admin/area/area-1/map?state=calc-initial');
+  });
+
+  it('falls back to the schematic map when the map library cannot be loaded', async () => {
+    await setup({ fail: true });
+    expect(el('slim-map-viewer')).toBeNull();
+    expect(el('[data-kind="schematic"]')).not.toBeNull();
+    // Every receiver is on the schematic map, also the one without coordinates.
+    expect(pins().map((p) => p.textContent?.trim())).toEqual(['E1', 'E2', 'E6']);
+    expect(el('[data-testid="details-fullscreen"]')).toBeNull();
   });
 });

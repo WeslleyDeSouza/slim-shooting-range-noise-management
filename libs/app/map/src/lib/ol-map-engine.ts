@@ -101,7 +101,8 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
 
   const objectsExtent = () => {
     const extent = createEmpty();
-    if (plantPartSource.getFeatures().length) extendExtent(extent, plantPartSource.getExtent());
+    const parts = plantPartSource.getFeatures().length ? plantPartSource.getExtent() : null;
+    if (parts) extendExtent(extent, parts);
     if (pins.length) extendExtent(extent, boundingExtent(pins.map((p) => [p.east, p.north])));
     return extent;
   };

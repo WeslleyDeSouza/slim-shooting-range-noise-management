@@ -192,7 +192,6 @@
     "view_map": "Karte",
     "view_list": "Liste",
     "fullscreen": "Vollansicht",
-    "gis_soon": "Vollansicht im GIS-Viewer folgt im Prototyp",
     "map_label": "Schematische Karte des Schiessplatzes mit Empfangspunkten",
     "legend": {
       "ok": "Eingehalten",
@@ -327,6 +326,13 @@
     "state_changed": "<b>{{n}}</b> Werte geändert · Total <b>{{total}}</b> Schuss ({{pct}} % gegenüber Ist)",
     "reset": "Zurücksetzen",
     "run": "Simulation ausführen"
+  },
+  "map_page": {
+    "title": "Karte {{area}}",
+    "state": "Zustand: {{name}}",
+    "back": "Zurück zu den Details",
+    "select_hint": "Empfangspunkt auf der Karte wählen.",
+    "no_data": "Für diesen Schiessplatz liegt keine Berechnungsgrundlage mit Koordinaten vor."
   },
   "year_info": "Das Jahr bestimmt die Nutzungen für Kontingent (Ist des Jahres und Mittel der drei Jahre) und Lärmbelastung; die Lärmampel beruht auf dem als «aktuell» markierten Berechnungsstand des Schiessplatzes.",
   "basis": {

@@ -192,7 +192,6 @@
     "view_map": "Carte",
     "view_list": "Liste",
     "fullscreen": "Vue complète",
-    "gis_soon": "La vue complète dans le visualiseur SIG suivra dans le prototype",
     "map_label": "Carte schématique de la place de tir avec les points de réception",
     "legend": {
       "ok": "Respecté",
@@ -327,6 +326,13 @@
     "state_changed": "<b>{{n}}</b> valeurs modifiées · total <b>{{total}}</b> coups ({{pct}} % par rapport à l’actuel)",
     "reset": "Réinitialiser",
     "run": "Lancer la simulation"
+  },
+  "map_page": {
+    "title": "Carte {{area}}",
+    "state": "État : {{name}}",
+    "back": "Retour aux détails",
+    "select_hint": "Sélectionnez un point de réception sur la carte.",
+    "no_data": "Il n'existe aucune base de calcul avec coordonnées pour cette place de tir."
   },
   "year_info": "L’année détermine les utilisations pour le contingent (réel de l’année et moyenne sur trois ans) et le bruit ; le feu bruit repose sur l’état de calcul marqué « actuel » de la place de tir.",
   "basis": {

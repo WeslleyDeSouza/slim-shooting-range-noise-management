@@ -192,7 +192,6 @@
     "view_map": "Mappa",
     "view_list": "Elenco",
     "fullscreen": "Vista completa",
-    "gis_soon": "La vista completa nel visualizzatore GIS seguirà nel prototipo",
     "map_label": "Mappa schematica della piazza di tiro con i punti di ricezione",
     "legend": {
       "ok": "Rispettato",
@@ -327,6 +326,13 @@
     "state_changed": "<b>{{n}}</b> valori modificati · totale <b>{{total}}</b> colpi ({{pct}} % rispetto all’attuale)",
     "reset": "Ripristinare",
     "run": "Eseguire la simulazione"
+  },
+  "map_page": {
+    "title": "Carta {{area}}",
+    "state": "Stato: {{name}}",
+    "back": "Torna ai dettagli",
+    "select_hint": "Selezionare un punto di ricezione sulla carta.",
+    "no_data": "Per questa piazza di tiro non esiste una base di calcolo con coordinate."
   },
   "year_info": "L’anno determina gli utilizzi per il contingente (effettivo dell’anno e media triennale) e il rumore; il semaforo rumore si basa sullo stato di calcolo contrassegnato come «attuale» della piazza di tiro.",
   "basis": {

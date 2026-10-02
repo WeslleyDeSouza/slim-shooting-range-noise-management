@@ -192,7 +192,6 @@
     "view_map": "Map",
     "view_list": "List",
     "fullscreen": "Full view",
-    "gis_soon": "Full view in the GIS viewer follows in the prototype",
     "map_label": "Schematic map of the shooting range with receiver points",
     "legend": {
       "ok": "Complied",
@@ -327,6 +326,13 @@
     "state_changed": "<b>{{n}}</b> values changed · total <b>{{total}}</b> shots ({{pct}} % versus current)",
     "reset": "Reset",
     "run": "Run simulation"
+  },
+  "map_page": {
+    "title": "Map {{area}}",
+    "state": "State: {{name}}",
+    "back": "Back to the details",
+    "select_hint": "Select a receiver point on the map.",
+    "no_data": "There is no calculation basis with coordinates for this shooting range."
   },
   "year_info": "The year selects the usages for quota (the year’s actual and the three-year mean) and noise; the noise light is based on the calculation state marked «current» for the range.",
   "basis": {

@@ -30,7 +30,9 @@ export function assessedLevel(level: number, rounding: NoiseRounding = NOISE_ROU
 /**
  * Ampel Lärmbelastung (B1 5.10, 7.7) for one level against one limit:
  * red when `Lr > limit`, orange when `Lr > limit − warnBand`, else green;
- * `none` without a usable level. `Lr` is the level rounded as the
+ * `none` without a usable level. The thresholds are configurable (B1 5.28):
+ * `warnBand` is the negated «grün bis … dB Abweichung» (default −5 dB →
+ * band 5), `options.overAbove` the «orange bis … dB Abweichung» (default 0). `Lr` is the level rounded as the
  * Projekthandbuch prescribes (`rounding`, default whole dB), so 60.4 dB
  * against 60 dB is eingehalten and 60.5 dB überschritten.
  */
@@ -39,7 +41,7 @@ export function noiseState(
   limit: number,
   warnBand = NOISE_WARN_BAND_DB,
   rounding: NoiseRounding = NOISE_ROUNDING_DEFAULT,
-  options: { incomplete?: boolean } = {},
+  options: { incomplete?: boolean; overAbove?: number } = {},
 ): NoiseState {
   // Fachregel O8: shots that could not be attributed to a source make the
   // overall assessment incomplete — no colour at all, the partial level is
@@ -50,7 +52,7 @@ export function noiseState(
     return 'none';
   }
   const lr = assessedLevel(level, rounding);
-  if (lr > limit) return 'over';
+  if (lr > limit + (options.overAbove ?? 0)) return 'over';
   if (lr > limit - warnBand) return 'warn';
   return 'ok';
 }
@@ -66,14 +68,17 @@ export function worstState(states: readonly NoiseState[]): NoiseState {
  * Ampel Kontingent Plangenehmigung (B1 5.10): green when `actual ≤ target`,
  * orange up to `target · warnFactor`, red above; `none` without a target.
  * A target of 0 (weapon without quota) is red as soon as anything was shot.
+ * Both percentages are configurable (B1 5.28, FAQ 166): `okFactor` is
+ * «grün bis … % des Solls» (default 100 %), `warnFactor` «orange bis … %».
  */
 export function quotaState(
   actual: number,
   target: number | null | undefined,
   warnFactor = QUOTA_WARN_FACTOR,
+  okFactor = 1,
 ): QuotaState {
   if (target == null || !Number.isFinite(target)) return 'none';
-  if (actual <= target) return 'ok';
+  if (actual <= target * okFactor) return 'ok';
   if (actual <= target * warnFactor) return 'warn';
   return 'over';
 }

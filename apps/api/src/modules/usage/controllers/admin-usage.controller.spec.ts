@@ -19,6 +19,7 @@ import { AreaResultDto } from '../../area/dto';
 import { CalculationModule } from '../../calculation/calculation.module';
 import { UsageCombinationDto, UsageOverviewDto } from '../dto';
 import { UsageModule } from '../usage.module';
+import { SettingsModule } from '../../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const YEAR = 2026;
@@ -68,7 +69,7 @@ describe('AdminUsageController (HTTP)', () => {
       entities: [
         ...AreaModule.DBOptions.entities,
         ...UsageModule.DBOptions.entities,
-        ...CalculationModule.DBOptions.entities,
+        ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
         DemoSeedMarkerEntity,
       ],
     });

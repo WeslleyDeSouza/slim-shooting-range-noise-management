@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { quotaState, worstState } from '@slim/lsv';
 import { AreaEntity, AreaQuotaEntity, AreaStatus, AreaStatusReason } from '../area/entities';
+import { SettingsService } from '../settings/settings.service';
 import { UsageService } from '../usage/usage.service';
 import { AssessmentService } from './assessment.service';
 
@@ -28,6 +29,7 @@ export class AreaStatusService {
     private readonly assessment: AssessmentService,
     @Inject(forwardRef(() => UsageService))
     private readonly usages: UsageService,
+    private readonly settings: SettingsService,
   ) {}
 
   async refresh(tenantId: string, areaId: string, now = new Date()): Promise<AreaStatusResult> {
@@ -80,7 +82,9 @@ export class AreaStatusService {
    */
   private async quota(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason> {
     const year = this.year(now);
-    const [quotas, current, previous1, previous2] = await Promise.all([
+    const [thresholds, quotas, current, previous1, previous2] = await Promise.all([
+      // Schwellenwerte der Kontingent-Ampel in Prozent des Solls (B1 5.28, FAQ 166).
+      this.settings.thresholds(tenantId),
       this.quotas.find({ where: { tenantId, areaId } }),
       this.usages.listYear(tenantId, areaId, year),
       this.usages.listYear(tenantId, areaId, year - 1),
@@ -101,8 +105,8 @@ export class AreaStatusService {
     for (const id of combinations) {
       const soll = target.get(id) ?? 0; // no Kontingent for this combination → Soll 0 (B1 5.10)
       if (!target.has(id) && (three.get(id) ?? 0) > 0) withoutQuota = true;
-      states.push(quotaState(ist.get(id) ?? 0, soll));
-      states.push(quotaState((three.get(id) ?? 0) / 3, soll));
+      states.push(quotaState(ist.get(id) ?? 0, soll, thresholds.quotaWarnFactor, thresholds.quotaOkFactor));
+      states.push(quotaState((three.get(id) ?? 0) / 3, soll, thresholds.quotaWarnFactor, thresholds.quotaOkFactor));
     }
     return { status: worstState(states), reason: withoutQuota ? 'no-quota' : null };
   }

@@ -11,6 +11,7 @@ import { UsageModule } from '../../modules/usage/usage.module';
 import { seedDemoDataset } from './demo-dataset.seed';
 import { DemoSeedMarkerEntity } from './demo-seed-marker.entity';
 import { DEFAULT_DATASET_KEY, fillPlaceholders, loadDataset, loadRawDatasets } from './tenant-dataset';
+import { SettingsModule } from '../../modules/settings/settings.module';
 
 const NOW = new Date(2026, 8, 11); // 11 September 2026
 
@@ -135,7 +136,7 @@ describe('seedDemoDataset', () => {
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
         ] as never[],
       ),

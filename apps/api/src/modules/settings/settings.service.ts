@@ -25,6 +25,14 @@ export interface AmpelThresholds {
   noiseOverAboveDb: number;
 }
 
+/** The thresholds of B1 5.10, for callers that run without the service (unit tests of single services). */
+export const DEFAULT_AMPEL_THRESHOLDS: AmpelThresholds = {
+  quotaOkFactor: SETTINGS_DEFAULTS.quotaGreenMaxPercent / 100,
+  quotaWarnFactor: SETTINGS_DEFAULTS.quotaOrangeMaxPercent / 100,
+  noiseWarnBandDb: -SETTINGS_DEFAULTS.noiseGreenMaxDb,
+  noiseOverAboveDb: SETTINGS_DEFAULTS.noiseOrangeMaxDb,
+};
+
 /** The fields an administrator can change (`PATCH admin/data/system`); `undefined` = leave as is. */
 export type SettingsPatch = Partial<Omit<SystemSettingsDto, 'manual'>>;
 

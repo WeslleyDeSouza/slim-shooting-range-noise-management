@@ -21,6 +21,7 @@ import { StateImportDto } from '../../calculation/dto';
 import { UsageModule } from '../../usage/usage.module';
 import { DataCalculationsModule } from '../data-calculations.module';
 import { CalculationsOverviewDto, DeliveryDto, StateDetailsDto, StateSummaryDto, UploadResultDto } from '../dto';
+import { SettingsModule } from '../../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const INTERESTED_EMAIL = 'interessent@demo.ch';
@@ -62,7 +63,7 @@ describe('AdminDataCalculationsController (HTTP)', () => {
       entities: [
         ...AreaModule.DBOptions.entities,
         ...UsageModule.DBOptions.entities,
-        ...CalculationModule.DBOptions.entities,
+        ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
         DemoSeedMarkerEntity,
       ],
     });

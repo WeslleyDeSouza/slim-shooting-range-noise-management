@@ -90,3 +90,33 @@ describe('quotaState (Ampel Kontingent Plangenehmigung, B1 5.10)', () => {
     expect(quotaState(111, 100, 1.1)).toBe('over');
   });
 });
+
+describe('configurable thresholds (B1 5.28, FAQ 166)', () => {
+  it('Empfangspunkte: «grün bis −5 dB, orange bis 0 dB» is the default; both limits move', () => {
+    // Default: deviation ≤ −5 dB green, ≤ 0 dB orange, above red.
+    expect([55, 56, 60, 61].map((lr) => noiseState(lr, 60))).toEqual(['ok', 'warn', 'warn', 'over']);
+    // «grün bis −2 dB»: the orange band shrinks to 2 dB.
+    expect([57, 58, 59, 60, 61].map((lr) => noiseState(lr, 60, 2))).toEqual(['ok', 'ok', 'warn', 'warn', 'over']);
+    // «orange bis +3 dB»: up to 63 dB stays orange, 64 dB is red.
+    expect([60, 61, 63, 64].map((lr) => noiseState(lr, 60, 5, undefined, { overAbove: 3 }))).toEqual(['warn', 'warn', 'warn', 'over']);
+    // «orange bis −1 dB»: red starts one dB below the limit.
+    expect([58, 59, 60].map((lr) => noiseState(lr, 60, 5, undefined, { overAbove: -1 }))).toEqual(['warn', 'warn', 'over']);
+    // The thresholds meet the level rounded to whole dB (B1.2 10.4), like the limit does.
+    expect(noiseState(63.4, 60, 5, undefined, { overAbove: 3 })).toBe('warn');
+    expect(noiseState(63.5, 60, 5, undefined, { overAbove: 3 })).toBe('over');
+    // An incomplete assessment carries no colour, whatever the thresholds.
+    expect(noiseState(50, 60, 5, undefined, { incomplete: true, overAbove: 3 })).toBe('incomplete');
+  });
+
+  it('Kontingent: «grün bis 100 %, orange bis 125 %» is the default; both percentages move', () => {
+    expect([1000, 1001, 1250, 1251].map((ist) => quotaState(ist, 1000))).toEqual(['ok', 'warn', 'warn', 'over']);
+    // «orange bis 110 %».
+    expect([1100, 1101].map((ist) => quotaState(ist, 1000, 1.1))).toEqual(['warn', 'over']);
+    // «grün bis 105 %, orange bis 150 %».
+    expect([1050, 1051, 1500, 1501].map((ist) => quotaState(ist, 1000, 1.5, 1.05))).toEqual(['ok', 'warn', 'warn', 'over']);
+    // Without a Kontingent (Soll 0) the first shot stays red, and no target stays «none».
+    expect(quotaState(1, 0, 1.5, 1.05)).toBe('over');
+    expect(quotaState(0, 0, 1.5, 1.05)).toBe('ok');
+    expect(quotaState(10, null, 1.5, 1.05)).toBe('none');
+  });
+});

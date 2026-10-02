@@ -13,6 +13,7 @@ import { UsageModule } from '../usage/usage.module';
 import { AreaModule } from './area.module';
 import { AreaService, needsAttention, worstStatus } from './area.service';
 import { AreaEntity } from './entities';
+import { SettingsModule } from '../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 
@@ -28,7 +29,7 @@ describe('AreaService', () => {
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
         ] as never[],
       ),

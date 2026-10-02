@@ -11,6 +11,7 @@ import { AssessmentService, resolvePeriod } from './assessment.service';
 import { CalculationModule } from './calculation.module';
 import { AssessmentDto, ReceiverAssessmentDto } from './dto';
 import { AreaWlrEntity, SourceLineEntity } from './entities';
+import { SettingsModule } from '../settings/settings.module';
 
 /** The demo year the dataset was tuned for (weekday pattern of the usages). */
 const NOW = new Date(2026, 11, 31);
@@ -43,7 +44,7 @@ describe('AssessmentService (5.12 Details)', () => {
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
         ] as never[],
       ),

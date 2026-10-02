@@ -109,6 +109,8 @@ export class UsageOverviewDto {
   @ApiProperty({ type: UsageRoomDto, isArray: true }) rooms: UsageRoomDto[];
   @ApiProperty({ type: UsageCombinationDto, isArray: true, description: 'Zulässige Kombinationen je Stellungsraum' }) combinations: UsageCombinationDto[];
   @ApiProperty({ type: UsageResultDto, isArray: true }) usages: UsageResultDto[];
+  @ApiProperty({ nullable: true, type: String, description: 'Sperrdatum der Schusszahlenerfassung (YYYY-MM-DD, B1 5.28): Nutzungen bis und mit diesem Datum sind gesperrt; null = keine Sperre' })
+  lockDate: string | null;
 }
 
 export class UsagePositionInputDto {

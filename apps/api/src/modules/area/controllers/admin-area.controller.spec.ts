@@ -17,6 +17,7 @@ import { CalculationModule } from '../../calculation/calculation.module';
 import { UsageModule } from '../../usage/usage.module';
 import { AreaModule } from '../area.module';
 import { AreaResultDto } from '../dto';
+import { SettingsModule } from '../../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const BASE = '/api/admin/area';
@@ -41,7 +42,7 @@ describe('AdminAreaController (HTTP)', () => {
       entities: [
         ...AreaModule.DBOptions.entities,
         ...UsageModule.DBOptions.entities,
-        ...CalculationModule.DBOptions.entities,
+        ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
         DemoSeedMarkerEntity,
       ],
     });

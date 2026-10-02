@@ -18,6 +18,7 @@ import { CalculationModule } from '../../calculation/calculation.module';
 import { UsageModule } from '../../usage/usage.module';
 import { DataWeaponsModule } from '../data-weapons.module';
 import { WeaponCombinationDto, WeaponMasterDataDto } from '../dto';
+import { SettingsModule } from '../../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const BASE = '/api/admin/data/weapons';
@@ -40,7 +41,7 @@ describe('AdminDataWeaponsController (HTTP)', () => {
       entities: [
         ...AreaModule.DBOptions.entities,
         ...UsageModule.DBOptions.entities,
-        ...CalculationModule.DBOptions.entities,
+        ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
         DemoSeedMarkerEntity,
       ],
     });

@@ -16,6 +16,7 @@ import { CalculationService } from './calculation.service';
 import { ReceiverAssessmentDto, StateImportDto } from './dto';
 import { BuildingEntity, CalculationRunEntity, AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
 import { ImportAbortedException, ImportService } from './import.service';
+import { SettingsModule } from '../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const PERIOD = { from: '2026-01-01', to: '2026-12-31', now: NOW };
@@ -87,7 +88,7 @@ describe('State isolation (B1 Kap. 10, slm 42–45)', () => {
     module = await Test.createTestingModule({
       imports: testDbSetup(
         [AreaModule, UsageModule, CalculationModule],
-        [...AreaModule.DBOptions.entities, ...UsageModule.DBOptions.entities, ...CalculationModule.DBOptions.entities, DemoSeedMarkerEntity] as never[],
+        [...AreaModule.DBOptions.entities, ...UsageModule.DBOptions.entities, ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities, DemoSeedMarkerEntity] as never[],
       ),
     }).compile();
     dataSource = module.get(DataSource);

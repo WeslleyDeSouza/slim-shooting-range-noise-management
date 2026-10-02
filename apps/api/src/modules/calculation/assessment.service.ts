@@ -21,6 +21,7 @@ import {
   WeaponCombinationEntity,
 } from '../area/entities';
 import { AreaUsageEntity } from '../usage/entities';
+import { AmpelThresholds, SettingsService } from '../settings/settings.service';
 import { UsageService } from '../usage/usage.service';
 import { CalculationService, StateModel } from './calculation.service';
 import {
@@ -95,6 +96,7 @@ export class AssessmentService {
     @Inject(forwardRef(() => UsageService))
     private readonly usages: UsageService,
     private readonly calculations: CalculationService,
+    private readonly settings: SettingsService,
   ) {}
 
   /** The permanent references of an area the calculation works with. */
@@ -121,10 +123,12 @@ export class AssessmentService {
     const now = options.now ?? new Date();
     const period = resolvePeriod(options.from, options.to, now, options.years);
     const reference = await this.reference(tenantId, areaId);
-    const [{ all, selected, current }, usages, assignments] = await Promise.all([
+    const [{ all, selected, current }, usages, assignments, thresholds] = await Promise.all([
       this.calculations.resolve(tenantId, areaId, options.calculationId),
       this.usagesOf(tenantId, areaId, period),
       this.assignments.find({ where: { tenantId, areaId } }),
+      // Schwellenwerte der Empfangspunkt-Ampel aus der erweiterten Konfiguration (B1 5.28).
+      this.settings.thresholds(tenantId),
     ]);
     const counts = await this.calculations.sourceCounts(tenantId, all.map((c) => c.id));
     const labelOf = labeller(reference, assignments);
@@ -148,6 +152,7 @@ export class AssessmentService {
         referenceBySonarms.get(point.sonarmsId) ?? null,
         selected?.buildYearClass ?? null,
         current?.buildYearClass ?? null,
+        thresholds,
       ),
     );
 
@@ -241,6 +246,7 @@ function toAssessment(
   reference: PointLevels | null,
   buildYear: AreaCalculationEntity['buildYearClass'] | null,
   referenceBuildYear: AreaCalculationEntity['buildYearClass'] | null,
+  thresholds: Pick<AmpelThresholds, 'noiseWarnBandDb' | 'noiseOverAboveDb'>,
 ): ReceiverAssessmentDto {
   const rows: AssessmentRowDto[] = [];
   const incomplete = own.missing.length > 0;
@@ -265,7 +271,10 @@ function toAssessment(
         // handing it the displayed 0.1-dB value would round twice (60.4997 →
         // 60.5 → 61 «überschritten» although the Beurteilungswert is 60).
         // O8: an applicable row of an incomplete point carries no colour.
-        state: noiseState(level, limitSet[kind], undefined, undefined, { incomplete: applicable && incomplete }),
+        state: noiseState(level, limitSet[kind], thresholds.noiseWarnBandDb, undefined, {
+          incomplete: applicable && incomplete,
+          overAbove: thresholds.noiseOverAboveDb,
+        }),
         reserve: rounded === null ? null : roundDb(limitSet[kind] - rounded),
         deltaToCurrent: rounded !== null && referenceRounded !== null ? roundDb(rounded - referenceRounded) : null,
       });

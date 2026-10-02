@@ -10,9 +10,8 @@ import {
   ANNEX9_LIMITS,
   ANNEX9_USAGE_CATEGORIES,
   NOISE_ROUNDING_DEFAULT,
-  NOISE_WARN_BAND_DB,
-  QUOTA_WARN_FACTOR,
 } from '@slim/lsv';
+import { SettingsService } from '../settings/settings.service';
 import { AssessmentInputs, AssessmentOptions, AssessmentService } from './assessment.service';
 import { CalculationRunDto } from './dto';
 import { CalculationRunEntity } from './entities';
@@ -38,6 +37,7 @@ export class CalculationRunService {
     @InjectRepository(AreaQuotaEntity)
     private readonly quotas: Repository<AreaQuotaEntity>,
     private readonly assessment: AssessmentService,
+    private readonly settings: SettingsService,
   ) {}
 
   async run(tenantId: string, areaId: string, options: AssessmentOptions, createdBy: string): Promise<CalculationRunDto> {
@@ -65,7 +65,7 @@ export class CalculationRunService {
     const parameters = {
       holidays: reference.holidays.map((h) => ({ date: h.date, from: h.from, to: h.to, name: h.name, areaId: h.areaId })),
       limits: { annex9: ANNEX9_LIMITS, annex7: ANNEX7_LIMITS },
-      thresholds: { noiseWarnBandDb: NOISE_WARN_BAND_DB, quotaWarnFactor: QUOTA_WARN_FACTOR },
+      thresholds: await this.settings.thresholds(tenantId),
       rounding: NOISE_ROUNDING_DEFAULT,
       annex7Overall: Boolean(reference.area.annex7Overall),
       // FAQ 19/98 (A7X) and FAQ 165 (Kategorien Anhang 9): what the kernel applied in this run.

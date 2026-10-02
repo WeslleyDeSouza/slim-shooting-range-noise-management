@@ -18,6 +18,7 @@ import { AreaCalculationEntity, SourceDataA9Entity, SourceLineEntity } from './e
 import { SimulationService } from './simulation.service';
 import { deriveOperatingData, refKey } from './operating-data';
 import { RoomCombinationEntity } from '../area/entities/room-combination.entity';
+import { SettingsModule } from '../settings/settings.module';
 
 /**
  * Mathematische Randfälle durch die ganze Kette Nutzung → Betriebsdaten → Pegel → Ampel,
@@ -81,7 +82,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
     module = await Test.createTestingModule({
       imports: testDbSetup(
         [AreaModule, UsageModule, CalculationModule],
-        [...AreaModule.DBOptions.entities, ...UsageModule.DBOptions.entities, ...CalculationModule.DBOptions.entities, DemoSeedMarkerEntity] as never[],
+        [...AreaModule.DBOptions.entities, ...UsageModule.DBOptions.entities, ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities, DemoSeedMarkerEntity] as never[],
       ),
     }).compile();
     dataSource = module.get(DataSource);

@@ -10,6 +10,7 @@ import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import { UsageCombinationDto, UsageOverviewDto } from './dto';
 import { UsageModule } from './usage.module';
 import { UsageService } from './usage.service';
+import { SettingsModule } from '../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const YEAR = 2026;
@@ -28,7 +29,7 @@ describe('UsageService (5.11 Schusszahlen, B1 6.1.3 Nutzung + Positionen)', () =
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
         ] as never[],
       ),

@@ -13,6 +13,7 @@ import { AreaModule } from '../area.module';
 import { AreaService } from '../area.service';
 import { AreaScopeRule } from './area-scope.rule';
 import { AreaScopeService } from './area-scope.service';
+import { SettingsModule } from '../../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 /** The dataset's Schiessplatz-Verantwortlicher (Geissalp + Thun). */
@@ -44,7 +45,7 @@ describe('AreaScope (B1 8.1.2 «W/R-O», galaxy rule)', () => {
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
           AppCategoryEntity,
           AppEntity,

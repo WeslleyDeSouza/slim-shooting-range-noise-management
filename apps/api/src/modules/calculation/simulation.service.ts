@@ -1,8 +1,9 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { annex9Level, applicableLimits, LSV_EMPTY_LEVEL, limits, noiseState, roundDb, worstState } from '@slim/lsv';
 import { RoomCombinationEntity } from '../area/entities';
+import { AmpelThresholds, DEFAULT_AMPEL_THRESHOLDS, SettingsService } from '../settings/settings.service';
 import { UsageService } from '../usage/usage.service';
 import { AssessmentService, countStates, labeller, toReceiverDto } from './assessment.service';
 import { CalculationService, StateModel } from './calculation.service';
@@ -33,6 +34,7 @@ export class SimulationService {
     @Inject(forwardRef(() => UsageService))
     private readonly usages: UsageService,
     private readonly calculations: CalculationService,
+    @Optional() private readonly settings?: SettingsService,
   ) {}
 
   async base(tenantId: string, areaId: string, year: number, calculationId?: string): Promise<SimulationBaseDto> {
@@ -47,7 +49,7 @@ export class SimulationService {
   }
 
   async run(tenantId: string, areaId: string, dto: SimulationRunDto): Promise<SimulationResultDto> {
-    const { calculation, rows, receivers, model, reference, operating, labelOf, sourceCount } = await this.load(tenantId, areaId, dto.year, dto.calculationId);
+    const { calculation, rows, receivers, model, reference, operating, labelOf, sourceCount, thresholds } = await this.load(tenantId, areaId, dto.year, dto.calculationId);
     const known = new Set(rows.map((r) => refKey(r.roomId, r.combinationId)));
     const unknown = dto.rows.filter((r) => !known.has(refKey(r.roomId, r.combinationId)));
     if (unknown.length) {
@@ -66,7 +68,7 @@ export class SimulationService {
     const result = receivers.map(({ entity, base }) => {
       const { raw, incomplete } = model ? evaluate(entity, model, simulated, reference, labelOf) : { raw: null, incomplete: false };
       // State from the raw level (whole-dB rounding happens in noiseState), display rounded separately.
-      const simulatedRows = model ? assessmentRows(entity, model, simulated, reference, labelOf) : [];
+      const simulatedRows = model ? assessmentRows(entity, model, simulated, reference, labelOf, thresholds) : [];
       const simulatedState = worstState(simulatedRows.map((r) => r.state));
       const level = raw === null ? null : roundDb(raw);
       return {
@@ -97,6 +99,8 @@ export class SimulationService {
   }
 
   private async load(tenantId: string, areaId: string, year: number, calculationId?: string) {
+    // Schwellenwerte der Empfangspunkt-Ampel aus der erweiterten Konfiguration (B1 5.28).
+    const thresholds = this.settings ? await this.settings.thresholds(tenantId) : DEFAULT_AMPEL_THRESHOLDS;
     const reference = await this.assessment.reference(tenantId, areaId);
     const [{ selected }, usages, assignments] = await Promise.all([
       this.calculations.resolve(tenantId, areaId, calculationId),
@@ -140,9 +144,9 @@ export class SimulationService {
 
     const receivers = (model?.points ?? []).map((entity) => ({
       entity,
-      base: toSimulationReceiver(entity, selected, model as StateModel, operating, reference, labelOf),
+      base: toSimulationReceiver(entity, selected, model as StateModel, operating, reference, labelOf, thresholds),
     }));
-    return { calculation: selected, rows, receivers, model, reference, operating, labelOf, sourceCount };
+    return { calculation: selected, rows, receivers, model, reference, operating, labelOf, sourceCount, thresholds };
   }
 }
 
@@ -154,12 +158,13 @@ function toSimulationReceiver(
   operating: OperatingData,
   reference: ReferenceData,
   labelOf: (roomId: string, combinationId: string) => string,
+  thresholds: AmpelThresholds,
 ): SimulationReceiverDto {
   const kinds = calculation ? applicableLimits(calculation.buildYearClass) : ['igw' as const];
   const limitKind = kinds.includes('igw') ? 'igw' : 'pw';
   const limit = limits(9, point.sensitivityLevel)[limitKind];
   const { raw, incomplete } = evaluate(point, model, operating, reference, labelOf);
-  const rows = assessmentRows(point, model, operating, reference, labelOf);
+  const rows = assessmentRows(point, model, operating, reference, labelOf, thresholds);
   return {
     ...toReceiverDto(point),
     assessmentRows: rows,
@@ -192,13 +197,13 @@ function evaluate(
 }
 
 /** Both IGW overall and PW of new parts remain visible in mixed plants. */
-function assessmentRows(point: ImmissionPointEntity, model: StateModel, operating: OperatingData, reference: ReferenceData, labelOf: (roomId: string, combinationId: string) => string): AssessmentRowDto[] {
+function assessmentRows(point: ImmissionPointEntity, model: StateModel, operating: OperatingData, reference: ReferenceData, labelOf: (roomId: string, combinationId: string) => string, thresholds: AmpelThresholds): AssessmentRowDto[] {
   return applicableLimits(model.state.buildYearClass).map((kind) => {
     const { raw, incomplete } = evaluate(point, model, operating, reference, labelOf, kind === 'pw' && model.state.buildYearClass === 'mixed');
     const limit = limits(9, point.sensitivityLevel)[kind];
     const level = raw === null ? null : roundDb(raw);
     return { annex: 9, limitKind: kind, limit, applicable: true, level,
-      state: noiseState(raw, limit, undefined, undefined, { incomplete }),
+      state: noiseState(raw, limit, thresholds.noiseWarnBandDb, undefined, { incomplete, overAbove: thresholds.noiseOverAboveDb }),
       reserve: level === null ? null : roundDb(limit - level), deltaToCurrent: null };
   });
 }

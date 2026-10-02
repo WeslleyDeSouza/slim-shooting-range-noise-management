@@ -8,3 +8,5 @@ export * from './data-area';
 export * from './data-weapons';
 export * from './data-calculations';
 export * from './access';
+export * from './settings';
+export * from './data-system';

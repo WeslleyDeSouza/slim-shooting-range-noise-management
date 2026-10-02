@@ -42,7 +42,9 @@ import {
   CalculationModule,
   DataAreaModule,
   DataCalculationsModule,
+  DataSystemModule,
   DataWeaponsModule,
+  SettingsModule,
   UsageModule,
 } from './modules';
 import { AreaStatusService } from './modules/calculation/area-status.service';
@@ -118,6 +120,8 @@ const isPrimaryInstance = (process.env['NODE_APP_INSTANCE'] ?? '0') === '0';
         ...(<never[]>DataWeaponsModule.DBOptions.entities),
         ...(<never[]>DataCalculationsModule.DBOptions.entities),
         ...(<never[]>AccessModule.DBOptions.entities),
+        ...(<never[]>SettingsModule.DBOptions.entities),
+        ...(<never[]>DataSystemModule.DBOptions.entities),
         // Demo dataset marker (mocks/tenant), harmless in production
         DemoSeedMarkerEntity,
       ],
@@ -153,6 +157,9 @@ const isPrimaryInstance = (process.env['NODE_APP_INSTANCE'] ?? '0') === '0';
     DataWeaponsModule,
     DataCalculationsModule,
     AccessModule,
+    // Erweiterte Konfiguration (5.28): settings read by usage + calculation, mask in the Datenverwaltung
+    SettingsModule,
+    DataSystemModule,
     // Audit hooks of the galaxy user / role / app lifecycle → logbook
     AuthAuditModule,
   ],

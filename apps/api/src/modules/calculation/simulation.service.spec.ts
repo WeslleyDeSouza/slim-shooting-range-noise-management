@@ -11,6 +11,7 @@ import { AssessmentService } from './assessment.service';
 import { CalculationModule } from './calculation.module';
 import { SimulationBaseDto } from './dto';
 import { SimulationService } from './simulation.service';
+import { SettingsModule } from '../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
 const YEAR = 2026;
@@ -29,7 +30,7 @@ describe('SimulationService (5.13 Simulation)', () => {
         [
           ...AreaModule.DBOptions.entities,
           ...UsageModule.DBOptions.entities,
-          ...CalculationModule.DBOptions.entities,
+          ...CalculationModule.DBOptions.entities, ...SettingsModule.DBOptions.entities,
           DemoSeedMarkerEntity,
         ] as never[],
       ),

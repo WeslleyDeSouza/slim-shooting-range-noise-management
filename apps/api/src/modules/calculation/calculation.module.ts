@@ -5,6 +5,7 @@ import { Cron } from '@nestjs/schedule';
 import { DataSource } from 'typeorm';
 import { AreaModule } from '../area/area.module';
 import { AreaEntity, AreaQuotaEntity, AreaRoomEntity, HolidayEntity, RoomCombinationEntity, WeaponCombinationEntity } from '../area/entities';
+import { SettingsModule } from '../settings/settings.module';
 import { UsageModule } from '../usage/usage.module';
 import { AreaStatusService } from './area-status.service';
 import { AssessmentService } from './assessment.service';
@@ -20,6 +21,7 @@ import { SimulationService } from './simulation.service';
     TypeOrmModule.forFeature([...DBOptions.entities, AreaEntity, AreaRoomEntity, RoomCombinationEntity, WeaponCombinationEntity, HolidayEntity, AreaQuotaEntity]),
     AreaModule,
     RulesModule,
+    SettingsModule,
     forwardRef(() => UsageModule),
   ],
   controllers: [AdminCalculationController],

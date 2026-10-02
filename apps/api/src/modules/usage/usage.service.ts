@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   forwardRef,
   Inject,
   Injectable,
@@ -26,6 +27,7 @@ import {
   UsageResultDto,
   UsageUpdateDto,
 } from './dto';
+import { SettingsService } from '../settings/settings.service';
 import { AreaUsageEntity, UsagePositionEntity } from './entities';
 
 /** Fields the caller may set; the rest is derived or audit. */
@@ -53,6 +55,7 @@ export class UsageService {
     @InjectRepository(AreaQuotaEntity)
     private readonly quotas: Repository<AreaQuotaEntity>,
     private readonly areas: AreaService,
+    private readonly settings: SettingsService,
     @Optional() @Inject(forwardRef(() => AreaStatusService))
     private readonly status?: AreaStatusService,
   ) {}
@@ -70,11 +73,12 @@ export class UsageService {
   /** Usages of one calendar year, newest first; rooms and allowed combinations of the area. */
   async overview(tenantId: string, areaId: string, year: number): Promise<UsageOverviewDto> {
     await this.areas.get(tenantId, areaId);
-    const [rooms, combinations, usages, years] = await Promise.all([
+    const [rooms, combinations, usages, years, lockDate] = await Promise.all([
       this.rooms.find({ where: { tenantId, areaId }, order: { sortOrder: 'ASC', name: 'ASC' } }),
       this.combinationsOf(tenantId, areaId),
       this.listYear(tenantId, areaId, year),
       this.years(tenantId, areaId),
+      this.settings.usageLockDate(tenantId),
     ]);
 
     const byRoom = new Map<string, { count: number; shots: number }>();
@@ -100,6 +104,7 @@ export class UsageService {
       })),
       combinations,
       usages: usages.map((usage) => toUsageDto(usage, roomById.get(usage.roomId), combinationById)),
+      lockDate,
     };
   }
 
@@ -174,6 +179,7 @@ export class UsageService {
       const existing = await this.repo.findOne({ where: { tenantId, areaId, externalId: input.externalId }, relations: { positions: true } });
       if (existing) return this.toDto(tenantId, areaId, existing);
     }
+    await this.assertUnlocked(tenantId, [input.date]);
     const saved = await this.repo.save(
       this.repo.create({
         tenantId,
@@ -212,6 +218,8 @@ export class UsageService {
       note: dto.note === undefined ? usage.note : dto.note,
     };
     const { room, positions } = await this.validate(tenantId, areaId, merged, { allowDisabled: !dto.positions && !dto.roomId });
+    // Neither a locked usage may change, nor may a usage move into the locked period.
+    await this.assertUnlocked(tenantId, [usage.date, merged.date]);
     Object.assign(usage, {
       roomId: room.id,
       unit: merged.unit.trim(),
@@ -235,6 +243,7 @@ export class UsageService {
   /** Soft delete, so the toast's "Rückgängig" can bring the rows back. */
   async remove(tenantId: string, areaId: string, ids: string[]): Promise<string[]> {
     const rows = await this.repo.find({ where: { tenantId, areaId, id: In(ids) } });
+    await this.assertUnlocked(tenantId, rows.map((r) => r.date));
     if (rows.length) await this.repo.softRemove(rows);
     if (rows.length) await this.refreshStatus(tenantId, areaId);
     return rows.map((r) => r.id);
@@ -243,9 +252,24 @@ export class UsageService {
   async restore(tenantId: string, areaId: string, ids: string[]): Promise<string[]> {
     const rows = await this.repo.find({ where: { tenantId, areaId, id: In(ids) }, withDeleted: true });
     const deleted = rows.filter((r) => r.deletedAt);
+    await this.assertUnlocked(tenantId, deleted.map((r) => r.date));
     if (deleted.length) await this.repo.recover(deleted);
     if (deleted.length) await this.refreshStatus(tenantId, areaId);
     return deleted.map((r) => r.id);
+  }
+
+  /**
+   * Sperrdatum der Schusszahlenerfassung (B1 5.28): usages dated up to and
+   * including the lock date can no longer be recorded, changed, deleted or
+   * restored — for every source (form, ELO, import).
+   */
+  private async assertUnlocked(tenantId: string, dates: string[]): Promise<void> {
+    if (!dates.length) return;
+    const lock = await this.settings.usageLockDate(tenantId);
+    if (lock && dates.some((date) => date <= lock)) {
+      const [y, m, d] = lock.split('-');
+      throw new ConflictException(`Die Schusszahlenerfassung ist bis und mit ${d}.${m}.${y} gesperrt (Sperrdatum der erweiterten Konfiguration).`);
+    }
   }
 
   /**

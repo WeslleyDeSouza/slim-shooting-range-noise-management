@@ -38,7 +38,7 @@
         "s3": "A click on a row opens the details; the symbols at the end of the row lead to overview, shot counts, details and simulation.",
         "s4": "Traffic light: green = complied with, orange = to be checked, red = exceeded, grey = no basis, striped = cannot be assessed.",
         "s5": "The thresholds and colours of the traffic lights come from the advanced configuration.",
-        "s6": "“Export” writes the rows shown to an Excel or CSV file; search and filters apply to the file as well."
+        "s6": "A click on a column title sorts the table (second click descending, third click back to the initial order). Mark rows with the checkbox, with Ctrl + click, or a range with Shift + click. “Export” writes the rows shown as an Excel or CSV file – if rows are marked, only these; search, filters and sorting also apply to the file."
       },
       "area_overview": {
         "title": "Firing range – overview",

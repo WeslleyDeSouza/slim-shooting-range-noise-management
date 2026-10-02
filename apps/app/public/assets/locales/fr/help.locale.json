@@ -38,7 +38,7 @@
         "s3": "Un clic sur une ligne ouvre les détails ; les symboles en fin de ligne mènent à la vue d’ensemble, aux coups tirés, aux détails et à la simulation.",
         "s4": "Feu : vert = respecté, orange = à vérifier, rouge = dépassé, gris = pas de base, hachuré = non évaluable.",
         "s5": "Les seuils et les couleurs des feux proviennent de la configuration avancée.",
-        "s6": "« Exporter » écrit les lignes affichées dans un fichier Excel ou CSV ; la recherche et les filtres s’appliquent aussi au fichier."
+        "s6": "Un clic sur un titre de colonne trie le tableau (deuxième clic : ordre décroissant, troisième : ordre initial). Les lignes se sélectionnent avec la case à cocher, avec Ctrl + clic ou, pour une plage, avec Maj + clic. « Exporter » écrit les lignes affichées dans un fichier Excel ou CSV – si des lignes sont sélectionnées, uniquement celles-ci ; la recherche, les filtres et le tri s’appliquent aussi au fichier."
       },
       "area_overview": {
         "title": "Place de tir – vue d’ensemble",

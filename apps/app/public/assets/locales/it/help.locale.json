@@ -38,7 +38,7 @@
         "s3": "Un clic su una riga apre i dettagli; i simboli a fine riga conducono a panoramica, colpi, dettagli e simulazione.",
         "s4": "Semaforo: verde = rispettato, arancione = da verificare, rosso = superato, grigio = nessuna base, tratteggiato = non valutabile.",
         "s5": "I valori soglia e i colori dei semafori provengono dalla configurazione avanzata.",
-        "s6": "«Esporta» scrive le righe visualizzate in un file Excel o CSV; la ricerca e i filtri valgono anche per il file."
+        "s6": "Un clic sul titolo di una colonna ordina la tabella (secondo clic: ordine decrescente, terzo: ordine iniziale). Le righe si selezionano con la casella, con Ctrl + clic oppure, per un intervallo, con Maiusc + clic. «Esporta» scrive le righe visualizzate in un file Excel o CSV – se sono selezionate delle righe, solo queste; ricerca, filtri e ordinamento valgono anche per il file."
       },
       "area_overview": {
         "title": "Piazza di tiro – panoramica",

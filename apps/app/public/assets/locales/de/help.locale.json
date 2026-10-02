@@ -38,7 +38,7 @@
         "s3": "Ein Klick auf eine Zeile öffnet die Details; die Symbole am Zeilenende führen zu Übersicht, Schusszahlen, Details und Simulation.",
         "s4": "Ampel: grün = eingehalten, orange = zu prüfen, rot = überschritten, grau = keine Grundlage, gestreift = nicht beurteilbar.",
         "s5": "Die Schwellenwerte und Farben der Ampeln stammen aus der erweiterten Konfiguration.",
-        "s6": "«Exportieren» schreibt die angezeigten Zeilen als Excel- oder CSV-Datei; Suche und Filter gelten auch für die Datei."
+        "s6": "Ein Klick auf einen Spaltentitel sortiert die Tabelle (zweiter Klick absteigend, dritter wieder wie zu Beginn). Zeilen markieren Sie mit dem Kästchen, mit Ctrl + Klick oder als Bereich mit Shift + Klick. «Exportieren» schreibt die angezeigten Zeilen als Excel- oder CSV-Datei – sind Zeilen markiert, nur diese; Suche, Filter und Sortierung gelten auch für die Datei."
       },
       "area_overview": {
         "title": "Schiessplatz – Übersicht",

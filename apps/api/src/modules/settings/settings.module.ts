@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminSettingsController } from './controllers/admin-settings.controller';
 import DBOptions from './db/settings.database';
-import { SystemSettingsEntity, UserManualEntity } from './entities';
+import { SelectionListValueEntity, SystemSettingsEntity, UserManualEntity } from './entities';
+import { SelectionListService } from './selection-list.service';
 import { SettingsService } from './settings.service';
 
 /**
@@ -12,10 +13,10 @@ import { SettingsService } from './settings.service';
  * `modules/data-system`.
  */
 @Module({
-  imports: [TypeOrmModule.forFeature([SystemSettingsEntity, UserManualEntity])],
+  imports: [TypeOrmModule.forFeature([SystemSettingsEntity, UserManualEntity, SelectionListValueEntity])],
   controllers: [AdminSettingsController],
-  providers: [SettingsService],
-  exports: [SettingsService],
+  providers: [SettingsService, SelectionListService],
+  exports: [SettingsService, SelectionListService],
 })
 export class SettingsModule {
   static DBOptions = DBOptions;

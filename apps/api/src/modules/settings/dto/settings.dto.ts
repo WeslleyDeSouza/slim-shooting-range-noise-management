@@ -1,4 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import { SELECTION_LIST_KEYS } from '../selection-lists.defaults';
 
 /** Metadata of the uploaded Benutzerhandbuch (the file itself: `GET admin/settings/manual`). */
 export class ManualInfoDto {
@@ -65,4 +67,107 @@ export class SystemSettingsDto {
 
   @ApiProperty({ type: ManualInfoDto, nullable: true, description: 'Hochgeladenes Benutzerhandbuch (PDF); null = keines hinterlegt' })
   manual: ManualInfoDto | null;
+}
+
+/** One value of an Auswahlliste (B1 5.3, slm 1). */
+export class SelectionListValueDto {
+  @ApiProperty({ description: 'Stabiler Schlüssel des Werts; er wird auf den Datensätzen gespeichert, die den Wert verwenden' })
+  code: string;
+
+  @ApiProperty({ description: 'Bezeichnung DE' })
+  labelDe: string;
+
+  @ApiProperty({ nullable: true, type: String, description: 'Bezeichnung FR; null = die deutsche Bezeichnung wird gezeigt' })
+  labelFr: string | null;
+
+  @ApiProperty({ nullable: true, type: String, description: 'Bezeichnung IT; null = die deutsche Bezeichnung wird gezeigt' })
+  labelIt: string | null;
+
+  @ApiProperty({ nullable: true, type: String, description: 'Bezeichnung EN; null = die deutsche Bezeichnung wird gezeigt' })
+  labelEn: string | null;
+
+  @ApiProperty({ description: 'Aktiv — inaktive Werte werden nicht mehr zur Auswahl angeboten, bleiben auf bestehenden Datensätzen aber lesbar' })
+  enabled: boolean;
+
+  @ApiProperty({ description: 'Reihenfolge in der Auswahl (aufsteigend)' })
+  sortOrder: number;
+
+  @ApiProperty({ description: 'Wert, mit dem die Applikation ausgeliefert wird (im Unterschied zu selbst hinzugefügten Werten)' })
+  builtIn: boolean;
+}
+
+/** An Auswahlliste with its values in the order of the selection. */
+export class SelectionListDto {
+  @ApiProperty({ enum: SELECTION_LIST_KEYS, description: 'Schlüssel der Auswahlliste' })
+  key: string;
+
+  @ApiProperty({ type: SelectionListValueDto, isArray: true, description: 'Werte der Liste, aktive und inaktive' })
+  values: SelectionListValueDto[];
+}
+
+/** A new value of an Auswahlliste; the code is derived from the German label. */
+export class SelectionListValueCreateDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  @ApiProperty({ description: 'Bezeichnung DE (Pflicht)' })
+  labelDe: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung FR' })
+  labelFr?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung IT' })
+  labelIt?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung EN' })
+  labelEn?: string | null;
+}
+
+/** Changes of a value: labels, active flag, position. Only what is sent changes. */
+export class SelectionListValueUpdateDto {
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(120)
+  @ApiPropertyOptional({ description: 'Bezeichnung DE' })
+  labelDe?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung FR; null oder leer = deutsche Bezeichnung' })
+  labelFr?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung IT; null oder leer = deutsche Bezeichnung' })
+  labelIt?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(120)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bezeichnung EN; null oder leer = deutsche Bezeichnung' })
+  labelEn?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ description: 'Aktiv (false = inaktivieren)' })
+  enabled?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(9999)
+  @ApiPropertyOptional({ description: 'Reihenfolge in der Auswahl' })
+  sortOrder?: number;
 }

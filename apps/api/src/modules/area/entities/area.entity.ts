@@ -4,20 +4,6 @@ import { DbPlatformColumn } from '@app-galaxy/core-api';
 import { SlimBaseEntity } from '@api-slim/common';
 import { AreaRoomEntity } from './area-room.entity';
 import { RoomCombinationEntity } from './room-combination.entity';
-import {
-  AREA_CLASSIFICATION,
-  AreaClassification,
-  NOISE_REMEDIATION_STATE,
-  NoiseRemediationState,
-  PROJECT_STATE,
-  ProjectState,
-  RECALCULATION_STATE,
-  RecalculationState,
-  REMEDIATION_PROJECT_STATE,
-  RemediationProjectState,
-  SPM_STATE,
-  SpmState,
-} from './area-master-data.enums';
 
 /** Traffic-light status of an area (quota / noise), see sitemap.md. */
 /** Ampel incl. `incomplete` = «nicht beurteilbar» (Fachregel O8, see @slim/lsv NoiseState). */
@@ -106,29 +92,29 @@ export class AreaEntity extends SlimBaseEntity {
 
   // --- Stammdaten (B1 5.16, «generelle Eigenschaften des Schiessplatzes») ---
 
-  @ApiProperty({ enum: AREA_CLASSIFICATION, nullable: true, description: 'Klassierung (Lärm)' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «classification» (slm 1): Klassierung (Lärm)' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  classification: AreaClassification | null;
+  classification: string | null;
 
-  @ApiProperty({ enum: RECALCULATION_STATE, nullable: true, description: 'Stand Neuberechnung' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «recalculation_state» (slm 1): Stand Neuberechnung' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  recalculationState: RecalculationState | null;
+  recalculationState: string | null;
 
-  @ApiProperty({ enum: REMEDIATION_PROJECT_STATE, nullable: true, description: 'Bearbeitungsstand Sanierungsprojekt' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «remediation_project_state» (slm 1): Bearbeitungsstand Sanierungsprojekt' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  remediationProjectState: RemediationProjectState | null;
+  remediationProjectState: string | null;
 
-  @ApiProperty({ enum: SPM_STATE, nullable: true, description: 'Stand SPM' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «spm_state» (slm 1): Stand SPM' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  spmState: SpmState | null;
+  spmState: string | null;
 
-  @ApiProperty({ enum: NOISE_REMEDIATION_STATE, nullable: true, description: 'Stand Lärmsanierung' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «noise_remediation_state» (slm 1): Stand Lärmsanierung' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  noiseRemediationState: NoiseRemediationState | null;
+  noiseRemediationState: string | null;
 
-  @ApiProperty({ enum: PROJECT_STATE, nullable: true, description: 'Stand Projekt' })
+  @ApiProperty({ nullable: true, type: String, description: 'Auswahlliste «project_state» (slm 1): Stand Projekt' })
   @DbPlatformColumn({ type: 'varchar', length: 24, nullable: true })
-  projectState: ProjectState | null;
+  projectState: string | null;
 
   @ApiProperty({ nullable: true, description: 'Gültige Plangenehmigung, z. B. «Militärische Plangenehmigung vom 13.02.2023» (5.16 Kontingente)' })
   @DbPlatformColumn({ type: 'varchar', length: 200, nullable: true })

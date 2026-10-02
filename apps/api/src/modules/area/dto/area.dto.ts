@@ -1,29 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsIn,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
 } from 'class-validator';
 import {
-  AREA_CLASSIFICATION,
   AREA_STATUS,
   AREA_STATUS_REASON,
-  AreaClassification,
   AreaStatus,
   AreaStatusReason,
-  NOISE_REMEDIATION_STATE,
-  NoiseRemediationState,
-  PROJECT_STATE,
-  ProjectState,
-  RECALCULATION_STATE,
-  RecalculationState,
-  REMEDIATION_PROJECT_STATE,
-  RemediationProjectState,
-  SPM_STATE,
-  SpmState,
 } from '../entities';
 
 /** One area as the API returns it (the generated client model `AreaResultDto`). */
@@ -65,23 +52,23 @@ export class AreaResultDto {
   enabled: boolean;
 
   // Stammdaten (5.16)
-  @ApiProperty({ enum: AREA_CLASSIFICATION, nullable: true, type: String, description: 'Klassierung' })
-  classification: AreaClassification | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «classification» — Klassierung' })
+  classification: string | null;
 
-  @ApiProperty({ enum: RECALCULATION_STATE, nullable: true, type: String, description: 'Stand Neuberechnung' })
-  recalculationState: RecalculationState | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «recalculation_state» — Stand Neuberechnung' })
+  recalculationState: string | null;
 
-  @ApiProperty({ enum: REMEDIATION_PROJECT_STATE, nullable: true, type: String, description: 'Bearbeitungsstand Sanierungsprojekt' })
-  remediationProjectState: RemediationProjectState | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «remediation_project_state» — Bearbeitungsstand Sanierungsprojekt' })
+  remediationProjectState: string | null;
 
-  @ApiProperty({ enum: SPM_STATE, nullable: true, type: String, description: 'Stand SPM' })
-  spmState: SpmState | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «spm_state» — Stand SPM' })
+  spmState: string | null;
 
-  @ApiProperty({ enum: NOISE_REMEDIATION_STATE, nullable: true, type: String, description: 'Stand Lärmsanierung' })
-  noiseRemediationState: NoiseRemediationState | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «noise_remediation_state» — Stand Lärmsanierung' })
+  noiseRemediationState: string | null;
 
-  @ApiProperty({ enum: PROJECT_STATE, nullable: true, type: String, description: 'Stand Projekt' })
-  projectState: ProjectState | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Schlüssel aus der Auswahlliste «project_state» — Stand Projekt' })
+  projectState: string | null;
 
   @ApiProperty({ nullable: true, type: String, description: 'Gültige Plangenehmigung' })
   planningApproval: string | null;
@@ -95,34 +82,40 @@ export class AreaMasterDataDto {
   annex7Overall?: boolean;
 
   @IsOptional()
-  @IsIn(AREA_CLASSIFICATION)
-  @ApiPropertyOptional({ enum: AREA_CLASSIFICATION, nullable: true })
-  classification?: AreaClassification | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Klassierung: Schlüssel eines aktiven Werts der Auswahlliste «classification» (slm 1)' })
+  classification?: string | null;
 
   @IsOptional()
-  @IsIn(RECALCULATION_STATE)
-  @ApiPropertyOptional({ enum: RECALCULATION_STATE, nullable: true })
-  recalculationState?: RecalculationState | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Stand Neuberechnung: Schlüssel eines aktiven Werts der Auswahlliste «recalculation_state»' })
+  recalculationState?: string | null;
 
   @IsOptional()
-  @IsIn(REMEDIATION_PROJECT_STATE)
-  @ApiPropertyOptional({ enum: REMEDIATION_PROJECT_STATE, nullable: true })
-  remediationProjectState?: RemediationProjectState | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Bearbeitungsstand Sanierungsprojekt: Schlüssel eines aktiven Werts der Auswahlliste «remediation_project_state»' })
+  remediationProjectState?: string | null;
 
   @IsOptional()
-  @IsIn(SPM_STATE)
-  @ApiPropertyOptional({ enum: SPM_STATE, nullable: true })
-  spmState?: SpmState | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Stand SPM: Schlüssel eines aktiven Werts der Auswahlliste «spm_state»' })
+  spmState?: string | null;
 
   @IsOptional()
-  @IsIn(NOISE_REMEDIATION_STATE)
-  @ApiPropertyOptional({ enum: NOISE_REMEDIATION_STATE, nullable: true })
-  noiseRemediationState?: NoiseRemediationState | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Stand Lärmsanierung: Schlüssel eines aktiven Werts der Auswahlliste «noise_remediation_state»' })
+  noiseRemediationState?: string | null;
 
   @IsOptional()
-  @IsIn(PROJECT_STATE)
-  @ApiPropertyOptional({ enum: PROJECT_STATE, nullable: true })
-  projectState?: ProjectState | null;
+  @IsString()
+  @MaxLength(24)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Stand Projekt: Schlüssel eines aktiven Werts der Auswahlliste «project_state»' })
+  projectState?: string | null;
 
   @IsOptional()
   @IsString()

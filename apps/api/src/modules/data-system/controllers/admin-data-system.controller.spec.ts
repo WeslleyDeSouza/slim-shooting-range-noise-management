@@ -16,8 +16,10 @@ import { DemoSeedMarkerEntity } from '../../../mocks/tenant/demo-seed-marker.ent
 import { AreaModule } from '../../area/area.module';
 import { AreaResultDto } from '../../area/dto';
 import { CalculationModule } from '../../calculation/calculation.module';
+import { DataAreaModule } from '../../data-area/data-area.module';
 import { AssessmentDto } from '../../calculation/dto';
-import { SystemSettingsDto } from '../../settings/dto';
+import { SelectionListDto, SystemSettingsDto } from '../../settings/dto';
+import { uniqueCode } from '../../settings/selection-list.service';
 import { SettingsModule } from '../../settings/settings.module';
 import { UsageCombinationDto, UsageOverviewDto } from '../../usage/dto';
 import { UsageModule } from '../../usage/usage.module';
@@ -27,6 +29,7 @@ const NOW = new Date(2026, 11, 31);
 const YEAR = 2026;
 const SETTINGS = '/api/admin/settings';
 const SYSTEM = '/api/admin/data/system';
+const LISTS = '/api/admin/settings/lists';
 /** Smallest file that starts like a PDF. */
 const PDF = Buffer.from('%PDF-1.4\n% SLIM Benutzerhandbuch (Test)\n%%EOF\n', 'latin1');
 
@@ -68,7 +71,7 @@ describe('AdminDataSystemController + AdminSettingsController (HTTP)', () => {
 
   beforeAll(async () => {
     api = await createTestApp({
-      modules: [AreaModule, UsageModule, CalculationModule, SettingsModule, DataSystemModule],
+      modules: [AreaModule, UsageModule, CalculationModule, SettingsModule, DataSystemModule, DataAreaModule],
       entities: [
         ...AreaModule.DBOptions.entities,
         ...UsageModule.DBOptions.entities,
@@ -303,5 +306,130 @@ describe('AdminDataSystemController + AdminSettingsController (HTTP)', () => {
       expect((await settings()).manual).toBeNull();
       await api.http().get(`${SETTINGS}/manual`).set(reader).expect(404);
     });
+  });
+
+  describe('Auswahllisten (B1 5.3, slm 1)', () => {
+    const lists = async (headers: Record<string, string> = authHeaders()): Promise<SelectionListDto[]> => (await api.http().get(LISTS).set(headers).expect(200)).body;
+    const listOf = async (key: string): Promise<SelectionListDto> => (await lists()).find((l) => l.key === key) as SelectionListDto;
+    const masterData = (areaId: string) => `/api/admin/data/area/${areaId}`;
+    let otherAreaId: string;
+
+    beforeAll(async () => {
+      const areas: AreaResultDto[] = (await api.http().get('/api/admin/area').set(specialist).expect(200)).body;
+      otherAreaId = areas.find((a) => a.id !== geissalpId)?.id as string;
+    });
+
+    it('serves every user the lists the masks pick from, with the values and labels the application ships with', async () => {
+      const all = await lists(reader);
+      expect(all.map((l) => l.key)).toEqual([
+        'classification',
+        'recalculation_state',
+        'remediation_project_state',
+        'spm_state',
+        'noise_remediation_state',
+        'project_state',
+        'civil_usage_kind',
+      ]);
+      const spm = all.find((l) => l.key === 'spm_state') as SelectionListDto;
+      expect(spm.values.map((v) => [v.code, v.labelDe, v.labelFr, v.enabled, v.builtIn])).toEqual([
+        ['open', 'Offen', 'Ouvert', true, true],
+        ['in_progress', 'In Bearbeitung', 'En cours', true, true],
+        ['completed', 'Abgeschlossen', 'Terminé', true, true],
+      ]);
+      expect(all.find((l) => l.key === 'civil_usage_kind')?.values.map((v) => v.code)).toEqual(['obligatory', 'field_shooting', 'other']);
+    });
+
+    it('lets only the Applikationsadministrator maintain the lists', async () => {
+      for (const headers of [specialist, reader]) {
+        await api.http().post(`${SYSTEM}/lists/spm_state`).set(headers).send({ labelDe: 'Sistiert' }).expect(403);
+        await api.http().patch(`${SYSTEM}/lists/spm_state/open`).set(headers).send({ enabled: false }).expect(403);
+      }
+      expect((await listOf('spm_state')).values).toHaveLength(3);
+    });
+
+    it('adds a value at the end of a list; the code comes from the German label', async () => {
+      const list: SelectionListDto = (await api.http().post(`${SYSTEM}/lists/spm_state`).send({ labelDe: ' Sistiert ', labelFr: 'Suspendu' }).expect(201)).body;
+      expect(list.values.map((v) => v.code)).toEqual(['open', 'in_progress', 'completed', 'sistiert']);
+      expect(list.values[3]).toMatchObject({ labelDe: 'Sistiert', labelFr: 'Suspendu', labelIt: null, labelEn: null, enabled: true, builtIn: false, sortOrder: 4 });
+      // The other lists are untouched.
+      expect((await listOf('project_state')).values.map((v) => v.code)).toEqual(['not_started', 'ongoing', 'completed']);
+
+      await api.http().post(`${SYSTEM}/lists/spm_state`).send({ labelDe: 'sistiert' }).expect(400); // already there
+      await api.http().post(`${SYSTEM}/lists/spm_state`).send({ labelDe: '   ' }).expect(400);
+      await api.http().post(`${SYSTEM}/lists/gibt_es_nicht`).send({ labelDe: 'Wert' }).expect(404);
+    });
+
+    it('accepts in the Stammdaten of a Schiessplatz what the list offers, and nothing else', async () => {
+      const saved = await api.http().patch(masterData(geissalpId)).set(specialist).send({ spmState: 'sistiert' }).expect(200);
+      expect(saved.body.spmState).toBe('sistiert');
+      const refused = await api.http().patch(masterData(geissalpId)).set(specialist).send({ spmState: 'frei_erfunden' }).expect(400);
+      expect(refused.body.message).toContain('«frei_erfunden»');
+      await api.http().patch(masterData(geissalpId)).set(specialist).send({ classification: 'frei_erfunden' }).expect(400);
+    });
+
+    it('changes the labels of a value without touching the records that use it', async () => {
+      const list: SelectionListDto = (await api.http().patch(`${SYSTEM}/lists/spm_state/sistiert`).send({ labelDe: 'Sistiert (ruht)', labelIt: 'Sospeso' }).expect(200)).body;
+      expect(list.values.find((v) => v.code === 'sistiert')).toMatchObject({ labelDe: 'Sistiert (ruht)', labelFr: 'Suspendu', labelIt: 'Sospeso' });
+      const area: AreaResultDto = (await api.http().get('/api/admin/area').set(specialist).expect(200)).body.find((a: AreaResultDto) => a.id === geissalpId);
+      expect(area.spmState).toBe('sistiert');
+      // A label that another value of the list already has is refused; an unknown value is 404.
+      await api.http().patch(`${SYSTEM}/lists/spm_state/sistiert`).send({ labelDe: 'Offen' }).expect(400);
+      await api.http().patch(`${SYSTEM}/lists/spm_state/gibt_es_nicht`).send({ labelDe: 'X' }).expect(404);
+    });
+
+    it('sets a value inactive: it stays on the records that carry it and is offered to no other', async () => {
+      const list: SelectionListDto = (await api.http().patch(`${SYSTEM}/lists/spm_state/sistiert`).send({ enabled: false }).expect(200)).body;
+      expect(list.values.find((v) => v.code === 'sistiert')?.enabled).toBe(false);
+      // Geissalp keeps the value and can still be saved with it.
+      await api.http().patch(masterData(geissalpId)).set(specialist).send({ spmState: 'sistiert', planningApproval: 'Plangenehmigung 2023' }).expect(200);
+      // Another Schiessplatz cannot take the inactive value.
+      await api.http().patch(masterData(otherAreaId)).set(specialist).send({ spmState: 'sistiert' }).expect(400);
+      // Active again: now it can.
+      await api.http().patch(`${SYSTEM}/lists/spm_state/sistiert`).send({ enabled: true }).expect(200);
+      await api.http().patch(masterData(otherAreaId)).set(specialist).send({ spmState: 'sistiert' }).expect(200);
+    });
+
+    it('keeps at least one active value in a list', async () => {
+      await api.http().patch(`${SYSTEM}/lists/project_state/not_started`).send({ enabled: false }).expect(200);
+      await api.http().patch(`${SYSTEM}/lists/project_state/ongoing`).send({ enabled: false }).expect(200);
+      const last = await api.http().patch(`${SYSTEM}/lists/project_state/completed`).send({ enabled: false }).expect(400);
+      expect(last.body.message).toContain('letzte aktive Wert');
+      await api.http().patch(`${SYSTEM}/lists/project_state/not_started`).send({ enabled: true }).expect(200);
+      await api.http().patch(`${SYSTEM}/lists/project_state/ongoing`).send({ enabled: true }).expect(200);
+    });
+
+    it('offers a new zivile Nutzungsart to the Schusszahlenerfassung', async () => {
+      const list: SelectionListDto = (await api.http().post(`${SYSTEM}/lists/civil_usage_kind`).send({ labelDe: 'Jungschützenkurs' }).expect(201)).body;
+      const code = list.values[list.values.length - 1].code;
+      // The column of the usage holds 16 characters.
+      expect(code).toBe('jungschuetzenkur');
+
+      const civil = { ...usageOn(`${YEAR}-08-20`), usageType: 'civil' };
+      const created = await api.http().post(usageBase()).set(specialist).send({ ...civil, civilUsageKind: code }).expect(201);
+      expect(created.body.civilUsageKind).toBe(code);
+      await api.http().post(usageBase()).set(specialist).send({ ...civil, civilUsageKind: 'frei_erfunden' }).expect(400);
+      await api.http().post(usageBase()).set(specialist).send({ ...civil, civilUsageKind: 'obligatory' }).expect(201);
+
+      // Inactive: no new usage with it, the existing one can still be edited.
+      await api.http().patch(`${SYSTEM}/lists/civil_usage_kind/${code}`).send({ enabled: false }).expect(200);
+      await api.http().post(usageBase()).set(specialist).send({ ...civil, date: `${YEAR}-08-21`, civilUsageKind: code }).expect(400);
+      await api.http().patch(`${usageBase()}/${created.body.id}`).set(specialist).send({ unit: 'Schützenverein' }).expect(200);
+    });
+  });
+});
+
+describe('uniqueCode (code of a new list value)', () => {
+  it('derives a readable key from the label', () => {
+    expect(uniqueCode('Sistiert', [], 24)).toBe('sistiert');
+    expect(uniqueCode('Neubeurteilung nötig (Lärm)', [], 24)).toBe('neubeurteilung_noetig_la');
+    expect(uniqueCode('Étude préliminaire', [], 24)).toBe('etude_preliminaire');
+    expect(uniqueCode('!!!', [], 24)).toBe('wert');
+  });
+
+  it('keeps the code unique within the list and inside the column', () => {
+    expect(uniqueCode('Offen', ['offen'], 24)).toBe('offen_2');
+    expect(uniqueCode('Offen', ['offen', 'offen_2'], 24)).toBe('offen_3');
+    expect(uniqueCode('Jungschützenkurs', ['jungschuetzenkur'], 16)).toBe('jungschuetzenk_2');
+    expect(uniqueCode('Jungschützenkurs', ['jungschuetzenkur'], 16)).toHaveLength(16);
   });
 });

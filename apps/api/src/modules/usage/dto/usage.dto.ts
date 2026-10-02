@@ -18,7 +18,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ANNEX7_CATEGORY, Annex7CategoryCode, QUANTITY_UNIT, QuantityUnit } from '../../area/entities';
-import { CIVIL_USAGE_KIND, CivilUsageKind, USAGE_SOURCE, USAGE_TYPE, UsageSource, UsageType } from '../entities';
+import { USAGE_SOURCE, USAGE_TYPE, UsageSource, UsageType } from '../entities';
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 /** HH:mm on the quarter hour (B1 6.2.3, 7.4.1). */
@@ -77,7 +77,7 @@ export class UsageResultDto {
   @ApiProperty({ description: 'HH:mm' }) timeFrom: string;
   @ApiProperty({ description: 'HH:mm' }) timeTo: string;
   @ApiProperty({ enum: USAGE_TYPE }) usageType: UsageType;
-  @ApiProperty({ enum: CIVIL_USAGE_KIND, nullable: true, type: String }) civilUsageKind: CivilUsageKind | null;
+  @ApiProperty({ nullable: true, type: String, description: 'Zivile Nutzungsart: Schlüssel aus der Auswahlliste «civil_usage_kind»' }) civilUsageKind: string | null;
   @ApiProperty({ nullable: true, type: Number }) personCount: number | null;
   @ApiProperty({ type: UsagePositionDto, isArray: true }) positions: UsagePositionDto[];
   @ApiProperty({ description: 'Waffen der Positionen, zusammengefasst («Stgw 90 · 5.6 mm, Pist 75 · 9 mm»)' }) weaponName: string;
@@ -158,9 +158,10 @@ export class UsageCreateDto {
   usageType: UsageType;
 
   @IsOptional()
-  @IsIn(CIVIL_USAGE_KIND)
-  @ApiPropertyOptional({ enum: CIVIL_USAGE_KIND, nullable: true, description: 'Pflicht bei Kategorie Zivil' })
-  civilUsageKind?: CivilUsageKind | null;
+  @IsString()
+  @MaxLength(16)
+  @ApiPropertyOptional({ nullable: true, type: String, description: 'Pflicht bei Kategorie Zivil: Schlüssel eines aktiven Werts der Auswahlliste «civil_usage_kind» (slm 1)' })
+  civilUsageKind?: string | null;
 
   @IsOptional()
   @IsInt()
@@ -196,7 +197,7 @@ export class UsageUpdateDto {
   @IsOptional() @Matches(TIME) @ApiPropertyOptional() timeFrom?: string;
   @IsOptional() @Matches(TIME) @ApiPropertyOptional() timeTo?: string;
   @IsOptional() @IsIn(USAGE_TYPE) @ApiPropertyOptional({ enum: USAGE_TYPE }) usageType?: UsageType;
-  @IsOptional() @IsIn(CIVIL_USAGE_KIND) @ApiPropertyOptional({ enum: CIVIL_USAGE_KIND, nullable: true }) civilUsageKind?: CivilUsageKind | null;
+  @IsOptional() @IsString() @MaxLength(16) @ApiPropertyOptional({ nullable: true, type: String, description: 'Schlüssel eines aktiven Werts der Auswahlliste «civil_usage_kind»' }) civilUsageKind?: string | null;
   @IsOptional() @IsInt() @Min(0) @Max(100000) @ApiPropertyOptional({ nullable: true }) personCount?: number | null;
   @IsOptional() @IsArray() @ArrayNotEmpty() @ValidateNested({ each: true }) @Type(() => UsagePositionInputDto)
   @ApiPropertyOptional({ type: UsagePositionInputDto, isArray: true, description: 'Replaces every position' })

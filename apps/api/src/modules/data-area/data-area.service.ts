@@ -28,6 +28,17 @@ import {
   QuotaCombinationOptionDto,
   RoomWeaponAssignmentDto,
 } from './dto';
+import { SelectionListKey, SelectionListService } from '../settings';
+
+/** Fields of the Stammdaten mask whose value comes from an Auswahlliste (slm 1), with the list they pick from. */
+const LIST_FIELDS = {
+  classification: 'classification',
+  recalculationState: 'recalculation_state',
+  remediationProjectState: 'remediation_project_state',
+  spmState: 'spm_state',
+  noiseRemediationState: 'noise_remediation_state',
+  projectState: 'project_state',
+} as const satisfies Partial<Record<keyof AreaUpdateDto, SelectionListKey>>;
 
 /** Fields of the Stammdaten mask (5.16) whose change is written to the logbook as before/after. */
 const MASTER_DATA_FIELDS: readonly (keyof AreaUpdateDto)[] = [
@@ -68,6 +79,7 @@ export class DataAreaService {
     private readonly states: Repository<AreaCalculationEntity>,
     private readonly areas: AreaService,
     private readonly status: AreaStatusService,
+    private readonly selectionLists: SelectionListService,
     // Global CoreLoggerModule in the app; the service specs run without it.
     @Optional() private readonly logger?: LoggerService,
   ) {}
@@ -150,6 +162,10 @@ export class DataAreaService {
   ): Promise<AreaResultDto> {
     const before = await this.areas.get(tenantId, areaId);
     const changes: Record<string, { from: unknown; to: unknown }> = {};
+    // A value must be active in its Auswahlliste — or be the one the Schiessplatz already has.
+    for (const [field, list] of Object.entries(LIST_FIELDS) as [keyof typeof LIST_FIELDS, SelectionListKey][]) {
+      await this.selectionLists.assertUsable(tenantId, list, dto[field], before[field]);
+    }
     for (const field of MASTER_DATA_FIELDS) {
       if (dto[field] === undefined) continue;
       if (before[field] === dto[field]) continue;

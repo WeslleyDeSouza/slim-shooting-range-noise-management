@@ -4,7 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { ReplayGuard } from '@app-galaxy/auth-api';
 import { GetTenantId, TenantGuard } from '@app-galaxy/core-api';
-import { SystemSettingsDto } from '../dto';
+import { SelectionListDto, SystemSettingsDto } from '../dto';
+import { SelectionListService } from '../selection-list.service';
 import { SettingsService } from '../settings.service';
 
 /**
@@ -19,13 +20,23 @@ import { SettingsService } from '../settings.service';
 @Controller('admin/settings')
 @UseGuards(AuthGuard('jwt'), TenantGuard, ReplayGuard)
 export class AdminSettingsController {
-  constructor(private readonly service: SettingsService) {}
+  constructor(
+    private readonly service: SettingsService,
+    private readonly selectionLists: SelectionListService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Erweiterte Konfiguration des Mandanten lesen (B1 5.28, 5.9)' })
   @ApiOkResponse({ type: SystemSettingsDto })
   get(@GetTenantId() tenantId: string): Promise<SystemSettingsDto> {
     return this.service.get(tenantId);
+  }
+
+  @Get('lists')
+  @ApiOperation({ summary: 'Auswahllisten mit ihren Werten lesen (B1 5.3, slm 1) — für die Auswahlfelder der Masken' })
+  @ApiOkResponse({ type: SelectionListDto, isArray: true })
+  lists(@GetTenantId() tenantId: string): Promise<SelectionListDto[]> {
+    return this.selectionLists.all(tenantId);
   }
 
   @Get('manual')

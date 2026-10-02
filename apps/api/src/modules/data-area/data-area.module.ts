@@ -9,6 +9,7 @@ import {
   WeaponCombinationEntity,
 } from '../area/entities';
 import { CalculationModule } from '../calculation/calculation.module';
+import { SettingsModule } from '../settings/settings.module';
 import { AreaCalculationEntity } from '../calculation/entities';
 import { AdminDataAreaController } from './controllers/admin-data-area.controller';
 import { AdminDataAreaWeaponsController } from './controllers/admin-data-area-weapons.controller';
@@ -32,6 +33,7 @@ import DBOptions from './db/data-area.database';
       AreaCalculationEntity,
     ]),
     AreaModule,
+    SettingsModule,
     CalculationModule,
     RulesModule,
   ],

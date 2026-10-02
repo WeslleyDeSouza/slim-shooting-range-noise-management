@@ -27,6 +27,7 @@ import {
   UsageResultDto,
   UsageUpdateDto,
 } from './dto';
+import { SelectionListService } from '../settings/selection-list.service';
 import { SettingsService } from '../settings/settings.service';
 import { AreaUsageEntity, UsagePositionEntity } from './entities';
 
@@ -56,6 +57,7 @@ export class UsageService {
     private readonly quotas: Repository<AreaQuotaEntity>,
     private readonly areas: AreaService,
     private readonly settings: SettingsService,
+    private readonly selectionLists: SelectionListService,
     @Optional() @Inject(forwardRef(() => AreaStatusService))
     private readonly status?: AreaStatusService,
   ) {}
@@ -174,6 +176,7 @@ export class UsageService {
   async create(tenantId: string, areaId: string, input: UsageInput): Promise<UsageResultDto> {
     await this.areas.get(tenantId, areaId);
     const { room, positions } = await this.validate(tenantId, areaId, input);
+    if (input.usageType === 'civil') await this.selectionLists.assertUsable(tenantId, 'civil_usage_kind', input.civilUsageKind);
     if (input.externalId) {
       // Idempotent for the ELO interface: the same external id is the same Nutzung.
       const existing = await this.repo.findOne({ where: { tenantId, areaId, externalId: input.externalId }, relations: { positions: true } });
@@ -218,6 +221,8 @@ export class UsageService {
       note: dto.note === undefined ? usage.note : dto.note,
     };
     const { room, positions } = await this.validate(tenantId, areaId, merged, { allowDisabled: !dto.positions && !dto.roomId });
+    // The civil kind must be an active value of its Auswahlliste — or the one the usage already has.
+    if (merged.usageType === 'civil') await this.selectionLists.assertUsable(tenantId, 'civil_usage_kind', merged.civilUsageKind, usage.civilUsageKind);
     // Neither a locked usage may change, nor may a usage move into the locked period.
     await this.assertUnlocked(tenantId, [usage.date, merged.date]);
     Object.assign(usage, {

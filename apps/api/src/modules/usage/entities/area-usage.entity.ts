@@ -65,9 +65,9 @@ export class AreaUsageEntity extends SlimBaseEntity {
   @DbPlatformColumn({ type: 'varchar', length: 10, nullable: false })
   usageType: UsageType;
 
-  @ApiProperty({ enum: CIVIL_USAGE_KIND, nullable: true, description: 'Zivile Nutzungsart (nur bei Kategorie Zivil)' })
+  @ApiProperty({ nullable: true, type: String, description: 'Zivile Nutzungsart (nur bei Kategorie Zivil): Schlüssel aus der Auswahlliste «civil_usage_kind» (slm 1)' })
   @DbPlatformColumn({ type: 'varchar', length: 16, nullable: true })
-  civilUsageKind: CivilUsageKind | null;
+  civilUsageKind: string | null;
 
   @ApiProperty({ nullable: true, description: 'Anzahl Personen, die geschossen haben (B1 6.1.3)' })
   @DbPlatformColumn({ type: 'int', nullable: true })

@@ -814,6 +814,21 @@ OPERATIONS: Broad range of activities related to business operations."
     varchar hochgeladen_von
     longblob inhalt
   }
+  auswahlliste_wert {
+    uuid tenantId
+    uuid id PK
+    datetime createdAt
+    datetime updatedAt
+    datetime deletedAt
+    varchar liste
+    varchar code
+    varchar bezeichnung_de
+    varchar bezeichnung_fr
+    varchar bezeichnung_it
+    varchar bezeichnung_en
+    int reihenfolge
+    tinyint aktiv
+  }
   auth_login }|--|| auth_user: user
   app_user_setting }|--|| app_app: app
   app_feature_definition }|--|| app_app: app

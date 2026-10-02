@@ -1,8 +1,8 @@
-import { SystemSettingsEntity, UserManualEntity } from '../entities';
+import { SelectionListValueEntity, SystemSettingsEntity, UserManualEntity } from '../entities';
 
-/** Entities of this module: the Erweiterte Konfiguration (B1 5.28) and the Benutzerhandbuch. */
+/** Entities of this module: the Erweiterte Konfiguration (B1 5.28), the Benutzerhandbuch and the Auswahllisten (slm 1). */
 const DBOptions = {
-  entities: [SystemSettingsEntity, UserManualEntity],
+  entities: [SystemSettingsEntity, UserManualEntity, SelectionListValueEntity],
 };
 
 export default DBOptions;

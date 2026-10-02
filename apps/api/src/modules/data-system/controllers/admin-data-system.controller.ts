@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   Optional,
+  Param,
   Patch,
   Post,
   UploadedFile,
@@ -20,8 +21,10 @@ import {
   ApiConsumes,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -30,7 +33,9 @@ import { GetTenantId, TenantGuard } from '@app-galaxy/core-api';
 import { API_APPS_MAPPING } from '../../../mocks/main.mock-data';
 import { LogAction, LoggerService } from '../../../core/logger';
 import { AreaStatusService } from '../../calculation/area-status.service';
-import { ManualInfoDto, SystemSettingsDto } from '../../settings/dto';
+import { ManualInfoDto, SelectionListDto, SelectionListValueCreateDto, SelectionListValueUpdateDto, SystemSettingsDto } from '../../settings/dto';
+import { SelectionListService } from '../../settings/selection-list.service';
+import { SELECTION_LIST_KEYS } from '../../settings/selection-lists.defaults';
 import { MANUAL_MAX_BYTES, SettingsService } from '../../settings/settings.service';
 import { SystemSettingsUpdateDto } from '../dto';
 
@@ -58,6 +63,7 @@ export class AdminDataSystemController {
   constructor(
     private readonly settings: SettingsService,
     private readonly status: AreaStatusService,
+    private readonly selectionLists: SelectionListService,
     // Global CoreLoggerModule in the app; the HTTP specs boot without it.
     @Optional() private readonly logger?: LoggerService,
   ) {}
@@ -111,5 +117,44 @@ export class AdminDataSystemController {
   async removeManual(@GetTenantId() tenantId: string, @GetUserId() userId: string): Promise<void> {
     await this.settings.removeManual(tenantId);
     this.logger?.createLog({ tenantId, userId, section: 'SYSTEM_SETTINGS', action: LogAction.DELETE, refType: 'MANUAL', data: {} });
+  }
+
+  // ----- Auswahllisten (B1 5.3, slm 1) ---------------------------------------
+
+  @Post('lists/:list')
+  @HttpCode(201)
+  @ApiOperation({ summary: 'Wert zu einer Auswahlliste hinzufügen (slm 1)' })
+  @ApiParam({ name: 'list', enum: SELECTION_LIST_KEYS, description: 'Schlüssel der Auswahlliste' })
+  @ApiCreatedResponse({ type: SelectionListDto, description: 'Die Liste mit dem neuen Wert' })
+  @ApiBadRequestResponse({ description: 'Bezeichnung fehlt oder ist in der Liste schon vorhanden' })
+  @ApiNotFoundResponse({ description: 'Unbekannte Auswahlliste' })
+  async createListValue(
+    @GetTenantId() tenantId: string,
+    @GetUserId() userId: string,
+    @Param('list') list: string,
+    @Body() dto: SelectionListValueCreateDto,
+  ): Promise<SelectionListDto> {
+    const saved = await this.selectionLists.create(tenantId, list, dto);
+    this.logger?.createLog({ tenantId, userId, section: 'SELECTION_LIST', action: LogAction.CREATE, refType: list, data: { labelDe: dto.labelDe } });
+    return saved;
+  }
+
+  @Patch('lists/:list/:code')
+  @ApiOperation({ summary: 'Wert einer Auswahlliste ändern oder inaktivieren (slm 1)' })
+  @ApiParam({ name: 'list', enum: SELECTION_LIST_KEYS, description: 'Schlüssel der Auswahlliste' })
+  @ApiParam({ name: 'code', description: 'Schlüssel des Werts' })
+  @ApiOkResponse({ type: SelectionListDto, description: 'Die Liste nach der Änderung' })
+  @ApiBadRequestResponse({ description: 'Bezeichnung doppelt, oder letzter aktiver Wert der Liste' })
+  @ApiNotFoundResponse({ description: 'Unbekannte Auswahlliste oder unbekannter Wert' })
+  async updateListValue(
+    @GetTenantId() tenantId: string,
+    @GetUserId() userId: string,
+    @Param('list') list: string,
+    @Param('code') code: string,
+    @Body() dto: SelectionListValueUpdateDto,
+  ): Promise<SelectionListDto> {
+    const saved = await this.selectionLists.update(tenantId, list, code, dto);
+    this.logger?.createLog({ tenantId, userId, section: 'SELECTION_LIST', action: LogAction.UPDATE, refType: list, data: { code, ...dto } });
+    return saved;
   }
 }

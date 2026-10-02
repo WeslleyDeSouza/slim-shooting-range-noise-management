@@ -41,7 +41,9 @@ Anhang 7 (pro Empfangspunkt und Waffenkategorie k, Wh/Sh = Werk-/Sonn-Halbtage)
 
 Betriebsdaten (7.4): Anhang 9 – Werktag Mo–Fr 07:00–19:00, Schüsse anteilig nach Zeit,
 Sa/So/Feiertag ganz «ausserhalb». Anhang 7 – Werktag Mo–Sa, pro Kalendertag und Kategorie
-Vormittag/Nachmittag je 1 Halbtag (> 2 h) bzw. ½ (≤ 2 h), getrennt Werktag / Sonn-Feiertag.
+Vormittag/Nachmittag je 1 Halbtag (> 2 h) bzw. ½ (≤ 2 h), getrennt Werktag / Sonn-Feiertag. Mehrere Nutzungen
+derselben Kategorie am selben Tag werden über den ganzen Schiessplatz vereinigt: zeitgleiches Schiessen auf mehreren
+Stellungsräumen zählt einmal (B1 7.4.3 «gesamtheitlich»), aufeinanderfolgende Nutzungen addieren sich.
 
 Grenzwertvergleich (7.7): Baujahr vor 1985 → IGW, nach 1985 → PW, gemischt → beide.
 Ampel: Rot `Lr > Grenzwert`, Orange `Lr > Grenzwert − 5 dB`, sonst Grün; der Vergleich rundet den

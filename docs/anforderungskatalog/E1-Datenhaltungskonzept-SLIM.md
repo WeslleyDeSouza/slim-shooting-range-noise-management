@@ -8,8 +8,8 @@ Konzept vor (FAQ 132). Der frühere gemeinsame Entwurf (Version 0.1) ist in dies
 | [E1-Datenhaltungskonzept-Generalunternehmerin.md](E1-Datenhaltungskonzept-Generalunternehmerin.md) | [PLATZHALTER FIRMA] (Generalunternehmerin) | Hosting, Betrieb, Sicherung, Support, Projektführung, Qualitätssicherung, Dokumentation, Schulung; Endgeräte der Benutzer; Zugriff des Hosting-Anbieters |
 | [E1-Datenhaltungskonzept-Technologiepartnerin.md](E1-Datenhaltungskonzept-Technologiepartnerin.md) | Technologiepartnerin (Subunternehmerin Entwicklung) | Entwicklung, Arbeitsplätze, Repository, Pipeline, Pakete, Entwicklungsdokumentation, KI-Werkzeuge |
 
-Die Kapitel 1, 3, 4 und 5 (Geltung, Vorgaben, Grundsätze, Dateninventar) sind in beiden Dokumenten gleich. Sie werden
-aus einer Quelle erzeugt; Änderungen daran gehören in beide Dokumente.
+Die Kapitel 1, 3, 4 und 5 (Geltung, Vorgaben, Grundsätze, Dateninventar) sind in beiden Dokumenten gleich. Änderungen an
+diesen Kapiteln gehören in beide Dokumente.
 
 Interne Prüfpunkte und die Liste der Angaben, die vor der Abgabe einzutragen sind, stehen in
 [C2-offene-angaben.md](C2-offene-angaben.md), Abschnitt «E1 – Datenhaltungskonzepte».

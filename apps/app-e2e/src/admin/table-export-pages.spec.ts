@@ -84,8 +84,11 @@ test.describe('export of the tables of every mask', () => {
     expect(quotas.rows).toBeGreaterThan(3);
 
     await page.goto(`/admin/data-management/area/${id}/weapon-assignment`);
+    // Two tables on this mask: the Stellungsräume, and the Waffen/Kaliber of the chosen Stellungsraum.
+    const assignedRooms = await exportCsv(page, 'dwa-rooms-export');
+    expect(assignedRooms.rows).toBeGreaterThan(5);
     const assignments = await exportCsv(page, 'dwa-export');
-    expect(assignments.rows).toBeGreaterThan(5);
+    expect(assignments.rows).toBeGreaterThan(0);
   });
 
   test('Benutzerverwaltung and Auswahllisten', async ({ page }) => {

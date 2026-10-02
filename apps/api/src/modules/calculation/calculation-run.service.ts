@@ -17,7 +17,7 @@ import { CalculationRunDto } from './dto';
 import { CalculationRunEntity } from './entities';
 
 /** Version of the calculation kernel a run was computed with (bumped with every formula change). */
-export const KERNEL_VERSION = '@slim/lsv 1.4.0 (Anhang 7 nach Formelblatt A7X: leere Kategorien 0 dB)';
+export const KERNEL_VERSION = '@slim/lsv 1.5.0 (Anhang 7 nach A7X; Halbtage: parallele Nutzungen vereinigt)';
 
 /**
  * Berechnungslauf (B1 5.10 «Durchführen und Abspeichern von Immissions-

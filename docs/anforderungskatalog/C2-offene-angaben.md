@@ -149,3 +149,18 @@ einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
 **Abgleich mit C2**
 
 C2 Kapitel 6.3 muss dieselbe KI-Regel und dieselbe Aufteilung der Parteien nennen wie die beiden Konzepte.
+
+## Rückmeldung vom 02.10.2026 (Ausarbeitung zu E1, C2 und Z3) – was übernommen ist und was nicht
+
+| Punkt | Umsetzung | Zu prüfen |
+| --- | --- | --- |
+| E1: Umzug bis zur Eingabefrist | Zusage im Konzept der Technologiepartnerin, Kapitel 10 | Am 02.10.2026 liegt der Code noch auf GitHub; der Umzug muss vor der Eingabefrist erfolgt und belegt sein. |
+| KI-Deklaration | **Nicht in der vorgeschlagenen Form übernommen.** Der Vorschlag beschreibt eine «IDE-integrierte Code-Vervollständigung», die «lokal» arbeitet und nur «generische Code-Muster» verarbeitet. Tatsächlich eingesetzt sind ein KI-Programmierassistent (Claude Code, Anthropic), der Ausschnitte des Quellcodes ausserhalb der Schweiz verarbeitet, und die Vorübersetzung der Oberflächentexte über die OpenAI-API. Das Konzept der Technologiepartnerin deklariert diese beiden Werkzeuge mit Art, Umfang und Verwendung (Kapitel 7). | Eine Deklaration, die den Einsatz kleiner darstellt als er ist, wäre im Eignungsnachweis E1 unzutreffend. Entscheiden: Werkzeuge weiter einsetzen und Verträge beilegen, oder vor der Eingabefrist auf sie verzichten und die Deklaration anpassen. |
+| Excel-Import B1.6 (C2 3.2) | Text übernommen (Import-ID, gezieltes Ersetzen) | Die Aussage zu Schiessblöcken, Zeitkategorien und Tagesanteilen der Vorlage B1.6 ist aus der Rückmeldung übernommen und nicht gegen die Datei geprüft. Der Import ist nicht umgesetzt (Matrix Z). |
+| Teiljahre (C2 4.2) | Text übernommen | Keine Hochrechnung und Mittelungsbasis im Berechnungsstand entsprechen dem Prototyp. Die Unterscheidung «erfasste Nullnutzung / fehlende Erfassung / verkürzte Betriebsphase» ist im Prototyp nur teilweise vorhanden (Ampel grau «keine Nutzungen erfasst»); eine erfasste Nullnutzung und Betriebsphasen gibt es als Daten noch nicht. |
+| Gleichzeitige Nutzungen (C2 4.2) | Im Berechnungskern umgesetzt (Kernversion 1.5.0): Zeiträume werden für die Schiesshalbtage vereinigt; vorher wurden die Dauern addiert | Fachliche Bestätigung durch KOMZ Lärm (`fachliche-abweichungen.md`, A6). |
+| Stunden je Arbeitspaket (Z3 6) | Tabelle übernommen, mit zwei Anpassungen, damit die Summen je Firma mit der Rollentabelle übereinstimmen: Business Analyse 75 / 245 statt 80 / 240, Reserve 125 / 125 statt 120 / 130. Totale unverändert: 1'450 + 1'350 = 2'800. | Die Zahlen sind eine Angabe der Firma; die zwei Anpassungen bestätigen oder die Rollentabelle ändern. |
+| Kapazität je Rolle und Zeitraum (Z3 6.1) | Tabelle übernommen. In der Vorlage standen zwei Summen, die nicht zu den Zellen passten: Betrieb / Sicherheit 195 (die Zellen ergeben 190) und PI 4 500 (die Zellen ergeben 495). Mit 195 / 500 wäre das Total 2'805 gewesen; eingetragen sind 190 und 495, Total 2'800. | Trainer-Stunden (120 h) stehen in LP1a als «Einführung und Schulungsvorbereitung»; die Schulungen selbst sind LP3. Abgrenzung im Preisblatt prüfen. |
+| Vertragsablauf und Meilensteine (Z3 4, 5) | Planungsphase Januar–März 2027, vier PI April 2027–März 2028, Abnahmekaskade in PI 4; M2 neu Juni, M3 September, M4 Dezember 2027 | Die Artikel 2.2.1, 2.2.6, 2.3.8, 2.3.9, 2.13.2 und A1.2 Ziffer 7 sind aus der Rückmeldung übernommen; der Rahmenvertrag liegt nicht im Repository. Am Vertragstext prüfen. |
+| Demo-Rolle (C2 6.5) | Schiessplatz-Verantwortlicher statt Interessent | Das Demo-Konto `schiessplatz@demo.ch` ist den Schiessplätzen Geissalp und Thun zugeordnet. |
+| slm 51 in der Matrix | Zeile berichtigt: slm 51 ist die Mehrsprachigkeit (B1 12.2), nicht nur die deutschen DB-Bezeichnungen; Kapitel 2.3 und 5.4 | – |

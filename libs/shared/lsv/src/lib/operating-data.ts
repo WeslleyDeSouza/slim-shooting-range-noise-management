@@ -190,33 +190,45 @@ function emptyHalfDays(): Annex7HalfDays {
  * (before 12:00) and the afternoon (from 12:00) each count 1 when the
  * category's shooting time in that half exceeds 2 h, ½ when it is shorter
  * but not zero, and 0 when nobody shot. Several usages of the same category
- * in the same half add up; a usage spanning 12:00 contributes to both halves.
+ * in the same half are looked at as a whole («gesamtheitlich», B1 7.4.3): their
+ * periods are united, so shooting at the same time on two Stellungsräume
+ * counts once, and usages one after the other add up. A usage spanning 12:00
+ * contributes to both halves.
  */
 export function annex7HalfDays(
   usages: readonly (UsageSlot & { category: Annex7Category })[],
   options?: CalendarOptions,
 ): Annex7HalfDays {
-  // date|category → [morning minutes, afternoon minutes]
-  const minutes = new Map<string, [number, number]>();
+  // date|category → the periods of all usages of the Schiessplatz on that day
+  const periods = new Map<string, [number, number][]>();
   // date|category → [morning kind, afternoon kind]
   const kind = new Map<string, [keyof HalfDays, keyof HalfDays]>();
 
   for (const usage of usages) {
-    const [from, to] = slotMinutes(usage);
     const key = `${usage.date}|${usage.category}`;
-    const acc = minutes.get(key) ?? [0, 0];
-    acc[0] += overlap(from, to, 0, ANNEX7_NOON_MINUTE);
-    acc[1] += overlap(from, to, ANNEX7_NOON_MINUTE, 24 * 60);
-    minutes.set(key, acc);
+    periods.set(key, [...(periods.get(key) ?? []), slotMinutes(usage)]);
     kind.set(key, halfDayKinds(usage.date, options));
   }
 
   const out = emptyHalfDays();
-  for (const [key, [morning, afternoon]] of minutes) {
+  for (const [key, slots] of periods) {
     const category = key.slice(key.indexOf('|') + 1) as Annex7Category;
     const [morningKind, afternoonKind] = kind.get(key) ?? ['work', 'work'];
-    out[category][morningKind] += halfDayValue(morning);
-    out[category][afternoonKind] += halfDayValue(afternoon);
+    const united = unite(slots);
+    const within = (winFrom: number, winTo: number) => united.reduce((sum, [from, to]) => sum + overlap(from, to, winFrom, winTo), 0);
+    out[category][morningKind] += halfDayValue(within(0, ANNEX7_NOON_MINUTE));
+    out[category][afternoonKind] += halfDayValue(within(ANNEX7_NOON_MINUTE, 24 * 60));
   }
   return out;
+}
+
+/** Unites periods `[from, to)` that overlap or touch, so time shot in parallel counts once. */
+function unite(slots: readonly [number, number][]): [number, number][] {
+  const united: [number, number][] = [];
+  for (const [from, to] of [...slots].sort((a, b) => a[0] - b[0])) {
+    const last = united[united.length - 1];
+    if (last && from <= last[1]) last[1] = Math.max(last[1], to);
+    else united.push([from, to]);
+  }
+  return united;
 }

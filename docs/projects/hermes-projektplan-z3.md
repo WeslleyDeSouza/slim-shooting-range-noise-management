@@ -75,8 +75,9 @@ Methodenquelle: [Offizielles HERMES-Referenzhandbuch, Ausgabe 2022](https://www.
 
 **Programm-Inkremente (PI):** Der Rahmenvertrag verlangt je PI ein separates Angebot mit geschätztem Maximalaufwand,
 Kostendach und Terminplan, zu erstellen innerhalb von drei Wochen nach Angebotsaufforderung (Art. 2.3.4); die
-Auftraggeberin rechnet mit vier bis sechs PI von rund drei Monaten (FAQ 69). Dieser Plan sieht fünf PI vor: PI 1
-Januar–März 2027, PI 2 April–Juni 2027, PI 3 Juli–September 2027, PI 4 Oktober–Dezember 2027, PI 5 Januar–März 2028.
+Auftraggeberin rechnet mit vier bis sechs PI von rund drei Monaten (FAQ 69). Dieser Plan sieht nach der Planungsphase
+(Januar–März 2027) vier PI vor: PI 1 April–Juni 2027, PI 2 Juli–September 2027, PI 3 Oktober–Dezember 2027, PI 4
+Januar–März 2028.
 Anzahl, Dauer und Zuordnung zu den Releases werden in der agilen Planung gemeinsam festgelegt.
 
 ## 3. Organisation und Entscheidungen
@@ -117,14 +118,27 @@ Validierung vorhandener Funktionen, nicht ihrem Aufbau; M2 und M3 bauen darauf a
 im März 2028 ausgerichtet. Die Termine bleiben von der Mitwirkung der Auftraggeberin (Daten, Fachentscheide,
 ELO-Testumgebung), Integration und Abnahme bestimmt.
 
+**Vertraglicher Ablauf nach Rahmenvertrag (Beilage A1):**
+
+- **Planungsphase (Januar–März 2027):** Machbarkeitsanalyse (Art. 2.2.1), Präzisierung des Product Backlogs zum
+  Minimum Marketable Product (MMP) und Festlegung der Mindestleistung mit einem Nachtrag nach Art. 2.2.6 (M1).
+- **Entwicklungsphase (April 2027–März 2028):** vier Programm-Inkremente (PI 1 bis PI 4) von je drei Monaten. Die
+  Leistungen eines PI beginnen erst nach beidseitiger Unterzeichnung des Einzelvertrags für dieses PI (Art. 2.3.8,
+  2.3.9).
+- **Abnahmekaskade in PI 4:** Der Einführungskandidat steht im Januar 2028 bereit. Die Bestellerin führt die
+  Schlussabnahmetests durch (rund 30 Tage, A1.2 Ziffer 7); nach bestandener Schlussabnahme folgt die schriftliche
+  Schlussgenehmigung (Art. 2.13.2) innerhalb von 30 Tagen. Erst die Schlussgenehmigung gibt die produktive
+  Inbetriebnahme frei (M6, März 2028).
+- **Projektabschluss:** April 2028 (M7).
+
 | Meilenstein | Zieltermin | Ergebnisse und Entscheidungskriterien |
 |---|---|---|
 | M0 – Projektstart abgestimmt | Januar 2027 | Auftrag und Kompetenzen geklärt, Team verfügbar, Mitwirkungsplan, Zugänge, PMP und Start-Backlog abgestimmt |
-| M1 – Konzeptbasis bestätigt, Prototyp überführt | März 2027 | Vorhandene Funktionen gemeinsam überprüft, fachlich validiert und in die vereinbarte Architektur überführt; bestätigter Restumfang; Architektur, Datenmodell nach B1 Kapitel 10, Fachregeln, Sicherheits-/Betriebsansatz, priorisierter Backlog, Test- und Migrationsansatz und Aufwandprognose nachvollziehbar |
-| M2 – Technische Integrationsbasis nachgewiesen | Mai 2027 | PostgreSQL/PostGIS, unabhängige Zustände, FGDB-Import und -Export über GDAL mit den Testdaten von KOMZ Lärm und ELO-Verbindung auf der Akzeptanzumgebung geprüft |
-| M3 – Fachlicher Durchstich mit dokumentiertem Review | August 2027 | Die im Prototyp vorhandene Kette Nutzungen → Betriebsdaten → Quellenverteilung → Anhang 7/9 → Beurteilung und Anzeige läuft auf der Zielarchitektur mit Daten der Auftraggeberin und unabhängigen Sollwerten; fachliches Review durch KOMZ Lärm dokumentiert (Zwischenreviews ab M1) |
-| M4 – Einführungskandidat bereit | November 2027 | Gesamter geschuldeter Umfang für die Anwenderprüfung bereit; Dokumentation, Rollen, Migration und Betriebsabläufe prüfbar; Restmängel klassifiziert |
-| M5 – Schlussabnahme und Freigabe der Produktivsetzung | Januar/Februar 2028 | Schlussabnahmetests (rund 30 Tage) gemäss A1.2 bestanden, Schlussgenehmigung erteilt, Migration geprobt, Berechtigungen und Support bereit, Restore und Rollback geprüft |
+| M1 – Planungsphase abgeschlossen, Nachtrag unterzeichnet | März 2027 | Nachtrag nach Art. 2.2.6 unterzeichnet (MMP und Mindestleistung festgelegt); vorhandene Funktionen gemeinsam überprüft, fachlich validiert und in die vereinbarte Architektur überführt; bestätigter Restumfang; Architektur, Datenmodell nach B1 Kapitel 10, Fachregeln, Sicherheits-/Betriebsansatz, priorisierter Backlog, Test- und Migrationsansatz und Aufwandprognose nachvollziehbar |
+| M2 – Technische Integrationsbasis nachgewiesen (PI 1) | Juni 2027 | PostgreSQL/PostGIS, unabhängige Zustände, FGDB-Import und -Export über GDAL mit den Testdaten von KOMZ Lärm und ELO-Verbindung auf der Akzeptanzumgebung geprüft |
+| M3 – Fachlicher Durchstich mit dokumentiertem Review (PI 2) | September 2027 | Die im Prototyp vorhandene Kette Nutzungen → Betriebsdaten → Quellenverteilung → Anhang 7/9 → Beurteilung und Anzeige läuft auf der Zielarchitektur mit Daten der Auftraggeberin und unabhängigen Sollwerten; fachliches Review durch KOMZ Lärm dokumentiert (Zwischenreviews ab M1) |
+| M4 – Fachoberflächen vollständig, Lasttest bestanden (PI 3) | Dezember 2027 | Gesamter geschuldeter Umfang für die Anwenderprüfung bereit; Lasttest nach B1 12.5 bestanden; Dokumentation, Rollen, Migration und Betriebsabläufe prüfbar; Restmängel klassifiziert |
+| M5 – Einführungskandidat, Schlussabnahme und Schlussgenehmigung (PI 4) | Januar/Februar 2028 | Einführungskandidat im Januar bereitgestellt; Schlussabnahmetests (rund 30 Tage) gemäss A1.2 bestanden, Schlussgenehmigung nach Art. 2.13.2 erteilt, Migration geprobt, Berechtigungen und Support bereit, Restore und Rollback geprüft |
 | M6 – Einführung (produktive Inbetriebnahme) | März 2028; vertraglicher Termin 30.06.2028 | Produktivmigration durchgeführt, Betrieb an [PLATZHALTER FIRMA] übergeben (LP4), erste Betriebszeit begleitet, offene Punkte zugeordnet |
 | M7 – Projektabschluss | April 2028 | Ergebnisse übergeben, Projektschlussbeurteilung und Abschlussentscheid |
 
@@ -163,10 +177,10 @@ geplant.
 
 | Release-Schwerpunkt | PI | Inhalte |
 |---|---|---|
-| R1 – Plattform und Referenzen | PI 1 | Umgebungen in der Schweiz, Build und Deployment, PostgreSQL/PostGIS, MFA (TOTP) und Rechte, Stammdaten und Struktur nach B1 Kapitel 10 |
-| R2 – Austausch und Fachkern | PI 2 | FGDB über GDAL, WLR und Betriebsdaten, ELO-Schnittstelle, Quellenverteilung, Kalender, Rundung, Referenzrechnungen und Reproduzierbarkeit |
-| R3 – Fachoberflächen | PI 3–4 | Schiessplatz-Übersicht 5.10, Nutzungen, Berechnungsverwaltung, Karte in der Datenverwaltung, Importe und Exporte, konfigurierte Fachparameter und Rollenoberflächen |
-| R4 – Einführungskandidat | PI 4–5 | Vollständige Sprachen und Dokumentation, Last-, Sicherheits- und Anwendertests, Migration, Befähigung und Betrieb |
+| R1 – Plattform und Integrationsbasis | PI 1 | Umgebungen in der Schweiz, Build und Deployment, PostgreSQL/PostGIS, FGDB über GDAL, MFA (TOTP) und Rechte, Stammdaten und Struktur nach B1 Kapitel 10 |
+| R2 – Austausch und Fachkern | PI 2 | WLR und Betriebsdaten, ELO-Schnittstelle, Quellenverteilung, Kalender, Rundung, Referenzrechnungen und Reproduzierbarkeit |
+| R3 – Fachoberflächen und Lasttest | PI 3 | Schiessplatz-Übersicht 5.10, Nutzungen, Berechnungsverwaltung, Karte in der Datenverwaltung, Importe und Exporte, konfigurierte Fachparameter und Rollenoberflächen |
+| R4 – Einführungskandidat und Abnahme | PI 4 | Vollständige Sprachen und Dokumentation, Last-, Sicherheits- und Anwendertests, Migration, Befähigung und Betrieb |
 
 Sicherheit, Dokumentation und Tests laufen in allen Releases mit. Optionen (LP1b) werden nach Abruf in den Releaseplan
 integriert; die Auswirkungen auf Kapazität und Termine werden vor der Zusage ausgewiesen.
@@ -186,16 +200,19 @@ Aufwand (Rahmenvertrag Art. 3.1).
 Die Technologiepartnerin führt Architektur, Integration und Entwicklung. [PLATZHALTER FIRMA] führt Projektleitung, Business Analyse,
 Qualitätssicherung, Dokumentation, Einführung und Betriebsübergabe.
 
-| Arbeitspaket | Technologiepartnerin | [PLATZHALTER FIRMA] | Stunden |
-|---|---:|---:|---:|
-| Projektleitung, Steuerung, Reporting und Koordination | – | 280 | 280 |
-| Business Analyse, Fachklärung und Anwenderworkshops | 65 | 250 | 315 |
-| Architektur, Sicherheit und technische Konzepte | 245 | – | 245 |
-| Entwicklung einschliesslich Datenmodell, GIS und Integrationen | 1'015 | – | 1'015 |
-| Fach-, Integrations-, End-to-End- und Lasttests, Qualitätssicherung | – | 385 | 385 |
-| Migration, Dokumentation, Einführung und Betriebsübergabe | – | 315 | 315 |
-| Aufwandsreserve | 125 | 120 | 245 |
-| **Summe LP1a** | **1'450** | **1'350** | **2'800** |
+| Arbeitspaket | Technologiepartnerin | [PLATZHALTER FIRMA] | Stunden | Verbleibender Aufwand |
+|---|---:|---:|---:|---|
+| Projektleitung, Steuerung und Reporting | – | 280 | 280 | HERMES-Führung, Projektmanagementplan, monatliches Steuergremium, Controlling |
+| Business Analyse und Fachworkshops | 75 | 245 | 320 | Detailklärung mit KOMZ Lärm, Zuordnung der Vorlage B1.6, Register der Fachentscheide |
+| Architektur, PostGIS und GDAL | 260 | – | 260 | Umstellung auf PostgreSQL/PostGIS, FGDB-Zugriff über GDAL, Typzuordnung der vorbestehenden Bibliotheken |
+| Entwicklung (Restumfang gegenüber dem Prototyp) | 990 | – | 990 | ELO-Endpunkte, Excel-Import B1.6, verbleibende Masken, Exporte und Views |
+| Qualitätssicherung und Tests | – | 380 | 380 | Unabhängige Testabdeckung, Lasttests, End-to-End-Tests, Abnahmevorbereitung |
+| Migration, Handbuch und Einführung | – | 320 | 320 | Unterstützung der Datenübernahme, Benutzerhandbuch und Hilfe, Schulungsvorbereitung |
+| Aufwandsreserve | 125 | 125 | 250 | Unvorhergesehene Präzisierungen und Anpassungen an Schnittstellen |
+| **Summe LP1a** | **1'450** | **1'350** | **2'800** | |
+
+Der Aufwand ist je Arbeitspaket aus dem verbleibenden Umfang geschätzt: Grundlage ist der Stand je Anforderung in der
+Matrix des Lösungskonzepts (umgesetzt, teilweise, offen).
 
 Dies sind Arbeitspakete, keine zusätzlich zu summierenden Personenbudgets. Die automatisierten Tests der Technologiepartnerin
 gehören zum Paket Entwicklung; das Paket Tests und Qualitätssicherung ist die davon unabhängige Prüfung durch [PLATZHALTER FIRMA].
@@ -204,30 +221,40 @@ abrechenbar noch ein Anspruch auf Ausschöpfung des Maximalaufwands.
 
 ### 6.1 Kapazitätsplanung je Rolle
 
-Projektdauer Januar 2027 bis April 2028 (16 Monate): fünf Programm-Inkremente von je drei Monaten (Januar 2027 bis
-März 2028) und der Abschlussmonat April 2028. Das durchschnittliche Pensum bezieht sich auf 160 Arbeitsstunden je
-Monat über diese 16 Monate (2'560 Stunden je Vollzeitstelle). Die Rollenstunden ergeben zusammen 2'555 Stunden, mit
-der Reserve von 245 Stunden 2'800 Stunden.
+Projektdauer Januar 2027 bis April 2028 (16 Monate): Planungsphase (Januar–März 2027), vier Programm-Inkremente von
+je drei Monaten (April 2027–März 2028) und der Abschlussmonat April 2028.
 
-| Rolle | Firma | Person | Stellvertretung | Stunden | Ø Pensum |
-|---|---|---|---|---:|---:|
-| Projektleiter/in | [PLATZHALTER FIRMA] | [OFFEN: Projektleiter/in] | [OFFEN: Stellvertretung Projektleitung] | 280 | 11 % |
-| Lead-Business-Analyst/in | [PLATZHALTER FIRMA] | [OFFEN: Lead-Business-Analyst/in] | [OFFEN: Stellvertretung Lead-Business-Analyst/in] | 250 | 10 % |
-| Lead-Applikationsentwickler / Architektur | Technologiepartnerin | Weslley De Souza | [OFFEN: Stellvertretung Lead-Applikationsentwickler] | 765 | 30 % |
-| Applikationsentwicklung | Technologiepartnerin | [OFFEN: Applikationsentwickler/in] | [OFFEN: Stellvertretung Applikationsentwicklung] | 560 | 22 % |
-| Qualitätssicherung / Testing | [PLATZHALTER FIRMA] | [OFFEN: Qualitätssicherung] | [OFFEN: Stellvertretung Qualitätssicherung] | 385 | 15 % |
-| Betrieb / Sicherheit | [PLATZHALTER FIRMA] | [OFFEN: Betrieb / Sicherheit] | [OFFEN: Stellvertretung Betrieb / Sicherheit] | 315 | 12 % |
-| Reserve (rollenübergreifend) | Technologiepartnerin 125 / [PLATZHALTER FIRMA] 120 | – | – | 245 | – |
-| **Summe** | | | | **2'800** | |
+| Rolle | Firma | Person | Stellvertretung |
+|---|---|---|---|
+| Projektleiter/in | [PLATZHALTER FIRMA] | [OFFEN: Projektleiter/in] | [OFFEN: Stellvertretung Projektleitung] |
+| Lead-Business-Analyst/in | [PLATZHALTER FIRMA] | [OFFEN: Lead-Business-Analyst/in] | [OFFEN: Stellvertretung Lead-Business-Analyst/in] |
+| Lead-Applikationsentwickler / Architektur | Technologiepartnerin | Weslley De Souza | [OFFEN: Stellvertretung Lead-Applikationsentwickler] |
+| Applikationsentwicklung | Technologiepartnerin | [OFFEN: Applikationsentwickler/in] | [OFFEN: Stellvertretung Applikationsentwicklung] |
+| Qualitätssicherung / Testing | [PLATZHALTER FIRMA] | [OFFEN: Qualitätssicherung] | [OFFEN: Stellvertretung Qualitätssicherung] |
+| Betrieb / Sicherheit | [PLATZHALTER FIRMA] | [OFFEN: Betrieb / Sicherheit] | [OFFEN: Stellvertretung Betrieb / Sicherheit] |
+| Einführung und Schulungsvorbereitung | [PLATZHALTER FIRMA] | [OFFEN: Trainer/in] | [OFFEN: Stellvertretung Trainer/in] |
 
-Die Stunden je Rolle folgen aus den Arbeitspaketen: Architektur (245 h) und Entwicklung (1'015 h) verteilen sich auf
-die beiden Entwicklungsrollen, der Anteil der Technologiepartnerin an der Business Analyse (65 h, Spezifikation von
-Schnittstellen und Datenmodell) liegt beim Lead-Applikationsentwickler, das Paket Migration, Dokumentation, Einführung
-und Betriebsübergabe (315 h) bei der Rolle Betrieb / Sicherheit. Die Durchschnittspensen der Schlüsselrollen liegen
-zwischen 10 % und 30 %. Das entspricht dem Projektvolumen: Der Maximalaufwand ist dank des vorhandenen Prototyps auf
-2'800 Stunden reduziert und verteilt sich auf 16 Monate; die Verfügbarkeit ist über die benannten Stellvertretungen
-abgesichert. Die Verteilung der Stunden je Person auf die PI: [OFFEN: Pensen je Person und PI]. Die Kapazitäten der Auftraggeberin je Workshop, Review und Abnahme werden im
-Mitwirkungsplan vereinbart (Abschnitt 12).
+Stunden je Rolle und Zeitraum:
+
+| Rolle | Planung Jan–Mär 27 | PI 1 Apr–Jun 27 | PI 2 Jul–Sep 27 | PI 3 Okt–Dez 27 | PI 4 Jan–Mär 28 | Abschluss Apr 28 | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Projektleiter/in | 45 | 50 | 50 | 50 | 60 | 25 | 280 |
+| Lead-Business-Analyst/in | 75 | 60 | 50 | 35 | 20 | 10 | 250 |
+| Lead-Applikationsentwickler / Architektur | 105 | 210 | 195 | 150 | 75 | 30 | 765 |
+| Applikationsentwicklung | 40 | 160 | 160 | 120 | 60 | 20 | 560 |
+| Qualitätssicherung / Testing | 25 | 60 | 80 | 100 | 95 | 25 | 385 |
+| Betrieb / Sicherheit | 20 | 30 | 35 | 45 | 45 | 15 | 190 |
+| Einführung und Schulungsvorbereitung | 0 | 0 | 0 | 30 | 80 | 10 | 120 |
+| Aufwandsreserve | 20 | 40 | 50 | 60 | 60 | 20 | 250 |
+| **Total je Zeitraum** | **330** | **610** | **620** | **590** | **495** | **155** | **2'800** |
+
+Technologiepartnerin: 765 + 560 = 1'325 Stunden und 125 Stunden Reserve = 1'450 Stunden. [PLATZHALTER FIRMA]: 280 + 250 +
+385 + 190 + 120 = 1'225 Stunden und 125 Stunden Reserve = 1'350 Stunden. Die Rollen arbeiten über die Arbeitspakete
+hinweg; die Summen je Firma stimmen mit der Tabelle der Arbeitspakete überein. Gemessen an 160 Arbeitsstunden je
+Monat liegen die Durchschnittspensen der Schlüsselrollen zwischen 10 % und 30 %. Das entspricht dem Projektvolumen:
+Der Maximalaufwand ist dank des vorhandenen Prototyps auf 2'800 Stunden reduziert; die Verfügbarkeit ist über die
+benannten Stellvertretungen abgesichert und wird je PI im Einzelvertrag bestätigt. Die Kapazitäten der Auftraggeberin
+je Workshop, Review und Abnahme werden im Mitwirkungsplan vereinbart (Abschnitt 12).
 
 ## 7. Ergebnisse und Lieferobjekte
 

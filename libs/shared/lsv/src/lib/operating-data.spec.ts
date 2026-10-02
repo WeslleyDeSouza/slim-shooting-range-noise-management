@@ -264,6 +264,21 @@ describe('annex7HalfDays — Schiesshalbtage (B1 7.4)', () => {
     ).toEqual({ work: 1, sunday: 0 });
   });
 
+  it('counts time shot in parallel on several Stellungsräume once (B1 7.4.3 «gesamtheitlich»)', () => {
+    // Two usages at the same time, e.g. on two Stellungsräume: 1.5 h of shooting, not 3 h.
+    expect(annex7HalfDays([a(MON, '08:00', '09:30'), a(MON, '08:00', '09:30')]).a).toEqual({ work: 0.5, sunday: 0 });
+    // Partly overlapping: 08:00–10:30 united = 2.5 h → a full half-day; the sum of the durations would be 3.5 h.
+    expect(annex7HalfDays([a(MON, '08:00', '09:30'), a(MON, '08:30', '10:30')]).a).toEqual({ work: 1, sunday: 0 });
+    // One after the other without a gap: 08:00–10:00 is exactly 2 h → half.
+    expect(annex7HalfDays([a(MON, '08:00', '09:00'), a(MON, '09:00', '10:00')]).a).toEqual({ work: 0.5, sunday: 0 });
+    // A usage inside a longer one adds nothing.
+    expect(annex7HalfDays([a(MON, '13:00', '17:00'), a(MON, '14:00', '15:00')]).a).toEqual({ work: 1, sunday: 0 });
+    // Parallel shooting of another category is counted for that category.
+    expect(annex7HalfDays([a(MON, '08:00', '09:30'), a(MON, '08:00', '09:30', 'b')])).toMatchObject({ a: { work: 0.5 }, b: { work: 0.5 } });
+    // The order of the usages does not matter.
+    expect(annex7HalfDays([a(MON, '08:30', '10:30'), a(MON, '08:00', '09:30')]).a).toEqual({ work: 1, sunday: 0 });
+  });
+
   it('treats Saturday as a workday, Sunday and holidays as Sunday', () => {
     expect(annex7HalfDays([a(SAT, '08:00', '11:30')]).a).toEqual({
       work: 1,

@@ -354,5 +354,52 @@
     "over": "Exceeded: limit or 125 % of the quota exceeded",
     "incomplete": "Not assessable: usages without a source or level in the state (O8)",
     "none": "No data: no calculation basis or no usages recorded"
+  },
+  "summary": {
+    "title": "Overview",
+    "subtitle": "{{area}} · assessment, quotas and receiver points",
+    "not_set": "Not recorded",
+    "assessment": {
+      "title": "Assessment of the noise exposure",
+      "classification": "Classification",
+      "quota_light": "Compliance with the quota of the planning approval",
+      "quota_rule": "Worst colour of all weapons/calibres in the table below (year and average over 3 years).",
+      "noise_light": "Current noise exposure",
+      "noise_rule": "Worst colour of all receiver points in the current year on the current calculation basis."
+    },
+    "stand": {
+      "title": "Status SPM / MPV / project",
+      "spm_state": "Status SPM",
+      "noise_remediation_state": "Status noise remediation",
+      "project_state": "Status project",
+      "remediation_project_state": "Progress of the remediation project",
+      "recalculation_state": "Status recalculation"
+    },
+    "quota": {
+      "title": "Quotas according to the planning approval",
+      "approval": "Valid planning approval",
+      "approval_none": "none recorded",
+      "col_weapon": "Weapon / calibre",
+      "col_unit": "Unit",
+      "col_target": "Quota (target)",
+      "col_has_quota": "Quota recorded",
+      "col_current": "Comparison year {{year}} (actual)",
+      "col_current_state": "Compliance in the year",
+      "col_average": "Comparison average {{from}}–{{year}} (actual)",
+      "col_average_state": "Compliance in the average over 3 years",
+      "no_quota": "no quota",
+      "no_quota_hint": "For weapons/calibres without a quota the target is 0: every usage exceeds it.",
+      "empty": "Neither quotas nor usages are recorded for this firing range.",
+      "rule": "Green: actual ≤ {{green}} % of the target · Orange: actual ≤ {{orange}} % · Red: above"
+    },
+    "map": {
+      "title": "Site with receiver points",
+      "basis": "Calculation basis “{{state}}”, usages {{year}}",
+      "to_details": "Details per receiver point",
+      "annex_9": "Annex 9",
+      "annex_7": "Annex 7",
+      "list": "Receiver points",
+      "color_rule": "The colour of a receiver point shows the assessment under Annex 9 of the Noise Abatement Ordinance."
+    }
   }
 }

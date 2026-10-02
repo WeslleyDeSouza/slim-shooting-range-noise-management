@@ -41,10 +41,12 @@
         "s6": "“Export” writes the rows shown to an Excel or CSV file; search and filters apply to the file as well."
       },
       "area_overview": {
-        "title": "Shooting range – overview",
-        "intro": "The context bar shows the selected shooting range with its two traffic lights and leads to shot counts, details and simulation.",
-        "s1": "With the selector showing number and name you switch the shooting range without leaving the area.",
-        "s2": "The content of this page (comparison with the quotas of the planning approval) is not available in this version yet."
+        "title": "Firing range – overview",
+        "intro": "The page summarises the chosen firing range: assessment of the noise exposure, status SPM / MPV / project, comparison with the quotas of the planning approval and the map of the receiver points.",
+        "s1": "Use the selection field with number and name to switch the firing range without leaving the area.",
+        "s2": "“Assessment of the noise exposure” shows the classification and the two traffic lights. Each light takes the worst colour: the quota light from the table, the noise light from the receiver points.",
+        "s3": "The quota table compares, per weapon/calibre, the target with the actual value of the year and with the average over three years. Weapons/calibres without a quota count with a target of 0. The year can be chosen; the table can be exported as an Excel or CSV file.",
+        "s4": "The map shows the receiver points in the colour of the assessment under Annex 9. A click on a point shows limit and level; “Full view” opens the map in a new tab."
       },
       "shots": {
         "title": "Shot counts",

@@ -1,0 +1,251 @@
+<div class="slim-page asum" data-testid="summary">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title">{{ 'summary.title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ 'summary.subtitle' | translate: { area: areaLabel() } }}</p>
+    </div>
+  </div>
+
+  <div class="asum__top">
+    <!-- 1 Beurteilung Lärmbelastung (B1 5.10) -->
+    <section class="slim-card" data-testid="summary-assessment">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ 'summary.assessment.title' | translate }}</h2>
+      </div>
+      <div class="slim-card__body">
+        <dl class="asum__facts">
+          <dt class="asum__fact-label">{{ 'summary.assessment.classification' | translate }}</dt>
+          <dd class="asum__fact" data-testid="summary-classification">{{ classification() ?? ('summary.not_set' | translate) }}</dd>
+
+          <dt class="asum__fact-label">{{ 'summary.assessment.quota_light' | translate }}</dt>
+          <dd class="asum__fact" data-testid="summary-light-quota">
+            @if (quota(); as q) {
+              <app-status-pill kind="quota" [status]="q.status" [reason]="q.reason" [basis]="quotaBasis()" />
+            } @else if (area(); as a) {
+              <app-status-pill kind="quota" [status]="a.quotaStatus" [reason]="a.quotaStatusReason" />
+            }
+            <p class="slim-field__hint">{{ 'summary.assessment.quota_rule' | translate }}</p>
+          </dd>
+
+          <dt class="asum__fact-label">{{ 'summary.assessment.noise_light' | translate }}</dt>
+          <dd class="asum__fact" data-testid="summary-light-noise">
+            @if (area(); as a) {
+              <app-status-pill kind="noise" [status]="a.noiseStatus" [reason]="a.noiseStatusReason" [basis]="a.noiseStatusBasis" />
+            }
+            <p class="slim-field__hint">{{ 'summary.assessment.noise_rule' | translate }}</p>
+          </dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 2 Stand SPM / MPV / Projekt (Stammdaten 5.16) -->
+    <section class="slim-card" data-testid="summary-stand">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ 'summary.stand.title' | translate }}</h2>
+      </div>
+      <div class="slim-card__body">
+        <dl class="slim-kv">
+          @for (item of stand(); track item.key) {
+            <dt class="slim-kv__key">{{ 'summary.stand.' + item.key | translate }}</dt>
+            <dd class="slim-kv__value" [attr.data-testid]="'summary-stand-' + item.key" [class.slim-text--muted]="!item.value">
+              {{ item.value ?? ('summary.not_set' | translate) }}
+            </dd>
+          }
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <!-- 3 Übersicht Kontingente gemäss Plangenehmigung -->
+  <section class="slim-card slim-card--bleed" data-testid="summary-quota">
+    <div class="slim-card__header asum__head">
+      <div>
+        <h2 class="slim-card__title">{{ 'summary.quota.title' | translate }}</h2>
+        <p class="slim-card__subtitle" data-testid="summary-approval">
+          {{ 'summary.quota.approval' | translate }}:
+          @if (area()?.planningApproval; as approval) {
+            <b>{{ approval }}</b>
+          } @else {
+            <span class="slim-text--muted">{{ 'summary.quota.approval_none' | translate }}</span>
+          }
+        </p>
+      </div>
+      <div class="slim-card__actions">
+        @if (quota(); as q) {
+          <label class="slim-filter">
+            {{ 'year' | translate }}
+            <select class="slim-select" data-testid="summary-year" [value]="q.year" (change)="setYear($any($event.target).value)">
+              @for (y of q.years; track y) {
+                <option [value]="y" [selected]="y === q.year">{{ y }}</option>
+              }
+            </select>
+          </label>
+        }
+        <app-table-export testId="summary-export" [small]="true" [source]="exportSource" [disabled]="!rows().length" />
+      </div>
+    </div>
+
+    @if (quotaError(); as message) {
+      <div class="slim-alert slim-alert--danger asum__alert" role="alert">
+        <div class="slim-alert__body">{{ message | translate }}</div>
+      </div>
+    }
+
+    <div class="slim-table-wrap">
+      <table class="slim-table slim-table--stack slim-table--compact">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'summary.quota.col_weapon' | translate }}</th>
+            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_target' | translate }}</th>
+            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_current' | translate: { year: quota()?.year ?? '' } }}</th>
+            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_average' | translate: { from: quota()?.fromYear ?? '', year: quota()?.year ?? '' } }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.combinationId) {
+            <tr class="slim-table__row" data-testid="summary-quota-row" [attr.data-current]="row.currentState" [attr.data-average]="row.averageState">
+              <td [attr.data-label]="'summary.quota.col_weapon' | translate">
+                {{ row.name }}
+                @if (!row.hasQuota) {
+                  <span class="slim-badge slim-badge--outline asum__flag" data-testid="summary-no-quota" [attr.title]="'summary.quota.no_quota_hint' | translate">
+                    {{ 'summary.quota.no_quota' | translate }}
+                  </span>
+                }
+              </td>
+              <td [attr.data-label]="'summary.quota.col_target' | translate" class="slim-table__cell--num">
+                <span class="asum__amount">
+                  <b>{{ row.target | number: digits(row) }}</b>
+                  <small class="slim-text--muted">{{ (row.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</small>
+                </span>
+              </td>
+              <td [attr.data-label]="'summary.quota.col_current' | translate: { year: quota()?.year ?? '' }" class="slim-table__cell--num">
+                <span class="asum__compare">
+                  <span class="asum__value">
+                    <b>{{ row.current | number: digits(row) }}</b>
+                    @if (percent(row.current, row); as p) {
+                      <small class="slim-text--muted">{{ p }} %</small>
+                    }
+                  </span>
+                  <app-status-pill [status]="row.currentState" />
+                </span>
+              </td>
+              <td [attr.data-label]="'summary.quota.col_average' | translate: { from: quota()?.fromYear ?? '', year: quota()?.year ?? '' }" class="slim-table__cell--num">
+                <span class="asum__compare">
+                  <span class="asum__value">
+                    <b>{{ row.average | number: digits(row) }}</b>
+                    @if (percent(row.average, row); as p) {
+                      <small class="slim-text--muted">{{ p }} %</small>
+                    }
+                  </span>
+                  <app-status-pill [status]="row.averageState" />
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="slim-table__cell--wrap">
+                <div class="slim-empty">
+                  @if (quotaLoading()) {
+                    <span class="slim-spinner"></span>
+                  } @else {
+                    <div class="slim-empty__text" data-testid="summary-quota-empty">{{ 'summary.quota.empty' | translate }}</div>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="slim-table-foot asum__foot">
+      @if (quota(); as q) {
+        <span data-testid="summary-quota-rule">{{ 'summary.quota.rule' | translate: { green: q.greenMaxPercent, orange: q.orangeMaxPercent } }}</span>
+      }
+      @if (withoutQuota()) {
+        <span>{{ 'summary.quota.no_quota_hint' | translate }}</span>
+      }
+    </div>
+  </section>
+
+  <!-- 4 Übersicht Areal mit Empfangspunkten -->
+  <section class="slim-card" data-testid="summary-map-card">
+    <div class="slim-card__header asum__head">
+      <div>
+        <h2 class="slim-card__title">{{ 'summary.map.title' | translate }}</h2>
+        <p class="slim-card__subtitle">
+          @if (calculation(); as c) {
+            {{ 'summary.map.basis' | translate: { state: c.name, year: mapYear } }}
+          }
+        </p>
+      </div>
+      <div class="slim-card__actions">
+        <a class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="summary-to-details" [routerLink]="routes.admin.area.details(area()?.id ?? '')">
+          {{ 'summary.map.to_details' | translate }}
+        </a>
+      </div>
+    </div>
+    <div class="slim-card__body">
+      @if (!receivers().length) {
+        <div class="slim-empty">
+          @if (assessmentLoading()) {
+            <span class="slim-spinner"></span>
+          } @else {
+            <div class="slim-empty__title">{{ 'details.no_calculation.title' | translate }}</div>
+            <p class="slim-empty__text">{{ 'details.no_calculation.text' | translate }}</p>
+            @if (calculationsLink(); as link) {
+              <a class="slim-btn slim-btn--primary" data-testid="summary-to-calculations" [routerLink]="link">
+                {{ 'details.no_calculation.link' | translate }}
+              </a>
+            }
+          }
+        </div>
+      } @else {
+        @if (useGis()) {
+          <slim-map-viewer
+            class="asum__gis"
+            data-testid="summary-map"
+            pinTestId="summary-pin"
+            [points]="mapPoints()"
+            [plantParts]="plantParts()"
+            [selectedId]="selectedId()"
+            [title]="areaLabel()"
+            [fullscreenLink]="fullscreenLink()"
+            [popup]="true"
+            (pointSelected)="select($event)"
+            (unavailable)="gisAvailable.set(false)"
+          >
+            <div slimMapPopup class="asum__pop">
+              @if (selected(); as r) {
+                <div class="asum__pop-head">
+                  <b>{{ r.code }}</b> · {{ r.address }}
+                  <button type="button" class="asum__pop-close" [attr.aria-label]="'common.close' | translate" (click)="select(null); $event.stopPropagation()">×</button>
+                </div>
+                @for (row of applicableRows(r); track row.annex + row.limitKind) {
+                  <div class="asum__pop-row" [attr.data-annex]="row.annex">
+                    <span>{{ (row.annex === 9 ? 'summary.map.annex_9' : 'summary.map.annex_7') | translate }} · {{ row.limitKind.toUpperCase() }} {{ row.limit }} dB</span>
+                    <b>{{ row.level === null ? '–' : (row.level | number: '1.1-1') + ' dB' }}</b>
+                  </div>
+                }
+              }
+            </div>
+          </slim-map-viewer>
+        }
+
+        <!-- The Empfangspunkte as a list: the map in words, and all there is when the map cannot be shown. -->
+        <ul class="slim-list slim-list--divided asum__points" data-testid="summary-points" [attr.aria-label]="'summary.map.list' | translate">
+          @for (r of receivers(); track r.id) {
+            <li class="slim-list__item" data-testid="summary-point" [attr.data-state]="annex9State(r)">
+              <div class="slim-list__content">
+                <div class="slim-list__title">{{ r.code }}</div>
+                <div class="slim-list__meta">{{ r.address }}</div>
+              </div>
+              <div class="slim-list__trailing"><app-status-pill [status]="annex9State(r)" /></div>
+            </li>
+          }
+        </ul>
+        <p class="slim-field__hint">{{ 'summary.map.color_rule' | translate }}</p>
+      }
+    </div>
+  </section>
+</div>

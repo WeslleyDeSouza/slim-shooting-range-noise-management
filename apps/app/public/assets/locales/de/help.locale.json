@@ -42,9 +42,11 @@
       },
       "area_overview": {
         "title": "Schiessplatz – Übersicht",
-        "intro": "Die Kontextleiste zeigt den gewählten Schiessplatz mit seinen beiden Ampeln und führt zu Schusszahlen, Details und Simulation.",
+        "intro": "Die Seite fasst den gewählten Schiessplatz zusammen: Beurteilung der Lärmbelastung, Stand SPM / MPV / Projekt, Vergleich mit den Kontingenten der Plangenehmigung und Karte der Empfangspunkte.",
         "s1": "Über das Auswahlfeld mit Nummer und Name wechseln Sie den Schiessplatz, ohne den Bereich zu verlassen.",
-        "s2": "Der Inhalt dieser Seite (Vergleich mit den Kontingenten der Plangenehmigung) ist in dieser Version noch nicht verfügbar."
+        "s2": "«Beurteilung Lärmbelastung» zeigt die Klassierung und die beiden Ampeln. Jede Ampel übernimmt die schlechteste Farbe: die Kontingent-Ampel aus der Tabelle, die Lärm-Ampel aus den Empfangspunkten.",
+        "s3": "Die Kontingent-Tabelle vergleicht je Waffe/Kaliber das Soll mit dem Ist des Jahres und mit dem Durchschnitt über drei Jahre. Waffen/Kaliber ohne Kontingent zählen mit Soll 0. Das Jahr ist wählbar, die Tabelle lässt sich als Excel- oder CSV-Datei exportieren.",
+        "s4": "Die Karte zeigt die Empfangspunkte in der Farbe der Beurteilung nach Anhang 9. Ein Klick auf einen Punkt zeigt Grenzwert und Pegel; «Vollansicht» öffnet die Karte in einem neuen Tab."
       },
       "shots": {
         "title": "Schusszahlen",

@@ -354,5 +354,52 @@
     "over": "Dépassé : valeur limite ou 125 % du contingent dépassés",
     "incomplete": "Non évaluable : utilisations sans source ou niveau dans l’état (O8)",
     "none": "Pas de données : pas de base de calcul ou aucune utilisation saisie"
+  },
+  "summary": {
+    "title": "Vue d’ensemble",
+    "subtitle": "{{area}} · évaluation, contingents et points de réception",
+    "not_set": "Non saisi",
+    "assessment": {
+      "title": "Évaluation de l’exposition au bruit",
+      "classification": "Classification",
+      "quota_light": "Respect du contingent de l’approbation des plans",
+      "quota_rule": "Couleur la plus défavorable de toutes les armes/calibres du tableau ci-dessous (année et moyenne sur 3 ans).",
+      "noise_light": "Exposition au bruit actuelle",
+      "noise_rule": "Couleur la plus défavorable de tous les points de réception pour l’année en cours, sur la base de calcul actuelle."
+    },
+    "stand": {
+      "title": "État SPM / MPV / projet",
+      "spm_state": "État SPM",
+      "noise_remediation_state": "État de l’assainissement du bruit",
+      "project_state": "État du projet",
+      "remediation_project_state": "Avancement du projet d’assainissement",
+      "recalculation_state": "État du nouveau calcul"
+    },
+    "quota": {
+      "title": "Contingents selon l’approbation des plans",
+      "approval": "Approbation des plans en vigueur",
+      "approval_none": "aucune saisie",
+      "col_weapon": "Arme / calibre",
+      "col_unit": "Unité",
+      "col_target": "Contingent (valeur cible)",
+      "col_has_quota": "Contingent saisi",
+      "col_current": "Comparaison année {{year}} (valeur réelle)",
+      "col_current_state": "Respect dans l’année",
+      "col_average": "Comparaison moyenne {{from}}–{{year}} (valeur réelle)",
+      "col_average_state": "Respect en moyenne sur 3 ans",
+      "no_quota": "sans contingent",
+      "no_quota_hint": "Pour les armes/calibres sans contingent, la valeur cible est 0 : chaque utilisation est un dépassement.",
+      "empty": "Ni contingents ni utilisations ne sont saisis pour cette place de tir.",
+      "rule": "Vert : valeur réelle ≤ {{green}} % de la cible · Orange : valeur réelle ≤ {{orange}} % · Rouge : au-delà"
+    },
+    "map": {
+      "title": "Site avec points de réception",
+      "basis": "Base de calcul « {{state}} », utilisations {{year}}",
+      "to_details": "Détails par point de réception",
+      "annex_9": "Annexe 9",
+      "annex_7": "Annexe 7",
+      "list": "Points de réception",
+      "color_rule": "La couleur d’un point de réception indique l’évaluation selon l’annexe 9 OPB."
+    }
   }
 }

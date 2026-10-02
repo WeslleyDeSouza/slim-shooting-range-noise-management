@@ -354,5 +354,52 @@
     "over": "Superato: valore limite o 125 % del contingente superati",
     "incomplete": "Non valutabile: utilizzi senza sorgente o livello nello stato (O8)",
     "none": "Nessun dato: nessuna base di calcolo o nessun utilizzo registrato"
+  },
+  "summary": {
+    "title": "Panoramica",
+    "subtitle": "{{area}} · valutazione, contingenti e punti di ricezione",
+    "not_set": "Non registrato",
+    "assessment": {
+      "title": "Valutazione dell’esposizione al rumore",
+      "classification": "Classificazione",
+      "quota_light": "Rispetto del contingente dell’approvazione dei piani",
+      "quota_rule": "Colore peggiore di tutte le armi/calibri della tabella sottostante (anno e media su 3 anni).",
+      "noise_light": "Esposizione al rumore attuale",
+      "noise_rule": "Colore peggiore di tutti i punti di ricezione nell’anno in corso, sulla base di calcolo attuale."
+    },
+    "stand": {
+      "title": "Stato SPM / MPV / progetto",
+      "spm_state": "Stato SPM",
+      "noise_remediation_state": "Stato del risanamento fonico",
+      "project_state": "Stato del progetto",
+      "remediation_project_state": "Avanzamento del progetto di risanamento",
+      "recalculation_state": "Stato del nuovo calcolo"
+    },
+    "quota": {
+      "title": "Contingenti secondo l’approvazione dei piani",
+      "approval": "Approvazione dei piani valida",
+      "approval_none": "nessuna registrata",
+      "col_weapon": "Arma / calibro",
+      "col_unit": "Unità",
+      "col_target": "Contingente (valore nominale)",
+      "col_has_quota": "Contingente registrato",
+      "col_current": "Confronto anno {{year}} (valore effettivo)",
+      "col_current_state": "Rispetto nell’anno",
+      "col_average": "Confronto media {{from}}–{{year}} (valore effettivo)",
+      "col_average_state": "Rispetto nella media su 3 anni",
+      "no_quota": "senza contingente",
+      "no_quota_hint": "Per armi/calibri senza contingente il valore nominale è 0: ogni utilizzo è un superamento.",
+      "empty": "Per questa piazza di tiro non sono registrati né contingenti né utilizzi.",
+      "rule": "Verde: valore effettivo ≤ {{green}} % del nominale · Arancione: valore effettivo ≤ {{orange}} % · Rosso: oltre"
+    },
+    "map": {
+      "title": "Area con punti di ricezione",
+      "basis": "Base di calcolo «{{state}}», utilizzi {{year}}",
+      "to_details": "Dettagli per punto di ricezione",
+      "annex_9": "Allegato 9",
+      "annex_7": "Allegato 7",
+      "list": "Punti di ricezione",
+      "color_rule": "Il colore di un punto di ricezione indica la valutazione secondo l’allegato 9 OIF."
+    }
   }
 }

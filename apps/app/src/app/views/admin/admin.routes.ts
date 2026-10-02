@@ -77,10 +77,14 @@ export const ADMIN_ROUTES: Routes = [
               ),
             children: [
               { path: '', pathMatch: 'full', redirectTo: S.overview },
-              placeholder(S.overview, {
-                title: 'menu.area_overview',
-                crumbs: ['menu.areas'],
-              }),
+              // «Schiessplatz-Nutzungen – Übersicht» (B1 5.10, slm 9)
+              {
+                path: S.overview,
+                loadComponent: () =>
+                  import('./area/summary/area-summary.component').then(
+                    (c) => c.AreaSummaryComponent,
+                  ),
+              },
               {
                 path: S.shots,
                 loadComponent: () =>

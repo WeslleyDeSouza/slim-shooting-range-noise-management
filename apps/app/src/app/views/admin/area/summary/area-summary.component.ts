@@ -175,6 +175,11 @@ export class AreaSummaryComponent extends ComponentBase {
     return receiver.rows.filter((row) => row.applicable);
   }
 
+  /** Stück show at most one decimal (the mean of three years), Kilogramm the three a quantity can have. */
+  protected digits(row: QuotaRowDto): string {
+    return row.quantityUnit === 'kg' ? '1.0-3' : '1.0-1';
+  }
+
   /** Ist as a share of the Soll in percent; null when the Soll is 0 (nothing to divide by). */
   protected percent(actual: number, row: QuotaRowDto): number | null {
     return row.target > 0 ? Math.round((actual / row.target) * 100) : null;

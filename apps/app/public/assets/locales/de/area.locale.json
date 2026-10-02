@@ -354,5 +354,52 @@
     "over": "Überschritten: Grenzwert bzw. 125 % des Kontingents überschritten",
     "incomplete": "Nicht beurteilbar: Nutzungen ohne Quelle oder Pegel im Zustand (O8)",
     "none": "Keine Daten: keine Berechnungsgrundlage oder keine Nutzungen erfasst"
+  },
+  "summary": {
+    "title": "Übersicht",
+    "subtitle": "{{area}} · Beurteilung, Kontingente und Empfangspunkte",
+    "not_set": "Nicht erfasst",
+    "assessment": {
+      "title": "Beurteilung Lärmbelastung",
+      "classification": "Klassierung",
+      "quota_light": "Einhaltung Kontingent Plangenehmigung",
+      "quota_rule": "Schlechteste Farbe aller Waffen/Kaliber der Tabelle unten (Jahr und Ø über 3 Jahre).",
+      "noise_light": "Aktuelle Lärmbelastung",
+      "noise_rule": "Schlechteste Farbe aller Empfangspunkte im laufenden Jahr auf der aktuellen Berechnungsgrundlage."
+    },
+    "stand": {
+      "title": "Stand SPM / MPV / Projekt",
+      "spm_state": "Stand SPM",
+      "noise_remediation_state": "Stand Lärmsanierung",
+      "project_state": "Stand Projekt",
+      "remediation_project_state": "Bearbeitungsstand Sanierungsprojekt",
+      "recalculation_state": "Stand Neuberechnung"
+    },
+    "quota": {
+      "title": "Übersicht Kontingente gemäss Plangenehmigung",
+      "approval": "Gültige Plangenehmigung",
+      "approval_none": "keine erfasst",
+      "col_weapon": "Waffe / Kaliber",
+      "col_unit": "Einheit",
+      "col_target": "Kontingent (Soll)",
+      "col_has_quota": "Kontingent erfasst",
+      "col_current": "Vergleich Jahr {{year}} (Ist)",
+      "col_current_state": "Einhaltung im Jahr",
+      "col_average": "Vergleich Ø {{from}}–{{year}} (Ist)",
+      "col_average_state": "Einhaltung im Ø über 3 Jahre",
+      "no_quota": "ohne Kontingent",
+      "no_quota_hint": "Für Waffen/Kaliber ohne Kontingent gilt als Soll 0: Jede Nutzung ist eine Überschreitung.",
+      "empty": "Für diesen Schiessplatz sind weder Kontingente noch Nutzungen erfasst.",
+      "rule": "Grün: Ist ≤ {{green}} % des Solls · Orange: Ist ≤ {{orange}} % · Rot: darüber"
+    },
+    "map": {
+      "title": "Übersicht Areal mit Empfangspunkten",
+      "basis": "Berechnungsgrundlage «{{state}}», Nutzungen {{year}}",
+      "to_details": "Details je Empfangspunkt",
+      "annex_9": "Anhang 9",
+      "annex_7": "Anhang 7",
+      "list": "Empfangspunkte",
+      "color_rule": "Die Farbe eines Empfangspunkts zeigt die Beurteilung nach Anhang 9 LSV."
+    }
   }
 }

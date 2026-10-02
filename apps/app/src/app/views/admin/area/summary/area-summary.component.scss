@@ -1,0 +1,126 @@
+@use 'slim/abstracts' as slim;
+
+// «Schiessplatz – Übersicht» (B1 5.10). Block `asum`.
+:host {
+  display: block;
+}
+
+.asum {
+  // Beurteilung and Stand next to each other from tablet width.
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(4);
+    margin-bottom: slim.space(4);
+
+    @include slim.mq('md') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  // Card header with a title and controls: the controls move below the title when there is no room.
+  &__head {
+    flex-wrap: wrap;
+    gap: slim.space(2) slim.space(4);
+  }
+
+  // Beurteilung: label above value, so a long Klassierung and the rule texts use the whole width.
+  &__facts {
+    display: grid;
+    gap: slim.space(1);
+    margin: 0;
+  }
+
+  &__fact-label {
+    font-size: slim.font-size('xs');
+    font-weight: slim.font-weight('semibold');
+    color: slim.color('text-3');
+  }
+
+  &__fact {
+    margin: 0 0 slim.space(3);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // A quantity with its unit.
+  &__amount {
+    display: inline-flex;
+    align-items: baseline;
+    gap: slim.space(1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__alert {
+    margin: 0 slim.space(4) slim.space(3);
+  }
+
+  // Marks a Waffe/Kaliber that is used without a Kontingent.
+  &__flag {
+    margin-left: slim.space(2);
+  }
+
+  // Ist value with its share of the Soll, then the colour.
+  &__compare {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: slim.space(3);
+  }
+
+  &__value {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.25;
+  }
+
+  &__foot {
+    flex-wrap: wrap;
+    gap: slim.space(2) slim.space(4);
+  }
+
+  // Map ----------------------------------------------------------------------
+  &__gis {
+    display: block;
+    height: calc(#{slim.space(16)} * 6);
+    margin-bottom: slim.space(4);
+  }
+
+  &__pop {
+    width: calc(#{slim.space(16)} * 4);
+  }
+
+  &__pop-head {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    margin-bottom: slim.space(1);
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__pop-close {
+    @include slim.control-reset;
+    margin-left: auto;
+    font-size: slim.font-size('lg');
+    line-height: 1;
+    color: slim.color('text-4');
+    @include slim.focus-visible;
+  }
+
+  &__pop-row {
+    display: flex;
+    justify-content: space-between;
+    gap: slim.space(2);
+    padding: slim.space(1) 0;
+    border-top: 1px dashed slim.color('line');
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__points {
+    margin-bottom: slim.space(2);
+  }
+}

@@ -42,9 +42,11 @@
       },
       "area_overview": {
         "title": "Piazza di tiro – panoramica",
-        "intro": "La barra di contesto mostra la piazza di tiro scelta con i suoi due semafori e conduce a colpi, dettagli e simulazione.",
-        "s1": "Con il campo di selezione con numero e nome si cambia piazza di tiro senza lasciare il settore.",
-        "s2": "Il contenuto di questa pagina (confronto con i contingenti dell’approvazione dei piani) non è ancora disponibile in questa versione."
+        "intro": "La pagina riassume la piazza di tiro scelta: valutazione dell’esposizione al rumore, stato SPM / MPV / progetto, confronto con i contingenti dell’approvazione dei piani e carta dei punti di ricezione.",
+        "s1": "Con il campo di selezione con numero e nome si cambia piazza di tiro senza lasciare l’area.",
+        "s2": "«Valutazione dell’esposizione al rumore» mostra la classificazione e i due semafori. Ogni semaforo riprende il colore peggiore: quello dei contingenti dalla tabella, quello del rumore dai punti di ricezione.",
+        "s3": "La tabella dei contingenti confronta, per arma/calibro, il valore nominale con il valore effettivo dell’anno e con la media su tre anni. Armi/calibri senza contingente contano con valore nominale 0. L’anno è selezionabile; la tabella può essere esportata come file Excel o CSV.",
+        "s4": "La carta mostra i punti di ricezione nel colore della valutazione secondo l’allegato 9. Un clic su un punto mostra valore limite e livello; «Vista completa» apre la carta in una nuova scheda."
       },
       "shots": {
         "title": "Colpi",

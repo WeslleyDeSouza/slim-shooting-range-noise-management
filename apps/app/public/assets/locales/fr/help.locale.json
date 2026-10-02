@@ -42,9 +42,11 @@
       },
       "area_overview": {
         "title": "Place de tir – vue d’ensemble",
-        "intro": "La barre de contexte présente la place de tir choisie avec ses deux feux et mène aux coups tirés, aux détails et à la simulation.",
+        "intro": "La page résume la place de tir choisie : évaluation de l’exposition au bruit, état SPM / MPV / projet, comparaison avec les contingents de l’approbation des plans et carte des points de réception.",
         "s1": "Le champ de sélection avec numéro et nom permet de changer de place de tir sans quitter le domaine.",
-        "s2": "Le contenu de cette page (comparaison avec les contingents de l’approbation des plans) n’est pas encore disponible dans cette version."
+        "s2": "« Évaluation de l’exposition au bruit » montre la classification et les deux feux. Chaque feu reprend la couleur la plus défavorable : le feu des contingents à partir du tableau, le feu du bruit à partir des points de réception.",
+        "s3": "Le tableau des contingents compare, par arme/calibre, la valeur cible avec la valeur réelle de l’année et avec la moyenne sur trois ans. Les armes/calibres sans contingent comptent avec une cible de 0. L’année peut être choisie ; le tableau peut être exporté en fichier Excel ou CSV.",
+        "s4": "La carte montre les points de réception dans la couleur de l’évaluation selon l’annexe 9. Un clic sur un point affiche la valeur limite et le niveau ; « Vue complète » ouvre la carte dans un nouvel onglet."
       },
       "shots": {
         "title": "Coups tirés",

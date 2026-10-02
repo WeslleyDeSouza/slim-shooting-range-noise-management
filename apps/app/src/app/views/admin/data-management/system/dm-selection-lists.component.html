@@ -1,0 +1,117 @@
+<section class="slim-card dlist" data-testid="dlist">
+  <div class="slim-card__header">
+    <h2 class="slim-card__title">{{ prefix + '.title' | translate }}</h2>
+    @if (!readonly()) {
+      <div class="slim-card__actions">
+        <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dlist-add" [disabled]="editing() !== null" (click)="add()">
+          <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+          <span class="slim-btn__label">{{ prefix + '.add' | translate }}</span>
+        </button>
+      </div>
+    }
+  </div>
+  <div class="slim-card__body dlist__body">
+    <p class="slim-field__hint">{{ prefix + '.hint' | translate }}</p>
+
+    <div class="slim-field dlist__pick">
+      <label class="slim-field__label" for="dlist-list">{{ prefix + '.list' | translate }}</label>
+      <select class="slim-select" id="dlist-list" data-testid="dlist-list" [value]="selected()" (change)="select($any($event.target).value)">
+        @for (key of keys; track key) {
+          <option [value]="key" [selected]="key === selected()">{{ prefix + '.lists.' + key | translate }}</option>
+        }
+      </select>
+      <p class="slim-field__hint">{{ prefix + '.used_in.' + selected() | translate }}</p>
+    </div>
+
+    @if (error(); as message) {
+      <div class="slim-alert slim-alert--danger" role="alert" data-testid="dlist-error">
+        <div class="slim-alert__body">{{ message | translate }}</div>
+      </div>
+    }
+
+    @if (editing() !== null) {
+      <form class="dlist__form" [formGroup]="form" (ngSubmit)="save()" novalidate data-testid="dlist-form">
+        <div class="slim-form__legend">{{ (editing() === '' ? prefix + '.new_value' : prefix + '.edit_value') | translate }}</div>
+        <div class="dlist__labels">
+          <div class="slim-field" [class.slim-field--invalid]="submitted() && !form.controls.labelDe.value.trim()">
+            <label class="slim-field__label" for="dlist-de">{{ prefix + '.label_de' | translate }} <span class="slim-field__required">*</span></label>
+            <input class="slim-input" id="dlist-de" formControlName="labelDe" maxlength="120" data-testid="dlist-label-de" />
+            <p class="slim-field__error">{{ prefix + '.err_label' | translate }}</p>
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="dlist-fr">{{ prefix + '.label_fr' | translate }}</label>
+            <input class="slim-input" id="dlist-fr" formControlName="labelFr" maxlength="120" data-testid="dlist-label-fr" />
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="dlist-it">{{ prefix + '.label_it' | translate }}</label>
+            <input class="slim-input" id="dlist-it" formControlName="labelIt" maxlength="120" data-testid="dlist-label-it" />
+          </div>
+          <div class="slim-field">
+            <label class="slim-field__label" for="dlist-en">{{ prefix + '.label_en' | translate }}</label>
+            <input class="slim-input" id="dlist-en" formControlName="labelEn" maxlength="120" data-testid="dlist-label-en" />
+          </div>
+        </div>
+        <p class="slim-field__hint">{{ prefix + '.label_hint' | translate }}</p>
+        <div class="dlist__form-actions">
+          <button type="button" class="slim-btn slim-btn--ghost" data-testid="dlist-cancel" (click)="close()">{{ 'common.cancel' | translate }}</button>
+          <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving()" data-testid="dlist-save">{{ 'common.save' | translate }}</button>
+        </div>
+      </form>
+    }
+
+    <div class="slim-table-wrap">
+      <table class="slim-table dlist__table">
+        <thead>
+          <tr>
+            <th scope="col">{{ prefix + '.label_de' | translate }}</th>
+            <th scope="col">{{ prefix + '.label_fr' | translate }}</th>
+            <th scope="col">{{ prefix + '.label_it' | translate }}</th>
+            <th scope="col">{{ prefix + '.label_en' | translate }}</th>
+            <th scope="col">{{ prefix + '.status' | translate }}</th>
+            @if (!readonly()) {
+              <th scope="col" class="slim-table__cell--actions">{{ prefix + '.actions' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of values(); track v.code; let first = $first; let last = $last) {
+            <tr class="slim-table__row" [class.dlist__row--inactive]="!v.enabled" data-testid="dlist-row" [attr.data-code]="v.code">
+              <td class="dlist__label">{{ v.labelDe }}</td>
+              <td class="dlist__label">{{ v.labelFr ?? '–' }}</td>
+              <td class="dlist__label">{{ v.labelIt ?? '–' }}</td>
+              <td class="dlist__label">{{ v.labelEn ?? '–' }}</td>
+              <td>
+                <span class="slim-badge" [class.slim-badge--success]="v.enabled" [class.slim-badge--outline]="!v.enabled" data-testid="dlist-status">
+                  {{ (v.enabled ? prefix + '.active' : prefix + '.inactive') | translate }}
+                </span>
+              </td>
+              @if (!readonly()) {
+                <td class="slim-table__cell--actions">
+                  <div class="slim-row-actions">
+                    <button type="button" class="dlist__icon" data-testid="dlist-up" [disabled]="first || saving()" [attr.title]="prefix + '.move_up' | translate" [attr.aria-label]="prefix + '.move_up' | translate" (click)="move(v, -1)">
+                      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+                    <button type="button" class="dlist__icon" data-testid="dlist-down" [disabled]="last || saving()" [attr.title]="prefix + '.move_down' | translate" [attr.aria-label]="prefix + '.move_down' | translate" (click)="move(v, 1)">
+                      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </button>
+                    <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="dlist-edit" [disabled]="saving()" (click)="edit(v)">{{ 'common.edit' | translate }}</button>
+                    <button
+                      type="button"
+                      class="slim-btn slim-btn--ghost slim-btn--sm"
+                      data-testid="dlist-toggle"
+                      [disabled]="saving() || isLastActive(v)"
+                      [attr.title]="isLastActive(v) ? (prefix + '.last_active' | translate) : null"
+                      (click)="toggle(v)"
+                    >
+                      {{ (v.enabled ? prefix + '.deactivate' : prefix + '.activate') | translate }}
+                    </button>
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

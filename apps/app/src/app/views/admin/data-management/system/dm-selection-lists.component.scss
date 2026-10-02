@@ -1,0 +1,74 @@
+@use 'slim/abstracts' as slim;
+
+// Pflege der Auswahllisten (slm 1). Block `dlist`.
+:host {
+  display: block;
+}
+
+.dlist {
+  &__body {
+    display: grid;
+    gap: slim.space(4);
+  }
+
+  &__pick {
+    max-width: calc(#{slim.space(16)} * 6);
+  }
+
+  &__form {
+    display: grid;
+    gap: slim.space(3);
+    padding: slim.space(4);
+    border: 1px solid slim.color('line');
+    border-radius: slim.radius('md');
+    background: slim.color('surface-2');
+  }
+
+  &__labels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(3);
+
+    @include slim.mq('md') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: slim.space(2);
+  }
+
+  // Labels are sentences: let them wrap (the table default is nowrap).
+  &__label {
+    white-space: normal;
+  }
+
+  &__row--inactive &__label {
+    color: slim.color('text-3');
+  }
+
+  &__icon {
+    display: inline-grid;
+    place-items: center;
+    width: slim.size('control-h-sm');
+    height: slim.size('control-h-sm');
+    border: 1px solid slim.color('line');
+    border-radius: slim.radius('md');
+    background: slim.color('surface');
+    color: slim.color('text-2');
+    cursor: pointer;
+    @include slim.focus-visible;
+
+    svg {
+      width: slim.space(4);
+      height: slim.space(4);
+    }
+
+    &:disabled {
+      color: slim.color('disabled');
+      cursor: default;
+    }
+  }
+}

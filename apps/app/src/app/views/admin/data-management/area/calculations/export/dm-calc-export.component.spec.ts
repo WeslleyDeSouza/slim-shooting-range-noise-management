@@ -74,6 +74,17 @@ describe('DmCalcExportComponent (5.20 Export)', () => {
     expect(years[0].textContent).toContain('412');
   });
 
+  it('sorts the Zustände and the years by a column (B1 5.5.2)', () => {
+    const names = () => all('[data-testid="dce-state"]').map((r) => r.getAttribute('data-name'));
+    const title = el<HTMLButtonElement>('[data-testid="dce-sort-name"] button');
+    title.click();
+    title.click();
+    fixture.detectChanges();
+    expect(names()).toEqual(['Variante A', 'Sanierter Zustand SPM Geissalp', 'Initiale Aufnahme']);
+    expect(el('[data-testid="dce-sort-name"]').getAttribute('aria-sort')).toBe('descending');
+    expect(el('[data-testid="dce-sort-year"] button')).not.toBeNull();
+  });
+
   it('selects states one by one or all at once and exports the selection as a JSON bundle', fakeAsync(() => {
     all('[data-testid="dce-state"]')[1].click();
     fixture.detectChanges();

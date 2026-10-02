@@ -17,8 +17,12 @@ import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { CaliberDto, WeaponCategoryDto, WeaponCombinationDto, WeaponDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent } from '../../../../common/table-select.component';
 import { AccessFacade } from '../../../../core/access/access.facade';
 import { saveBlob } from '../../../../core/download';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
 import {
   DataWeaponsFacade,
   WeaponInputByKind,
@@ -82,6 +86,14 @@ const COMBINATION_FILTERS: { key: CombinationFilter; label: string }[] = [
   { key: 'caliberName', label: 'col_caliber' },
 ];
 
+/** Ids of the four lists in the export of the table: file name (date and extension are added) and logbook. */
+const EXPORT_TABLES: Record<WeaponKind, string> = {
+  combination: 'waffe_kaliber_kombinationen',
+  caliber: 'kaliber',
+  weapon: 'waffen',
+  category: 'waffenkategorien',
+};
+
 interface Row {
   record: WeaponRecord;
   cells: (Highlighted | boolean)[];
@@ -107,7 +119,7 @@ interface Toast {
 @Component({
   selector: 'app-dm-weapons',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, TranslatePipe, DatePipe],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, TranslatePipe, DatePipe, TableExportComponent, TableSelectComponent],
   templateUrl: './dm-weapons.component.html',
   styleUrl: './dm-weapons.component.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -208,6 +220,35 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
       }));
   });
 
+  /** Marked rows of the open list for the export (B1 5.5.3); a click on a row opens it. */
+  protected readonly marked = new TableSelection();
+  protected readonly shownIds = computed(() => this.rows().map((row) => row.record.id));
+
+  /** The open list as shown (search, filters and sorting applied), or its marked rows, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly tableExportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const kind = this.kind();
+    const filters = this.filters();
+    const picked = this.marked.pick(this.rows(), (row) => row.record.id);
+    return tableExport<Row>({
+      table: EXPORT_TABLES[kind],
+      title: t(`${I18N}.kind_${kind}`),
+      filters: [
+        { label: t('admin.export.search'), value: this.query().trim() },
+        ...(kind === 'combination' ? COMBINATION_FILTERS.map((f) => ({ label: t(`${I18N}.${f.label}`), value: filters[f.key] })) : []),
+      ],
+      columns: this.columns().map((column, index) => ({
+        header: t(`${I18N}.${column.label}`),
+        value: (row: Row) => {
+          const cell = row.cells[index];
+          return typeof cell === 'boolean' ? t(cell ? 'common.yes' : 'common.no') : `${cell.pre}${cell.match}${cell.post}` || null;
+        },
+      })),
+      rows: picked.rows,
+      selection: picked.selection,
+    });
+  };
+
   protected sortBy(key: string): void {
     if (this.sortKey() === key) {
       this.sortAsc.update((asc) => !asc);
@@ -287,6 +328,7 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
         this.sortAsc.set(true);
         this.filters.set({ categoryName: '', weaponName: '', caliberName: '' });
         this.selection.set(null);
+        this.marked.clear();
         this.facade.clearError();
       });
     });

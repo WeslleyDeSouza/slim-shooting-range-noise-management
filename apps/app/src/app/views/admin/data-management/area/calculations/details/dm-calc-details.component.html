@@ -37,9 +37,9 @@
           <table class="slim-table slim-table--compact">
             <thead>
               <tr>
-                <th>{{ prefix + '.col_room_no' | translate }}</th>
-                <th>{{ prefix + '.col_room_name' | translate }}</th>
-                <th class="slim-table__cell--num">{{ prefix + '.col_sources' | translate }}</th>
+                <th appSort="no" [sort]="roomSort">{{ prefix + '.col_room_no' | translate }}</th>
+                <th appSort="name" [sort]="roomSort" data-testid="dcd-room-sort-name">{{ prefix + '.col_room_name' | translate }}</th>
+                <th appSort="sources" [sort]="roomSort" class="slim-table__cell--num">{{ prefix + '.col_sources' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -63,6 +63,7 @@
           <h2 class="slim-card__title" data-testid="dcd-detail-title">
             @if (selectedRoom(); as room) { {{ prefix + '.detail_title' | translate: { room: roomLabel(room) } }} } @else { {{ prefix + '.detail_none' | translate }} }
           </h2>
+          <app-table-export testId="dcd-export" [small]="true" [source]="exportSource" [disabled]="!shownIds().length" />
         </div>
         <nav class="slim-tabs dcd__tabs" role="tablist">
           @for (t of tabs; track t) {
@@ -75,28 +76,30 @@
         <div class="slim-table-wrap dcd__table-wrap">
           @switch (tab()) {
             @case ('wlr_day') {
-              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: rows().wlrDay }" />
+              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: view().wlrDay }" />
             }
             @case ('wlr_night') {
-              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: rows().wlrNight }" />
+              <ng-container *ngTemplateOutlet="wlrTable; context: { rows: view().wlrNight }" />
             }
             @case ('a9') {
               <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-a9">
                 <thead>
                   <tr>
-                    <th>{{ prefix + '.col_source' | translate }}</th>
-                    <th>{{ prefix + '.col_weapon' | translate }}</th>
-                    <th>{{ prefix + '.col_combination' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_a9_m1' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_a9_m2' | translate }}</th>
-                    <th>{{ prefix + '.col_estimated' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
-                    <th>{{ prefix + '.col_remark' | translate }}</th>
+                    <th class="slim-table__cell--check"><app-table-select testId="dcd-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" /></th>
+                    <th appSort="source" [sort]="a9Sort">{{ prefix + '.col_source' | translate }}</th>
+                    <th appSort="weapon" [sort]="a9Sort">{{ prefix + '.col_weapon' | translate }}</th>
+                    <th appSort="combination" [sort]="a9Sort">{{ prefix + '.col_combination' | translate }}</th>
+                    <th appSort="inside" [sort]="a9Sort" class="slim-table__cell--num" data-testid="dcd-a9-sort-inside">{{ prefix + '.col_a9_m1' | translate }}</th>
+                    <th appSort="outside" [sort]="a9Sort" class="slim-table__cell--num">{{ prefix + '.col_a9_m2' | translate }}</th>
+                    <th appSort="estimated" [sort]="a9Sort">{{ prefix + '.col_estimated' | translate }}</th>
+                    <th appSort="year" [sort]="a9Sort" class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
+                    <th appSort="remark" [sort]="a9Sort">{{ prefix + '.col_remark' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (r of rows().a9; track r.sourceId) {
-                    <tr data-testid="dcd-row">
+                  @for (r of view().a9; track r.sourceId) {
+                    <tr class="slim-table__row" data-testid="dcd-row" [appSelectRow]="r.sourceId" [selection]="selection" [shown]="shownIds()">
+                      <td class="slim-table__cell--check"><app-table-select testId="dcd-select" [selection]="selection" [shown]="shownIds()" [rowId]="r.sourceId" [label]="'common.table.select_row' | translate" /></td>
                       <td class="dcd__num">{{ r.sourceId }}</td>
                       <td>{{ r.weaponSystem }}</td>
                       <td [class.slim-text--muted]="!r.combinationName">{{ r.combinationName ?? ('admin.dm_calc.no_combination' | translate) }}</td>
@@ -107,7 +110,7 @@
                       <td [class.slim-text--muted]="!r.remark">{{ r.remark ?? '—' }}</td>
                     </tr>
                   } @empty {
-                    <tr><td colspan="8" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+                    <tr><td colspan="9" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
                   }
                 </tbody>
               </table>
@@ -116,20 +119,22 @@
               <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-a7">
                 <thead>
                   <tr>
-                    <th>{{ prefix + '.col_source' | translate }}</th>
-                    <th>{{ prefix + '.col_weapon' | translate }}</th>
-                    <th>{{ prefix + '.col_category' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_half_days_work' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_half_days_sunday' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_shots_work' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_shots_sunday' | translate }}</th>
-                    <th>{{ prefix + '.col_estimated' | translate }}</th>
-                    <th class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
+                    <th class="slim-table__cell--check"><app-table-select testId="dcd-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" /></th>
+                    <th appSort="source" [sort]="a7Sort">{{ prefix + '.col_source' | translate }}</th>
+                    <th appSort="weapon" [sort]="a7Sort">{{ prefix + '.col_weapon' | translate }}</th>
+                    <th appSort="category" [sort]="a7Sort">{{ prefix + '.col_category' | translate }}</th>
+                    <th appSort="halfDaysWork" [sort]="a7Sort" class="slim-table__cell--num">{{ prefix + '.col_half_days_work' | translate }}</th>
+                    <th appSort="halfDaysSunday" [sort]="a7Sort" class="slim-table__cell--num">{{ prefix + '.col_half_days_sunday' | translate }}</th>
+                    <th appSort="shotsWork" [sort]="a7Sort" class="slim-table__cell--num">{{ prefix + '.col_shots_work' | translate }}</th>
+                    <th appSort="shotsSunday" [sort]="a7Sort" class="slim-table__cell--num">{{ prefix + '.col_shots_sunday' | translate }}</th>
+                    <th appSort="estimated" [sort]="a7Sort">{{ prefix + '.col_estimated' | translate }}</th>
+                    <th appSort="year" [sort]="a7Sort" class="slim-table__cell--num">{{ prefix + '.col_year' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @for (r of rows().a7; track r.sourceId) {
-                    <tr data-testid="dcd-row">
+                  @for (r of view().a7; track r.sourceId) {
+                    <tr class="slim-table__row" data-testid="dcd-row" [appSelectRow]="r.sourceId" [selection]="selection" [shown]="shownIds()">
+                      <td class="slim-table__cell--check"><app-table-select testId="dcd-select" [selection]="selection" [shown]="shownIds()" [rowId]="r.sourceId" [label]="'common.table.select_row' | translate" /></td>
                       <td class="dcd__num">{{ r.sourceId }}</td>
                       <td>{{ r.weaponSystem }}</td>
                       <td>{{ r.category }} · {{ 'admin.dm_weapons.annex7.' + r.category | translate }}</td>
@@ -141,7 +146,7 @@
                       <td class="slim-table__cell--num dcd__num">{{ r.year ?? '—' }}</td>
                     </tr>
                   } @empty {
-                    <tr><td colspan="9" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+                    <tr><td colspan="10" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
                   }
                 </tbody>
               </table>
@@ -156,21 +161,23 @@
     <table class="slim-table slim-table--compact dcd__data" data-testid="dcd-wlr">
       <thead>
         <tr>
-          <th>{{ prefix + '.col_point' | translate }}</th>
-          <th>{{ prefix + '.col_building' | translate }}</th>
-          <th>{{ prefix + '.col_source' | translate }}</th>
-          <th>{{ prefix + '.col_weapon' | translate }}</th>
-          <th class="slim-table__cell--num">{{ prefix + '.col_elevation' | translate }}</th>
-          <th class="slim-table__cell--num">LAE(MK)</th>
-          <th class="slim-table__cell--num">LAE(GK)</th>
-          <th class="slim-table__cell--num">LAE(Det)</th>
-          <th class="slim-table__cell--num">LAE</th>
-          <th class="slim-table__cell--num">LAFmax</th>
+          <th class="slim-table__cell--check"><app-table-select testId="dcd-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" /></th>
+          <th appSort="point" [sort]="wlrSort">{{ prefix + '.col_point' | translate }}</th>
+          <th appSort="egid" [sort]="wlrSort">{{ prefix + '.col_building' | translate }}</th>
+          <th appSort="source" [sort]="wlrSort">{{ prefix + '.col_source' | translate }}</th>
+          <th appSort="weapon" [sort]="wlrSort">{{ prefix + '.col_weapon' | translate }}</th>
+          <th appSort="elevation" [sort]="wlrSort" class="slim-table__cell--num">{{ prefix + '.col_elevation' | translate }}</th>
+          <th appSort="laeMk" [sort]="wlrSort" class="slim-table__cell--num">LAE(MK)</th>
+          <th appSort="laeGk" [sort]="wlrSort" class="slim-table__cell--num">LAE(GK)</th>
+          <th appSort="laeDet" [sort]="wlrSort" class="slim-table__cell--num">LAE(Det)</th>
+          <th appSort="lae" [sort]="wlrSort" class="slim-table__cell--num" data-testid="dcd-wlr-sort-lae">LAE</th>
+          <th appSort="lafmax" [sort]="wlrSort" class="slim-table__cell--num">LAFmax</th>
         </tr>
       </thead>
       <tbody>
         @for (r of rows; track r.point + '|' + r.sourceId) {
-          <tr data-testid="dcd-row">
+          <tr class="slim-table__row" data-testid="dcd-row" [appSelectRow]="wlrId(r)" [selection]="selection" [shown]="shownIds()">
+            <td class="slim-table__cell--check"><app-table-select testId="dcd-select" [selection]="selection" [shown]="shownIds()" [rowId]="wlrId(r)" [label]="'common.table.select_row' | translate" /></td>
             <td class="dcd__strong">{{ r.point }}</td>
             <td class="dcd__num" [class.slim-text--muted]="!r.egid">{{ r.egid ?? '—' }}</td>
             <td class="dcd__num">{{ r.sourceId }}</td>
@@ -183,7 +190,7 @@
             <td class="slim-table__cell--num dcd__num">{{ r.lafmax | number: '1.1-1' }}</td>
           </tr>
         } @empty {
-          <tr><td colspan="10" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
+          <tr><td colspan="11" class="slim-table__cell--wrap"><div class="slim-empty"><div class="slim-empty__text">{{ prefix + '.rows_empty' | translate }}</div></div></td></tr>
         }
       </tbody>
     </table>

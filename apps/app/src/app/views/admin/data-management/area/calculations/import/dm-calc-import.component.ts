@@ -15,6 +15,8 @@ import {
   timeGroupFromFileName,
 } from '../../../../../../core/data-calculations/calculations.logic';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
+import { TableSortHeaderComponent } from '../../../../../../common/table-sort-header.component';
+import { SortValue, TableSort } from '../../../../../../core/table/table-sort';
 import { areaIdSignal } from '../../_context/area-id';
 
 const I18N = 'admin.dm_calc';
@@ -40,10 +42,22 @@ interface Toast {
  * Betriebsdaten (Anhang 9 / 7) are uploaded and the result of each upload
  * is shown (applied, replaced, unknown, errors).
  */
+type StateSortKey = 'id' | 'name' | 'year' | 'current' | 'mgdm' | 'buildYear' | 'supplier' | 'delivered';
+
+/** What the columns of a table of Berechnungszustände are sorted by (B1 5.5.2). */
+const STATE_SORT: Partial<Record<StateSortKey, (s: StateSummaryDto) => SortValue>> = {
+  id: (s) => s.externalId,
+  name: (s) => s.name,
+  year: (s) => s.referenceYear,
+  current: (s) => s.isCurrent,
+  mgdm: (s) => s.isMgdm,
+  buildYear: (s) => s.buildYearClass,
+};
+
 @Component({
   selector: 'app-dm-calc-import',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, TableSortHeaderComponent],
   templateUrl: './dm-calc-import.component.html',
   styleUrl: './dm-calc-import.component.scss',
 })
@@ -85,6 +99,9 @@ export class DmCalcImportComponent extends ComponentBase {
   // --- Zustände / uploads -------------------------------------------------------
 
   protected readonly states = this.facade.states;
+  protected readonly stateSort = new TableSort<StateSortKey>();
+  /** The Zustände in the order of the API, or of the chosen column (B1 5.5.2). */
+  protected readonly stateRows = computed(() => this.stateSort.apply(this.states(), STATE_SORT));
   protected readonly selectedStateId = signal<string | null>(null);
   protected readonly selectedState = computed<StateSummaryDto | null>(() => this.states().find((s) => s.id === this.selectedStateId()) ?? null);
   protected readonly details = this.facade.details;

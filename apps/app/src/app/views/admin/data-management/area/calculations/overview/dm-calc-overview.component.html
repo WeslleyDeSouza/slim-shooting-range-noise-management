@@ -25,18 +25,22 @@
           </svg>
           <input class="slim-search__input" type="search" autocomplete="off" data-testid="dco-search" [placeholder]="prefix + '.search_placeholder' | translate" [attr.aria-label]="prefix + '.search_placeholder' | translate" [value]="query()" (input)="query.set($any($event.target).value)" />
         </div>
+        <app-table-export testId="dco-export" [small]="true" [source]="exportSource" [disabled]="!rows().length" />
         <div class="slim-toolbar__meta" data-testid="dco-count">{{ prefix + '.count' | translate: { n: rows().length, total: all().length } }}</div>
       </div>
       <div class="slim-table-wrap dco__table-wrap">
         <table class="slim-table slim-table--stack slim-table--compact">
           <thead>
             <tr>
-              <th>{{ prefix + '.col_name' | translate }}</th>
-              <th>{{ prefix + '.col_supplier' | translate }}</th>
-              <th class="slim-table__cell--num">{{ prefix + '.col_states' | translate }}</th>
-              <th>{{ prefix + '.col_delivered' | translate }}</th>
-              <th>{{ prefix + '.col_current' | translate }}</th>
-              <th>{{ prefix + '.col_mgdm' | translate }}</th>
+              <th class="slim-table__cell--check">
+                <app-table-select testId="dco-select-all" [selection]="marked" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+              </th>
+              <th appSort="name" [sort]="sort" data-testid="dco-sort-name">{{ prefix + '.col_name' | translate }}</th>
+              <th appSort="supplier" [sort]="sort">{{ prefix + '.col_supplier' | translate }}</th>
+              <th appSort="states" [sort]="sort" class="slim-table__cell--num">{{ prefix + '.col_states' | translate }}</th>
+              <th appSort="delivered" [sort]="sort">{{ prefix + '.col_delivered' | translate }}</th>
+              <th appSort="current" [sort]="sort">{{ prefix + '.col_current' | translate }}</th>
+              <th appSort="mgdm" [sort]="sort">{{ prefix + '.col_mgdm' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -51,6 +55,9 @@
                 (click)="select(d)"
                 (keydown.enter)="select(d)"
               >
+                <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                  <app-table-select testId="dco-select" [selection]="marked" [shown]="shownIds()" [rowId]="d.id" [label]="'common.table.select_row' | translate" />
+                </td>
                 <td [attr.data-label]="prefix + '.col_name' | translate" class="dco__name">{{ d.name }}</td>
                 <td [attr.data-label]="prefix + '.col_supplier' | translate">{{ d.supplier || '—' }}</td>
                 <td [attr.data-label]="prefix + '.col_states' | translate" class="slim-table__cell--num">{{ d.stateCount }}</td>
@@ -68,7 +75,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="6" class="slim-table__cell--wrap">
+                <td colspan="7" class="slim-table__cell--wrap">
                   <div class="slim-empty">
                     @if (loading()) {
                       <span class="slim-spinner"></span>
@@ -160,17 +167,17 @@
                     <table class="slim-table slim-table--compact dco__states-table">
                       <thead>
                         <tr>
-                          <th>{{ prefix + '.col_state_id' | translate }}</th>
-                          <th>{{ prefix + '.col_state_name' | translate }}</th>
-                          <th class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
-                          <th>{{ prefix + '.col_current' | translate }}</th>
-                          <th>{{ prefix + '.col_mgdm' | translate }}</th>
-                          <th>{{ prefix + '.col_build_year' | translate }}</th>
+                          <th appSort="id" [sort]="stateSort">{{ prefix + '.col_state_id' | translate }}</th>
+                          <th appSort="name" [sort]="stateSort" data-testid="dco-state-sort-name">{{ prefix + '.col_state_name' | translate }}</th>
+                          <th appSort="year" [sort]="stateSort" class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
+                          <th appSort="current" [sort]="stateSort">{{ prefix + '.col_current' | translate }}</th>
+                          <th appSort="mgdm" [sort]="stateSort">{{ prefix + '.col_mgdm' | translate }}</th>
+                          <th appSort="buildYear" [sort]="stateSort">{{ prefix + '.col_build_year' | translate }}</th>
                           <th class="slim-table__cell--actions"><span class="slim-u-sr-only">{{ prefix + '.details_link' | translate }}</span></th>
                         </tr>
                       </thead>
                       <tbody>
-                        @for (s of d.states; track s.id) {
+                        @for (s of stateRows(); track s.id) {
                           <tr data-testid="dco-state" [attr.data-name]="s.name">
                             <td class="dco__num">{{ s.externalId ?? '—' }}</td>
                             <td>

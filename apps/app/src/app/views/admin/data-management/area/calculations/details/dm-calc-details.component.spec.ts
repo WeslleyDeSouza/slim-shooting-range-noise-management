@@ -4,6 +4,8 @@ import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
+import { TableExportData } from '../../../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../../../core/table/table-export.facade';
 import { AccessStub, CalcFacadeStub, DELIVERY_2023, TRANSLATE_STUB, routeStub } from '../dm-calc.spec-data';
 import { DmCalcDetailsComponent } from './dm-calc-details.component';
 
@@ -11,15 +13,19 @@ describe('DmCalcDetailsComponent (5.21 Berechnungsdetails)', () => {
   let fixture: ComponentFixture<DmCalcDetailsComponent>;
   let facade: CalcFacadeStub;
   let navigate: jest.SpyInstance;
+  /** What the export button hands to the API. */
+  let exportFacade: { download: jest.Mock };
 
   async function setup(query: Record<string, string> = {}): Promise<void> {
     facade = new CalcFacadeStub();
+    exportFacade = { download: jest.fn().mockResolvedValue(true) };
     await TestBed.configureTestingModule({
       imports: [DmCalcDetailsComponent],
       providers: [
         provideRouter([]),
         { provide: DataCalculationsFacade, useValue: facade },
         { provide: AccessFacade, useValue: new AccessStub() },
+        { provide: TableExportFacade, useValue: exportFacade },
         DataEmitter,
         { provide: TranslateService, useValue: TRANSLATE_STUB },
         { provide: ActivatedRoute, useValue: routeStub(query) },
@@ -35,7 +41,8 @@ describe('DmCalcDetailsComponent (5.21 Berechnungsdetails)', () => {
   const el = <T extends Element = HTMLElement>(selector: string): T => fixture.nativeElement.querySelector(selector) as T;
   const all = (selector: string): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll(selector));
   const roomNames = () => all('[data-testid="dcd-room"]').map((r) => r.getAttribute('data-name'));
-  const rowTexts = () => all('[data-testid="dcd-row"]').map((r) => Array.from(r.querySelectorAll('td')).map((td) => td.textContent?.trim()).join(' '));
+  /** The cells with content; the box of the multi-selection is left out. */
+  const rowTexts = () => all('[data-testid="dcd-row"]').map((r) => Array.from(r.querySelectorAll('td:not(.slim-table__cell--check)')).map((td) => td.textContent?.trim()).join(' '));
   const tabTexts = () => all('[role="tab"]').map((t) => t.textContent?.replace(/\s+/g, ' ').replace('admin.dm_calc.', '').trim());
 
   it('opens with the current state and the first Stellungsraum that has sources (B1 Abbildung 32)', async () => {
@@ -90,6 +97,59 @@ describe('DmCalcDetailsComponent (5.21 Berechnungsdetails)', () => {
     fixture.detectChanges();
     expect(rowTexts()[0]).toContain('B_Mg51');
     expect(rowTexts()[0]).toContain('geschätzt');
+  });
+
+  it('sorts the table of the open tab and exports it as shown, or its marked rows (B1 5.5.2, 5.5.3, 5.5.5)', async () => {
+    await setup();
+    const exported = async (): Promise<TableExportData> => {
+      exportFacade.download.mockClear();
+      el<HTMLButtonElement>('[data-testid="dcd-export"]').click();
+      fixture.detectChanges();
+      el<HTMLButtonElement>('[data-testid="dcd-export-csv"]').click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      fixture.detectChanges();
+      return exportFacade.download.mock.calls[0][0] as TableExportData;
+    };
+    // WLR DAY by LAE ascending: 48.0, 55.1, 60.4.
+    el<HTMLButtonElement>('[data-testid="dcd-wlr-sort-lae"] button').click();
+    fixture.detectChanges();
+    expect(rowTexts().map((row) => row.split(' ').slice(-2)[0])).toEqual(['48.0', '55.1', '60.4']);
+
+    const shown = await exported();
+    expect(shown.table).toBe('berechnung_wlr_day');
+    expect(shown.title).toBe('admin.dm_calc.tab_wlr_day');
+    expect(shown.selection).toBe(false);
+    expect(shown.header).toHaveLength(10);
+    expect(shown.rows.map((row) => row[8])).toEqual([48, 55.1, 60.4]);
+    expect(shown.filters[0]).toEqual({ label: 'admin.dm_calc.field_state', value: 'Lieferung 2023, Initiale Aufnahme' });
+    expect(shown.filters[1].value).toContain('Stellungsrm A 1');
+
+    // The first two rows as shown are marked.
+    const boxes = all('[data-testid="dcd-select"]');
+    boxes[0].click();
+    boxes[1].click();
+    fixture.detectChanges();
+    const marked = await exported();
+    expect(marked.selection).toBe(true);
+    expect(marked.rows.map((row) => row[8])).toEqual([48, 55.1]);
+
+    // Another tab is another table: its own file, and the marks are gone.
+    el<HTMLButtonElement>('[data-testid="dcd-tab-a9"]').click();
+    fixture.detectChanges();
+    const a9 = await exported();
+    expect(a9.table).toBe('betriebsdaten_anhang9');
+    expect(a9.selection).toBe(false);
+    expect(a9.header).toHaveLength(8);
+    expect(a9.rows).toHaveLength(1);
+  });
+
+  it('sorts the Stellungsräume by a column', async () => {
+    await setup();
+    const title = el<HTMLButtonElement>('[data-testid="dcd-room-sort-name"] button');
+    title.click();
+    title.click();
+    fixture.detectChanges();
+    expect(roomNames()).toEqual(['Stellungsrm B 2', 'Stellungsrm A 1', 'NGST Schönenboden']);
   });
 
   it('filters the Stellungsräume by number or name', async () => {

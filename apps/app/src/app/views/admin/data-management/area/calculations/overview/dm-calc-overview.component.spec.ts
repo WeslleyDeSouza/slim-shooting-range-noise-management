@@ -4,6 +4,8 @@ import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
+import { TableExportData } from '../../../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../../../core/table/table-export.facade';
 import { AccessStub, CalcFacadeStub, DELIVERY_2023, DELIVERY_2026, INITIAL, SANITISED, TRANSLATE_STUB, delivery, routeStub, state } from '../dm-calc.spec-data';
 import { DmCalcOverviewComponent } from './dm-calc-overview.component';
 
@@ -12,6 +14,8 @@ describe('DmCalcOverviewComponent (5.18 Übersicht Berechnungen)', () => {
   let component: DmCalcOverviewComponent;
   let facade: CalcFacadeStub;
   let access: AccessStub;
+  /** What the export button hands to the API. */
+  const exportFacade = { download: jest.fn().mockResolvedValue(true) };
 
   beforeEach(async () => {
     facade = new CalcFacadeStub();
@@ -22,6 +26,7 @@ describe('DmCalcOverviewComponent (5.18 Übersicht Berechnungen)', () => {
         provideRouter([]),
         { provide: DataCalculationsFacade, useValue: facade },
         { provide: AccessFacade, useValue: access },
+        { provide: TableExportFacade, useValue: exportFacade },
         DataEmitter,
         { provide: TranslateService, useValue: TRANSLATE_STUB },
         { provide: ActivatedRoute, useValue: routeStub() },
@@ -66,6 +71,44 @@ describe('DmCalcOverviewComponent (5.18 Übersicht Berechnungen)', () => {
     expect(stateNames()).toEqual(['Initiale Aufnahme', 'Sanierter Zustand SPM Geissalp']);
     expect(all('[data-testid="dco-state"]')[0].textContent).toContain('1104.020_1');
     expect(el<HTMLButtonElement>('[data-testid="dco-save"]').disabled).toBe(true);
+  });
+
+  it('sorts the Berechnungen and the Zustände of the open one by a column (B1 5.5.2)', () => {
+    el<HTMLButtonElement>('[data-testid="dco-sort-name"] button').click();
+    fixture.detectChanges();
+    expect(rowNames()).toEqual(['Lieferung 2023', 'Lieferung 2026']);
+    const stateNames = () => all('[data-testid="dco-state"]').map((s) => s.getAttribute('data-name'));
+    expect(stateNames()).toEqual(['Initiale Aufnahme', 'Sanierter Zustand SPM Geissalp']);
+    const title = el<HTMLButtonElement>('[data-testid="dco-state-sort-name"] button');
+    title.click();
+    title.click();
+    fixture.detectChanges();
+    expect(stateNames()).toEqual(['Sanierter Zustand SPM Geissalp', 'Initiale Aufnahme']);
+  });
+
+  it('exports the Berechnungen as shown, or the marked ones; the box does not open the row (B1 5.5.3, 5.5.5)', async () => {
+    const exported = async (): Promise<TableExportData> => {
+      exportFacade.download.mockClear();
+      el<HTMLButtonElement>('[data-testid="dco-export"]').click();
+      fixture.detectChanges();
+      el<HTMLButtonElement>('[data-testid="dco-export-csv"]').click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      fixture.detectChanges();
+      return exportFacade.download.mock.calls[0][0] as TableExportData;
+    };
+    const shown = await exported();
+    expect(shown.table).toBe('berechnungen');
+    expect(shown.selection).toBe(false);
+    expect(shown.rows.map((row) => row[0])).toEqual(['Lieferung 2026', 'Lieferung 2023']);
+    expect(shown.rows[1].slice(3)).toEqual(['10.05.2023', 'Ja', 'Ja']);
+
+    const open = all('[data-testid="dco-row"]').findIndex((row) => row.classList.contains('slim-table__row--selected'));
+    all('[data-testid="dco-select"]')[0].click();
+    fixture.detectChanges();
+    expect(all('[data-testid="dco-row"]').findIndex((row) => row.classList.contains('slim-table__row--selected'))).toBe(open);
+    const marked = await exported();
+    expect(marked.selection).toBe(true);
+    expect(marked.rows.map((row) => row[0])).toEqual(['Lieferung 2026']);
   });
 
   it('searches over Bezeichnung, Lieferantin and the states (name / Zustand ID)', () => {

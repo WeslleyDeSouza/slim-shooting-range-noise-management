@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { DeliveryDto, StateSummaryDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
@@ -25,6 +25,12 @@ import {
   sortDeliveries,
 } from '../../../../../../core/data-calculations/calculations.logic';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
+import { TableExportComponent } from '../../../../../../common/table-export.component';
+import { TableSelectComponent } from '../../../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../../../common/table-sort-header.component';
+import { tableExport, TableExportData } from '../../../../../../core/table/table-export';
+import { TableSelection } from '../../../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../../../core/table/table-sort';
 import { HasUnsavedChanges } from '../../../../_common/unsaved-changes.guard';
 import { areaIdSignal } from '../../_context/area-id';
 import { notBlank } from '../../general/master-data/dm-area-master-data.component';
@@ -52,10 +58,37 @@ interface Toast {
  * the Baujahr of the Anlageteile per state. Rules live in
  * `calculations.logic.ts`; data in `DataCalculationsFacade`.
  */
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'berechnungen';
+
+type DeliverySortKey = 'name' | 'supplier' | 'states' | 'delivered' | 'current' | 'mgdm';
+
+/** What the columns of the Berechnungen are sorted by (B1 5.5.2). */
+const DELIVERY_SORT: Record<DeliverySortKey, (d: DeliveryDto) => SortValue> = {
+  name: (d) => d.name,
+  supplier: (d) => d.supplier,
+  states: (d) => d.stateCount,
+  delivered: (d) => d.deliveredAt,
+  current: (d) => d.hasCurrent,
+  mgdm: (d) => d.hasMgdm,
+};
+
+type StateSortKey = 'id' | 'name' | 'year' | 'current' | 'mgdm' | 'buildYear' | 'supplier' | 'delivered';
+
+/** What the columns of a table of Berechnungszustände are sorted by (B1 5.5.2). */
+const STATE_SORT: Partial<Record<StateSortKey, (s: StateSummaryDto) => SortValue>> = {
+  id: (s) => s.externalId,
+  name: (s) => s.name,
+  year: (s) => s.referenceYear,
+  current: (s) => s.isCurrent,
+  mgdm: (s) => s.isMgdm,
+  buildYear: (s) => s.buildYearClass,
+};
+
 @Component({
   selector: 'app-dm-calc-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, DatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, DatePipe, TableExportComponent, TableSelectComponent, TableSortHeaderComponent],
   templateUrl: './dm-calc-overview.component.html',
   styleUrl: './dm-calc-overview.component.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -65,6 +98,7 @@ export class DmCalcOverviewComponent extends ComponentBase implements HasUnsaved
   private readonly access = inject(AccessFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly prefix = I18N;
   protected readonly routes = APP_ROUTES;
@@ -80,7 +114,38 @@ export class DmCalcOverviewComponent extends ComponentBase implements HasUnsaved
 
   protected readonly query = signal('');
   protected readonly all = computed(() => sortDeliveries(this.facade.deliveries()));
-  protected readonly rows = computed(() => filterDeliveries(this.all(), this.query()));
+  protected readonly sort = new TableSort<DeliverySortKey>();
+  /** The Berechnungen as shown: search applied, newest first, or in the order of the chosen column (B1 5.5.2). */
+  protected readonly rows = computed(() => this.sort.apply(filterDeliveries(this.all(), this.query()), DELIVERY_SORT));
+  /** Marked Berechnungen for the export (B1 5.5.3); a click on a row opens it. */
+  protected readonly marked = new TableSelection();
+  protected readonly shownIds = computed(() => this.rows().map((d) => d.id));
+
+  /** The Berechnungen as shown, or the marked ones, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const yesNo = (value: boolean) => t(value ? 'common.yes' : 'common.no');
+    const picked = this.marked.pick(this.rows(), (d) => d.id);
+    return tableExport<DeliveryDto>({
+      table: EXPORT_TABLE,
+      title: t(`${I18N}.overview_title`),
+      filters: [{ label: t('admin.export.search'), value: this.query().trim() }],
+      columns: [
+        { header: t(`${I18N}.col_name`), value: (d) => d.name },
+        { header: t(`${I18N}.col_supplier`), value: (d) => d.supplier || null },
+        { header: t(`${I18N}.col_states`), value: (d) => d.stateCount },
+        { header: t(`${I18N}.col_delivered`), value: (d) => d.deliveredAt.slice(0, 10).split('-').reverse().join('.') },
+        { header: t(`${I18N}.col_current`), value: (d) => yesNo(d.hasCurrent) },
+        { header: t(`${I18N}.col_mgdm`), value: (d) => yesNo(d.hasMgdm) },
+      ],
+      rows: picked.rows,
+      selection: picked.selection,
+    });
+  };
+
+  protected readonly stateSort = new TableSort<StateSortKey>();
+  /** The Zustände of the open Berechnung in the order of the API, or of the chosen column. */
+  protected readonly stateRows = computed(() => this.stateSort.apply(this.selected()?.states ?? [], STATE_SORT));
 
   // --- Detail ----------------------------------------------------------------
 

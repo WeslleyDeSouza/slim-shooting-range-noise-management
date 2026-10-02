@@ -98,12 +98,16 @@
             </label>
           }
         }
+        <app-table-export testId="dmw-table-export" [small]="true" [source]="tableExportSource" [disabled]="!rows().length" />
       </div>
 
       <div class="slim-table-wrap dmw__table-wrap">
         <table class="slim-table slim-table--stack slim-table--compact">
           <thead>
             <tr>
+              <th class="slim-table__cell--check">
+                <app-table-select testId="dmw-select-all" [selection]="marked" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+              </th>
               @for (col of columns(); track col.key) {
                 <th [class.slim-table__cell--num]="col.kind === 'number'" [attr.aria-sort]="sortKey() === col.key ? (sortAsc() ? 'ascending' : 'descending') : null">
                   <button
@@ -136,6 +140,9 @@
                 (keydown.enter)="select(row.record)"
                 (keydown.space)="$event.preventDefault(); select(row.record)"
               >
+                <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                  <app-table-select testId="dmw-select" [selection]="marked" [shown]="shownIds()" [rowId]="row.record.id" [label]="'common.table.select_row' | translate" />
+                </td>
                 @for (cell of row.cells; track $index; let i = $index) {
                   <td
                     [attr.data-label]="prefix + '.' + columns()[i].label | translate"
@@ -167,7 +174,7 @@
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="columns().length + (readonly() ? 0 : 1)" class="slim-table__cell--wrap">
+                <td [attr.colspan]="columns().length + (readonly() ? 1 : 2)" class="slim-table__cell--wrap">
                   <div class="slim-empty">
                     @if (loading() && !loaded()) {
                       <span class="slim-spinner"></span>

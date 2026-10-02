@@ -125,15 +125,15 @@
         <table class="slim-table slim-table--compact">
           <thead>
             <tr>
-              <th>{{ prefix + '.col_state_id' | translate }}</th>
-              <th>{{ prefix + '.col_state_name' | translate }}</th>
-              <th class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
-              <th>{{ prefix + '.col_current' | translate }}</th>
-              <th>{{ prefix + '.col_mgdm' | translate }}</th>
+              <th appSort="id" [sort]="stateSort">{{ prefix + '.col_state_id' | translate }}</th>
+              <th appSort="name" [sort]="stateSort" data-testid="dci-sort-name">{{ prefix + '.col_state_name' | translate }}</th>
+              <th appSort="year" [sort]="stateSort" class="slim-table__cell--num">{{ prefix + '.col_ref_year' | translate }}</th>
+              <th appSort="current" [sort]="stateSort">{{ prefix + '.col_current' | translate }}</th>
+              <th appSort="mgdm" [sort]="stateSort">{{ prefix + '.col_mgdm' | translate }}</th>
             </tr>
           </thead>
           <tbody>
-            @for (s of states(); track s.id) {
+            @for (s of stateRows(); track s.id) {
               <tr class="slim-table__row slim-table__row--clickable" [class.slim-table__row--selected]="selectedStateId() === s.id" tabindex="0" data-testid="dci-state" [attr.data-name]="s.name" (click)="selectState(s.id)" (keydown.enter)="selectState(s.id)">
                 <td class="dci__num">{{ s.externalId ?? '—' }}</td>
                 <td><span class="dci__strong">{{ s.name }}</span> <span class="slim-text--muted slim-text--xs">· {{ s.delivery.name }}</span></td>

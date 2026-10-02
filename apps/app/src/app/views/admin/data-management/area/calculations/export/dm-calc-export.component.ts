@@ -5,11 +5,13 @@ import { ActivatedRoute } from '@angular/router';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { SLIM_APP_ID } from '@slim/shared';
-import type { StateSummaryDto } from '@ui-slim/apiClient';
+import type { DeliveryDto, ShotYearDto, StateSummaryDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { toggleSelection } from '../../../../../../core/data-calculations/calculations.logic';
 import { saveBlob } from '../../../../../../core/download';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
+import { TableSortHeaderComponent } from '../../../../../../common/table-sort-header.component';
+import { SortValue, TableSort } from '../../../../../../core/table/table-sort';
 import { areaIdSignal } from '../../_context/area-id';
 import { BUILD_YEAR_OPTIONS } from '../overview/dm-calc-overview.component';
 
@@ -32,10 +34,35 @@ interface Toast {
  * (an empty state with a new ZustandID, optionally in a new delivery), and
  * the calendar years with Schusszahlen for the CSV export.
  */
+type StateSortKey = 'id' | 'name' | 'year' | 'current' | 'mgdm' | 'buildYear' | 'supplier' | 'delivered';
+
+/** What the columns of a table of Berechnungszustände are sorted by (B1 5.5.2). */
+const STATE_SORT: Partial<Record<StateSortKey, (s: StateSummaryDto & { delivery: DeliveryDto }) => SortValue>> = {
+  id: (s) => s.externalId,
+  name: (s) => s.name,
+  year: (s) => s.referenceYear,
+  current: (s) => s.isCurrent,
+  mgdm: (s) => s.isMgdm,
+  buildYear: (s) => s.buildYearClass,
+  supplier: (s) => s.delivery.supplier,
+  delivered: (s) => s.delivery.deliveredAt,
+};
+
+type YearSortKey = 'year' | 'usages' | 'shots' | 'kg' | 'imported';
+
+/** What the columns of the years with Schusszahlen are sorted by. */
+const YEAR_SORT: Record<YearSortKey, (y: ShotYearDto) => SortValue> = {
+  year: (y) => y.year,
+  usages: (y) => y.usageCount,
+  shots: (y) => y.shots,
+  kg: (y) => y.kg,
+  imported: (y) => y.importedCount,
+};
+
 @Component({
   selector: 'app-dm-calc-export',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DatePipe, DecimalPipe, TableSortHeaderComponent],
   templateUrl: './dm-calc-export.component.html',
   styleUrl: './dm-calc-export.component.scss',
 })
@@ -53,6 +80,11 @@ export class DmCalcExportComponent extends ComponentBase {
   protected readonly states = this.facade.states;
   protected readonly deliveries = this.facade.deliveries;
   protected readonly years = this.facade.years;
+  protected readonly stateSort = new TableSort<StateSortKey>();
+  protected readonly yearSort = new TableSort<YearSortKey>();
+  /** The two tables as shown: in the order of the API, or of the chosen column (B1 5.5.2). */
+  protected readonly stateRows = computed(() => this.stateSort.apply(this.states(), STATE_SORT));
+  protected readonly yearRows = computed(() => this.yearSort.apply(this.years(), YEAR_SORT));
   protected readonly loading = this.facade.loading;
   protected readonly saving = this.facade.saving;
   protected readonly canWrite = this.access.canWrite(SLIM_APP_ID.ADMIN_DATA_CALCULATIONS);

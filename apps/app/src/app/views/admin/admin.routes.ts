@@ -102,6 +102,14 @@ export const ADMIN_ROUTES: Routes = [
                     (c) => c.AreaSimulationComponent,
                   ),
               },
+              // Vollansicht of the map (slm 2, B1 5.10), opened from the Details in a new tab
+              {
+                path: S.map,
+                loadComponent: () =>
+                  import('./area/map/area-map.component').then(
+                    (c) => c.AreaMapComponent,
+                  ),
+              },
             ],
           },
         ],

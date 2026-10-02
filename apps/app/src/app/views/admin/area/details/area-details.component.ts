@@ -12,16 +12,20 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
+import { APP_ROUTES } from '@slim/shared';
 import type {
   AssessmentRowDto,
   ReceiverAssessmentDto,
 } from '@ui-slim/apiClient';
+import { MapPoint, MapViewerComponent } from '@ui-slim/map';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
+import { AreaFacade } from '../../../../core/area/area.facade';
 import {
   AssessmentFacade,
   AssessmentQuery,
 } from '../../../../core/calculation/assessment.facade';
+import { MapFacade } from '../../../../core/calculation/map.facade';
 
 type ReceiverState = ReceiverAssessmentDto['state'];
 type View = 'map' | 'list';
@@ -40,20 +44,26 @@ const METER_HEADROOM_DB = 8;
 
 /**
  * "Schiessplatz – Details · Empfangspunkte" (B1 5.12, mock
- * `_mocks/area/detail.index.html`): the receivers of the area on a
- * schematic map / list, assessed against the LSV limits for a calculation
- * state and a period, with the four assessment rows of the selected point.
- * Rendered inside AreaContextComponent; data: AssessmentFacade.
+ * `_mocks/area/detail.index.html`): the receivers of the area on the map /
+ * as list, assessed against the LSV limits for a calculation state and a
+ * period, with the four assessment rows of the selected point. The map is
+ * the GIS-Kartenviewer (`slm 2`: swisstopo background, Anlagenteile and
+ * Empfangspunkte in LV95); the schematic map stays as fallback when the map
+ * library is not available or the state has no coordinates.
+ * Rendered inside AreaContextComponent; data: AssessmentFacade, MapFacade.
  */
 @Component({
   selector: 'app-area-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DecimalPipe, TranslatePipe, StatusPillComponent],
+  imports: [DatePipe, DecimalPipe, TranslatePipe, StatusPillComponent, MapViewerComponent],
   templateUrl: './area-details.component.html',
   styleUrl: './area-details.component.scss',
 })
 export class AreaDetailsComponent extends ComponentBase {
   private readonly facade = inject(AssessmentFacade);
+  private readonly maps = inject(MapFacade);
+  private readonly areas = inject(AreaFacade);
+  private readonly translate = inject(TranslateService);
   private readonly route = inject(ActivatedRoute);
 
   /** The area id lives on the parent route (`/admin/area/:id/details`). */
@@ -109,6 +119,33 @@ export class AreaDetailsComponent extends ComponentBase {
     () => this.receivers().find((r) => r.id === this.selectedId()) ?? null,
   );
 
+  // GIS map (slm 2) ----------------------------------------------------------
+  /** False once the map library could not be loaded: the schematic map takes over. */
+  protected readonly gisAvailable = signal(true);
+  protected readonly hasCoordinates = computed(() => this.receivers().some((r) => r.east !== null && r.north !== null));
+  protected readonly useGis = computed(() => this.gisAvailable() && this.hasCoordinates());
+  protected readonly plantParts = this.maps.plantParts;
+  protected readonly mapPoints = computed<MapPoint[]>(() =>
+    this.receivers().map((r) => ({
+      id: r.id,
+      code: r.code,
+      east: r.east,
+      north: r.north,
+      state: r.state,
+      label: `${r.code}, ${this.translate.translate('details.state.' + r.state) ?? r.state}`,
+    })),
+  );
+  protected readonly mapTitle = computed(() => {
+    const area = this.areas.byId(this.areaId());
+    return area ? `${area.coordinationSectionNo} ${area.name}` : '';
+  });
+  /** «Vollansicht» in a new tab (B1 5.10), on the state the page shows. */
+  protected readonly fullscreenLink = computed(() => {
+    const id = this.areaId();
+    const state = this.calculation()?.id;
+    return id ? APP_ROUTES.admin.area.map(id) + (state ? `?state=${state}` : '') : null;
+  });
+
   private readonly query = computed<AssessmentQuery>(() => {
     const query: AssessmentQuery = {};
     const calculationId = this.calculationId();
@@ -130,6 +167,15 @@ export class AreaDetailsComponent extends ComponentBase {
       const areaId = this.areaId();
       const query = this.query();
       untracked(() => this.load(areaId, query, false));
+    });
+
+    // The Anlagenteile of the map belong to the state the assessment shows.
+    effect(() => {
+      const areaId = this.areaId();
+      const state = this.calculation()?.id ?? null;
+      untracked(() => {
+        if (areaId && state) void this.maps.load(areaId, state);
+      });
     });
 
     // Keep the selection across reloads; default to the first receiver.

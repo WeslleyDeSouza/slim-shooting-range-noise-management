@@ -18,6 +18,8 @@ export const ROUTE_SEGMENT = {
   shots: 'shots',
   details: 'details',
   simulation: 'simulation',
+  /** Vollansicht of the map of one Schiessplatz (B1 5.10 «Vollansicht in einem separaten Tab»). */
+  map: 'map',
 
   dataManagement: 'data-management',
   /** Datenverwaltung › Schiessplatz › Allgemein (5.15 Übersicht, 5.16 Stammdaten) */
@@ -68,6 +70,7 @@ export const APP_ROUTES = {
       shots: (id: string) => join(S.admin, S.area, id, S.shots),
       details: (id: string) => join(S.admin, S.area, id, S.details),
       simulation: (id: string) => join(S.admin, S.area, id, S.simulation),
+      map: (id: string) => join(S.admin, S.area, id, S.map),
     },
     /** Datenverwaltung */
     dataManagement: {

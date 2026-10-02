@@ -123,6 +123,16 @@
     padding-top: slim.space(3);
   }
 
+  // GIS-Kartenviewer: same footprint as the schematic map it replaces, taller on desktop.
+  &__gis {
+    aspect-ratio: 600 / 520;
+
+    @include slim.mq('lg') {
+      aspect-ratio: auto;
+      height: 560px;
+    }
+  }
+
   // Schematic terrain (colours from tokens so the map follows the theme)
   &__map-ground {
     fill: slim.color('surface-2');

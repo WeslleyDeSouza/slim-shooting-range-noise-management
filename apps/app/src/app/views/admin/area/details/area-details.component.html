@@ -173,19 +173,31 @@
                 {{ 'details.view_list' | translate }}
               </button>
             </div>
-            <button
-              type="button"
-              class="slim-btn slim-btn--sm slim-btn--pill details__fullscreen"
-              disabled
-              [attr.title]="'details.gis_soon' | translate"
-            >
-              <span class="slim-btn__label">{{ 'details.fullscreen' | translate }}</span>
-            </button>
+            @if (useGis() && fullscreenLink(); as link) {
+              <a class="slim-btn slim-btn--sm slim-btn--pill details__fullscreen" target="_blank" rel="noopener" [href]="link" data-testid="details-fullscreen">
+                <span class="slim-btn__label">{{ 'details.fullscreen' | translate }}</span>
+              </a>
+            }
           </header>
 
           <div class="slim-card__body details__mapbody">
-            @if (view() === 'map') {
-              <div class="slim-map details__map" data-testid="details-map">
+            @if (view() === 'map' && useGis()) {
+              <!-- GIS-Kartenviewer (slm 2): swisstopo background, Anlagenteile and Empfangspunkte in LV95 -->
+              <slim-map-viewer
+                class="details__gis"
+                data-testid="details-map"
+                pinTestId="details-pin"
+                [points]="mapPoints()"
+                [plantParts]="plantParts()"
+                [selectedId]="selectedId()"
+                [title]="mapTitle()"
+                [fullscreenLink]="fullscreenLink()"
+                (pointSelected)="select($event)"
+                (unavailable)="gisAvailable.set(false)"
+              />
+            } @else if (view() === 'map') {
+              <!-- Fallback: schematic map (map library not available or state without coordinates) -->
+              <div class="slim-map details__map" data-testid="details-map" data-kind="schematic">
                 <svg
                   class="slim-map__canvas"
                   viewBox="0 0 600 520"

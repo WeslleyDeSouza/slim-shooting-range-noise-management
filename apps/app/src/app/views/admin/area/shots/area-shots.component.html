@@ -53,6 +53,16 @@
     </div>
   </div>
 
+  @if (lockDate(); as lock) {
+    <div class="slim-alert slim-alert--info shots__readonly" data-testid="shots-lock-notice">
+      <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+        <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4" />
+      </svg>
+      <div class="slim-alert__body">{{ 'shots.lock_notice' | translate: { date: (lock | date: 'dd.MM.yyyy') } }}</div>
+    </div>
+  }
+
   @if (readonly()) {
     <div class="slim-alert slim-alert--info shots__readonly">
       <svg class="slim-alert__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -273,14 +283,15 @@
                   class="slim-table__row"
                   data-testid="shots-row"
                   [class.slim-table__row--selected]="selected().has(row.usage.id)"
-                  (dblclick)="!readonly() && openForm(row.usage)"
+                  [attr.data-locked]="isLockedDate(row.usage.date) ? 'true' : null"
+                  (dblclick)="!readonly() && !isLockedDate(row.usage.date) && openForm(row.usage)"
                 >
                   <td class="shots__check">
                     <input
                       type="checkbox"
                       class="slim-check__input"
                       [checked]="selected().has(row.usage.id)"
-                      [disabled]="readonly()"
+                      [disabled]="readonly() || isLockedDate(row.usage.date)"
                       [attr.aria-label]="'shots.select' | translate"
                       (change)="toggleSelect(row.usage.id, $any($event.target).checked)"
                     />
@@ -322,7 +333,15 @@
                   </td>
                   <td class="slim-table__cell--actions">
                     <div class="slim-row-actions">
-                      @if (!readonly()) {
+                      @if (!readonly() && isLockedDate(row.usage.date)) {
+                        <!-- Sperrdatum (B1 5.28): the usage is frozen. -->
+                        <span class="shots__locked" data-testid="shots-locked" [attr.title]="'shots.locked' | translate" [attr.aria-label]="'shots.locked' | translate">
+                          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                            <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4" />
+                            <path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.4" />
+                          </svg>
+                        </span>
+                      } @else if (!readonly()) {
                         <button
                           type="button"
                           class="shots__icon-btn"
@@ -482,8 +501,10 @@
                 <button type="button" class="shots__qchip" (click)="setDate(-1)">{{ 'shots.form.yesterday' | translate }}</button>
               </div>
             }
-            <input class="slim-input" id="shots-date" type="date" formControlName="date" />
-            <p class="slim-field__error">{{ 'shots.form.err_date' | translate }}</p>
+            <input class="slim-input" id="shots-date" type="date" formControlName="date" [attr.min]="minDate()" />
+            <p class="slim-field__error" data-testid="shots-date-error">
+              {{ (form.controls.date.hasError('locked') ? 'shots.form.err_locked' : 'shots.form.err_date') | translate: { date: (lockDate() | date: 'dd.MM.yyyy') } }}
+            </p>
           </div>
 
           <div class="slim-field" [class.slim-field--invalid]="submitted() && (invalid('timeFrom') || invalid('timeTo') || form.hasError('timeRange'))">

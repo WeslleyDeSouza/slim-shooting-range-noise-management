@@ -46,6 +46,8 @@
     "export_soon": "Esportazione (Excel) degli utilizzi filtrati – in arrivo",
     "new": "Registrare un utilizzo",
     "readonly_notice": "Per questa piazza di tiro dispone solo del diritto di lettura. Registrare, modificare ed eliminare non è possibile.",
+    "lock_notice": "La registrazione dei colpi è bloccata fino al {{date}} compreso. Gli utilizzi fino a questa data non possono più essere registrati, modificati o eliminati.",
+    "locked": "Bloccato (data di blocco della registrazione dei colpi)",
     "kpi": {
       "total": "Colpi {{year}} in totale",
       "count": "Utilizzi registrati",
@@ -100,6 +102,7 @@
       "unit_placeholder": "p. es. K1, Art Abt 10, Schützenverein Geissalp",
       "err_unit": "Indicare l’unità utilizzatrice.",
       "err_date": "Indicare una data.",
+      "err_locked": "La data si trova nel periodo bloccato (fino al {{date}} compreso).",
       "today": "Oggi",
       "yesterday": "Ieri",
       "morning": "Mattina",

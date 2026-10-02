@@ -46,6 +46,8 @@
     "export_soon": "Export (Excel) der gefilterten Nutzungen – folgt",
     "new": "Nutzung erfassen",
     "readonly_notice": "Sie haben Leseberechtigung für diesen Schiessplatz. Erfassen, Bearbeiten und Löschen sind nicht möglich.",
+    "lock_notice": "Die Schusszahlenerfassung ist bis und mit {{date}} gesperrt. Nutzungen bis zu diesem Datum können nicht mehr erfasst, bearbeitet oder gelöscht werden.",
+    "locked": "Gesperrt (Sperrdatum der Schusszahlenerfassung)",
     "kpi": {
       "total": "Schuss {{year}} gesamt",
       "count": "Nutzungen erfasst",
@@ -100,6 +102,7 @@
       "unit_placeholder": "z. B. K1, Art Abt 10, Schützenverein Geissalp",
       "err_unit": "Bitte Nutzungseinheit angeben.",
       "err_date": "Bitte Datum angeben.",
+      "err_locked": "Das Datum liegt in der gesperrten Periode (bis und mit {{date}}).",
       "today": "Heute",
       "yesterday": "Gestern",
       "morning": "Vormittag",

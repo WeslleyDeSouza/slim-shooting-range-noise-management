@@ -139,11 +139,10 @@ flowchart LR
 
 | Zweck | Daten | Ist (Prototyp, 02.10.2026) | Ziel ab Zuschlag |
 | --- | --- | --- | --- |
-| Quellcode-Repository | D10 | GitHub.com, privates Repository – **nicht in der Schweiz** | Git-Dienst mit Speicherung in der Schweiz (FAQ 158) [OFFEN: Anbieter bzw. selbst betrieben]; Umzug mit vollständiger Historie vor Projektstart, Löschung auf GitHub |
-| CI/CD | D10 (Code, Build-Logs, Testberichte) | GitHub Actions auf GitHub-Runnern; optional Nx-Cloud-Remote-Cache – **nicht in der Schweiz** | Pipeline und Runner auf Schweizer Infrastruktur; Remote-Cache abgeschaltet oder selbst betrieben |
-| Container-Registry | Images | über Pipeline-Geheimnisse konfiguriert; Standort aus dem Repository nicht ersichtlich | Registry in der Schweiz [OFFEN: Standort belegen] |
-| Private Paketquelle | Bibliotheken `@app-galaxy/*` | Nexus (`nexus-repository.revolvit.ch`) | [OFFEN: Standort und Betreiber belegen] |
-| Öffentliche Paketquellen | keine Projektdaten ausgehend | npm-Registry, Docker Hub (nur Bezug) | Bezug über Proxy in der eigenen Paketquelle; Versionen in der SBOM |
+| Quellcode-Repository | D10 | GitHub.com, privates Repository – **nicht in der Schweiz** | GitLab, selbst betrieben auf Schweizer Infrastruktur (kostenlose Edition, keine Lizenzkosten) (FAQ 158); Umzug mit vollständiger Historie vor Projektstart, Löschung auf GitHub |
+| CI/CD | D10 (Code, Build-Logs, Testberichte) | GitHub Actions auf GitHub-Runnern; optional Nx-Cloud-Remote-Cache – **nicht in der Schweiz** | Pipeline und Runner selbst betrieben auf Schweizer Infrastruktur [OFFEN: GitLab CI der eigenen Instanz oder anderes Werkzeug]; Remote-Cache abgeschaltet oder selbst betrieben |
+| Container-Registry und Paketquelle | Container-Images, Bibliotheken `@app-galaxy/*` | Pakete aus einem selbst betriebenen Nexus; Container-Registry über Pipeline-Geheimnisse konfiguriert | Nexus, selbst betrieben auf Schweizer Infrastruktur (kostenlose Edition, keine Lizenzkosten), für Container-Images und Pakete |
+| Öffentliche Paketquellen | keine Projektdaten ausgehend | npm-Registry, Docker Hub (nur Bezug) | Bezug über Proxy im selbst betriebenen Nexus; Versionen in der SBOM |
 | Projektdokumentation | D10 | Markdown im Repository (`docs/`) | folgt dem Repository; kein separates Wiki ausserhalb der Schweiz |
 | Backlog, Sprint- und Abnahmeunterlagen | D10 | – | Werkzeug mit Speicherung in der Schweiz [OFFEN: Produkt] |
 | Ticketsystem und Hotline (Support) | D12 | – | Werkzeug mit Speicherung in der Schweiz [OFFEN: Produkt] |
@@ -221,9 +220,9 @@ Anforderungen an den Hosting-Anbieter: Sitz und Betrieb nach Schweizer Recht; au
 
 | Nr. | Umstellung | Anlass |
 | --- | --- | --- |
-| 1 | Repository mit Historie auf einen Git-Dienst in der Schweiz umziehen, GitHub-Repository löschen | FAQ 158 |
+| 1 | Repository mit Historie auf das selbst betriebene GitLab in der Schweiz umziehen, GitHub-Repository löschen | FAQ 158 |
 | 2 | Pipeline und Runner in die Schweiz verlegen, Nx-Cloud-Cache deaktivieren | FAQ 49 |
-| 3 | Standort von Container-Registry und Nexus belegen oder in die Schweiz verlegen | FAQ 49 |
+| 3 | Container-Images und Pakete ausschliesslich über das selbst betriebene Nexus in der Schweiz führen; Standort belegen | FAQ 49 |
 | 4 | Maschinelle Vorübersetzung und KI-Assistenten nach Regel 6.2 freigeben oder ersetzen | FAQ 157, 160, 53 |
 | 5 | Mermaid-Bibliothek der ERD-Seite lokal ausliefern | Grundsatz 4 |
 | 6 | Hosting, Backup-Standort, SMTP, Monitoring, Ticketsystem beschaffen und belegen | FAQ 132 |
@@ -249,7 +248,7 @@ Bei Vertragsende erhält die Auftraggeberin einen lesbaren Gesamtabzug (SQL/CSV,
 
 - Bestätigung des Hosting-Anbieters zu Rechenzentrumsstandorten und ausschliesslicher Bearbeitung in der Schweiz, Zertifikat ISO 27001
 - Vertrag bzw. Auftragsbearbeitungsvereinbarung mit Hosting-, Backup- und SMTP-Anbieter
-- Standortbelege für Repository, Pipeline, Registry, Paketquelle, Ticketsystem
+- Standortbelege für GitLab (Quellcode), Nexus (Container-Images und Pakete), Pipeline und Ticketsystem
 - Inventar der KI-Werkzeuge mit Vertragsgrundlage
 - nach Inbetriebnahme: Restore-Protokoll, Liste der administrativen Zugriffsberechtigten
 
@@ -260,7 +259,7 @@ Bei Vertragsende erhält die Auftraggeberin einen lesbaren Gesamtabzug (SQL/CSV,
 | 1 | Einreichende Firma, Verantwortliche; Subunternehmen und deren eigene Konzepte | Kopf, 1 |
 | 2 | Wortlaut E1 (Teil A) und Formvorgaben (Teil C) gegenprüfen | Lesehilfe |
 | 3 | Hosting-Anbieter, Rechenzentren, zweiter Backup-Standort | 5.1, 7 |
-| 4 | Git-Dienst, Pipeline, Registry, Standort Nexus | 6.1 |
+| 4 | Standortbeleg (Schweizer Infrastruktur) für die selbst betriebenen GitLab- und Nexus-Instanzen; Werkzeug für die Pipeline | 6.1 |
 | 5 | Backlog-, Ticket- und Austauschwerkzeuge | 6.1 |
 | 6 | SMTP-Anbieter; Log- und Monitoring-Produkt | 5.1 |
 | 7 | Regel für KI-Werkzeuge und Vorübersetzung; Abgleich mit C2 6.3; Antwort FAQ 53 | 6.2 |

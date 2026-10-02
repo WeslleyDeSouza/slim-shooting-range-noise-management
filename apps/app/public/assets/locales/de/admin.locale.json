@@ -805,6 +805,69 @@
       "col_half_days_sunday": "Halbtag_So",
       "col_shots_work": "Zahl_Wo",
       "col_shots_sunday": "Zahl_So"
+    },
+    "dm_system": {
+      "title": "Erweiterte Konfiguration",
+      "subtitle": "Sperrdatum der Schusszahlenerfassung, Benutzerhandbuch, Schwellenwerte und Farben der Ampeln, Kontaktangaben.",
+      "readonly": "Sie haben Leseberechtigung. Die erweiterte Konfiguration ändert die Rolle Applikationsadministrator/in.",
+      "unsaved": "Ungespeicherte Änderungen",
+      "lock": {
+        "title": "Sperrdatum Schusszahlenerfassung",
+        "label": "Gesperrt bis und mit",
+        "clear": "Sperre aufheben",
+        "hint": "Gilt für die ganze Applikation. Beispiel: Mit dem Sperrdatum 31.12.2025 können Nutzungen mit Datum vor dem 01.01.2026 nicht mehr erfasst, geändert oder gelöscht werden."
+      },
+      "manual": {
+        "title": "Benutzerhandbuch",
+        "none": "Es ist kein Benutzerhandbuch hinterlegt.",
+        "meta": "{{size}} MB · hochgeladen am {{date}}",
+        "upload": "PDF hochladen",
+        "replace": "PDF ersetzen",
+        "remove": "Entfernen",
+        "hint": "PDF-Dokument, höchstens 20 MB. Die Benutzerinnen und Benutzer öffnen es im Hauptmenü unter «Hilfe & Kontakt»."
+      },
+      "manual_not_pdf": "Das Benutzerhandbuch muss ein PDF-Dokument sein.",
+      "manual_too_large": "Die Datei ist grösser als 20 MB.",
+      "thresholds": {
+        "title": "Schwellenwerte und Farben der Ampeln",
+        "defaults": "Standard wiederherstellen",
+        "quota_title": "Schwellenwerte Plangenehmigung",
+        "quota_hint": "Ampel «Einhaltung Kontingent»: Ist-Schusszahl in Prozent des Kontingents (Soll).",
+        "quota_green": "Grün bis und mit … Prozent des Solls",
+        "quota_orange": "Orange bis und mit … Prozent des Solls",
+        "percent_of_target": "% des Solls",
+        "noise_title": "Schwellenwerte Empfangspunkte",
+        "noise_hint": "Ampel «Lärmbelastung»: Abweichung des Beurteilungspegels vom Grenzwert in dB.",
+        "noise_green": "Grün bis und mit … dB Abweichung",
+        "noise_orange": "Orange bis und mit … dB Abweichung",
+        "db_deviation": "dB Abweichung"
+      },
+      "colors": {
+        "title": "Ampelfarben",
+        "hint": "Die Farben gelten für beide Ampeln, die Karte und die Listen.",
+        "default": "Standard",
+        "reset": "Standard"
+      },
+      "contacts": {
+        "title": "Kontaktangaben im Hauptmenü",
+        "name": "Name oder Stelle",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "hint": "Die Angaben erscheinen im Hauptmenü unter «Hilfe & Kontakt». Leere Felder werden nicht angezeigt."
+      },
+      "errors": {
+        "quota_range": "Bitte Werte zwischen 1 und 1000 Prozent angeben.",
+        "noise_range": "Bitte Werte zwischen −50 und 50 dB angeben.",
+        "order": "Der Schwellenwert «orange» darf nicht unter dem Schwellenwert «grün» liegen.",
+        "email": "Bitte eine gültige E-Mail-Adresse angeben."
+      },
+      "discard_title": "Änderungen verwerfen?",
+      "discard_text": "Die erweiterte Konfiguration wurde geändert, aber noch nicht gespeichert.",
+      "keep_editing": "Weiter bearbeiten",
+      "discard": "Verwerfen",
+      "toast_saved": "Erweiterte Konfiguration gespeichert. Die Änderung wird protokolliert.",
+      "toast_manual_uploaded": "Benutzerhandbuch hochgeladen.",
+      "toast_manual_removed": "Benutzerhandbuch entfernt."
     }
   }
 }

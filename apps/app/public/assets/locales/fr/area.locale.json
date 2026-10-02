@@ -46,6 +46,8 @@
     "export_soon": "Export (Excel) des utilisations filtrées – à venir",
     "new": "Saisir une utilisation",
     "readonly_notice": "Vous avez un droit de lecture pour cette place de tir. Saisir, modifier et supprimer ne sont pas possibles.",
+    "lock_notice": "La saisie des coups tirés est verrouillée jusqu’au {{date}} inclus. Les utilisations jusqu’à cette date ne peuvent plus être saisies, modifiées ni supprimées.",
+    "locked": "Verrouillé (date de verrouillage de la saisie des coups tirés)",
     "kpi": {
       "total": "Coups {{year}} au total",
       "count": "Utilisations saisies",
@@ -100,6 +102,7 @@
       "unit_placeholder": "p. ex. K1, Art Abt 10, Schützenverein Geissalp",
       "err_unit": "Veuillez indiquer l’unité.",
       "err_date": "Veuillez indiquer une date.",
+      "err_locked": "La date se situe dans la période verrouillée (jusqu’au {{date}} inclus).",
       "today": "Aujourd’hui",
       "yesterday": "Hier",
       "morning": "Matin",

@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -22,6 +23,7 @@ import { APP_ROUTES, GALAXY_APP_ID, ROUTE_SEGMENT, SLIM_APP_ID } from '@slim/sha
 import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
 import { AccessFacade } from '../../../core/access/access.facade';
+import { saveBlob, SettingsFacade } from '../../../core/settings/settings.facade';
 import { AreaSwitcherComponent } from './area-switcher.component';
 import { BuildStampComponent } from './build-stamp.component';
 import { AreaFacade } from '../../../core/area/area.facade';
@@ -58,6 +60,7 @@ interface AreaPage {
   selector: 'app-admin-layout',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DatePipe,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
@@ -120,7 +123,9 @@ interface AreaPage {
                 <div class="slim-menu__heading">
                   {{ 'shell.help' | translate }}
                 </div>
-                <button type="button" class="slim-menu__item">
+                <!-- Benutzerhandbuch: the PDF of the erweiterte Konfiguration (5.28); without one the entry says so. -->
+                @if (manual(); as m) {
+                  <button type="button" class="slim-menu__item" data-testid="menu-manual" (click)="downloadManual()">
                   <svg
                     class="slim-menu__icon"
                     viewBox="0 0 16 16"
@@ -141,11 +146,39 @@ interface AreaPage {
                     />
                   </svg>
                   <span class="admin-layout__menu-text"
-                    >{{ 'shell.manual' | translate
-                    }}<small>{{ 'shell.manual_sub' | translate }}</small></span
+                    >{{ 'shell.manual' | translate }}<small>{{ m.fileName }} · {{ m.uploadedAt | date: 'dd.MM.yyyy' }}</small></span
                   >
-                </button>
-                <button type="button" class="slim-menu__item">
+                  </button>
+                } @else {
+                  <div class="slim-menu__item admin-layout__menu-static" data-testid="menu-manual-none">
+                  <svg
+                    class="slim-menu__icon"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3.5 2.5h7l2 2v9h-9v-11z"
+                      stroke="currentColor"
+                      stroke-width="1.4"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M6 8h4M6 10.5h4"
+                      stroke="currentColor"
+                      stroke-width="1.4"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  <span class="admin-layout__menu-text"
+                    >{{ 'shell.manual' | translate }}<small>{{ 'shell.manual_none' | translate }}</small></span
+                  >
+                  </div>
+                }
+                <!-- Kontaktinformationen des Fachverantwortlichen und der Systemadministration (B1 5.9). -->
+                @for (c of contacts(); track c.key) {
+                  <div class="slim-menu__item admin-layout__menu-static" [attr.data-testid]="'menu-contact-' + c.id">
+                    @if (c.id === 'specialist') {
                   <svg
                     class="slim-menu__icon"
                     viewBox="0 0 16 16"
@@ -166,14 +199,7 @@ interface AreaPage {
                       stroke-linecap="round"
                     />
                   </svg>
-                  <span class="admin-layout__menu-text"
-                    >{{ 'shell.specialist' | translate
-                    }}<small>{{
-                      'shell.specialist_sub' | translate
-                    }}</small></span
-                  >
-                </button>
-                <button type="button" class="slim-menu__item">
+                    } @else {
                   <svg
                     class="slim-menu__icon"
                     viewBox="0 0 16 16"
@@ -195,11 +221,24 @@ interface AreaPage {
                       stroke-width="1.4"
                     />
                   </svg>
-                  <span class="admin-layout__menu-text"
-                    >{{ 'shell.sysadmin' | translate
-                    }}<small>slim-support&#64;example.admin.ch</small></span
-                  >
-                </button>
+                    }
+                    <span class="admin-layout__menu-text"
+                      >{{ c.key | translate }}
+                      @if (c.lines.length || c.email) {
+                        <small>
+                          @for (line of c.lines; track line) {
+                            {{ line }}<br />
+                          }
+                          @if (c.email) {
+                            <a class="admin-layout__menu-mail" [href]="'mailto:' + c.email">{{ c.email }}</a>
+                          }
+                        </small>
+                      } @else {
+                        <small>{{ 'shell.contact_none' | translate }}</small>
+                      }
+                    </span>
+                  </div>
+                }
                 <div class="slim-menu__divider"></div>
                 <div class="slim-menu__heading">
                   {{ 'shell.application' | translate }}
@@ -590,6 +629,7 @@ interface AreaPage {
 export class AdminLayoutComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
   private readonly access = inject(AccessFacade);
+  private readonly settings = inject(SettingsFacade);
   private readonly auth = inject(AuthFacade);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
@@ -598,6 +638,18 @@ export class AdminLayoutComponent extends ComponentBase {
   /** Which build is running (tools/build-info.js stamps it in the CI build). */
   protected readonly build = BUILD_INFO;
   protected readonly version = BUILD_INFO.version;
+
+  /** Benutzerhandbuch of the erweiterte Konfiguration (B1 5.28), null when none is stored. */
+  protected readonly manual = this.settings.manual;
+  /** Fachverantwortliche/r and Systemadministration as maintained in the erweiterte Konfiguration (B1 5.9). */
+  protected readonly contacts = computed(() => {
+    const s = this.settings.settings();
+    const lines = (...values: (string | null | undefined)[]) => values.filter((v): v is string => !!v);
+    return [
+      { id: 'specialist', key: 'shell.specialist', lines: lines(s?.specialistName, s?.specialistPhone), email: s?.specialistEmail ?? null },
+      { id: 'sysadmin', key: 'shell.sysadmin', lines: lines(s?.sysadminName, s?.sysadminPhone), email: s?.sysadminEmail ?? null },
+    ];
+  });
   protected readonly summary = this.area.summary;
   protected readonly openMenu = signal<'main' | 'user' | null>(null);
 
@@ -811,8 +863,18 @@ export class AdminLayoutComponent extends ComponentBase {
   /** ComponentBase calls this on init and on every DATA_RELOAD emit (tenant switch). */
   override getData(): void {
     void this.access.load();
+    // Sperrdatum, Ampel colours, contacts and Benutzerhandbuch of the erweiterte Konfiguration (5.28).
+    void this.settings.load();
     // The Schiessplatz picker and the bookmarks need the list; the facade deduplicates loads.
     void this.area.load();
+  }
+
+  protected async downloadManual(): Promise<void> {
+    const manual = this.manual();
+    if (!manual) return;
+    const blob = await this.settings.manualFile();
+    if (blob) saveBlob(blob, manual.fileName);
+    this.openMenu.set(null);
   }
 
   protected toggle(menu: 'main' | 'user'): void {

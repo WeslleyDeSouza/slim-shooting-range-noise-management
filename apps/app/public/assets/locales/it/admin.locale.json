@@ -805,6 +805,69 @@
       "col_half_days_sunday": "Halbtag_So",
       "col_shots_work": "Zahl_Wo",
       "col_shots_sunday": "Zahl_So"
+    },
+    "dm_system": {
+      "title": "Configurazione avanzata",
+      "subtitle": "Data di blocco della registrazione dei colpi, manuale d’uso, valori soglia e colori dei semafori, dati di contatto.",
+      "readonly": "Disponete dell’accesso in lettura. La configurazione avanzata è modificata dal ruolo di amministratore/trice dell’applicazione.",
+      "unsaved": "Modifiche non salvate",
+      "lock": {
+        "title": "Data di blocco della registrazione dei colpi",
+        "label": "Bloccato fino al (compreso)",
+        "clear": "Togliere il blocco",
+        "hint": "Vale per tutta l’applicazione. Esempio: con la data di blocco 31.12.2025 gli utilizzi con data anteriore al 01.01.2026 non possono più essere registrati, modificati o eliminati."
+      },
+      "manual": {
+        "title": "Manuale d’uso",
+        "none": "Non è depositato alcun manuale d’uso.",
+        "meta": "{{size}} MB · caricato il {{date}}",
+        "upload": "Caricare un PDF",
+        "replace": "Sostituire il PDF",
+        "remove": "Rimuovere",
+        "hint": "Documento PDF, al massimo 20 MB. Le utenti e gli utenti lo aprono nel menu principale sotto «Aiuto & contatto»."
+      },
+      "manual_not_pdf": "Il manuale d’uso deve essere un documento PDF.",
+      "manual_too_large": "Il file supera i 20 MB.",
+      "thresholds": {
+        "title": "Valori soglia e colori dei semafori",
+        "defaults": "Ripristinare i valori predefiniti",
+        "quota_title": "Valori soglia approvazione dei piani",
+        "quota_hint": "Semaforo «Rispetto del contingente»: numero effettivo di colpi in percento del contingente (valore nominale).",
+        "quota_green": "Verde fino a … percento del valore nominale (compreso)",
+        "quota_orange": "Arancione fino a … percento del valore nominale (compreso)",
+        "percent_of_target": "% del valore nominale",
+        "noise_title": "Valori soglia punti di ricezione",
+        "noise_hint": "Semaforo «Esposizione al rumore»: scostamento del livello di valutazione dal valore limite in dB.",
+        "noise_green": "Verde fino a … dB di scostamento (compreso)",
+        "noise_orange": "Arancione fino a … dB di scostamento (compreso)",
+        "db_deviation": "dB di scostamento"
+      },
+      "colors": {
+        "title": "Colori dei semafori",
+        "hint": "I colori valgono per entrambi i semafori, la carta e gli elenchi.",
+        "default": "Predefinito",
+        "reset": "Predefinito"
+      },
+      "contacts": {
+        "title": "Dati di contatto nel menu principale",
+        "name": "Nome o servizio",
+        "phone": "Telefono",
+        "email": "E-mail",
+        "hint": "I dati compaiono nel menu principale sotto «Aiuto & contatto». I campi vuoti non sono visualizzati."
+      },
+      "errors": {
+        "quota_range": "Indicare valori tra 1 e 1000 percento.",
+        "noise_range": "Indicare valori tra −50 e 50 dB.",
+        "order": "Il valore soglia «arancione» non può essere inferiore al valore soglia «verde».",
+        "email": "Indicare un indirizzo e-mail valido."
+      },
+      "discard_title": "Annullare le modifiche?",
+      "discard_text": "La configurazione avanzata è stata modificata ma non ancora salvata.",
+      "keep_editing": "Continuare la modifica",
+      "discard": "Annullare",
+      "toast_saved": "Configurazione avanzata salvata. La modifica è registrata nel registro.",
+      "toast_manual_uploaded": "Manuale d’uso caricato.",
+      "toast_manual_removed": "Manuale d’uso rimosso."
     }
   }
 }

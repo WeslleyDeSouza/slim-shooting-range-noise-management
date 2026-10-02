@@ -10,6 +10,7 @@ import type {
   UsageRoomDto,
 } from '@ui-slim/apiClient';
 import { AreaFacade } from '../../../../core/area/area.facade';
+import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 import { AreaShotsComponent, minutesBetween } from './area-shots.component';
 
@@ -54,7 +55,12 @@ const USAGES: UsageResultDto[] = [
 
 const KPI: UsageKpiDto = { year: 2026, totalShots: 3900, count: 3, civilSharePercent: 62, lastDate: '2026-06-21', years: [2026, 2025] };
 
+/** Sperrdatum der Schusszahlenerfassung as the erweiterte Konfiguration (B1 5.28) delivers it. */
+const lockDate = signal<string | null>(null);
+
 describe('AreaShotsComponent', () => {
+  afterEach(() => lockDate.set(null));
+
   let fixture: ComponentFixture<AreaShotsComponent>;
   let facade: {
     kpi: ReturnType<typeof signal<UsageKpiDto | null>>;
@@ -103,6 +109,7 @@ describe('AreaShotsComponent', () => {
       imports: [AreaShotsComponent],
       providers: [
         { provide: UsageFacade, useValue: facade },
+        { provide: SettingsFacade, useValue: { usageLockDate: lockDate } },
         { provide: AreaFacade, useValue: { byId: () => ({ id: AREA_ID, name: 'Geissalp', coordinationSectionNo: '1104.020' }) } },
         { provide: ActivatedRoute, useValue: { parent: parentRoute, paramMap: of(paramMap), snapshot: parentRoute.snapshot } },
       ],
@@ -178,6 +185,35 @@ describe('AreaShotsComponent', () => {
     const groups = el().querySelectorAll('.shots__group');
     expect(groups.length).toBe(2);
     expect(groups[0].textContent).toContain('Stellungsrm');
+  });
+
+  it('freezes the usages up to and including the Sperrdatum (B1 5.28)', async () => {
+    const rows = () => Array.from(el().querySelectorAll<HTMLElement>('[data-testid="shots-row"]'));
+    expect(el().querySelector('[data-testid="shots-lock-notice"]')).toBeNull();
+    expect(el().querySelectorAll('[data-testid="shots-edit"]')).toHaveLength(3);
+
+    // Usages of 05.05., 17.06. and 21.06.2026: a Sperrdatum of 17.06. freezes the first two.
+    lockDate.set('2026-06-17');
+    fixture.detectChanges();
+    expect(el().querySelector('[data-testid="shots-lock-notice"]')?.textContent).toContain('shots.lock_notice');
+    expect(rows().map((r) => r.getAttribute('data-locked'))).toEqual([null, 'true', 'true']); // newest first
+    expect(el().querySelectorAll('[data-testid="shots-edit"]')).toHaveLength(1);
+    expect(el().querySelectorAll('[data-testid="shots-delete"]')).toHaveLength(1);
+    expect(el().querySelectorAll('[data-testid="shots-locked"]')).toHaveLength(2);
+    const boxes = rows().map((r) => r.querySelector<HTMLInputElement>('input[type="checkbox"]')?.disabled);
+    expect(boxes).toEqual([false, true, true]);
+
+    // The entry form starts the day after the Sperrdatum and refuses a date in the locked period.
+    el().querySelector<HTMLButtonElement>('[data-testid="shots-new"]')?.click();
+    fixture.detectChanges();
+    const date = el().querySelector<HTMLInputElement>('#shots-date') as HTMLInputElement;
+    expect(date.getAttribute('min')).toBe('2026-06-18');
+    date.value = '2026-06-17';
+    date.dispatchEvent(new Event('input'));
+    el().querySelector<HTMLButtonElement>('[data-testid="shots-save"]')?.click();
+    await settle();
+    expect(el().querySelector('[data-testid="shots-date-error"]')?.textContent).toContain('shots.form.err_locked');
+    expect(facade.create).not.toHaveBeenCalled();
   });
 
   it('opens the drawer and blocks an empty save', async () => {

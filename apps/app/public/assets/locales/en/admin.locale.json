@@ -805,6 +805,69 @@
       "col_half_days_sunday": "Halbtag_So",
       "col_shots_work": "Zahl_Wo",
       "col_shots_sunday": "Zahl_So"
+    },
+    "dm_system": {
+      "title": "Advanced configuration",
+      "subtitle": "Lock date of the shot count recording, user manual, thresholds and colours of the traffic lights, contact details.",
+      "readonly": "You have read access. The advanced configuration is changed by the application administrator role.",
+      "unsaved": "Unsaved changes",
+      "lock": {
+        "title": "Lock date of the shot count recording",
+        "label": "Locked up to and including",
+        "clear": "Remove lock",
+        "hint": "Applies to the whole application. Example: with the lock date 31.12.2025, usages dated before 01.01.2026 can no longer be recorded, changed or deleted."
+      },
+      "manual": {
+        "title": "User manual",
+        "none": "No user manual has been stored.",
+        "meta": "{{size}} MB · uploaded on {{date}}",
+        "upload": "Upload PDF",
+        "replace": "Replace PDF",
+        "remove": "Remove",
+        "hint": "PDF document, 20 MB at most. Users open it in the main menu under “Help & contact”."
+      },
+      "manual_not_pdf": "The user manual must be a PDF document.",
+      "manual_too_large": "The file is larger than 20 MB.",
+      "thresholds": {
+        "title": "Thresholds and colours of the traffic lights",
+        "defaults": "Restore defaults",
+        "quota_title": "Thresholds planning approval",
+        "quota_hint": "Traffic light “Quota compliance”: actual shot count in percent of the quota (target).",
+        "quota_green": "Green up to and including … percent of the target",
+        "quota_orange": "Orange up to and including … percent of the target",
+        "percent_of_target": "% of the target",
+        "noise_title": "Thresholds receiver points",
+        "noise_hint": "Traffic light “Noise exposure”: deviation of the rating level from the limit value in dB.",
+        "noise_green": "Green up to and including … dB deviation",
+        "noise_orange": "Orange up to and including … dB deviation",
+        "db_deviation": "dB deviation"
+      },
+      "colors": {
+        "title": "Traffic light colours",
+        "hint": "The colours apply to both traffic lights, the map and the lists.",
+        "default": "Default",
+        "reset": "Default"
+      },
+      "contacts": {
+        "title": "Contact details in the main menu",
+        "name": "Name or unit",
+        "phone": "Phone",
+        "email": "E-mail",
+        "hint": "The details appear in the main menu under “Help & contact”. Empty fields are not shown."
+      },
+      "errors": {
+        "quota_range": "Please enter values between 1 and 1000 percent.",
+        "noise_range": "Please enter values between −50 and 50 dB.",
+        "order": "The threshold “orange” must not be below the threshold “green”.",
+        "email": "Please enter a valid e-mail address."
+      },
+      "discard_title": "Discard changes?",
+      "discard_text": "The advanced configuration has been changed but not saved yet.",
+      "keep_editing": "Keep editing",
+      "discard": "Discard",
+      "toast_saved": "Advanced configuration saved. The change is logged.",
+      "toast_manual_uploaded": "User manual uploaded.",
+      "toast_manual_removed": "User manual removed."
     }
   }
 }

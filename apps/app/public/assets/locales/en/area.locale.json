@@ -46,6 +46,8 @@
     "export_soon": "Export (Excel) of the filtered usages – coming soon",
     "new": "Record usage",
     "readonly_notice": "You have read access to this shooting range. Recording, editing and deleting are not possible.",
+    "lock_notice": "Recording shot counts is locked up to and including {{date}}. Usages up to this date can no longer be recorded, edited or deleted.",
+    "locked": "Locked (lock date of the shot count recording)",
     "kpi": {
       "total": "Shots {{year}} total",
       "count": "Usages recorded",
@@ -100,6 +102,7 @@
       "unit_placeholder": "e.g. K1, Art Abt 10, Schützenverein Geissalp",
       "err_unit": "Please enter the unit.",
       "err_date": "Please enter a date.",
+      "err_locked": "The date lies in the locked period (up to and including {{date}}).",
       "today": "Today",
       "yesterday": "Yesterday",
       "morning": "Morning",

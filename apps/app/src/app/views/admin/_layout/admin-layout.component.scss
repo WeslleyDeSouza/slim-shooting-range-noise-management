@@ -142,6 +142,11 @@
     }
   }
 
+  &__menu-mail {
+    color: slim.color('link');
+    overflow-wrap: anywhere;
+  }
+
   &__menu-static {
     cursor: default;
   }

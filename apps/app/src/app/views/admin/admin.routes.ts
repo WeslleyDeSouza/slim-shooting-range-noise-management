@@ -323,7 +323,14 @@ export const ADMIN_ROUTES: Routes = [
             loadComponent: () => import('./logs/logs.component').then((c) => c.AppLogsComponent),
           },
           placeholder(S.mgdmExport, { title: 'menu.mgdm_export', crumbs: DM }),
-          placeholder(S.system, { title: 'menu.system_settings', crumbs: DM }),
+          // 5.28 Erweiterte Konfiguration: Sperrdatum, Benutzerhandbuch, Schwellenwerte und Farben der Ampeln.
+          {
+            path: S.system,
+            data: { path: 'admin' },
+            resolve: LocaleResolver.default,
+            canDeactivate: [unsavedChangesGuard],
+            loadComponent: () => import('./data-management/system/dm-system.component').then((c) => c.DmSystemComponent),
+          },
         ],
       },
 

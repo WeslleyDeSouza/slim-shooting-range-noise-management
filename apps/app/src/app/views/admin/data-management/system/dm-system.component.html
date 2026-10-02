@@ -1,0 +1,242 @@
+<div class="slim-page dsys">
+  <div class="slim-page__header">
+    <div>
+      <h1 class="slim-page__title" data-testid="dsys-title">{{ prefix + '.title' | translate }}</h1>
+      <p class="slim-page__subtitle">{{ prefix + '.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (readonly() && settings()) {
+    <div class="slim-alert slim-alert--info slim-u-mb-4" data-testid="dsys-readonly">
+      <div class="slim-alert__body">{{ prefix + '.readonly' | translate }}</div>
+    </div>
+  }
+  @if (error(); as message) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4" role="alert" data-testid="dsys-error">
+      <div class="slim-alert__body">{{ message | translate }}</div>
+    </div>
+  }
+
+  <form class="dsys__layout" [formGroup]="form" (ngSubmit)="save()" novalidate data-testid="dsys-form">
+    <!-- 1 Sperrdatum Schusszahlenerfassung (B1 5.28, Abbildung 40) -->
+    <section class="slim-card">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.lock.title' | translate }}</h2>
+      </div>
+      <div class="slim-card__body slim-form">
+        <div class="slim-field">
+          <label class="slim-field__label" for="dsys-lock">{{ prefix + '.lock.label' | translate }}</label>
+          <div class="dsys__inline">
+            <input class="slim-input dsys__date" id="dsys-lock" type="date" formControlName="usageLockDate" data-testid="dsys-lock" />
+            @if (!readonly() && form.controls.usageLockDate.value) {
+              <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="dsys-lock-clear" (click)="clearLockDate()">
+                {{ prefix + '.lock.clear' | translate }}
+              </button>
+            }
+          </div>
+          <p class="slim-field__hint">{{ prefix + '.lock.hint' | translate }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 Benutzerhandbuch -->
+    <section class="slim-card" data-testid="dsys-manual">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.manual.title' | translate }}</h2>
+      </div>
+      <div class="slim-card__body slim-form">
+        @if (manual(); as m) {
+          <div class="dsys__file">
+            <button type="button" class="dsys__file-name" data-testid="dsys-manual-download" (click)="downloadManual()">{{ m.fileName }}</button>
+            <span class="slim-text--muted slim-text--xs" data-testid="dsys-manual-meta">
+              {{ prefix + '.manual.meta' | translate: { size: (m.size / 1024 / 1024).toFixed(1), date: (m.uploadedAt | date: 'dd.MM.yyyy HH:mm') } }}
+            </span>
+          </div>
+        } @else {
+          <p class="slim-text--muted" data-testid="dsys-manual-none">{{ prefix + '.manual.none' | translate }}</p>
+        }
+        @if (!readonly()) {
+          <div class="dsys__inline">
+            <label class="slim-btn slim-btn--secondary dsys__upload">
+              <input #file type="file" accept="application/pdf,.pdf" class="slim-u-sr-only" data-testid="dsys-manual-file" (change)="pickManual(file)" />
+              <span class="slim-btn__label">{{ (manual() ? prefix + '.manual.replace' : prefix + '.manual.upload') | translate }}</span>
+            </label>
+            @if (manual()) {
+              <button type="button" class="slim-btn slim-btn--ghost" data-testid="dsys-manual-remove" [disabled]="saving()" (click)="removeManual()">
+                {{ prefix + '.manual.remove' | translate }}
+              </button>
+            }
+          </div>
+        }
+        @if (manualError(); as key) {
+          <p class="slim-field__error dsys__error" role="alert" data-testid="dsys-manual-error">{{ key | translate }}</p>
+        }
+        <p class="slim-field__hint">{{ prefix + '.manual.hint' | translate }}</p>
+      </div>
+    </section>
+
+    <!-- 3 Schwellenwert-Festlegung: Kontingent in Prozent, Empfangspunkte in dB (FAQ 166) -->
+    <section class="slim-card dsys__wide" data-testid="dsys-thresholds">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.thresholds.title' | translate }}</h2>
+        @if (!readonly()) {
+          <div class="slim-card__actions">
+            <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="dsys-defaults" (click)="restoreDefaults()">
+              {{ prefix + '.thresholds.defaults' | translate }}
+            </button>
+          </div>
+        }
+      </div>
+      <div class="slim-card__body dsys__groups">
+        <div class="dsys__group" data-testid="dsys-quota">
+          <h3 class="dsys__group-title">{{ prefix + '.thresholds.quota_title' | translate }}</h3>
+          <p class="slim-field__hint">{{ prefix + '.thresholds.quota_hint' | translate }}</p>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorOk')"></span>
+            <label class="dsys__op" for="dsys-quota-green">≤</label>
+            <input class="slim-input dsys__number" id="dsys-quota-green" type="number" step="1" min="1" formControlName="quotaGreenMaxPercent" data-testid="dsys-quota-green" [attr.aria-label]="prefix + '.thresholds.quota_green' | translate" />
+            <span class="dsys__unit">{{ prefix + '.thresholds.percent_of_target' | translate }}</span>
+          </div>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorWarn')"></span>
+            <label class="dsys__op" for="dsys-quota-orange">≤</label>
+            <input class="slim-input dsys__number" id="dsys-quota-orange" type="number" step="1" min="1" formControlName="quotaOrangeMaxPercent" data-testid="dsys-quota-orange" [attr.aria-label]="prefix + '.thresholds.quota_orange' | translate" />
+            <span class="dsys__unit">{{ prefix + '.thresholds.percent_of_target' | translate }}</span>
+          </div>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorOver')"></span>
+            <span class="dsys__op">&gt;</span>
+            <span class="dsys__derived" data-testid="dsys-quota-red">{{ form.controls.quotaOrangeMaxPercent.value ?? '–' }}</span>
+            <span class="dsys__unit">{{ prefix + '.thresholds.percent_of_target' | translate }}</span>
+          </div>
+          @if (invalid('quotaGreenMaxPercent') || invalid('quotaOrangeMaxPercent')) {
+            <p class="slim-field__error dsys__error" data-testid="dsys-quota-error">{{ prefix + '.errors.quota_range' | translate }}</p>
+          } @else if (form.hasError('quotaOrder')) {
+            <p class="slim-field__error dsys__error" data-testid="dsys-quota-error">{{ prefix + '.errors.order' | translate }}</p>
+          }
+        </div>
+
+        <div class="dsys__group" data-testid="dsys-noise">
+          <h3 class="dsys__group-title">{{ prefix + '.thresholds.noise_title' | translate }}</h3>
+          <p class="slim-field__hint">{{ prefix + '.thresholds.noise_hint' | translate }}</p>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorOk')"></span>
+            <label class="dsys__op" for="dsys-noise-green">≤</label>
+            <input class="slim-input dsys__number" id="dsys-noise-green" type="number" step="1" formControlName="noiseGreenMaxDb" data-testid="dsys-noise-green" [attr.aria-label]="prefix + '.thresholds.noise_green' | translate" />
+            <span class="dsys__unit">{{ prefix + '.thresholds.db_deviation' | translate }}</span>
+          </div>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorWarn')"></span>
+            <label class="dsys__op" for="dsys-noise-orange">≤</label>
+            <input class="slim-input dsys__number" id="dsys-noise-orange" type="number" step="1" formControlName="noiseOrangeMaxDb" data-testid="dsys-noise-orange" [attr.aria-label]="prefix + '.thresholds.noise_orange' | translate" />
+            <span class="dsys__unit">{{ prefix + '.thresholds.db_deviation' | translate }}</span>
+          </div>
+          <div class="dsys__row">
+            <span class="dsys__swatch" [style.background]="colorOf('colorOver')"></span>
+            <span class="dsys__op">&gt;</span>
+            <span class="dsys__derived" data-testid="dsys-noise-red">{{ form.controls.noiseOrangeMaxDb.value ?? '–' }}</span>
+            <span class="dsys__unit">{{ prefix + '.thresholds.db_deviation' | translate }}</span>
+          </div>
+          @if (invalid('noiseGreenMaxDb') || invalid('noiseOrangeMaxDb')) {
+            <p class="slim-field__error dsys__error" data-testid="dsys-noise-error">{{ prefix + '.errors.noise_range' | translate }}</p>
+          } @else if (form.hasError('noiseOrder')) {
+            <p class="slim-field__error dsys__error" data-testid="dsys-noise-error">{{ prefix + '.errors.order' | translate }}</p>
+          }
+        </div>
+
+        <div class="dsys__group" data-testid="dsys-colors">
+          <h3 class="dsys__group-title">{{ prefix + '.colors.title' | translate }}</h3>
+          <p class="slim-field__hint">{{ prefix + '.colors.hint' | translate }}</p>
+          @for (c of colorFields; track c.field) {
+            <div class="dsys__row">
+              <input
+                class="dsys__color"
+                type="color"
+                [id]="'dsys-' + c.field"
+                [value]="colorOf(c.field)"
+                [disabled]="readonly()"
+                [attr.data-testid]="'dsys-' + c.field"
+                (input)="pickColor(c.field, $any($event.target).value)"
+              />
+              <label class="dsys__color-label" [for]="'dsys-' + c.field">{{ 'status_area.' + c.state | translate }}</label>
+              <span class="slim-text--muted slim-text--xs dsys__color-value" [attr.data-testid]="'dsys-' + c.field + '-value'">
+                {{ form.controls[c.field].value ?? (prefix + '.colors.default' | translate) }}
+              </span>
+              @if (!readonly() && form.controls[c.field].value) {
+                <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" [attr.data-testid]="'dsys-' + c.field + '-reset'" (click)="resetColor(c.field)">
+                  {{ prefix + '.colors.reset' | translate }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Kontakte des Hauptmenüs (B1 5.9) -->
+    <section class="slim-card dsys__wide" data-testid="dsys-contacts">
+      <div class="slim-card__header">
+        <h2 class="slim-card__title">{{ prefix + '.contacts.title' | translate }}</h2>
+      </div>
+      <div class="slim-card__body dsys__groups">
+        @for (who of ['specialist', 'sysadmin']; track who) {
+          <div class="dsys__group slim-form">
+            <h3 class="dsys__group-title">{{ 'shell.' + who | translate }}</h3>
+            <div class="slim-field">
+              <label class="slim-field__label" [for]="'dsys-' + who + '-name'">{{ prefix + '.contacts.name' | translate }}</label>
+              <input class="slim-input" [id]="'dsys-' + who + '-name'" [formControlName]="who + 'Name'" [attr.data-testid]="'dsys-' + who + '-name'" />
+            </div>
+            <div class="slim-field">
+              <label class="slim-field__label" [for]="'dsys-' + who + '-phone'">{{ prefix + '.contacts.phone' | translate }}</label>
+              <input class="slim-input" type="tel" [id]="'dsys-' + who + '-phone'" [formControlName]="who + 'Phone'" [attr.data-testid]="'dsys-' + who + '-phone'" />
+            </div>
+            <div class="slim-field" [class.slim-field--invalid]="invalid(who + 'Email')">
+              <label class="slim-field__label" [for]="'dsys-' + who + '-email'">{{ prefix + '.contacts.email' | translate }}</label>
+              <input class="slim-input" type="email" [id]="'dsys-' + who + '-email'" [formControlName]="who + 'Email'" [attr.data-testid]="'dsys-' + who + '-email'" />
+              <p class="slim-field__error">{{ prefix + '.errors.email' | translate }}</p>
+            </div>
+          </div>
+        }
+        <p class="slim-field__hint dsys__group">{{ prefix + '.contacts.hint' | translate }}</p>
+      </div>
+    </section>
+
+    @if (!readonly()) {
+      <div class="dsys__actions dsys__wide" data-testid="dsys-actions">
+        @if (dirty()) {
+          <span class="slim-badge slim-badge--warning" data-testid="dsys-dirty">{{ prefix + '.unsaved' | translate }}</span>
+        }
+        <button type="button" class="slim-btn slim-btn--ghost" data-testid="dsys-cancel" [disabled]="!dirty() || saving()" (click)="cancel()">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="submit" class="slim-btn slim-btn--primary" [class.slim-btn--loading]="saving()" [disabled]="saving() || !dirty()" data-testid="dsys-save">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    }
+  </form>
+
+  <!-- Änderungen verwerfen? -->
+  @if (confirmDiscard()) {
+    <div class="slim-sheet slim-sheet--open" role="alertdialog" aria-modal="true" data-testid="dsys-discard">
+      <button type="button" class="slim-sheet__backdrop" [attr.aria-label]="'common.close' | translate" (click)="resolveDiscard(false)"></button>
+      <div class="slim-sheet__panel">
+        <header class="slim-sheet__header"><div class="slim-sheet__title">{{ prefix + '.discard_title' | translate }}</div></header>
+        <div class="slim-sheet__body">{{ prefix + '.discard_text' | translate }}</div>
+        <footer class="slim-sheet__footer">
+          <button type="button" class="slim-btn" data-testid="dsys-discard-keep" (click)="resolveDiscard(false)">{{ prefix + '.keep_editing' | translate }}</button>
+          <button type="button" class="slim-btn slim-btn--danger" data-testid="dsys-discard-confirm" (click)="resolveDiscard(true)">{{ prefix + '.discard' | translate }}</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  @if (toast(); as key) {
+    <div class="slim-toasts">
+      <div class="slim-toast slim-toast--success" role="status" data-testid="dsys-toast">
+        <div class="slim-toast__body">{{ key | translate }}</div>
+        <button type="button" class="slim-toast__action" (click)="dismissToast()">{{ 'common.close' | translate }}</button>
+      </div>
+    </div>
+  }
+</div>

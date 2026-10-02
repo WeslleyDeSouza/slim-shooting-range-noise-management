@@ -32,6 +32,7 @@ import type {
   UsageRoomDto,
 } from '@ui-slim/apiClient';
 import { AreaFacade } from '../../../../core/area/area.facade';
+import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 
 /** Sortable columns of the table. */
@@ -120,6 +121,16 @@ function usageFormValidator(group: {
 export class AreaShotsComponent extends ComponentBase {
   private readonly facade = inject(UsageFacade);
   private readonly areaFacade = inject(AreaFacade);
+  /** Sperrdatum der Schusszahlenerfassung (B1 5.28): usages up to and including it are frozen. */
+  protected readonly lockDate = inject(SettingsFacade).usageLockDate;
+  /** First day a usage may be recorded on (the day after the Sperrdatum). */
+  protected readonly minDate = computed(() => {
+    const lock = this.lockDate();
+    if (!lock) return null;
+    const next = new Date(`${lock}T00:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + 1);
+    return next.toISOString().slice(0, 10);
+  });
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
@@ -239,7 +250,8 @@ export class AreaShotsComponent extends ComponentBase {
   protected readonly allSelected = computed(() => {
     const list = this.filtered();
     const sel = this.selected();
-    return list.length > 0 && list.every((u) => sel.has(u.id));
+    const open = list.filter((u) => !this.isLockedDate(u.date));
+    return open.length > 0 && open.every((u) => sel.has(u.id));
   });
   protected readonly units = computed(() =>
     [...new Set(this.usages().map((u) => u.unit))].sort((a, b) => a.localeCompare(b)),
@@ -261,7 +273,7 @@ export class AreaShotsComponent extends ComponentBase {
     {
       roomId: ['', Validators.required],
       unit: ['', [Validators.required, Validators.maxLength(256)]],
-      date: ['', Validators.required],
+      date: ['', [Validators.required, (c: AbstractControl) => (this.isLockedDate(c.value) ? { locked: true } : null)]],
       timeFrom: ['', [Validators.required, quarterHourValidator]],
       timeTo: ['', [Validators.required, quarterHourValidator]],
       usageType: ['military' as UsageCreateDto['usageType'], Validators.required],
@@ -397,12 +409,19 @@ export class AreaShotsComponent extends ComponentBase {
     });
   }
 
+  /** A date in the locked period (≤ Sperrdatum). */
+  protected isLockedDate(date: string | null | undefined): boolean {
+    const lock = this.lockDate();
+    return !!lock && !!date && date <= lock;
+  }
+
   protected toggleAll(on: boolean): void {
     this.selected.update((set) => {
       const next = new Set(set);
       for (const u of this.filtered()) {
-        if (on) next.add(u.id);
-        else next.delete(u.id);
+        // Locked usages cannot be deleted, so «alle» leaves them out.
+        if (on && !this.isLockedDate(u.date)) next.add(u.id);
+        else if (!on) next.delete(u.id);
       }
       return next;
     });

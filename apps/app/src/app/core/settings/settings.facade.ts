@@ -52,7 +52,7 @@ export class SettingsFacade extends SignalStore<SettingsState> {
   }
 
   /** Mask 5.28: saves the given fields; `null` resets a field to its default. */
-  async update(body: SystemSettingsUpdateDto): Promise<boolean> {
+  async save(body: SystemSettingsUpdateDto): Promise<boolean> {
     return this.mutate(async () => this.apply(await firstValueFrom(this.admin.adminDataSystemUpdate({ body }))));
   }
 

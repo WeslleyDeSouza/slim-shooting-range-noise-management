@@ -1,0 +1,153 @@
+@use 'slim/abstracts' as slim;
+
+// Datenverwaltung › Erweiterte Konfiguration (B1 5.28). Block `dsys`.
+.dsys {
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__wide {
+    grid-column: 1 / -1;
+  }
+
+  &__inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: slim.space(2);
+  }
+
+  &__date {
+    width: auto;
+  }
+
+  &__file {
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(1);
+  }
+
+  &__file-name {
+    @include slim.control-reset;
+    align-self: flex-start;
+    color: slim.color('link');
+    font-weight: slim.font-weight('semibold');
+    text-align: left;
+    text-decoration: underline;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+    @include slim.focus-visible;
+  }
+
+  &__upload {
+    cursor: pointer;
+  }
+
+  &__error {
+    display: block;
+  }
+
+  // Three groups side by side on a wide screen: Kontingent, Empfangspunkte, Farben.
+  &__groups {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(6);
+
+    @include slim.mq('md') {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(2);
+    min-width: 0;
+  }
+
+  &__group-title {
+    margin: 0;
+    font-size: slim.font-size('md');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  // One threshold: colour · operator · value · unit (Abbildung 40).
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: slim.space(2);
+    min-height: slim.size('control-h');
+  }
+
+  &__swatch {
+    flex: 0 0 auto;
+    width: slim.space(5);
+    height: slim.space(5);
+    border-radius: slim.radius('sm');
+    border: 1px solid slim.color('line-strong');
+  }
+
+  &__op {
+    flex: 0 0 auto;
+    width: slim.space(4);
+    font-weight: slim.font-weight('semibold');
+    text-align: center;
+  }
+
+  &__number {
+    width: calc(#{slim.space(16)} + #{slim.space(8)});
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__derived {
+    width: calc(#{slim.space(16)} + #{slim.space(8)});
+    padding-right: slim.space(3);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: slim.color('text-2');
+  }
+
+  &__unit {
+    color: slim.color('text-2');
+    font-size: slim.font-size('sm');
+  }
+
+  &__color {
+    flex: 0 0 auto;
+    width: slim.size('control-h');
+    height: slim.size('control-h');
+    padding: 0;
+    border: 1px solid slim.color('line-strong');
+    border-radius: slim.radius('sm');
+    background: none;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  &__color-label {
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__color-value {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: slim.space(2);
+  }
+}

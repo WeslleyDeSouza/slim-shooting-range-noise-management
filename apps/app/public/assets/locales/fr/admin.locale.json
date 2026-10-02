@@ -805,6 +805,69 @@
       "col_half_days_sunday": "Halbtag_So",
       "col_shots_work": "Zahl_Wo",
       "col_shots_sunday": "Zahl_So"
+    },
+    "dm_system": {
+      "title": "Configuration avancée",
+      "subtitle": "Date de verrouillage de la saisie des coups tirés, manuel d’utilisation, seuils et couleurs des feux, coordonnées de contact.",
+      "readonly": "Vous disposez d’un accès en lecture. La configuration avancée est modifiée par le rôle d’administrateur/trice de l’application.",
+      "unsaved": "Modifications non enregistrées",
+      "lock": {
+        "title": "Date de verrouillage de la saisie des coups tirés",
+        "label": "Verrouillé jusqu’au (inclus)",
+        "clear": "Lever le verrouillage",
+        "hint": "Valable pour toute l’application. Exemple : avec la date de verrouillage 31.12.2025, les utilisations datées d’avant le 01.01.2026 ne peuvent plus être saisies, modifiées ni supprimées."
+      },
+      "manual": {
+        "title": "Manuel d’utilisation",
+        "none": "Aucun manuel d’utilisation n’est enregistré.",
+        "meta": "{{size}} Mo · téléversé le {{date}}",
+        "upload": "Téléverser un PDF",
+        "replace": "Remplacer le PDF",
+        "remove": "Supprimer",
+        "hint": "Document PDF, 20 Mo au maximum. Les utilisatrices et utilisateurs l’ouvrent dans le menu principal sous « Aide & contact »."
+      },
+      "manual_not_pdf": "Le manuel d’utilisation doit être un document PDF.",
+      "manual_too_large": "Le fichier dépasse 20 Mo.",
+      "thresholds": {
+        "title": "Seuils et couleurs des feux",
+        "defaults": "Rétablir les valeurs par défaut",
+        "quota_title": "Seuils approbation des plans",
+        "quota_hint": "Feu « Respect du contingent » : nombre de coups effectif en pour cent du contingent (valeur cible).",
+        "quota_green": "Vert jusqu’à … pour cent de la valeur cible (inclus)",
+        "quota_orange": "Orange jusqu’à … pour cent de la valeur cible (inclus)",
+        "percent_of_target": "% de la valeur cible",
+        "noise_title": "Seuils points de réception",
+        "noise_hint": "Feu « Exposition au bruit » : écart du niveau d’évaluation par rapport à la valeur limite, en dB.",
+        "noise_green": "Vert jusqu’à … dB d’écart (inclus)",
+        "noise_orange": "Orange jusqu’à … dB d’écart (inclus)",
+        "db_deviation": "dB d’écart"
+      },
+      "colors": {
+        "title": "Couleurs des feux",
+        "hint": "Les couleurs valent pour les deux feux, la carte et les listes.",
+        "default": "Par défaut",
+        "reset": "Par défaut"
+      },
+      "contacts": {
+        "title": "Coordonnées dans le menu principal",
+        "name": "Nom ou service",
+        "phone": "Téléphone",
+        "email": "E-mail",
+        "hint": "Les coordonnées apparaissent dans le menu principal sous « Aide & contact ». Les champs vides ne sont pas affichés."
+      },
+      "errors": {
+        "quota_range": "Veuillez saisir des valeurs entre 1 et 1000 pour cent.",
+        "noise_range": "Veuillez saisir des valeurs entre −50 et 50 dB.",
+        "order": "Le seuil « orange » ne doit pas être inférieur au seuil « vert ».",
+        "email": "Veuillez saisir une adresse e-mail valable."
+      },
+      "discard_title": "Abandonner les modifications ?",
+      "discard_text": "La configuration avancée a été modifiée mais pas encore enregistrée.",
+      "keep_editing": "Continuer la modification",
+      "discard": "Abandonner",
+      "toast_saved": "Configuration avancée enregistrée. La modification est journalisée.",
+      "toast_manual_uploaded": "Manuel d’utilisation téléversé.",
+      "toast_manual_removed": "Manuel d’utilisation supprimé."
     }
   }
 }

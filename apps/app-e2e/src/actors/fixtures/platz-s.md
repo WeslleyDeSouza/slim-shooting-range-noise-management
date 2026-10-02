@@ -86,7 +86,7 @@ Nur zivile Nutzungen (U2, U3), Gesamtbeurteilung Anhang 7 = nein → Militär bl
 | Fall | Zustand | Zeitraum | E1 A9 Lr | E1 A9 Ampel | E1 A7 Lr | E2 A9 Lr |
 |---|---|---|---|---|---|---|
 | Grundfall | Z1 | 2026 | **57.1** | orange | **38.1** | – (nicht im Zustand) |
-| Zustandswechsel | Z2 | 2026 | **51.1** | grün | **32.1** | **57.1** |
+| Zustandswechsel | Z2 | 2026 | **51.1** | grün | **32.2** | **57.1** |
 | Σ Gewichte 0 | Z3 | 2026 | nicht beurteilbar | keine Farbe | nicht beurteilbar | nicht beurteilbar |
 | Σ Abend-Gewichte 0 (Q1a 1000/0, Q1b 0/0 – Negativfall) | Z2 | 2026 | nicht beurteilbar (Teilwert nur innerhalb: 49.3233, nie als Ampel) | keine Farbe | – | nicht beurteilbar |
 | ohne Quelle (O8) | Z1 | 2025 | nicht beurteilbar (pist75, sprengladung fehlen) | keine Farbe | – | – |

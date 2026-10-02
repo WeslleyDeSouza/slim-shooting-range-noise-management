@@ -81,6 +81,7 @@ apps/app-e2e/src/actors/
   fachablaeufe/                     rollenübergreifende Fachabläufe mit festgelegtem Soll (Abschnitt 7)
     protokoll-vorlage.md            Ausgangslage → Aktion → Soll → Ist → Beleg
     prio1-kernablaeufe.spec.ts      8 Fälle · prio2-datenfluss.spec.ts 6 Fälle · prio3-betrieb.spec.ts 2 Fälle
+    faq-praezisierungen.spec.ts     2 Fälle, laufen (kein Skelett): FAQ 52 Rechte 5.17, FAQ 19 / 98 Anhang 7 nach A7X
   fixtures/
     platz-s.md                      Testplatz S: synthetischer Platz mit Handrechnung (Soll-Tabelle); Dataset + Referenzwerte
                                     in libs/api/tests (TESTPLATZ_S_DATASET, TESTPLATZ_S_REFERENCE), Seed über `dataset`
@@ -111,14 +112,14 @@ Frontend-Ausblenden ist kein Ersatz für serverseitige Autorisierung. Für verbo
 ## 7. Fachabläufe mit festgelegtem Soll-Ergebnis
 
 Vollständige Abläufe zuerst – sie zeigen, ob Oberfläche, Datenmodell und Berechnung zusammen funktionieren.
-Vorbereitet in `fachablaeufe/` (alle `fixme`), Protokoll je Lauf nach `fachablaeufe/protokoll-vorlage.md`.
+Vorbereitet in `fachablaeufe/` (`fixme`, ausser `faq-praezisierungen.spec.ts`), Protokoll je Lauf nach `fachablaeufe/protokoll-vorlage.md`.
 Soll-Werte kommen aus der Empa-Referenz (B1.4, `criterias/support/criteria.ts` `B14_CONTROL`), aus der
 Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel – **nie** aus dem aktuellen Ergebnis der Anwendung.
 
 | Prio | Fall | Akteur | Soll (Kurzform, Herleitung im Spec) |
 |---|---|---|---|
 | 1 | 1.1 Empa-Demodaten importieren, A7/A9 berechnen | A01 | B1.4-Kontrollwerte (E1 60.7 / 73.8 …); E8 = 14.5 / 28.0 mit dokumentierter Kernel-Abweichung (14.3 / 28.1), Fachbestätigung nötig |
-| 1 | 1.2 Dieselben Nutzungen mit zwei Ständen | A01 | Testplatz S: Z1 57.1 / 38.1 → Z2 51.1 / 32.1, E2 nur in Z2; Nutzungen identisch |
+| 1 | 1.2 Dieselben Nutzungen mit zwei Ständen | A01 | Testplatz S: Z1 57.1 / 38.1 → Z2 51.1 / 32.2, E2 nur in Z2; Nutzungen identisch |
 | 1 | 1.3 Neuer Stand mit verschobenen Punkten | A01 | Z1 samt Ergebnis unverändert, Z2 mit eigenen Punkten/Quellen |
 | 1 | 1.4 Kombination ohne passende Quelle | A01 | Zeitraum 2025: E1 «nicht beurteilbar», nie grün, bis Übersicht/Startseite/Export |
 | 1 | 1.5 Σ Gewichte null / einzelne null | A01 | Z3 verweigert (Default), Z2 Verhältnis → 51.1 / 57.1 |

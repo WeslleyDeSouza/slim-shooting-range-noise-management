@@ -15,7 +15,7 @@ Arbeitsliste zum Lösungskonzept, Stand 21.09.2026. Kein Bestandteil der Anforde
 | 6.4 | Schulungsannahmen mit Preisblatt LP3 abgleichen. |
 | 6.5 FGDB | Vor Abgabe Lese-/Schreibprobe mit verfügbaren Referenzdaten und dokumentierten Grenzen; endgültiges Schema gemäss FAQ 99 erst im Projekt festlegen und danach vollständig prüfen. Gegebenenfalls Konvertierungswerkzeug, Lizenzen, Betrieb und Aufwand auf Anbieterseite konkretisieren. |
 | 6.5 Demo | Tatsächliche URL, freigegebene Zugangsinformationen in der Begleitnotiz, Freeze-Datum und Softwareversion. |
-| 4.3 / slm 33 | A7X-Referenzvariante im Anwendungsservice umsetzen und nachweisen. Abweichende Regel nur mit dokumentiertem Fachentscheid; der aktuelle E8-Standard ist kein vollständiger Erfüllungsnachweis. |
+| 4.3 / slm 33 | Im Code erledigt (02.10.2026): Der Berechnungskern rechnet Anhang 7 standardmässig nach A7X (E8 = 28.1), Kernversion 1.4.0, Nachweis in `annex7.spec.ts`, `rechenfaelle.spec.ts` und e2e `faq-praezisierungen.spec.ts`. Offen bleibt der Text: Kapitel 4.3, Risikotabelle 6.5 und Matrixzeile slm 33 beschreiben noch die Abweichung. |
 | Matrix / Tests | P bezeichnet den beschriebenen Umsetzungsstand, keine Abnahme. T kennzeichnet Teilumsetzungen oder fehlende wesentliche Nachweise, Z ausstehende Umsetzung. Abnahmeprotokolle müssen die tatsächlich ausgeführten Tests und offenen Befunde ausweisen. |
 
 ## Stand der FAQ-Grundlage

@@ -14,23 +14,49 @@ import {
   type Page,
 } from '@playwright/test';
 
+import * as CryptoJS from 'crypto-js';
+
 import { login, resetSession } from '../../support/login';
-import { SESSION_KEY } from '../../support/selectors';
 import { credentialsOf, type ActorId } from './actors';
 
-/** Access token of the stored session (auth-ui wraps the JSON in { value }). */
-export async function accessToken(page: Page): Promise<string> {
-  const token = await page.evaluate((key) => {
-    const raw = window.localStorage.getItem(key);
+/** localStorage keys of auth-ui: user token and tenant token, each wrapped in `{ value }`. */
+const USER_TOKEN_KEY = 'utk';
+const TENANT_TOKEN_KEY = 'ttk';
+
+async function storedToken(page: Page, key: string): Promise<string | null> {
+  return page.evaluate((k) => {
+    const raw = window.localStorage.getItem(k);
     if (!raw) return null;
-    const outer = JSON.parse(raw) as { value?: unknown };
-    const inner = (
-      typeof outer.value === 'string' ? JSON.parse(outer.value) : outer.value
-    ) as { accessToken?: string } | undefined;
-    return inner?.accessToken ?? null;
-  }, SESSION_KEY);
+    const value = (JSON.parse(raw) as { value?: unknown }).value;
+    return typeof value === 'string' && value ? value : null;
+  }, key);
+}
+
+/** Access token (JWT) of the signed-in actor. */
+export async function accessToken(page: Page): Promise<string> {
+  const token = await storedToken(page, USER_TOKEN_KEY);
   if (!token) throw new Error('no access token in the session — sign in first');
   return token;
+}
+
+/**
+ * Replay token as `AuthHttpReplayAttackInterceptor` of `@app-galaxy/auth-ui`
+ * builds it for every request of the app (header `X-TOKEN-ASGARD`); without
+ * it the `ReplayGuard` refuses the call before any role is looked at.
+ */
+function replayToken(): string {
+  const data = { userId: 'TOR', r2: Math.random(), ts: Date.now(), r1: Math.random(), r3: Math.random() };
+  return `Tor ${CryptoJS.AES.encrypt(JSON.stringify(data), 'Tor').toString()}`;
+}
+
+/** The headers the app itself sends: bearer, tenant token, replay token. */
+export async function sessionHeaders(page: Page): Promise<Record<string, string>> {
+  const tenant = await storedToken(page, TENANT_TOKEN_KEY);
+  return {
+    Authorization: `Bearer ${await accessToken(page)}`,
+    ...(tenant ? { 'x-token-tenant': tenant } : {}),
+    'X-TOKEN-ASGARD': replayToken(),
+  };
 }
 
 /**
@@ -46,7 +72,7 @@ export function api(page: Page, request: APIRequestContext) {
     async (path: string, options: { data?: unknown } = {}): Promise<APIResponse> =>
       request[method](path, {
         ...options,
-        headers: { Authorization: `Bearer ${await accessToken(page)}` },
+        headers: await sessionHeaders(page),
         // The assertions read the status themselves.
         failOnStatusCode: false,
       });

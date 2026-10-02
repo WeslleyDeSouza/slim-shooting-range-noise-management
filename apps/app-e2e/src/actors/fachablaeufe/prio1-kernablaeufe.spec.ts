@@ -31,9 +31,10 @@ test.describe('Prio 1 · Kernabläufe', () => {
       //               A9 Lr: E1 60.7 · E2 51.8 · E3 46.6 · E4a 41.8 · E5b 61.8 · E9 52.9
       //               A7 Lr: E1 73.8 · E2 66.3 · E3 60.5 · E4a 53.1
       //               E8-Sonderfall: A9 14.5 (Formelblatt A9X; der sonARMS-Kernel A9p schreibt 14.3, weil er Quellen
-      //               unter seiner Relevanzschwelle weglässt) und A7 28.0 (Kernel A7p; A7X summiert 0-dB-Zellen → 28.1).
-      //               Die Anwendung muss 14.5 / 28.0 zeigen und der Prüfer muss die Abweichung zum Kernel kennen –
-      //               Fachbestätigung E8 der Auftraggeberin ist Voraussetzung für «abgenommen» (Mitwirkung A1.1).
+      //               unter seiner Relevanzschwelle weglässt) und A7 28.1 (Formelblatt A7X summiert die 0-dB-Zellen der
+      //               leeren Kategorien; der Kernel-Ausdruck A7p zeigt 28.0).
+      //               Die Anwendung muss 14.5 / 28.1 zeigen: die Formelblätter sind gemäss FAQ 19 und 98 verbindlich,
+      //               der Prüfer muss die Abweichung zum Kernel-Ausdruck kennen (vgl. faq-praezisierungen.spec.ts).
       //               Ampel je Punkt gegen die ES-Grenzwerte der B1.4-Punkte; Vergleich auf ganze dB.
       // Ist:          –
       // Beleg:        Playwright-Trace + GET …/calculation/assessment als JSON im Report.
@@ -41,14 +42,15 @@ test.describe('Prio 1 · Kernabläufe', () => {
   );
 
   test.fixme(
-    `1.2 dieselben Nutzungen mit zwei Berechnungsständen auswerten (${S.name}: Z1 57.1 / 38.1 → Z2 51.1 / 32.1, E2 nur in Z2)`,
+    `1.2 dieselben Nutzungen mit zwei Berechnungsständen auswerten (${S.name}: Z1 57.1 / 38.1 → Z2 51.1 / 32.2, E2 nur in Z2)`,
     { annotation: tags({ actor: 'A01', prio: 1, useCase: '4.7', slm: [11, 43, 44] }) },
     async () => {
       // Ausgangslage: Testplatz S geseedet (TESTPLATZ_S_DATASET aus @api-slim/tests), Z1 aktuell, Nutzungen U1–U4 (2026).
       // Aktion:       Details → Zustand Z1 → E1 lesen; Zustand Z2 wählen → E1 und E2 lesen; zurück auf Z1.
       // Soll (platz-s.md Abschnitt 6):
       //               Z1: E1 A9 57.1 (orange, 57 vs IGW 60), A7 38.1 (grün); kein E2.
-      //               Z2: E1 A9 51.1 (grün), A7 32.1; E2 A9 57.1 (grün, ES III IGW 65). Delta E1 zu Z1 = −6.0 dB.
+      //               Z2: E1 A9 51.1 (grün), A7 32.2 (Lri 32.14, mit den 0-dB-Zellen des A7X 32.16); E2 A9 57.1 (grün, ES III IGW 65).
+      //               Delta E1 zu Z1: A9 −6.0 dB, A7 −5.9 dB (Anzeigewerte 32.2 − 38.1).
       //               Nutzungen (GET …/usage/overview) sind in beiden Sichten identisch – Nutzungen hängen am Platz,
       //               nicht am Zustand (slm 44); Quellen/Punkte kommen ausschliesslich aus dem gewählten Stand (slm 43).
       //               Q1b (Gewicht 0) in Z2 bekommt keine Schüsse, Q1a alles – Ergebnis unverändert 51.1 (Teil-Null-Regel).

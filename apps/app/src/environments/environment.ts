@@ -3,10 +3,10 @@ export const environment = {
   sw: false,
   api: {
     host: location.origin,
-    url: 'http://localhost:3333/api',
+    url: 'http://localhost:3334/api',
   },
   auth: {
-    url: 'http://localhost:3333/api/auth',
+    url: 'http://localhost:3334/api/auth',
   },
   sampleUser: {
     email: 'slim@demo.ch',

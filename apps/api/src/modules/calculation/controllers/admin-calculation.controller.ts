@@ -32,10 +32,12 @@ import {
   CalculationDto,
   CalculationRunDto,
   ImportReportDto,
+  MapQueryDto,
   SimulationBaseDto,
   SimulationResultDto,
   SimulationRunDto,
   StateImportDto,
+  StateMapDto,
   StatePointerDto,
 } from '../dto';
 import { ImportService } from '../import.service';
@@ -119,6 +121,19 @@ export class AdminCalculationController {
     await this.status.refresh(tenantId, areaId);
     const counts = await this.calculations.sourceCounts(tenantId, [state.id]);
     return this.calculations.toDto(state, counts.get(state.id));
+  }
+
+  /** slm 2: the map objects of a Zustand (Anlagenteile with geometry); the Empfangspunkte come with the assessment. */
+  @Get('map')
+  @ApiParam({ name: 'areaId' })
+  @ApiQuery({ name: 'calculationId', required: false })
+  @ApiOkResponse({ type: StateMapDto })
+  map(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Query() query: MapQueryDto,
+  ): Promise<StateMapDto> {
+    return this.calculations.mapOf(tenantId, areaId, query.calculationId);
   }
 
   @Get('assessment')

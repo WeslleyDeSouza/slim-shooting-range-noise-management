@@ -103,20 +103,20 @@ const CALENDAR = { holidays: HOLIDAYS.map((h) => (h.from ? { date: `${YEAR}-${h.
  * states keep their own number (`partNo`) and are matched by room name.
  */
 const ROOMS = [
-  { no: '01', name: 'Zielrm / Stellungsrm Fendershuus, A 1 links', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
-  { no: '02', name: 'Zielrm / Stellungsrm Fendershuus, A 2 rechts', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
-  { no: '03', name: 'Zielrm / Stellungsrm Seelihuus, B 1', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
-  { no: '08', name: 'Zielraum Seeli, C 1', group: 'Zielräume / Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
-  { no: '04', name: 'Stellungsraum A 3 auch Mw', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
-  { no: '07', name: 'Stellungsrm B 2', group: 'Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
-  { no: '09', name: 'Stellungsrm C 2', group: 'Stellungsräume', new: false, type: 'Gefechtsschiessplatz' },
-  { no: '05', name: 'Stellungsrm Mw Neuhaus, B 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
-  { no: '06', name: 'Stellungsrm Mw Salzmatt, C 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
-  { no: '10', name: 'Stellungsrm Mw Schönenboden, D', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)', noNumber: true },
-  { no: '11', name: 'NGST Seeli C rechts', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
-  { no: '12', name: 'NGST Seeli C links', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
-  { no: '13', name: 'NGST Schönenboden D unten', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
-  { no: '14', name: 'NGST Schönenboden D oben', group: 'NGST', new: false, type: 'Gefechtsschiessplatz', noNumber: true },
+  { no: '01', x: 250, y: 330, name: 'Zielrm / Stellungsrm Fendershuus, A 1 links', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
+  { no: '02', x: 275, y: 345, name: 'Zielrm / Stellungsrm Fendershuus, A 2 rechts', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
+  { no: '03', x: 330, y: 300, name: 'Zielrm / Stellungsrm Seelihuus, B 1', group: 'Zielräume / Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
+  { no: '08', x: 400, y: 200, name: 'Zielraum Seeli, C 1', group: 'Zielräume / Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
+  { no: '04', x: 230, y: 370, name: 'Stellungsraum A 3 auch Mw', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
+  { no: '07', x: 350, y: 320, name: 'Stellungsrm B 2', group: 'Stellungsräume', new: false, type: 'Schiessanlage (300m)' },
+  { no: '09', x: 420, y: 230, name: 'Stellungsrm C 2', group: 'Stellungsräume', new: false, type: 'Gefechtsschiessplatz' },
+  { no: '05', x: 300, y: 360, name: 'Stellungsrm Mw Neuhaus, B 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
+  { no: '06', x: 380, y: 260, name: 'Stellungsrm Mw Salzmatt, C 3', group: 'Stellungsräume', new: true, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)' },
+  { no: '10', x: 470, y: 160, name: 'Stellungsrm Mw Schönenboden, D', group: 'Stellungsräume', new: false, type: 'Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)', noNumber: true },
+  { no: '11', x: 440, y: 180, name: 'NGST Seeli C rechts', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
+  { no: '12', x: 410, y: 170, name: 'NGST Seeli C links', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
+  { no: '13', x: 490, y: 190, name: 'NGST Schönenboden D unten', group: 'NGST', new: false, type: 'Gefechtsschiessplatz' },
+  { no: '14', x: 500, y: 140, name: 'NGST Schönenboden D oben', group: 'NGST', new: false, type: 'Gefechtsschiessplatz', noNumber: true },
 ];
 
 /** Zulässige Kombinationen (room no → weapon type key). */
@@ -135,6 +135,16 @@ const COMBOS: [string, string][] = [
 const SHORT: Record<string, string> = { '01': 'A1L', '02': 'A2R', '03': 'B1', '04': 'A3', '05': 'B3', '06': 'C3', '07': 'B2', '08': 'C1', '09': 'C2', '10': 'D', '11': 'NGST-CR', '12': 'NGST-CL', '13': 'NGST-DU', '14': 'NGST-DO' };
 
 const roomName = (no: string) => ROOMS.find((r) => r.no === no)!.name;
+
+/** Mock canvas (600 × 520) → LV95 (EPSG:2056), the same transform for Anlageteile and Immissionspunkte. */
+const toEast = (x: number) => 2618420 + Math.round((x - 300) * 3.2);
+const toNorth = (y: number) => 1176900 - Math.round((y - 260) * 3.2);
+/** Footprint of an Anlageteil as WKT polygon in LV95: 80 × 50 m around its canvas position (B1.2 11.4.2, B1). */
+function plantPartGeometry(x: number, y: number): string {
+  const [e, n] = [toEast(x), toNorth(y)];
+  const ring = [[e - 40, n - 25], [e + 40, n - 25], [e + 40, n + 25], [e - 40, n + 25], [e - 40, n - 25]];
+  return `POLYGON((${ring.map(([a, b]) => `${a} ${b}`).join(', ')}))`;
+}
 const roomNo = (no: string) => `${AREA_NO}.${no}`;
 /** QuellenID after the B1.2 10.3 convention: Anlageteil_Waffentyp_m_KoordNr_Nr. */
 const sourceIdOf = (no: string, type: string, n: number) => `${SHORT[no]}_${WEAPON_TYPES[type].sonarms}_m_${AREA_NO}_${n}`;
@@ -387,11 +397,11 @@ function buildState(stateKey: string, usages: Usage[]) {
     isMgdm: !sanitised,
     propagation: { model: 'sonX', modelVersion: sanitised ? 'sonARMS Kernel 4.0.0' : 'sonARMS Kernel 3.2.1', primarySurfaces: 'Vektordaten Kataster 25' },
     perimeter: { name: 'Geissalp', spmNo: SPM_NO, coordinationSectionNo: AREA_NO },
-    plantParts: ROOMS.map((r) => ({ room: r.name, coordinationSectionNo: roomNo(r.no), name: r.name, type: r.type, builtAfter1985: r.new })),
+    plantParts: ROOMS.map((r) => ({ room: r.name, coordinationSectionNo: roomNo(r.no), name: r.name, type: r.type, builtAfter1985: r.new, geometry: plantPartGeometry(r.x, r.y) })),
     sources: sourceRows,
     immissionPoints: RECEIVERS.map((r, i) => ({
       sonarmsId: r.code, code: r.code, egid: r.egid, egrid: r.egid ? null : 'nicht in eGRIS', address: r.address, municipality: 'Sigriswil', type: r.type,
-      sensitivityLevel: r.es, east: 2618420 + Math.round((r.x - 300) * 3.2), north: 1176900 - Math.round((r.y - 260) * 3.2), height: 4,
+      sensitivityLevel: r.es, east: toEast(r.x), north: toNorth(r.y), height: 4,
       mapX: round1((r.x / 600) * 100), mapY: round1((r.y / 520) * 100), sortOrder: i,
     })),
     wlr,
@@ -492,7 +502,7 @@ const dataset = {
     name: 'SLIM Demo',
     identifier: 'SLIM_DEMO',
     description: 'Demo-Mandant des Prototyps: Waffenstammdaten, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.',
-    version: 6,
+    version: 7,
     // One account per role of B1 8.1.1 (roles.mock-data.ts); slim@demo.ch is the
     // galaxy admin the e2e suite and the setup wizard sign in with.
     users: [

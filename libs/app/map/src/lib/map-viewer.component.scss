@@ -1,0 +1,305 @@
+@use 'slim/abstracts' as slim;
+
+// The host decides the size; the viewer fills it (a page gives it a height or an aspect ratio).
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.gis {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+  border: 1px solid slim.color('line');
+  border-radius: slim.radius('md');
+  background: slim.color('surface-2');
+
+  &__map {
+    position: absolute;
+    inset: 0;
+
+    &:focus-visible {
+      outline: 2px solid slim.color('focus');
+      outline-offset: -2px;
+    }
+  }
+
+  // Holder of the pins until the engine moves them onto the map.
+  &__pins {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+  }
+
+  &__state {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: slim.space(4);
+    color: slim.color('text-3');
+    text-align: center;
+  }
+
+  &__notice {
+    position: absolute;
+    top: slim.space(2);
+    left: slim.space(2);
+    max-width: calc(100% - #{slim.space(16)});
+    padding: slim.space(1) slim.space(2);
+    border-radius: slim.radius('sm');
+    background: slim.color('warning-subtle');
+    color: slim.color('ink');
+    font-size: slim.font-size('xs');
+    box-shadow: slim.shadow('sm');
+
+    &--second {
+      top: slim.space(10);
+    }
+  }
+
+  // Tools: right edge, vertically stacked groups.
+  &__tools {
+    position: absolute;
+    top: slim.space(2);
+    right: slim.space(2);
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(2);
+  }
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    border-radius: slim.radius('md');
+    background: slim.color('surface');
+    box-shadow: slim.shadow('md');
+    overflow: hidden;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: slim.size('control-h');
+    height: slim.size('control-h');
+    padding: 0;
+    border: 0;
+    background: none;
+    color: slim.color('ink');
+    cursor: pointer;
+    @include slim.focus-visible;
+
+    svg {
+      width: slim.space(5);
+      height: slim.space(5);
+    }
+
+    & + & {
+      border-top: 1px solid slim.color('line');
+    }
+
+    &:disabled {
+      color: slim.color('disabled');
+      cursor: default;
+    }
+
+    &--active {
+      background: slim.color('primary-subtle');
+      color: slim.color('primary');
+    }
+
+    @include slim.hover {
+      background: slim.color('hover');
+    }
+  }
+
+  &__level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: slim.size('control-h-sm');
+    border-top: 1px solid slim.color('line');
+    border-bottom: 1px solid slim.color('line');
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('semibold');
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Layer and export panels open next to the tools.
+  &__panel {
+    position: absolute;
+    top: slim.space(2);
+    right: calc(#{slim.size('control-h')} + #{slim.space(4)});
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(2);
+    width: min(260px, calc(100% - #{slim.size('control-h')} - #{slim.space(6)}));
+    max-height: calc(100% - #{slim.space(4)});
+    overflow-y: auto;
+    padding: slim.space(3);
+    border-radius: slim.radius('md');
+    background: slim.color('surface');
+    box-shadow: slim.shadow('lg');
+    font-size: slim.font-size('sm');
+  }
+
+  &__panel-title {
+    margin: 0;
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__extras {
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  &__legend {
+    display: grid;
+    gap: slim.space(1);
+    margin: slim.space(1) 0 0;
+    padding: slim.space(2) 0 0;
+    border-top: 1px solid slim.color('line');
+    list-style: none;
+    color: slim.color('text-2');
+    font-size: slim.font-size('xs');
+  }
+
+  &__swatch {
+    display: inline-block;
+    width: slim.space(3);
+    height: slim.space(3);
+    margin-right: slim.space(2);
+    border-radius: 50%;
+    background: slim.color('text-4');
+    vertical-align: -1px;
+
+    &--ok {
+      background: slim.color('success');
+    }
+
+    &--warn {
+      background: slim.color('warning');
+    }
+
+    &--over {
+      background: slim.color('danger');
+    }
+
+    &--part {
+      border: 2px solid slim.color('ink');
+      border-radius: slim.radius('sm');
+      background: slim.color('surface-2');
+    }
+  }
+
+  // Background map switcher: bottom left, the alternatives unfold upwards.
+  &__base {
+    position: absolute;
+    left: slim.space(2);
+    bottom: slim.space(10);
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(1);
+  }
+
+  &__base-item {
+    position: relative;
+    display: block;
+    width: slim.space(16);
+    height: slim.space(16);
+    padding: 0;
+    border: 2px solid slim.color('surface');
+    border-radius: slim.radius('md');
+    background: slim.color('surface');
+    box-shadow: slim.shadow('md');
+    overflow: hidden;
+    cursor: pointer;
+    @include slim.focus-visible;
+
+    &--current {
+      border-color: slim.color('primary');
+    }
+  }
+
+  &__base-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__base-label {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 1px slim.space(1);
+    background: slim.color('scrim');
+    color: slim.color('primary-contrast');
+    font-size: slim.font-size('xs');
+    line-height: 1.3;
+    @include slim.truncate;
+  }
+
+  // Bottom edge: Ausdehnungsbalken, 1:XXX, coordinates, copyright.
+  &__foot {
+    position: absolute;
+    left: slim.space(2);
+    right: slim.space(2);
+    bottom: slim.space(2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: slim.space(2);
+    pointer-events: none;
+    font-size: slim.font-size('xs');
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__bar {
+    box-sizing: border-box;
+    padding: 0 slim.space(1);
+    border: 2px solid slim.color('ink');
+    border-top: 0;
+    background: slim.alpha('surface', 0.85);
+    color: slim.color('ink');
+    text-align: center;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+
+  &__chip {
+    padding: 1px slim.space(2);
+    border-radius: slim.radius('sm');
+    background: slim.alpha('surface', 0.9);
+    color: slim.color('ink');
+    box-shadow: slim.shadow('sm');
+    white-space: nowrap;
+
+    // The mouse coordinates only exist with a mouse.
+    &--coords {
+      display: none;
+
+      @include slim.mq('md') {
+        display: inline;
+      }
+    }
+  }
+
+  &__attribution {
+    padding: 0 slim.space(1);
+    border-radius: slim.radius('sm');
+    background: slim.alpha('surface', 0.8);
+    color: slim.color('text-2');
+  }
+}

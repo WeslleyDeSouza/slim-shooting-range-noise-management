@@ -3,7 +3,7 @@
     "name": "SLIM Demo",
     "identifier": "SLIM_DEMO",
     "description": "Demo-Mandant des Prototyps: Waffenstammdaten, neun Schiessplätze, davon 1104.020 Geissalp mit Stellungsräumen, Kombinationen, Kontingenten, Immissionspunkten, einer Immissionsberechnung mit zwei Zuständen und den Nutzungen des laufenden Jahres.",
-    "version": 6,
+    "version": 7,
     "users": [
       {
         "username": "slim@demo.ch",
@@ -645,98 +645,112 @@
                     "coordinationSectionNo": "1104.020.01",
                     "name": "Zielrm / Stellungsrm Fendershuus, A 1 links",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618220 1176651, 2618300 1176651, 2618300 1176701, 2618220 1176701, 2618220 1176651))"
                   },
                   {
                     "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
                     "coordinationSectionNo": "1104.020.02",
                     "name": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618300 1176603, 2618380 1176603, 2618380 1176653, 2618300 1176653, 2618300 1176603))"
                   },
                   {
                     "room": "Zielrm / Stellungsrm Seelihuus, B 1",
                     "coordinationSectionNo": "1104.020.03",
                     "name": "Zielrm / Stellungsrm Seelihuus, B 1",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618476 1176747, 2618556 1176747, 2618556 1176797, 2618476 1176797, 2618476 1176747))"
                   },
                   {
                     "room": "Zielraum Seeli, C 1",
                     "coordinationSectionNo": "1104.020.08",
                     "name": "Zielraum Seeli, C 1",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618700 1177067, 2618780 1177067, 2618780 1177117, 2618700 1177117, 2618700 1177067))"
                   },
                   {
                     "room": "Stellungsraum A 3 auch Mw",
                     "coordinationSectionNo": "1104.020.04",
                     "name": "Stellungsraum A 3 auch Mw",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618156 1176523, 2618236 1176523, 2618236 1176573, 2618156 1176573, 2618156 1176523))"
                   },
                   {
                     "room": "Stellungsrm B 2",
                     "coordinationSectionNo": "1104.020.07",
                     "name": "Stellungsrm B 2",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618540 1176683, 2618620 1176683, 2618620 1176733, 2618540 1176733, 2618540 1176683))"
                   },
                   {
                     "room": "Stellungsrm C 2",
                     "coordinationSectionNo": "1104.020.09",
                     "name": "Stellungsrm C 2",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618764 1176971, 2618844 1176971, 2618844 1177021, 2618764 1177021, 2618764 1176971))"
                   },
                   {
                     "room": "Stellungsrm Mw Neuhaus, B 3",
                     "coordinationSectionNo": "1104.020.05",
                     "name": "Stellungsrm Mw Neuhaus, B 3",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": true
+                    "builtAfter1985": true,
+                    "geometry": "POLYGON((2618380 1176555, 2618460 1176555, 2618460 1176605, 2618380 1176605, 2618380 1176555))"
                   },
                   {
                     "room": "Stellungsrm Mw Salzmatt, C 3",
                     "coordinationSectionNo": "1104.020.06",
                     "name": "Stellungsrm Mw Salzmatt, C 3",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": true
+                    "builtAfter1985": true,
+                    "geometry": "POLYGON((2618636 1176875, 2618716 1176875, 2618716 1176925, 2618636 1176925, 2618636 1176875))"
                   },
                   {
                     "room": "Stellungsrm Mw Schönenboden, D",
                     "coordinationSectionNo": "1104.020.10",
                     "name": "Stellungsrm Mw Schönenboden, D",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618924 1177195, 2619004 1177195, 2619004 1177245, 2618924 1177245, 2618924 1177195))"
                   },
                   {
                     "room": "NGST Seeli C rechts",
                     "coordinationSectionNo": "1104.020.11",
                     "name": "NGST Seeli C rechts",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618828 1177131, 2618908 1177131, 2618908 1177181, 2618828 1177181, 2618828 1177131))"
                   },
                   {
                     "room": "NGST Seeli C links",
                     "coordinationSectionNo": "1104.020.12",
                     "name": "NGST Seeli C links",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618732 1177163, 2618812 1177163, 2618812 1177213, 2618732 1177213, 2618732 1177163))"
                   },
                   {
                     "room": "NGST Schönenboden D unten",
                     "coordinationSectionNo": "1104.020.13",
                     "name": "NGST Schönenboden D unten",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618988 1177099, 2619068 1177099, 2619068 1177149, 2618988 1177149, 2618988 1177099))"
                   },
                   {
                     "room": "NGST Schönenboden D oben",
                     "coordinationSectionNo": "1104.020.14",
                     "name": "NGST Schönenboden D oben",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2619020 1177259, 2619100 1177259, 2619100 1177309, 2619020 1177309, 2619020 1177259))"
                   }
                 ],
                 "sources": [
@@ -2253,98 +2267,112 @@
                     "coordinationSectionNo": "1104.020.01",
                     "name": "Zielrm / Stellungsrm Fendershuus, A 1 links",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618220 1176651, 2618300 1176651, 2618300 1176701, 2618220 1176701, 2618220 1176651))"
                   },
                   {
                     "room": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
                     "coordinationSectionNo": "1104.020.02",
                     "name": "Zielrm / Stellungsrm Fendershuus, A 2 rechts",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618300 1176603, 2618380 1176603, 2618380 1176653, 2618300 1176653, 2618300 1176603))"
                   },
                   {
                     "room": "Zielrm / Stellungsrm Seelihuus, B 1",
                     "coordinationSectionNo": "1104.020.03",
                     "name": "Zielrm / Stellungsrm Seelihuus, B 1",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618476 1176747, 2618556 1176747, 2618556 1176797, 2618476 1176797, 2618476 1176747))"
                   },
                   {
                     "room": "Zielraum Seeli, C 1",
                     "coordinationSectionNo": "1104.020.08",
                     "name": "Zielraum Seeli, C 1",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618700 1177067, 2618780 1177067, 2618780 1177117, 2618700 1177117, 2618700 1177067))"
                   },
                   {
                     "room": "Stellungsraum A 3 auch Mw",
                     "coordinationSectionNo": "1104.020.04",
                     "name": "Stellungsraum A 3 auch Mw",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618156 1176523, 2618236 1176523, 2618236 1176573, 2618156 1176573, 2618156 1176523))"
                   },
                   {
                     "room": "Stellungsrm B 2",
                     "coordinationSectionNo": "1104.020.07",
                     "name": "Stellungsrm B 2",
                     "type": "Schiessanlage (300m)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618540 1176683, 2618620 1176683, 2618620 1176733, 2618540 1176733, 2618540 1176683))"
                   },
                   {
                     "room": "Stellungsrm C 2",
                     "coordinationSectionNo": "1104.020.09",
                     "name": "Stellungsrm C 2",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618764 1176971, 2618844 1176971, 2618844 1177021, 2618764 1177021, 2618764 1176971))"
                   },
                   {
                     "room": "Stellungsrm Mw Neuhaus, B 3",
                     "coordinationSectionNo": "1104.020.05",
                     "name": "Stellungsrm Mw Neuhaus, B 3",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": true
+                    "builtAfter1985": true,
+                    "geometry": "POLYGON((2618380 1176555, 2618460 1176555, 2618460 1176605, 2618380 1176605, 2618380 1176555))"
                   },
                   {
                     "room": "Stellungsrm Mw Salzmatt, C 3",
                     "coordinationSectionNo": "1104.020.06",
                     "name": "Stellungsrm Mw Salzmatt, C 3",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": true
+                    "builtAfter1985": true,
+                    "geometry": "POLYGON((2618636 1176875, 2618716 1176875, 2618716 1176925, 2618636 1176925, 2618636 1176875))"
                   },
                   {
                     "room": "Stellungsrm Mw Schönenboden, D",
                     "coordinationSectionNo": "1104.020.10",
                     "name": "Stellungsrm Mw Schönenboden, D",
                     "type": "Bogenschuss-Schiessanlage (Minenwerfer / Mörser / Panzerhaubize, etc.)",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618924 1177195, 2619004 1177195, 2619004 1177245, 2618924 1177245, 2618924 1177195))"
                   },
                   {
                     "room": "NGST Seeli C rechts",
                     "coordinationSectionNo": "1104.020.11",
                     "name": "NGST Seeli C rechts",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618828 1177131, 2618908 1177131, 2618908 1177181, 2618828 1177181, 2618828 1177131))"
                   },
                   {
                     "room": "NGST Seeli C links",
                     "coordinationSectionNo": "1104.020.12",
                     "name": "NGST Seeli C links",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618732 1177163, 2618812 1177163, 2618812 1177213, 2618732 1177213, 2618732 1177163))"
                   },
                   {
                     "room": "NGST Schönenboden D unten",
                     "coordinationSectionNo": "1104.020.13",
                     "name": "NGST Schönenboden D unten",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2618988 1177099, 2619068 1177099, 2619068 1177149, 2618988 1177149, 2618988 1177099))"
                   },
                   {
                     "room": "NGST Schönenboden D oben",
                     "coordinationSectionNo": "1104.020.14",
                     "name": "NGST Schönenboden D oben",
                     "type": "Gefechtsschiessplatz",
-                    "builtAfter1985": false
+                    "builtAfter1985": false,
+                    "geometry": "POLYGON((2619020 1177259, 2619100 1177259, 2619100 1177309, 2619020 1177309, 2619020 1177259))"
                   }
                 ],
                 "sources": [

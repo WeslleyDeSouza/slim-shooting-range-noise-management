@@ -229,6 +229,46 @@ export class SimulationResultDto {
 }
 
 /** Query of the assessment endpoint. */
+/** Anlageteil of a Zustand as the map shows it (B1 5.10: «Anlagenteile (Stellungsräume etc.)», Pflicht-Ebene). */
+export class MapPlantPartDto {
+  @ApiProperty({ description: 'Id des Anlageteils (uuid)' })
+  id: string;
+
+  @ApiProperty({ description: 'Id des übergeordneten Stellungsraums' })
+  roomId: string;
+
+  @ApiProperty({ description: 'Koordinationsabschnittsnummer des Anlageteils, z. B. «1104.020.07»' })
+  coordinationSectionNo: string;
+
+  @ApiProperty({ description: 'Bezeichnung gemäss Schiessplatzdossier' })
+  name: string;
+
+  @ApiProperty({ description: 'Schiessanlagentyp (Codeliste B1.2), z. B. «Schiessanlage (300m)»' })
+  type: string;
+
+  @ApiProperty({ description: 'Baujahr nach dem 1.1.1985 (Planungswert gilt, B1 7.7)' })
+  builtAfter1985: boolean;
+
+  @ApiProperty({ nullable: true, type: String, description: 'Geometrie als WKT in LV95 (EPSG:2056); null, wenn die Lieferung keine Geometrie enthält — der Anlageteil fehlt dann auf der Karte' })
+  geometry: string | null;
+}
+
+/** What the GIS-Kartenviewer draws for one Zustand besides the Empfangspunkte of the page (slm 2, B1 5.4 / 5.10). */
+export class StateMapDto {
+  @ApiProperty({ nullable: true, type: String, description: 'Id des Zustands, zu dem die Objekte gehören; null, wenn der Schiessplatz keine Berechnungsgrundlage hat' })
+  calculationId: string | null;
+
+  @ApiProperty({ type: MapPlantPartDto, isArray: true, description: 'Anlagenteile des Zustands, nach Koordinationsabschnittsnummer' })
+  plantParts: MapPlantPartDto[];
+}
+
+export class MapQueryDto {
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ description: 'Zustand; Standard: der aktuell gültige' })
+  calculationId?: string;
+}
+
 export class AssessmentQueryDto {
   @IsOptional()
   @IsUUID()

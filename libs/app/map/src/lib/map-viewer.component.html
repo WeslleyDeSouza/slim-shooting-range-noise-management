@@ -1,0 +1,193 @@
+<div class="gis" [class.gis--loading]="status() === 'loading'" data-testid="map-viewer" [attr.data-status]="status()">
+  <!-- The map itself; focusable so the arrow keys pan and +/- zoom. -->
+  <div #target class="gis__map" tabindex="0" role="application" [attr.aria-label]="prefix + '.label' | translate"></div>
+
+  <!-- Empfangspunkte: real buttons, placed on the map by the engine. -->
+  <div class="gis__pins">
+    @for (p of pins(); track p.id) {
+      <button
+        #pin
+        type="button"
+        [class]="'slim-map__pin slim-map__pin--' + p.state + (p.id === selectedId() ? ' slim-map__pin--active' : '')"
+        [attr.data-testid]="pinTestId()"
+        [attr.data-code]="p.code"
+        [attr.aria-pressed]="p.id === selectedId()"
+        [attr.aria-label]="p.label"
+        (click)="select(p)"
+      >
+        {{ p.code }}
+      </button>
+    }
+  </div>
+
+  @if (status() === 'loading') {
+    <div class="gis__state"><span class="slim-spinner"></span></div>
+  }
+  @if (status() === 'failed') {
+    <div class="gis__state" data-testid="map-failed">{{ prefix + '.failed' | translate }}</div>
+  }
+
+  @if (status() === 'ready') {
+    @if (tilesFailed()) {
+      <div class="gis__notice" role="status" data-testid="map-tiles-failed">{{ prefix + '.tiles_failed' | translate }}</div>
+    }
+    @if (hiddenPoints()) {
+      <div class="gis__notice gis__notice--second" role="status" data-testid="map-hidden-points">
+        {{ prefix + '.points_without_coordinates' | translate: { n: hiddenPoints() } }}
+      </div>
+    }
+
+    <!-- Tools (B1 Abbildung 16, right edge): Default, Ebenen, Export, Vollansicht; Zoom below. -->
+    <div class="gis__tools">
+      <div class="gis__group">
+        <button type="button" class="gis__btn" data-testid="map-reset" [attr.title]="prefix + '.reset' | translate" [attr.aria-label]="prefix + '.reset' | translate" (click)="reset()">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 7.5L8 3l5.5 4.5M4 6.5V13h3v-3.5h2V13h3V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        <button
+          type="button"
+          class="gis__btn"
+          [class.gis__btn--active]="panel() === 'layers'"
+          data-testid="map-layers"
+          [attr.title]="prefix + '.layers' | translate"
+          [attr.aria-label]="prefix + '.layers' | translate"
+          [attr.aria-expanded]="panel() === 'layers'"
+          (click)="togglePanel('layers')"
+        >
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2.5l6 3-6 3-6-3 6-3zM2 8.5l6 3 6-3M2 11l6 3 6-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        <button
+          type="button"
+          class="gis__btn"
+          [class.gis__btn--active]="panel() === 'export'"
+          data-testid="map-export"
+          [attr.title]="prefix + '.export.title' | translate"
+          [attr.aria-label]="prefix + '.export.title' | translate"
+          [attr.aria-expanded]="panel() === 'export'"
+          (click)="togglePanel('export')"
+        >
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 5.5v-3h7v3M4.5 11.5h-2v-6h11v6h-2M4.5 9.5h7v4h-7z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+        </button>
+        @if (fullscreenLink(); as link) {
+          <a class="gis__btn" data-testid="map-fullscreen" target="_blank" rel="noopener" [href]="link" [attr.title]="prefix + '.fullscreen' | translate" [attr.aria-label]="prefix + '.fullscreen' | translate">
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5L8.5 7.5M6.5 13.5h-4v-4M2.5 13.5l5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </a>
+        }
+      </div>
+
+      <div class="gis__group">
+        <button type="button" class="gis__btn" data-testid="map-zoom-in" [disabled]="(view()?.zoom ?? 0) >= zoomCount() - 1" [attr.title]="prefix + '.zoom_in' | translate" [attr.aria-label]="prefix + '.zoom_in' | translate" (click)="zoom(1)">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+        </button>
+        <span class="gis__level" data-testid="map-zoom-level" [attr.title]="prefix + '.zoom_level' | translate: { n: (view()?.zoom ?? 0) + 1, total: zoomCount() }">{{ (view()?.zoom ?? 0) + 1 }}</span>
+        <button type="button" class="gis__btn" data-testid="map-zoom-out" [disabled]="(view()?.zoom ?? 0) <= 0" [attr.title]="prefix + '.zoom_out' | translate" [attr.aria-label]="prefix + '.zoom_out' | translate" (click)="zoom(-1)">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 8h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Ebenen + Legende -->
+    @if (panel() === 'layers') {
+      <div class="gis__panel" role="dialog" [attr.aria-label]="prefix + '.layers' | translate" data-testid="map-layers-panel">
+        <h3 class="gis__panel-title">{{ prefix + '.layers' | translate }}</h3>
+        <label class="slim-check">
+          <input type="checkbox" class="slim-check__input" data-testid="map-layer-plant-parts" [checked]="layers().plantParts" (change)="toggleLayer('plantParts')" />
+          <span class="slim-check__label"><span class="gis__swatch gis__swatch--part" aria-hidden="true"></span>{{ prefix + '.layer.plant_parts' | translate }}</span>
+        </label>
+        <label class="slim-check">
+          <input type="checkbox" class="slim-check__input" data-testid="map-layer-points" [checked]="layers().points" (change)="toggleLayer('points')" />
+          <span class="slim-check__label">{{ prefix + '.layer.points' | translate }}</span>
+        </label>
+        <ul class="gis__legend">
+          @for (state of legendStates; track state) {
+            <li><span [class]="'gis__swatch gis__swatch--' + state" aria-hidden="true"></span>{{ prefix + '.legend.' + state | translate }}</li>
+          }
+        </ul>
+      </div>
+    }
+
+    <!-- Export (B1 5.4.6) -->
+    @if (panel() === 'export') {
+      <div class="gis__panel" role="dialog" [attr.aria-label]="prefix + '.export.title' | translate" data-testid="map-export-panel">
+        <h3 class="gis__panel-title">{{ prefix + '.export.title' | translate }}</h3>
+        <div class="slim-field">
+          <label class="slim-field__label" for="gis-export-format">{{ prefix + '.export.format' | translate }}</label>
+          <select id="gis-export-format" class="slim-select slim-select--sm" data-testid="map-export-format" (change)="setExport('format', $any($event.target).value)">
+            <option value="pdf" [selected]="exportOptions().format === 'pdf'">{{ prefix + '.export.format_pdf' | translate }}</option>
+            <option value="image" [selected]="exportOptions().format === 'image'">{{ prefix + '.export.format_image' | translate }}</option>
+          </select>
+        </div>
+        <div class="slim-field">
+          <label class="slim-field__label" for="gis-export-dpi">{{ prefix + '.export.resolution' | translate }}</label>
+          <select id="gis-export-dpi" class="slim-select slim-select--sm" data-testid="map-export-dpi" (change)="setExport('dpi', +$any($event.target).value)">
+            @for (dpi of config()?.export?.dpi ?? []; track dpi) {
+              <option [value]="dpi" [selected]="exportOptions().dpi === dpi">{{ dpi }} dpi</option>
+            }
+          </select>
+        </div>
+        @if (exportOptions().format === 'pdf') {
+          <fieldset class="gis__extras">
+            <legend class="slim-field__label">{{ prefix + '.export.extras' | translate }}</legend>
+            @for (extra of extras; track extra) {
+              <label class="slim-check">
+                <input type="checkbox" class="slim-check__input" [attr.data-testid]="'map-export-' + extra" [checked]="exportOptions()[extra]" (change)="setExport(extra, $any($event.target).checked)" />
+                <span class="slim-check__label">{{ prefix + '.export.extra.' + extra | translate }}</span>
+              </label>
+            }
+          </fieldset>
+        }
+        @if (exportError()) {
+          <p class="slim-text--danger slim-text--xs" data-testid="map-export-error">{{ prefix + '.export.failed' | translate }}</p>
+        }
+        <button type="button" class="slim-btn slim-btn--primary slim-btn--sm slim-btn--block" [class.slim-btn--loading]="exporting()" [disabled]="exporting()" data-testid="map-export-run" (click)="export()">
+          <span class="slim-btn__label">{{ prefix + '.export.run' | translate }}</span>
+        </button>
+      </div>
+    }
+
+    <!-- Hintergrundkarte (B1 5.4.5, bottom left): current one, the others on demand. -->
+    <div class="gis__base" [class.gis__base--open]="panel() === 'base'">
+      @if (panel() === 'base') {
+        @for (b of baseMaps(); track b.id) {
+          @if (b.id !== baseMapId()) {
+            <button type="button" class="gis__base-item" [attr.data-testid]="'map-base-' + b.id" [attr.title]="b.labelKey | translate" (click)="setBaseMap(b.id)">
+              @if (b.thumbnail) {
+                <img class="gis__base-img" alt="" loading="lazy" [src]="b.thumbnail" />
+              }
+              <span class="gis__base-label">{{ b.labelKey | translate }}</span>
+            </button>
+          }
+        }
+      }
+      @if (baseMap(); as current) {
+        <button
+          type="button"
+          class="gis__base-item gis__base-item--current"
+          data-testid="map-base"
+          [attr.title]="prefix + '.base.switch' | translate"
+          [attr.aria-label]="prefix + '.base.switch' | translate"
+          [attr.aria-expanded]="panel() === 'base'"
+          (click)="togglePanel('base')"
+        >
+          @if (current.thumbnail) {
+            <img class="gis__base-img" alt="" [src]="current.thumbnail" />
+          }
+          <span class="gis__base-label">{{ current.labelKey | translate }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- Massstab, Ausdehnungsbalken, Koordinaten (B1 5.4.3 / 5.4.4, bottom edge) -->
+    <div class="gis__foot">
+      @if (bar(); as b) {
+        <span class="gis__bar" data-testid="map-scale-bar" [style.width.px]="b.px">{{ b.label }}</span>
+      }
+      <span class="gis__chip" data-testid="map-scale">{{ scale() }}</span>
+      <span class="gis__chip gis__chip--coords" data-testid="map-coordinates">
+        {{ prefix + '.coordinates' | translate }}: {{ coordinates() || '–' }}
+      </span>
+      @if (baseMap(); as current) {
+        <span class="gis__attribution">{{ current.attribution }}</span>
+      }
+    </div>
+  }
+</div>

@@ -161,7 +161,7 @@ describe('seedDemoDataset', () => {
     expect(await dataSource.getRepository(AreaEntity).count({ where: { tenantId: mockTenantId } })).toBe(9);
     expect(await dataSource.getRepository(AreaWlrEntity).count({ where: { tenantId: mockTenantId } })).toBe(350);
     const marker = await dataSource.getRepository(DemoSeedMarkerEntity).findOneByOrFail({ tenantId: mockTenantId });
-    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 6, year: 2026 });
+    expect(marker).toMatchObject({ datasetKey: DEFAULT_DATASET_KEY, version: 7, year: 2026 });
   });
 
   it('rewrites the demo when the year turns, without duplicating rows', async () => {

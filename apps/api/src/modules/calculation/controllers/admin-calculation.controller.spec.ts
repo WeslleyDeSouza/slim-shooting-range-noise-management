@@ -18,7 +18,7 @@ import { AreaModule } from '../../area/area.module';
 import { AreaResultDto } from '../../area/dto';
 import { UsageModule } from '../../usage/usage.module';
 import { CalculationModule } from '../calculation.module';
-import { AssessmentDto, CalculationDto, CalculationRunDto, SimulationBaseDto } from '../dto';
+import { AssessmentDto, CalculationDto, CalculationRunDto, SimulationBaseDto, StateMapDto } from '../dto';
 
 const NOW = new Date(2026, 11, 31);
 const YEAR = 2026;
@@ -88,6 +88,32 @@ describe('AdminCalculationController (HTTP)', () => {
     expect(assessment.counts.total).toBe(assessment.receivers.length);
     expect(assessment.receivers[0].rows.length).toBeGreaterThan(0);
     expect(new Date(assessment.calculatedAt).getTime()).not.toBeNaN();
+  });
+
+  it('serves the map objects of a state: Anlagenteile with their LV95 geometry (slm 2, B1 5.10)', async () => {
+    const map: StateMapDto = (await api.http().get(`${base()}/map`).expect(200)).body;
+    const current = states.find((s) => s.isCurrent) as CalculationDto;
+    expect(map.calculationId).toBe(current.id);
+    // One Anlageteil per Stellungsraum of the demo, sorted by Koordinationsabschnittsnummer.
+    expect(map.plantParts).toHaveLength(14);
+    expect(map.plantParts[0]).toMatchObject({ coordinationSectionNo: '1104.020.01', name: 'Zielrm / Stellungsrm Fendershuus, A 1 links', builtAfter1985: false });
+    expect(map.plantParts.filter((p) => p.builtAfter1985).map((p) => p.coordinationSectionNo)).toEqual(['1104.020.05', '1104.020.06']);
+    // WKT polygon in LV95 (EPSG:2056): east 2 4xx xxx … 2 8xx xxx, north 1 0xx xxx … 1 3xx xxx.
+    for (const part of map.plantParts) {
+      expect(part.geometry).toMatch(/^POLYGON\(\((2[4-8]\d{5} 1[0-3]\d{5}(, )?){5}\)\)$/);
+    }
+
+    // Another state on request; unknown and malformed ids as for the assessment.
+    const other = states.find((s) => !s.isCurrent) as CalculationDto;
+    const sanitised: StateMapDto = (await api.http().get(`${base()}/map`).query({ calculationId: other.id }).expect(200)).body;
+    expect(sanitised.calculationId).toBe(other.id);
+    expect(sanitised.plantParts).toHaveLength(14);
+    await api.http().get(`${base()}/map`).query({ calculationId: 'nope' }).expect(400);
+    await api.http().get(`${base()}/map`).query({ calculationId: randomUUID() }).expect(404);
+
+    // Reading the map needs no more than the area right: the Interessent may, a user without a role may not.
+    await api.http().get(`${base()}/map`).set(authHeaders(readOnlyUserId)).expect(200);
+    await api.http().get(`${base()}/map`).set(authHeaders(randomUUID())).expect(403);
   });
 
   it('validates the assessment query (uuid, date pattern)', async () => {

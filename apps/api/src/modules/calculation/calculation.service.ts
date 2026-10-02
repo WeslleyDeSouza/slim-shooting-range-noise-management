@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
-import { CalculationDto } from './dto';
+import { CalculationDto, StateMapDto } from './dto';
 import {
   AreaCalculationEntity,
   AreaWlrEntity,
@@ -75,6 +75,25 @@ export class CalculationService {
     const selected = all.find((c) => c.id === calculationId);
     if (!selected) throw new NotFoundException(`Calculation ${calculationId} not found`);
     return { all, selected, current };
+  }
+
+  /** Map objects of the requested (else the current) state: the Anlagenteile with their geometry (slm 2, B1 5.10). */
+  async mapOf(tenantId: string, areaId: string, calculationId?: string): Promise<StateMapDto> {
+    const { selected } = await this.resolve(tenantId, areaId, calculationId);
+    if (!selected) return { calculationId: null, plantParts: [] };
+    const parts = await this.plantParts.find({ where: { tenantId, zustandId: selected.id }, order: { coordinationSectionNo: 'ASC', name: 'ASC' } });
+    return {
+      calculationId: selected.id,
+      plantParts: parts.map((p) => ({
+        id: p.id,
+        roomId: p.roomId,
+        coordinationSectionNo: p.coordinationSectionNo,
+        name: p.name,
+        type: p.type,
+        builtAfter1985: Boolean(p.builtAfter1985),
+        geometry: p.geometry ?? null,
+      })),
+    };
   }
 
   /** The complete model of one state. */

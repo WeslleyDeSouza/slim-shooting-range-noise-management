@@ -4,9 +4,9 @@ import { ROUTES } from '../support/selectors';
 
 /**
  * GIS-Kartenviewer (B1 5.4, Abbildung 16; slm 2) on the Details of the demo
- * area 1104.020 Geissalp: 6 Empfangspunkte and 14 Anlagenteile in LV95 on a
- * swisstopo background. The background tiles are answered locally, so the
- * suite does not depend on the external service. Signed in through the
+ * area 1104.020 Geissalp: 6 Empfangspunkte and 14 Anlagenteile (LV95) on a
+ * swisstopo background map. The background maps are answered locally, so
+ * the suite does not depend on the external services. Signed in through the
  * setup project.
  */
 const MAP = {
@@ -91,8 +91,8 @@ test.describe('map viewer (slm 2)', () => {
     await page.locator(MAP.viewer).scrollIntoViewIfNeeded();
     const box = await page.locator(MAP.viewer).boundingBox();
     expect(box).not.toBeNull();
-    // A spot of the map without a pin or a control, reached like a real mouse does: with a movement.
-    const [x, y] = [(box?.x ?? 0) + (box?.width ?? 0) * 0.3, (box?.y ?? 0) + (box?.height ?? 0) * 0.45];
+    // A spot of the map without a pin or a control (top left), reached like a real mouse does: with a movement.
+    const [x, y] = [(box?.x ?? 0) + (box?.width ?? 0) * 0.15, (box?.y ?? 0) + (box?.height ?? 0) * 0.2];
     await page.mouse.move(x - 20, y - 20);
     await page.mouse.move(x, y, { steps: 5 });
     // Geissalp of the demo lies around 2’618’400 / 1’176’900.
@@ -100,21 +100,29 @@ test.describe('map viewer (slm 2)', () => {
   });
 
   test('switches the background map and the layers (5.4.5, 5.10)', async ({ page }) => {
-    const tiles: string[] = [];
+    const requests: string[] = [];
     await mockMapTiles(page);
     page.on('request', (request) => {
-      if (request.url().startsWith('https://wmts.geo.admin.ch/')) tiles.push(request.url());
+      if (/^https:\/\/(wmts|vectortiles)\.geo\.admin\.ch\//.test(request.url())) requests.push(request.url());
     });
+    const tiles = (layer: string) => requests.some((u) => u.includes(`/${layer}/`));
     await openDetails(page);
-    // Default: the light base map of swisstopo in LV95.
-    await expect.poll(() => tiles.some((u) => u.includes('ch.swisstopo.leichte-basiskarte_reliefschattierung') && u.includes('/2056/'))).toBe(true);
+    // Default: the «Light Base Map» of swisstopo (vector tiles), and only that one is loaded.
+    await expect.poll(() => tiles('ch.swisstopo.lightbasemap.vt')).toBe(true);
+    expect(tiles('ch.swisstopo.imagerybasemap.vt')).toBe(false);
 
     await page.locator(MAP.base).click();
     await expect(page.locator(MAP.baseItem('imagery'))).toBeVisible();
     await expect(page.locator(MAP.baseItem('topo'))).toBeVisible();
     await page.locator(MAP.baseItem('imagery')).click();
     await expect(page.locator(MAP.base)).toContainText('Luftbild');
-    await expect.poll(() => tiles.some((u) => u.includes('ch.swisstopo.swissimage/'))).toBe(true);
+    // «Imagery Base Map»: its style, then the Orthofoto tiles.
+    await expect.poll(() => tiles('ch.swisstopo.imagerybasemap.vt')).toBe(true);
+    await expect.poll(() => tiles('ch.swisstopo.swissimage')).toBe(true);
+    await page.locator(MAP.base).click();
+    await page.locator(MAP.baseItem('topo')).click();
+    await expect(page.locator(MAP.base)).toContainText('Landeskarte');
+    await expect.poll(() => tiles('ch.swisstopo.pixelkarte-farbe')).toBe(true);
 
     // Layers: the Empfangspunkte can be hidden and shown again; the legend explains the colours.
     await page.locator(MAP.layers).click();

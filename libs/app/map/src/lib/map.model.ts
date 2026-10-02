@@ -1,18 +1,23 @@
 import { InjectionToken } from '@angular/core';
 
-/** One background map of the viewer (B1 5.4.5), a swisstopo WMTS layer in LV95. */
+/**
+ * One background map of the viewer (B1 5.4.5), loaded live from the service.
+ * `style`: vector tiles with their style document (the swisstopo «Light Base
+ * Map» and «Imagery Base Map»); `xyz`: raster tiles in Web Mercator.
+ */
 export interface MapBaseMapConfig {
   id: string;
   /** Locale key of the name shown in the switcher. */
   labelKey: string;
-  /** Tile URL with `{z}` (TileMatrix), `{x}` (TileCol), `{y}` (TileRow). */
+  type: 'style' | 'xyz';
+  /** `style`: URL of the style document (JSON). `xyz`: tile URL with `{z}`, `{x}`, `{y}`. */
   url: string;
-  /** Highest TileMatrix the layer offers (index into `tileGrid.resolutions`). */
-  maxMatrix: number;
+  /** `xyz` only: finest level the service offers (tiles are enlarged beyond it). */
+  maxZoom?: number;
   /** Copyright note, shown on the map and on the export. */
   attribution: string;
   opacity?: number;
-  /** One tile of the layer as the thumbnail of the switcher. */
+  /** Image of the switcher button. */
   thumbnail?: string;
 }
 
@@ -23,16 +28,19 @@ export interface MapBaseMapConfig {
  * `DEFAULT_MAP_CONFIG` is the same content as fallback.
  */
 export interface MapConfig {
-  /** EPSG code of view, tiles and data — CH1903+ / LV95. */
+  /** EPSG code of the data and of every coordinate shown — CH1903+ / LV95. */
   projection: string;
   /** [minEast, minNorth, maxEast, maxNorth] the view is limited to. */
   extent: [number, number, number, number];
-  tileGrid: { origin: [number, number]; resolutions: number[] };
   zoom: {
-    /** Zoomstufen as resolutions in m/px, coarse → fine (B1 5.4.3: 10–12 Stufen). */
-    resolutions: number[];
-    /** Finest resolution «Default» zooms to when it fits the objects. */
-    fitMinResolution: number;
+    /**
+     * Zoomstufen, coarse → fine (B1 5.4.3: 10–12 Stufen), as levels of the
+     * tile pyramid of the background maps: level 8 shows Switzerland, every
+     * level doubles the Massstab.
+     */
+    levels: number[];
+    /** Finest level «Default» zooms to when it fits the objects. */
+    fitMaxLevel: number;
     /** Padding in px around the objects when fitting. */
     fitPadding: number;
   };
@@ -43,6 +51,7 @@ export interface MapConfig {
   /** Selektionsfarbe (B1 5.4.2). */
   selectionColor: string;
   layers: {
+    /** `labelMaxResolution`: the numbers of the Anlagenteile show from this ground resolution (m per px) on. */
     plantParts: { visible: boolean; stroke: string; fill: string; strokeWidth: number; labelMaxResolution: number };
     points: { visible: boolean };
   };
@@ -65,6 +74,10 @@ export interface MapPoint {
   state: string;
   /** Accessible name of the pin. */
   label: string;
+  /** Ampel before a change (simulation): shown as a small dot next to the pin. */
+  previousState?: string | null;
+  /** Tooltip of that dot. */
+  previousLabel?: string;
 }
 
 /** Anlageteil on the map: geometry as WKT in LV95. */
@@ -78,16 +91,19 @@ export interface MapPlantPart {
 export interface MapViewState {
   /** Index of the Zoomstufe (0 = coarsest). */
   zoom: number;
-  /** m per px. */
+  /** m on the ground per px, at the centre of the map. */
   resolution: number;
   center: [number, number];
 }
 
+/** An element the map keeps at a coordinate: a pin, the dot next to it, the popover of the chosen point. */
 export interface MapPin {
   id: string;
   east: number;
   north: number;
   element: HTMLElement;
+  /** Popover: shifted sideways so that it stays inside the map. */
+  keepInside?: boolean;
 }
 
 export interface MapExportRequest {

@@ -20,8 +20,14 @@ import type { MapBaseMapConfig, MapConfig, MapEngine, MapEngineHandlers, MapExpo
 /** The export waits this long for the background tiles before it prints what is there. */
 const EXPORT_TIMEOUT_MS = 12_000;
 
+/** Distance a popover keeps from the edge of the map. */
+const EDGE_GAP_PX = 8;
+
 /** The swisstopo base maps («Light Base Map», «Imagery Base Map») are vector tiles in Web Mercator — so is the view. */
 const VIEW = 'EPSG:3857';
+
+/** m per px of level 0 of the Web Mercator tile pyramid (at the equator); every level halves it. */
+const LEVEL_0_RESOLUTION = 156543.03392804097;
 
 /** CH1903+ / LV95 (swisstopo): the projection of the data and of every coordinate the user sees. */
 const LV95_DEFINITION =
@@ -50,6 +56,8 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     const [east, north] = transform(coordinate, VIEW, config.projection);
     return [east, north];
   };
+  /** Metres on the ground per pixel at the centre — Web Mercator stretches with the latitude. */
+  const groundResolution = (resolution: number, center: number[]) => getPointResolution(VIEW, resolution, center, 'm');
   const wkt = new WKT();
   const levels = config.zoom.levels;
 
@@ -65,7 +73,9 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     baseGroups.set(base.id, group);
     if (base.type === 'style') {
       const styled = group;
-      applyMapboxStyle(styled, base.url)
+      // `webfonts: ''`: the fonts of the style are not on the device; the labels use the system sans-serif
+      // instead of fetching fonts from a third-party CDN (the default of the library).
+      applyMapboxStyle(styled, base.url, { webfonts: '' })
         .then(() => styled.getLayersArray().forEach((layer) => watchTiles(layer.getSource())))
         .catch(() => handlers.tileError());
     } else {
@@ -95,7 +105,7 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
         stroke: new Stroke({ color: style.stroke, width: style.strokeWidth }),
         fill: new Fill({ color: style.fill }),
         text:
-          resolution <= style.labelMaxResolution
+          groundResolution(resolution, view.getCenter() ?? toView(config.defaultCenter)) <= style.labelMaxResolution
             ? new Text({
                 text: String(feature.get('label') ?? ''),
                 font: '600 12px Helvetica, Arial, sans-serif',
@@ -110,12 +120,15 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
   const view = new View({
     projection: VIEW,
     extent: transformExtent(config.extent, config.projection, VIEW),
-    minZoom: levels[0],
-    maxZoom: levels[levels.length - 1],
+    // The Zoomstufen of the configuration are the resolutions of the view: its zoom is the index of the Zoomstufe.
+    resolutions: levels.map((level) => LEVEL_0_RESOLUTION / 2 ** level),
     constrainResolution: true,
+    constrainOnlyCenter: true,
     center: toView(config.defaultCenter),
-    zoom: levels[0],
+    zoom: 0,
   });
+  /** Finest Zoomstufe «Default» goes to. */
+  const fitMaxIndex = Math.max(0, levels.filter((level) => level <= config.zoom.fitMaxLevel).length - 1);
 
   const map = new OlMap({
     target,
@@ -130,20 +143,27 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
   /** Zoomstufe a running zoom animation heads for, so quick clicks add up. */
   let targetLevel: number | null = null;
 
-  /** Index of the Zoomstufe the view is at (the levels are consecutive zooms of the tile pyramid). */
-  const levelOf = (zoom: number) => Math.max(0, Math.min(levels.length - 1, Math.round(zoom) - levels[0]));
-  /** Metres on the ground per pixel at the centre — Web Mercator stretches with the latitude. */
-  const groundResolution = (resolution: number, center: number[]) => getPointResolution(VIEW, resolution, center, 'm');
+  /** Index of the Zoomstufe the view is at. */
+  const levelOf = (zoom: number | undefined) => Math.max(0, Math.min(levels.length - 1, Math.round(zoom ?? 0)));
 
-  /** Places every pin at the pixel of its coordinate (`--x` / `--y` of the design-system pin). */
+  /**
+   * Places every element at the pixel of its coordinate (`--x` / `--y` of the design-system pin) and tells it
+   * in which half of the map it sits (`data-half`), so a popover can open towards the middle.
+   */
   const positionPins = () => {
+    const size = map.getSize();
     for (const pin of pins) {
       const pixel = pinsVisible ? map.getPixelFromCoordinate(toView([pin.east, pin.north])) : null;
       pin.element.style.display = pixel ? '' : 'none'; // the pin sets its own `display`, the `hidden` attribute would lose
-      if (pixel) {
-        pin.element.style.setProperty('--x', `${Math.round(pixel[0])}px`);
-        pin.element.style.setProperty('--y', `${Math.round(pixel[1])}px`);
+      if (!pixel) continue;
+      let x = pixel[0];
+      if (pin.keepInside && size) {
+        const half = pin.element.offsetWidth / 2 + EDGE_GAP_PX;
+        if (size[0] > 2 * half) x = Math.max(half, Math.min(size[0] - half, x));
       }
+      pin.element.style.setProperty('--x', `${Math.round(x)}px`);
+      pin.element.style.setProperty('--y', `${Math.round(pixel[1])}px`);
+      if (size) pin.element.dataset['half'] = pixel[1] > size[1] / 2 ? 'lower' : 'upper';
     }
   };
 
@@ -151,7 +171,7 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     const center = view.getCenter();
     const resolution = view.getResolution();
     if (!center || !resolution) return;
-    handlers.view({ zoom: levelOf(view.getZoom() ?? levels[0]), resolution: groundResolution(resolution, center), center: toData(center) });
+    handlers.view({ zoom: levelOf(view.getZoom()), resolution: groundResolution(resolution, center), center: toData(center) });
   };
   map.on('moveend', () => {
     targetLevel = null;
@@ -174,10 +194,10 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     const extent = objectsExtent();
     if (isEmpty(extent)) {
       view.setCenter(toView(config.defaultCenter));
-      view.setZoom(levels[0]);
+      view.setZoom(0);
     } else {
       // A single point has no size: give it a neighbourhood instead of the finest Zoomstufe.
-      view.fit(buffer(extent, 60), { padding: Array(4).fill(config.zoom.fitPadding), maxZoom: levels[0] + config.zoom.fitMaxLevel });
+      view.fit(buffer(extent, 60), { padding: Array(4).fill(config.zoom.fitPadding), maxZoom: fitMaxIndex });
     }
     emitView();
   };
@@ -217,10 +237,10 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
 
     zoomBy(delta) {
       // From the Zoomstufe the view is heading for: a second click during the animation must not be lost.
-      const from = targetLevel ?? levelOf(view.getZoom() ?? levels[0]);
+      const from = targetLevel ?? levelOf(view.getZoom());
       targetLevel = Math.max(0, Math.min(levels.length - 1, from + delta));
       view.cancelAnimations();
-      view.animate({ zoom: levels[0] + targetLevel, duration: 150 });
+      view.animate({ zoom: targetLevel, duration: 150 });
     },
 
     exportImage(request: MapExportRequest): Promise<MapExportImage> {
@@ -252,6 +272,12 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
             const context = canvas.getContext('2d') as CanvasRenderingContext2D;
             context.fillStyle = '#ffffff';
             context.fillRect(0, 0, width, height);
+            // The background colour of a vector style is an element of its own, not a canvas.
+            const backdrop = map.getViewport().querySelector<HTMLElement>('.ol-mapbox-style-background')?.style.backgroundColor;
+            if (backdrop) {
+              context.fillStyle = backdrop;
+              context.fillRect(0, 0, width, height);
+            }
             for (const layerCanvas of Array.from(map.getViewport().querySelectorAll<HTMLCanvasElement>('.ol-layer canvas, canvas.ol-layer'))) {
               if (!layerCanvas.width) continue;
               const opacity = layerCanvas.parentElement?.style.opacity || layerCanvas.style.opacity;

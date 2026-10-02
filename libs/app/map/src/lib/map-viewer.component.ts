@@ -18,7 +18,7 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { MapConfigService } from './map-config.service';
 import { exportLayout, MapExportOptions, saveMapImage, saveMapPdf } from './map-export';
 import { formatLv95, formatScale, placeablePoints, scaleBar, scaleDenominator } from './map.logic';
-import { MAP_ENGINE, MapConfig, MapEngine, MapPlantPart, MapPoint, MapViewState } from './map.model';
+import { MAP_ENGINE, MapConfig, MapEngine, MapPin, MapPlantPart, MapPoint, MapViewState } from './map.model';
 
 const I18N = 'map';
 
@@ -27,15 +27,16 @@ const STATE_TOKEN: Record<string, string> = { ok: 'success', warn: 'warning', ov
 
 /**
  * GIS-Kartenviewer (`slm 2`, B1 5.4, Abbildung 16): swisstopo background
- * maps in CH1903+ / LV95, the Anlagenteile and Empfangspunkte of the host
- * page on top, Massstab «1:XXX» with Ausdehnungsbalken, Zoomstufen with
+ * maps, the Anlagenteile and Empfangspunkte of the host page (CH1903+ /
+ * LV95) on top, Massstab «1:XXX» with Ausdehnungsbalken, Zoomstufen with
  * «Default», the coordinates under the mouse, a switcher of the background
  * maps, a layer panel and the export as PDF or image with optional title,
  * copyright, date, disclaimer, scale and centre.
  *
  * The map library sits behind `MAP_ENGINE` (OpenLayers, loaded on demand).
  * The Empfangspunkte are real buttons placed on the map, so keyboard and
- * screen reader reach them. When the library cannot be loaded the viewer
+ * screen reader reach them; with `popup` the host projects a popover for
+ * the selected point (`slimMapPopup`). When the library cannot be loaded the viewer
  * emits `unavailable` and the host falls back to its own display.
  */
 @Component({
@@ -63,6 +64,8 @@ export class MapViewerComponent {
   readonly fullscreenLink = input<string | null>(null);
   /** `data-testid` of the pins, so a host page can keep its own. */
   readonly pinTestId = input('map-pin');
+  /** Shows the projected `slimMapPopup` content as popover at the selected point. */
+  readonly popup = input(false);
 
   readonly pointSelected = output<string>();
   /** The map library could not be loaded — the host shows its fallback. */
@@ -71,6 +74,8 @@ export class MapViewerComponent {
   protected readonly prefix = I18N;
   private readonly target = viewChild.required<ElementRef<HTMLElement>>('target');
   private readonly pinElements = viewChildren<ElementRef<HTMLElement>>('pin');
+  private readonly ghostElements = viewChildren<ElementRef<HTMLElement>>('ghost');
+  private readonly popElement = viewChild<ElementRef<HTMLElement>>('pop');
 
   protected readonly config = signal<MapConfig | null>(null);
   private readonly engine = signal<MapEngine | null>(null);
@@ -111,10 +116,11 @@ export class MapViewerComponent {
     return config ? placeablePoints(this.points(), config.extent) : [];
   });
   protected readonly hiddenPoints = computed(() => this.points().length - this.pins().length);
+  protected readonly selectedPin = computed(() => this.pins().find((p) => p.id === this.selectedId()) ?? null);
 
   protected readonly baseMaps = computed(() => this.config()?.baseMaps ?? []);
   protected readonly baseMap = computed(() => this.baseMaps().find((b) => b.id === this.baseMapId()) ?? null);
-  protected readonly zoomCount = computed(() => this.config()?.zoom.resolutions.length ?? 0);
+  protected readonly zoomCount = computed(() => this.config()?.zoom.levels.length ?? 0);
   protected readonly scale = computed(() => {
     const view = this.view();
     return view ? formatScale(scaleDenominator(view.resolution)) : '';
@@ -137,16 +143,24 @@ export class MapViewerComponent {
       if (engine) untracked(() => engine.setPlantParts(parts));
     });
 
-    // Empfangspunkte → the rendered buttons become overlays; a new set of objects re-centres the map.
+    // Empfangspunkte → the map positions the rendered buttons (and their dots, the popover); a new set of
+    // objects re-centres the map.
     let shown = '';
     effect(() => {
       const engine = this.engine();
       const pins = this.pins();
       const elements = this.pinElements();
+      const ghosts = this.ghostElements();
+      const pop = this.popElement();
       const parts = this.plantParts();
       if (!engine || elements.length !== pins.length) return;
       untracked(() => {
-        engine.setPins(pins.map((p, i) => ({ id: p.id, east: p.east, north: p.north, element: elements[i].nativeElement })));
+        const byId = new Map(pins.map((p) => [p.id, p]));
+        const place = (ref: ElementRef<HTMLElement>, keepInside = false): MapPin[] => {
+          const point = byId.get(ref.nativeElement.dataset['point'] ?? '');
+          return point ? [{ id: point.id, east: point.east, north: point.north, element: ref.nativeElement, keepInside }] : [];
+        };
+        engine.setPins([...elements.flatMap((e) => place(e)), ...ghosts.flatMap((e) => place(e)), ...(pop ? place(pop, true) : [])]);
         const key = [...pins.map((p) => p.id), ...parts.map((p) => p.id)].join('|');
         if (key !== shown) {
           shown = key;

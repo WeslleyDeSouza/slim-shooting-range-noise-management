@@ -3,6 +3,7 @@
   "subtitle": "Kontingente und Lärmbelastung im Blick.",
   "year": "Jahr",
   "export": "Exportieren",
+  "export_pending": "Der Export der Tabelle (Excel/CSV) ist noch in Bearbeitung.",
   "search_placeholder": "Schiessplatz oder Koordinationsabschnitt-Nr. suchen",
   "filter": {
     "all": "Alle",
@@ -241,7 +242,8 @@
     "select_hint": "Wählen Sie einen Empfangspunkt auf der Karte oder in der Liste.",
     "no_calculation": {
       "title": "Keine Berechnungsgrundlage",
-      "text": "Für diesen Schiessplatz ist noch keine Berechnung (sonARMS) importiert. Die Beurteilung der Empfangspunkte ist erst nach dem Import möglich (Datenverwaltung › Berechnungen)."
+      "text": "Für diesen Schiessplatz ist noch keine Berechnung (sonARMS) importiert. Die Beurteilung der Empfangspunkte ist erst nach dem Import möglich (Datenverwaltung › Berechnungen).",
+      "link": "Zu Datenverwaltung › Berechnungen"
     },
     "incomplete": {
       "title": "Beurteilung unvollständig.",

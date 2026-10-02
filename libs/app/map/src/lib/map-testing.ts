@@ -11,6 +11,9 @@ import {
   MapPlantPart,
 } from './map.model';
 
+/** Ground resolutions (m per px) the fake reports for its twelve Zoomstufen. */
+const FAKE_RESOLUTIONS = [250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25];
+
 /**
  * Stand-in for the map library in unit tests: records what the viewer asks
  * for and lets a spec drive the callbacks (view change, mouse position, tile
@@ -37,7 +40,7 @@ export class FakeMapEngine implements MapEngine {
   }
 
   emitView(): void {
-    this.handlers.view({ zoom: this.zoom, resolution: this.config.zoom.resolutions[this.zoom], center: [2618420, 1176900] });
+    this.handlers.view({ zoom: this.zoom, resolution: FAKE_RESOLUTIONS[this.zoom] ?? 1, center: [2618420, 1176900] });
   }
 
   setBaseMap(id: string): void {
@@ -61,7 +64,7 @@ export class FakeMapEngine implements MapEngine {
   }
 
   zoomBy(delta: number): void {
-    this.zoom = Math.max(0, Math.min(this.config.zoom.resolutions.length - 1, this.zoom + delta));
+    this.zoom = Math.max(0, Math.min(this.config.zoom.levels.length - 1, this.zoom + delta));
     this.emitView();
   }
 

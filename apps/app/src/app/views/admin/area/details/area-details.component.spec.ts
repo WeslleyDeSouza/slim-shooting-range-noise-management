@@ -6,6 +6,7 @@ import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
 import type { AssessmentDto, MapPlantPartDto, ReceiverAssessmentDto } from '@ui-slim/apiClient';
 import { FakeMap, provideFakeMap } from '@ui-slim/map';
+import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { AssessmentFacade } from '../../../../core/calculation/assessment.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
@@ -104,6 +105,10 @@ class MapFacadeStub {
   readonly load = jest.fn(async () => undefined);
 }
 
+/** Rights of the signed-in user: the link to the Datenverwaltung only shows with access to it. */
+const canOpenCalculations = signal(true);
+const ACCESS_STUB = { can: () => canOpenCalculations };
+
 const AREA_STUB = { byId: () => ({ id: 'area-1', name: 'Geissalp', coordinationSectionNo: '1104.020' }) };
 
 describe('AreaDetailsComponent', () => {
@@ -118,6 +123,7 @@ describe('AreaDetailsComponent', () => {
         { provide: AssessmentFacade, useValue: facade },
         { provide: MapFacade, useValue: new MapFacadeStub() },
         { provide: AreaFacade, useValue: AREA_STUB },
+        { provide: AccessFacade, useValue: ACCESS_STUB },
         DataEmitter,
         {
           provide: TranslateService,
@@ -236,6 +242,20 @@ describe('AreaDetailsComponent', () => {
     fixture.detectChanges();
     expect(el('[data-testid="details-map"]')).toBeNull();
     expect(fixture.nativeElement.textContent).toContain('details.no_calculation.text');
+    // … and leads straight to where a calculation is imported.
+    expect(el<HTMLAnchorElement>('[data-testid="details-to-calculations"]').getAttribute('href')).toBe(
+      '/admin/data-management/area/area-1/calculations',
+    );
+  });
+
+  it('does not offer the link to the Datenverwaltung without the right to open it', () => {
+    canOpenCalculations.set(false);
+    facade.assessment.set(assessment({ calculation: null, current: null, calculations: [], receivers: [] }));
+    facade.receivers.set([]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('details.no_calculation.text');
+    expect(el('[data-testid="details-to-calculations"]')).toBeNull();
+    canOpenCalculations.set(true);
   });
 });
 
@@ -275,6 +295,7 @@ describe('AreaDetailsComponent — GIS-Kartenviewer (slm 2)', () => {
         { provide: AssessmentFacade, useValue: facade },
         { provide: MapFacade, useValue: maps },
         { provide: AreaFacade, useValue: AREA_STUB },
+        { provide: AccessFacade, useValue: ACCESS_STUB },
         ...fakeMap.providers,
         DataEmitter,
         { provide: TranslateService, useValue: { translate: (key: string) => key, sectionChanged$: of(null), languageChanged$: of(null) } },

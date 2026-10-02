@@ -113,6 +113,11 @@
           </svg>
           <div class="slim-empty__title">{{ 'details.no_calculation.title' | translate }}</div>
           <p class="slim-empty__text">{{ 'details.no_calculation.text' | translate }}</p>
+          @if (calculationsLink(); as link) {
+            <a class="slim-btn slim-btn--primary" data-testid="details-to-calculations" [routerLink]="link">
+              {{ 'details.no_calculation.link' | translate }}
+            </a>
+          }
         </div>
       </section>
     } @else {

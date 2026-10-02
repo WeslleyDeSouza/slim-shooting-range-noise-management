@@ -3,6 +3,7 @@
   "subtitle": "Contingents et nuisances sonores en un coup d'œil.",
   "year": "Année",
   "export": "Exporter",
+  "export_pending": "L’export du tableau (Excel/CSV) est encore en cours de réalisation.",
   "search_placeholder": "Rechercher une place de tir ou un n° de secteur de coordination",
   "filter": {
     "all": "Tous",
@@ -241,7 +242,8 @@
     "select_hint": "Sélectionnez un point de réception sur la carte ou dans la liste.",
     "no_calculation": {
       "title": "Pas de base de calcul",
-      "text": "Aucun calcul (sonARMS) n’a encore été importé pour cette place de tir. L’évaluation des points de réception n’est possible qu’après l’import (Gestion des données › Calculs)."
+      "text": "Aucun calcul (sonARMS) n’a encore été importé pour cette place de tir. L’évaluation des points de réception n’est possible qu’après l’import (Gestion des données › Calculs).",
+      "link": "Vers Gestion des données › Calculs"
     },
     "incomplete": {
       "title": "Évaluation incomplète.",

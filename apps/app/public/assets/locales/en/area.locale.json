@@ -3,6 +3,7 @@
   "subtitle": "Quotas and noise exposure at a glance.",
   "year": "Year",
   "export": "Export",
+  "export_pending": "The export of the table (Excel/CSV) is still being worked on.",
   "search_placeholder": "Search shooting range or coordination section no.",
   "filter": {
     "all": "All",
@@ -241,7 +242,8 @@
     "select_hint": "Select a receiver point on the map or in the list.",
     "no_calculation": {
       "title": "No calculation basis",
-      "text": "No calculation (sonARMS) has been imported for this shooting range yet. The receiver points can only be assessed after the import (Data management › Calculations)."
+      "text": "No calculation (sonARMS) has been imported for this shooting range yet. The receiver points can only be assessed after the import (Data management › Calculations).",
+      "link": "Go to Data management › Calculations"
     },
     "incomplete": {
       "title": "Assessment incomplete.",

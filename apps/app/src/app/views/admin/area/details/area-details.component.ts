@@ -9,17 +9,18 @@ import {
   untracked,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
-import { APP_ROUTES } from '@slim/shared';
+import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type {
   AssessmentRowDto,
   ReceiverAssessmentDto,
 } from '@ui-slim/apiClient';
 import { MapPoint, MapViewerComponent } from '@ui-slim/map';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
+import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import {
   AssessmentFacade,
@@ -55,7 +56,7 @@ const METER_HEADROOM_DB = 8;
 @Component({
   selector: 'app-area-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DecimalPipe, TranslatePipe, StatusPillComponent, MapViewerComponent],
+  imports: [DatePipe, DecimalPipe, RouterLink, TranslatePipe, StatusPillComponent, MapViewerComponent],
   templateUrl: './area-details.component.html',
   styleUrl: './area-details.component.scss',
 })
@@ -138,6 +139,12 @@ export class AreaDetailsComponent extends ComponentBase {
   protected readonly mapTitle = computed(() => {
     const area = this.areas.byId(this.areaId());
     return area ? `${area.coordinationSectionNo} ${area.name}` : '';
+  });
+  /** Where a calculation is imported (5.18 / 5.19) — offered when nothing is there to assess, to users who may open it. */
+  private readonly canOpenCalculations = inject(AccessFacade).can(SLIM_APP_ID.ADMIN_DATA_CALCULATIONS);
+  protected readonly calculationsLink = computed(() => {
+    const id = this.areaId();
+    return id && this.canOpenCalculations() ? APP_ROUTES.admin.dataManagement.area.calculationsOf(id) : null;
   });
   /** «Vollansicht» in a new tab (B1 5.10), on the state the page shows. */
   protected readonly fullscreenLink = computed(() => {

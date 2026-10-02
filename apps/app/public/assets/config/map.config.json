@@ -1,50 +1,80 @@
 {
   "projection": "EPSG:2056",
-  "extent": [2420000, 1030000, 2900000, 1350000],
-  "tileGrid": {
-    "origin": [2420000, 1350000],
-    "resolutions": [4000, 3750, 3500, 3250, 3000, 2750, 2500, 2250, 2000, 1750, 1500, 1250, 1000, 750, 650, 500, 250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25, 0.1]
-  },
+  "extent": [
+    2420000,
+    1030000,
+    2900000,
+    1350000
+  ],
   "zoom": {
-    "resolutions": [250, 100, 50, 20, 10, 5, 2.5, 2, 1.5, 1, 0.5, 0.25],
-    "fitMinResolution": 1,
+    "levels": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "fitMaxLevel": 17,
     "fitPadding": 56
   },
-  "defaultCenter": [2660000, 1190000],
+  "defaultCenter": [
+    2660000,
+    1190000
+  ],
   "defaultBaseMap": "light",
   "baseMaps": [
     {
       "id": "light",
       "labelKey": "map.base.light",
-      "url": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/2056/{z}/{x}/{y}.png",
-      "maxMatrix": 27,
+      "type": "style",
+      "url": "https://vectortiles.geo.admin.ch/styles/ch.swisstopo.lightbasemap.vt/style.json",
       "attribution": "© swisstopo",
-      "thumbnail": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.leichte-basiskarte_reliefschattierung/default/current/2056/18/14/11.png"
+      "thumbnail": "assets/map/base-light.jpg"
     },
     {
       "id": "imagery",
       "labelKey": "map.base.imagery",
-      "url": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/2056/{z}/{x}/{y}.jpeg",
-      "maxMatrix": 28,
+      "type": "style",
+      "url": "https://vectortiles.geo.admin.ch/styles/ch.swisstopo.imagerybasemap.vt/style.json",
       "attribution": "© swisstopo",
-      "thumbnail": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/2056/18/14/11.jpeg"
+      "thumbnail": "assets/map/base-imagery.jpg"
     },
     {
       "id": "topo",
       "labelKey": "map.base.topo",
-      "url": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/2056/{z}/{x}/{y}.jpeg",
-      "maxMatrix": 27,
+      "type": "xyz",
+      "url": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
       "attribution": "© swisstopo",
-      "thumbnail": "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/2056/18/14/11.jpeg"
+      "thumbnail": "assets/map/base-topo.jpg",
+      "maxZoom": 19
     }
   ],
   "selectionColor": "#006699",
   "layers": {
-    "plantParts": { "visible": true, "stroke": "#17181c", "fill": "rgba(23, 24, 28, 0.18)", "strokeWidth": 2, "labelMaxResolution": 5 },
-    "points": { "visible": true }
+    "plantParts": {
+      "visible": true,
+      "stroke": "#17181c",
+      "fill": "rgba(23, 24, 28, 0.18)",
+      "strokeWidth": 2,
+      "labelMaxResolution": 7
+    },
+    "points": {
+      "visible": true
+    }
   },
   "export": {
-    "dpi": [96, 150, 300],
+    "dpi": [
+      96,
+      150,
+      300
+    ],
     "defaultDpi": 150,
     "disclaimerKey": "map.export.disclaimer"
   }

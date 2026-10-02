@@ -80,19 +80,23 @@ describe('map configuration (B1 5.4.2)', () => {
     expect(file).toEqual(DEFAULT_MAP_CONFIG);
   });
 
-  it('offers 10–12 Zoomstufen and the swisstopo background maps with the light base map as default (5.4.3 / 5.4.5)', () => {
-    const { zoom, baseMaps, defaultBaseMap, tileGrid } = DEFAULT_MAP_CONFIG;
-    expect(zoom.resolutions.length).toBeGreaterThanOrEqual(10);
-    expect(zoom.resolutions.length).toBeLessThanOrEqual(12);
-    expect([...zoom.resolutions].sort((a, b) => b - a)).toEqual(zoom.resolutions); // coarse → fine
-    // Every Zoomstufe is a resolution the tile grid serves natively (sharp tiles, no resampling).
-    for (const r of zoom.resolutions) expect(tileGrid.resolutions).toContain(r);
+  it('offers 10–12 Zoomstufen, coarse to fine, with the «Default» level among them (5.4.3)', () => {
+    const { levels, fitMaxLevel } = DEFAULT_MAP_CONFIG.zoom;
+    expect(levels.length).toBeGreaterThanOrEqual(10);
+    expect(levels.length).toBeLessThanOrEqual(12);
+    expect([...levels].sort((a, b) => a - b)).toEqual(levels);
+    expect(levels).toContain(fitMaxLevel);
+  });
+
+  it('uses the swisstopo «Light Base Map» (vector tiles, default) and «Imagery Base Map», live from the service (5.4.5)', () => {
+    const { baseMaps, defaultBaseMap } = DEFAULT_MAP_CONFIG;
     expect(defaultBaseMap).toBe('light');
-    expect(baseMaps.map((b) => b.id)).toEqual(['light', 'imagery', 'topo']);
-    for (const b of baseMaps) {
-      expect(b.url).toMatch(/^https:\/\/wmts\.geo\.admin\.ch\/1\.0\.0\/ch\.swisstopo\.[a-z0-9._-]+\/default\/current\/2056\/\{z\}\/\{x\}\/\{y\}\.(png|jpeg)$/);
-      expect(b.maxMatrix).toBeLessThan(tileGrid.resolutions.length);
-    }
+    expect(baseMaps.map((b) => [b.id, b.type, b.url])).toEqual([
+      ['light', 'style', 'https://vectortiles.geo.admin.ch/styles/ch.swisstopo.lightbasemap.vt/style.json'],
+      ['imagery', 'style', 'https://vectortiles.geo.admin.ch/styles/ch.swisstopo.imagerybasemap.vt/style.json'],
+      ['topo', 'xyz', 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg'],
+    ]);
+    for (const b of baseMaps) expect(b.attribution).toBe('© swisstopo');
   });
 });
 

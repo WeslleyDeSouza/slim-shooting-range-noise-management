@@ -3,6 +3,7 @@
   "subtitle": "Contingenti e immissioni di rumore a colpo d'occhio.",
   "year": "Anno",
   "export": "Esporta",
+  "export_pending": "L’esportazione della tabella (Excel/CSV) è ancora in fase di realizzazione.",
   "search_placeholder": "Cerca piazza di tiro o n. settore di coordinamento",
   "filter": {
     "all": "Tutti",
@@ -241,7 +242,8 @@
     "select_hint": "Selezionare un punto di ricezione sulla mappa o nell’elenco.",
     "no_calculation": {
       "title": "Nessuna base di calcolo",
-      "text": "Per questa piazza di tiro non è ancora stato importato alcun calcolo (sonARMS). La valutazione dei punti di ricezione è possibile solo dopo l’importazione (Gestione dati › Calcoli)."
+      "text": "Per questa piazza di tiro non è ancora stato importato alcun calcolo (sonARMS). La valutazione dei punti di ricezione è possibile solo dopo l’importazione (Gestione dati › Calcoli).",
+      "link": "Vai a Gestione dati › Calcoli"
     },
     "incomplete": {
       "title": "Valutazione incompleta.",

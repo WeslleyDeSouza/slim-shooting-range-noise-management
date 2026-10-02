@@ -22,6 +22,9 @@ import {
 
 type StatusFilter = '' | AreaStatus;
 
+/** How long a toast stays. */
+const NOTICE_MS = 6000;
+
 /**
  * "Übersicht Schiessplätze" (mock view-plaetze, chapters 5.8 / 5.9):
  * breadcrumbs, year + export, search + status filter, table with
@@ -67,7 +70,7 @@ type StatusFilter = '' | AreaStatus;
               }
             </select>
           </label>
-          <button type="button" class="slim-btn">
+          <button type="button" class="slim-btn" data-testid="area-export" (click)="exportTable()">
             <svg
               class="slim-btn__icon"
               viewBox="0 0 16 16"
@@ -342,6 +345,14 @@ type StatusFilter = '' | AreaStatus;
         {{ 'sample_note' | translate }}
       </p>
     </div>
+
+    @if (notice(); as key) {
+      <div class="slim-toasts">
+        <div class="slim-toast" role="status" data-testid="area-toast">
+          <div class="slim-toast__body">{{ key | translate }}</div>
+        </div>
+      </div>
+    }
   `,
 })
 export class AreaOverviewComponent extends ComponentBase {
@@ -363,6 +374,9 @@ export class AreaOverviewComponent extends ComponentBase {
 
   protected readonly year = signal(this.years[0]);
   protected readonly query = signal('');
+  /** Locale key of the message shown as toast. */
+  protected readonly notice = signal<string | null>(null);
+  private noticeTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly attentionFromUrl = toSignal(
     this.route.queryParamMap.pipe(map((p) => p.get('status') === 'attention')),
@@ -408,6 +422,13 @@ export class AreaOverviewComponent extends ComponentBase {
   protected noiseBasis(r: AreaResultDto): string | null {
     if (!r.noiseStatusBasis) return null;
     return this.translate.translate('basis.noise', { state: r.noiseStatusBasis, year: r.statusYear ?? '' }) ?? null;
+  }
+
+  /** Excel-/CSV-Export of the table (slm 9, B1 5.5.5) is not built yet: the button says so. */
+  protected exportTable(): void {
+    this.notice.set('export_pending');
+    if (this.noticeTimer) clearTimeout(this.noticeTimer);
+    this.noticeTimer = setTimeout(() => this.notice.set(null), NOTICE_MS);
   }
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */

@@ -21,7 +21,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
@@ -37,6 +37,7 @@ import { AreaFacade } from '../../../../core/area/area.facade';
 import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { QuantityComponent, sumQuantities } from './quantity.component';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 
 /** Sortable columns of the table. */
@@ -79,7 +80,7 @@ interface PositionForm {
 
 /** A row of the table: either a room heading (grouped view) or a usage. */
 export type ShotsRow =
-  | { kind: 'group'; roomName: string; shots: number }
+  | { kind: 'group'; roomName: string; shots: number; kg: number }
   | { kind: 'usage'; usage: UsageResultDto };
 
 interface Toast {
@@ -90,6 +91,8 @@ interface Toast {
 }
 
 const TOAST_MS = 6000;
+/** Query parameter that names the usage shown in the drawer. */
+const USAGE_PARAM = 'usage';
 /** Id of the table in the export: file name (date and extension are added) and logbook. */
 const EXPORT_TABLE = 'schusszahlen';
 const QUICK_TIMES = {
@@ -113,13 +116,15 @@ function usageFormValidator(group: {
 /**
  * «Schiessplatz – Schusszahlen» (B1 5.11, mock `_mocks/area/index.html`):
  * KPIs, Stellungsräume with counts, the year's usages with filters, sorting,
- * export (Excel/CSV, 5.5.5), bulk delete + undo, and the create / edit drawer. Renders inside the area
+ * export (Excel/CSV, 5.5.5), bulk delete + undo, and the create / edit drawer.
+ * A usage has an address of its own (B1 5.6, slm 5): `…/shots?usage=<id>`
+ * opens its drawer, and the address follows the drawer. Renders inside the area
  * context (`AreaContextComponent`), data from `UsageFacade`.
  */
 @Component({
   selector: 'app-area-shots',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, DatePipe, TableExportComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, DatePipe, TableExportComponent, QuantityComponent],
   templateUrl: './area-shots.component.html',
   styleUrl: './area-shots.component.scss',
 })
@@ -137,6 +142,7 @@ export class AreaShotsComponent extends ComponentBase {
     return next.toISOString().slice(0, 10);
   });
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
@@ -241,23 +247,20 @@ export class AreaShotsComponent extends ComponentBase {
     if (this.room() || this.sort().key !== 'room') {
       return list.map((usage) => ({ kind: 'usage', usage }));
     }
-    const sums = new Map<string, number>();
-    for (const u of list) sums.set(u.roomName, (sums.get(u.roomName) ?? 0) + u.shots);
     const rows: ShotsRow[] = [];
     let last: string | null = null;
     for (const usage of list) {
       if (usage.roomName !== last) {
         last = usage.roomName;
-        rows.push({ kind: 'group', roomName: usage.roomName, shots: sums.get(usage.roomName) ?? 0 });
+        rows.push({ kind: 'group', roomName: usage.roomName, ...sumQuantities(list.filter((u) => u.roomName === usage.roomName)) });
       }
       rows.push({ kind: 'usage', usage });
     }
     return rows;
   });
 
-  protected readonly displayedShots = computed(() =>
-    this.filtered().reduce((sum, u) => sum + u.shots, 0),
-  );
+  /** Sum of the usages shown, per unit (Schuss and kg are never one number). */
+  protected readonly displayed = computed(() => sumQuantities(this.filtered()));
   protected readonly allSelected = computed(() => {
     const list = this.filtered();
     const sel = this.selected();
@@ -303,7 +306,7 @@ export class AreaShotsComponent extends ComponentBase {
         { header: t('shots.columns.category'), value: (u) => t(`shots.category.${u.category}`) },
         { header: t('shots.columns.weapon'), value: (u) => u.weaponName },
         { header: t('shots.columns.shots'), value: (u) => u.shots },
-        { header: t('shots.form.quantity_unit'), value: (u) => t(u.quantityUnit === 'kg' ? 'shots.unit_kg' : u.quantityUnit === 'mixed' ? 'shots.unit_mixed' : 'shots.unit_shots') },
+        { header: t('shots.columns.kg'), value: (u) => u.kg },
         { header: t('shots.form.persons'), value: (u) => u.personCount },
         { header: t('shots.columns.recorded_by'), value: (u) => u.recordedBy },
         { header: t('shots.export.source'), value: (u) => t(`shots.export.source_${u.source}`) },
@@ -387,9 +390,7 @@ export class AreaShotsComponent extends ComponentBase {
 
   // Delete / toast -------------------------------------------------------
   protected readonly pendingDelete = signal<UsageResultDto[]>([]);
-  protected readonly pendingShots = computed(() =>
-    this.pendingDelete().reduce((sum, u) => sum + u.shots, 0),
-  );
+  protected readonly pending = computed(() => sumQuantities(this.pendingDelete()));
   protected readonly toast = signal<Toast | null>(null);
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -415,6 +416,54 @@ export class AreaShotsComponent extends ComponentBase {
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.drawerOpen()) this.dirty.set(true);
     });
+    // The address names a usage: open it once the usages of the year are there.
+    effect(() => {
+      const id = this.linkedUsageId();
+      const loading = this.loading();
+      const usages = this.usages();
+      untracked(() => void this.openLinked(id, loading, usages));
+    });
+  }
+
+  // Address of a usage (B1 5.6) ------------------------------------------
+  /** `?usage=<id>`: the usage the address names. */
+  private readonly linkedUsageId = toSignal(this.route.queryParamMap.pipe(map((p) => p.get(USAGE_PARAM))), { initialValue: null });
+  /** The address named a usage that does not exist on this Schiessplatz. */
+  protected readonly usageMissing = signal(false);
+  /** Id that is being looked up, so one address asks the API once. */
+  private lookup: string | null = null;
+  /** Id of the usage whose drawer was just closed: the address still names it until the navigation is through. */
+  private dismissed: string | null = null;
+
+  private async openLinked(id: string | null, loading: boolean, usages: UsageResultDto[]): Promise<void> {
+    if (id !== this.dismissed) this.dismissed = null;
+    if (!id || loading || this.lookup === id || this.dismissed === id) return;
+    if (this.drawerOpen() && this.editId() === id) return;
+    const listed = usages.find((u) => u.id === id);
+    if (listed) {
+      this.openForm(listed);
+      return;
+    }
+    // Not in the year shown: the usage may belong to another year.
+    this.lookup = id;
+    const usage = await this.facade.find(this.areaId(), id);
+    this.lookup = null;
+    if (this.linkedUsageId() !== id) return;
+    if (!usage) {
+      this.usageMissing.set(true);
+      this.setLinkedUsage(null);
+      return;
+    }
+    const year = Number(usage.date.slice(0, 4));
+    // Changing the year reloads the list; the effect then finds the usage in it.
+    if (year !== this.year()) this.year.set(year);
+    else this.openForm(usage);
+  }
+
+  /** Writes the usage shown in the drawer to the address (no new history entry). */
+  private setLinkedUsage(id: string | null): void {
+    if ((this.linkedUsageId() ?? null) === id) return;
+    void this.router.navigate([], { relativeTo: this.route, queryParams: { [USAGE_PARAM]: id }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
@@ -520,6 +569,8 @@ export class AreaShotsComponent extends ComponentBase {
     this.form.updateValueAndValidity();
     this.dirty.set(false);
     this.drawerOpen.set(true);
+    this.usageMissing.set(false);
+    this.setLinkedUsage(usage?.id ?? null);
   }
 
   protected requestClose(): void {
@@ -534,6 +585,8 @@ export class AreaShotsComponent extends ComponentBase {
     this.confirmDiscard.set(false);
     this.drawerOpen.set(false);
     this.dirty.set(false);
+    this.dismissed = this.linkedUsageId();
+    this.setLinkedUsage(null);
   }
 
   protected setDate(offsetDays: number): void {
@@ -689,7 +742,7 @@ function compare(a: UsageResultDto, b: UsageResultDto, key: ShotsSortKey): numbe
     case 'weapon':
       return a.weaponName.localeCompare(b.weaponName) || dateOrder(a, b);
     case 'shots':
-      return a.shots - b.shots || dateOrder(a, b);
+      return a.shots - b.shots || a.kg - b.kg || dateOrder(a, b);
     case 'recordedBy':
       return a.recordedBy.localeCompare(b.recordedBy) || dateOrder(a, b);
   }

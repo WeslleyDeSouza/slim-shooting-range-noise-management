@@ -12,7 +12,9 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
@@ -73,6 +75,21 @@ export class AdminUsageController {
   ): Promise<UsageOverviewDto> {
     const y = Number(year) || new Date().getFullYear();
     return this.usages.overview(tenantId, areaId, y);
+  }
+
+  /** Declared after `overview`, so that word is never read as an id. */
+  @Get(':id')
+  @ApiOperation({ summary: 'Eine Nutzung über ihre Adresse lesen (B1 5.6, slm 5); die Berechtigung für den Schiessplatz wird geprüft (slm 6)' })
+  @ApiParam({ name: 'areaId' })
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: UsageResultDto })
+  @ApiNotFoundResponse({ description: 'Die Nutzung gibt es auf diesem Schiessplatz nicht (oder sie ist gelöscht)' })
+  one(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UsageResultDto> {
+    return this.usages.one(tenantId, areaId, id);
   }
 
   @Post()

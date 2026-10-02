@@ -88,6 +88,7 @@
               <th>{{ prefix + '.col_year' | translate }}</th>
               <th class="slim-table__cell--num">{{ prefix + '.col_usages' | translate }}</th>
               <th class="slim-table__cell--num">{{ prefix + '.col_shots' | translate }}</th>
+              <th class="slim-table__cell--num">{{ prefix + '.col_kg' | translate }}</th>
               <th class="slim-table__cell--num">{{ prefix + '.col_imported' | translate }}</th>
             </tr>
           </thead>
@@ -103,6 +104,7 @@
                 <td class="dce__strong dce__num">{{ y.year }}</td>
                 <td class="slim-table__cell--num dce__num">{{ y.usageCount }}</td>
                 <td class="slim-table__cell--num dce__num">{{ y.shots | number: '1.0-3' }}</td>
+                <td class="slim-table__cell--num dce__num" data-testid="dce-year-kg">{{ y.kg | number: '1.0-3' }}</td>
                 <td class="slim-table__cell--num dce__num">{{ y.importedCount }}</td>
               </tr>
             } @empty {

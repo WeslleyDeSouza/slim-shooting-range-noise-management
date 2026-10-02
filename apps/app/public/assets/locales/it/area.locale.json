@@ -51,7 +51,8 @@
       "total": "Colpi {{year}} in totale",
       "count": "Utilizzi registrati",
       "civil_share": "Quota utilizzo civile",
-      "last": "Ultimo utilizzo"
+      "last": "Ultimo utilizzo",
+      "kg": "Esplosivi {{year}} in totale"
     },
     "rooms": "Posizioni di tiro",
     "all_rooms": "Tutte le posizioni di tiro",
@@ -66,7 +67,8 @@
       "category": "Categoria",
       "weapon": "Arma / calibro",
       "shots": "Numero di colpi",
-      "recorded_by": "Registrato da"
+      "recorded_by": "Registrato da",
+      "kg": "Esplosivi (kg)"
     },
     "type": {
       "military": "Militare",
@@ -149,7 +151,6 @@
       "undo": "Annulla"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pezzi / kg",
     "export": {
       "date": "Data",
       "source": "Origine",
@@ -157,7 +158,8 @@
       "source_elo": "ELO",
       "source_import": "Importazione",
       "search": "Ricerca"
-    }
+    },
+    "usage_missing": "Questo utilizzo non esiste su questa piazza di tiro oppure è stato eliminato."
   },
   "details": {
     "title": "Dettagli · Punti di ricezione",

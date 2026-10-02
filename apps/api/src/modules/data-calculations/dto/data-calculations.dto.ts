@@ -423,8 +423,11 @@ export class ShotYearDto {
   @ApiProperty({ description: 'Anzahl Nutzungen des Jahres' })
   usageCount: number;
 
-  @ApiProperty({ description: 'Summe der Mengen des Jahres (Stück; kg-Mengen mitgezählt)' })
+  @ApiProperty({ description: 'Summe der Mengen des Jahres in Stück (Schuss)' })
   shots: number;
+
+  @ApiProperty({ description: 'Summe der Mengen des Jahres in Kilogramm (Sprengstoff)' })
+  kg: number;
 
   @ApiProperty({ description: 'Anzahl Nutzungen, die aus ELO oder einem Import stammen (nicht von Hand erfasst)' })
   importedCount: number;

@@ -72,6 +72,19 @@ export class UsageFacade extends SignalStore<UsageState> {
     }
   }
 
+  /**
+   * One usage by its id, whatever its year (B1 5.6: a Nutzung has an address
+   * of its own). Null when it does not exist on this Schiessplatz or the user
+   * may not read it; the state of the page stays untouched.
+   */
+  async find(areaId: string, id: string): Promise<UsageResultDto | null> {
+    try {
+      return await firstValueFrom(this.api.adminUsageOne({ areaId, id }));
+    } catch {
+      return null;
+    }
+  }
+
   async create(dto: UsageCreateDto): Promise<UsageResultDto | null> {
     return this.mutate(async (areaId) => {
       const created = await firstValueFrom(this.api.adminUsageCreate({ areaId, body: dto }));

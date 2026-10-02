@@ -77,12 +77,6 @@ test.describe('entry page', () => {
     await expect(page.locator('.slim-table tbody tr')).toHaveCount(1);
   });
 
-  test('says that the export of the table is not available yet', async ({ page }) => {
-    await page.goto(ROUTES.area);
-    await page.locator('[data-testid="area-export"]').click();
-    await expect(page.locator('[data-testid="area-toast"]')).toContainText('Der Export der Tabelle (Excel/CSV) ist noch in Bearbeitung.');
-  });
-
   test('opens the Schiessplatz overview of the Datenverwaltung from its root address', async ({ page }) => {
     await page.goto('/admin/data-management');
     await expect(page).toHaveURL(/\/admin\/data-management\/area\/overview$/);

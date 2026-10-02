@@ -51,7 +51,8 @@
       "total": "Schuss {{year}} gesamt",
       "count": "Nutzungen erfasst",
       "civil_share": "Anteil zivile Nutzung",
-      "last": "Letzte Nutzung"
+      "last": "Letzte Nutzung",
+      "kg": "Sprengstoff {{year}} gesamt"
     },
     "rooms": "Stellungsräume",
     "all_rooms": "Alle Stellungsräume",
@@ -66,7 +67,8 @@
       "category": "Kategorie",
       "weapon": "Waffe / Kaliber",
       "shots": "Anzahl Schuss",
-      "recorded_by": "Erfasser"
+      "recorded_by": "Erfasser",
+      "kg": "Sprengstoff (kg)"
     },
     "type": {
       "military": "Militärisch",
@@ -149,7 +151,6 @@
       "undo": "Rückgängig"
     },
     "unit_kg": "kg",
-    "unit_mixed": "Stück / kg",
     "export": {
       "date": "Datum",
       "source": "Herkunft",
@@ -157,7 +158,8 @@
       "source_elo": "ELO",
       "source_import": "Import",
       "search": "Suche"
-    }
+    },
+    "usage_missing": "Diese Nutzung gibt es auf diesem Schiessplatz nicht, oder sie wurde gelöscht."
   },
   "details": {
     "title": "Details · Empfangspunkte",

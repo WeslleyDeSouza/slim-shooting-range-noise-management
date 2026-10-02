@@ -251,6 +251,8 @@ describe('AdminDataCalculationsController (HTTP)', () => {
     expect(years.body.years[0].year).toBe(2026);
     expect(years.body.years[0].usageCount).toBeGreaterThan(70);
     expect(years.body.years[0].shots).toBeGreaterThan(1000);
+    // Sprengstoff of the year is a sum of its own, in kg.
+    expect(years.body.years[0].kg).toBeGreaterThan(0);
 
     const csv = await api.http().post(`${base()}/export/shots`).send({ years: [2026] }).expect(200);
     expect(csv.headers['content-type']).toContain('text/csv');

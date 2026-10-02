@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, of } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type {
   UsageCombinationDto,
@@ -16,6 +16,7 @@ import { TableExportData } from '../../../../core/table/table-export';
 import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 import { AreaShotsComponent, minutesBetween } from './area-shots.component';
+import { QuantityComponent } from './quantity.component';
 import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { fakeSelectionLists } from '../../../../core/settings/selection-lists.testing';
 
@@ -34,9 +35,9 @@ class TranslateStubPipe implements PipeTransform {
 const AREA_ID = 'area-1';
 
 const ROOMS: UsageRoomDto[] = [
-  { id: 'r1', coordinationSectionNo: '1104.020.05', name: 'Stellungsrm Mw Neuhaus, B 3', groupName: 'Stellungsräume', enabled: true, usageCount: 2, shots: 1500 },
-  { id: 'r2', coordinationSectionNo: '1104.020.07', name: 'Stellungsrm B 2', groupName: 'Stellungsräume', enabled: true, usageCount: 1, shots: 2400 },
-  { id: 'r3', coordinationSectionNo: '1104.020.11', name: 'NGST Seeli C rechts', groupName: 'NGST', enabled: true, usageCount: 0, shots: 0 },
+  { id: 'r1', coordinationSectionNo: '1104.020.05', name: 'Stellungsrm Mw Neuhaus, B 3', groupName: 'Stellungsräume', enabled: true, usageCount: 2, shots: 1500, kg: 2.5 },
+  { id: 'r2', coordinationSectionNo: '1104.020.07', name: 'Stellungsrm B 2', groupName: 'Stellungsräume', enabled: true, usageCount: 1, shots: 2400, kg: 0 },
+  { id: 'r3', coordinationSectionNo: '1104.020.11', name: 'NGST Seeli C rechts', groupName: 'NGST', enabled: true, usageCount: 0, shots: 0, kg: 0 },
 ];
 
 /** Zulässige Kombinationen je Stellungsraum (5.17); `c1` is the permanent combination «Stgw 90» allowed on two rooms. */
@@ -53,12 +54,12 @@ const pos = (id: string, combinationId: string, quantity: number, quantityUnit: 
 };
 
 const USAGES: UsageResultDto[] = [
-  { id: 'u1', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, positions: [pos('p1', 'c2', 500)], weaponName: 'Pz Hb 74 · 15.5 cm', category: 'artillery', unit: 'K1', date: '2026-05-05', timeFrom: '11:00', timeTo: '15:00', usageType: 'military', civilUsageKind: null, personCount: 40, shots: 500, quantityUnit: 'shots', recordedBy: 'Lt Meier Fiona', source: 'manual', externalId: null, note: null, updatedAt: '2026-05-05T15:00:00.000Z' },
-  { id: 'u2', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, positions: [pos('p2', 'c1', 1000), pos('p3', 'c3', 2.5, 'kg')], weaponName: 'Stgw 90 · 5.6 mm, Sprengladung · kg', category: 'handguns', unit: 'Inf Bat 12', date: '2026-06-17', timeFrom: '08:00', timeTo: '11:30', usageType: 'military', civilUsageKind: null, personCount: 80, shots: 1002.5, quantityUnit: 'mixed', recordedBy: 'Hptm Roth Beat', source: 'manual', externalId: null, note: null, updatedAt: '2026-06-17T12:00:00.000Z' },
-  { id: 'u3', areaId: AREA_ID, roomId: 'r2', roomName: ROOMS[1].name, positions: [pos('p4', 'c1', 2400)], weaponName: 'Stgw 90 · 5.6 mm', category: 'handguns', unit: 'Schützenverein Geissalp', date: '2026-06-21', timeFrom: '13:30', timeTo: '17:00', usageType: 'civil', civilUsageKind: 'obligatory', personCount: 22, shots: 2400, quantityUnit: 'shots', recordedBy: 'ELO-Import', source: 'elo', externalId: 'ELO-2026-1104-00001', note: null, updatedAt: '2026-06-21T17:00:00.000Z' },
+  { id: 'u1', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, positions: [pos('p1', 'c2', 500)], weaponName: 'Pz Hb 74 · 15.5 cm', category: 'artillery', unit: 'K1', date: '2026-05-05', timeFrom: '11:00', timeTo: '15:00', usageType: 'military', civilUsageKind: null, personCount: 40, shots: 500, kg: 0, recordedBy: 'Lt Meier Fiona', source: 'manual', externalId: null, note: null, updatedAt: '2026-05-05T15:00:00.000Z' },
+  { id: 'u2', areaId: AREA_ID, roomId: 'r1', roomName: ROOMS[0].name, positions: [pos('p2', 'c1', 1000), pos('p3', 'c3', 2.5, 'kg')], weaponName: 'Stgw 90 · 5.6 mm, Sprengladung · kg', category: 'handguns', unit: 'Inf Bat 12', date: '2026-06-17', timeFrom: '08:00', timeTo: '11:30', usageType: 'military', civilUsageKind: null, personCount: 80, shots: 1000, kg: 2.5, recordedBy: 'Hptm Roth Beat', source: 'manual', externalId: null, note: null, updatedAt: '2026-06-17T12:00:00.000Z' },
+  { id: 'u3', areaId: AREA_ID, roomId: 'r2', roomName: ROOMS[1].name, positions: [pos('p4', 'c1', 2400)], weaponName: 'Stgw 90 · 5.6 mm', category: 'handguns', unit: 'Schützenverein Geissalp', date: '2026-06-21', timeFrom: '13:30', timeTo: '17:00', usageType: 'civil', civilUsageKind: 'obligatory', personCount: 22, shots: 2400, kg: 0, recordedBy: 'ELO-Import', source: 'elo', externalId: 'ELO-2026-1104-00001', note: null, updatedAt: '2026-06-21T17:00:00.000Z' },
 ];
 
-const KPI: UsageKpiDto = { year: 2026, totalShots: 3900, count: 3, civilSharePercent: 62, lastDate: '2026-06-21', years: [2026, 2025] };
+const KPI: UsageKpiDto = { year: 2026, totalShots: 3900, totalKg: 2.5, count: 3, civilSharePercent: 62, lastDate: '2026-06-21', years: [2026, 2025] };
 
 /** Sperrdatum der Schusszahlenerfassung as the erweiterte Konfiguration (B1 5.28) delivers it. */
 const lockDate = signal<string | null>(null);
@@ -76,6 +77,7 @@ describe('AreaShotsComponent', () => {
     saving: ReturnType<typeof signal<boolean>>;
     error: ReturnType<typeof signal<string | null>>;
     load: jest.Mock;
+    find: jest.Mock;
     create: jest.Mock;
     updateUsage: jest.Mock;
     remove: jest.Mock;
@@ -83,6 +85,10 @@ describe('AreaShotsComponent', () => {
   };
   /** What the export button hands to the API. */
   let exportFacade: { download: jest.Mock };
+  /** The query of the address (`?usage=<id>`) and what the page writes back to it. */
+  let query$: BehaviorSubject<{ get: (key: string) => string | null }>;
+  let router: { navigate: jest.Mock };
+  const address = (usage: string | null) => ({ get: (key: string) => (key === 'usage' ? usage : null) });
 
   const el = () => fixture.nativeElement as HTMLElement;
   /** Let pending promises settle without waiting for the 6 s toast timer. */
@@ -102,12 +108,15 @@ describe('AreaShotsComponent', () => {
       saving: signal(false),
       error: signal<string | null>(null),
       load: jest.fn().mockResolvedValue(undefined),
+      find: jest.fn().mockResolvedValue(null),
       create: jest.fn().mockResolvedValue(USAGES[0]),
       updateUsage: jest.fn().mockResolvedValue(USAGES[0]),
       remove: jest.fn().mockResolvedValue(['u1']),
       restore: jest.fn().mockResolvedValue(['u1']),
     };
     exportFacade = { download: jest.fn().mockResolvedValue(true) };
+    query$ = new BehaviorSubject(address(null));
+    router = { navigate: jest.fn().mockResolvedValue(true) };
 
     // The area id lives on the parent route (`/admin/area/:id/shots`).
     const paramMap = { get: (k: string) => (k === 'id' ? AREA_ID : null) };
@@ -123,7 +132,8 @@ describe('AreaShotsComponent', () => {
         // Keys pass through, as in the pipe stub.
         { provide: TranslateService, useValue: { translate: (key: string) => key, lang: 'de' } },
         { provide: AreaFacade, useValue: { byId: () => ({ id: AREA_ID, name: 'Geissalp', coordinationSectionNo: '1104.020' }) } },
-        { provide: ActivatedRoute, useValue: { parent: parentRoute, paramMap: of(paramMap), snapshot: parentRoute.snapshot } },
+        { provide: ActivatedRoute, useValue: { parent: parentRoute, paramMap: of(paramMap), queryParamMap: query$, snapshot: parentRoute.snapshot } },
+        { provide: Router, useValue: router },
       ],
     })
       .overrideComponent(AreaShotsComponent, {
@@ -131,6 +141,10 @@ describe('AreaShotsComponent', () => {
         add: { imports: [TranslateStubPipe] },
       })
       .overrideComponent(TableExportComponent, {
+        remove: { imports: [TranslatePipe] },
+        add: { imports: [TranslateStubPipe] },
+      })
+      .overrideComponent(QuantityComponent, {
         remove: { imports: [TranslatePipe] },
         add: { imports: [TranslateStubPipe] },
       })
@@ -377,16 +391,16 @@ describe('AreaShotsComponent', () => {
       expect(data.selection).toBe(false);
       expect(data.header).toEqual([
         'shots.columns.room', 'shots.columns.unit', 'shots.export.date', 'shots.form.from', 'shots.form.to', 'shots.columns.type', 'shots.form.civil_kind',
-        'shots.columns.category', 'shots.columns.weapon', 'shots.columns.shots', 'shots.form.quantity_unit', 'shots.form.persons', 'shots.columns.recorded_by', 'shots.export.source',
+        'shots.columns.category', 'shots.columns.weapon', 'shots.columns.shots', 'shots.columns.kg', 'shots.form.persons', 'shots.columns.recorded_by', 'shots.export.source',
       ]);
       // Newest first, as the table is sorted.
       expect(column(data, 'shots.columns.unit')).toEqual(['Schützenverein Geissalp', 'Inf Bat 12', 'K1']);
       expect(data.rows[0]).toEqual([
         'Stellungsrm B 2', 'Schützenverein Geissalp', '21.06.2026', '13:30', '17:00', 'shots.type.civil', 'obligatory (DE)',
-        'shots.category.handguns', 'Stgw 90 · 5.6 mm', 2400, 'shots.unit_shots', 22, 'ELO-Import', 'shots.export.source_elo',
+        'shots.category.handguns', 'Stgw 90 · 5.6 mm', 2400, 0, 22, 'ELO-Import', 'shots.export.source_elo',
       ]);
-      // A usage with Stück and kg: the quantity is a number, the unit says that it is mixed.
-      expect(data.rows[1].slice(9, 11)).toEqual([1002.5, 'shots.unit_mixed']);
+      // A usage with Schuss and Sprengstoff: one column per unit, never one sum.
+      expect(data.rows[1].slice(9, 11)).toEqual([1000, 2.5]);
       expect(data.rows[2][6]).toBeNull();
     });
 
@@ -432,6 +446,108 @@ describe('AreaShotsComponent', () => {
       fixture.detectChanges();
       expect(rows().length).toBe(0);
       expect((el().querySelector('[data-testid="shots-export"]') as HTMLButtonElement).disabled).toBe(true);
+    });
+  });
+
+  describe('sums per unit: Schuss and Kilogramm are never one number', () => {
+    const parts = (host: Element | null) => ({
+      shots: host?.querySelector('[data-unit="shots"]')?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+      kg: host?.querySelector('[data-unit="kg"]')?.textContent?.replace(/\s+/g, ' ').trim() ?? null,
+    });
+
+    it('shows a usage with Schuss and Sprengstoff as two quantities', () => {
+      // Row 1 is the usage of Inf Bat 12: 1000 Schuss Stgw 90 and 2.5 kg Sprengladung.
+      const mixed = parts(rows()[1].querySelector('[data-testid="shots-quantity"]'));
+      expect(mixed.shots).toMatch(/^1.?000 shots\.unit_shots$/);
+      expect(mixed.kg).toBe('2.5 shots.unit_kg');
+      // A usage in Schuss only names no kg.
+      expect(parts(rows()[0].querySelector('[data-testid="shots-quantity"]'))).toEqual({ shots: expect.stringMatching(/^2.?400 shots\.unit_shots$/), kg: null });
+    });
+
+    it('sums the table per unit', () => {
+      const foot = parts(el().querySelector('[data-testid="shots-foot-sum"]'));
+      // 500 + 1000 + 2400 Schuss; the 2.5 kg are not part of that sum.
+      expect(foot.shots).toMatch(/^3.?900 shots\.unit_shots$/);
+      expect(foot.kg).toBe('2.5 shots.unit_kg');
+    });
+
+    it('shows the Sprengstoff of the year as a KPI of its own, only when there is some', () => {
+      expect(el().querySelector('[data-testid="shots-kpi-total"]')?.textContent?.replace(/\D/g, '')).toBe('3900');
+      expect(el().querySelector('[data-testid="shots-kpi-kg"]')?.textContent).toContain('2.5');
+      facade.kpi.set({ ...KPI, totalKg: 0 });
+      fixture.detectChanges();
+      expect(el().querySelector('[data-testid="shots-kpi-kg"]')).toBeNull();
+    });
+
+    it('sums the groups of the room view per unit', () => {
+      const headers = el().querySelectorAll<HTMLElement>('.shots__th');
+      headers[0].click(); // sort by room
+      fixture.detectChanges();
+      const groups = Array.from(el().querySelectorAll('.shots__group')).map((g) => parts(g));
+      expect(groups).toEqual([
+        { shots: expect.stringMatching(/^2.?400 /), kg: null },
+        { shots: expect.stringMatching(/^1.?500 /), kg: '2.5 shots.unit_kg' },
+      ]);
+    });
+  });
+
+  describe('a usage under its own address (B1 5.6, slm 5)', () => {
+    const drawer = () => el().querySelector('[data-testid="shots-drawer"]');
+    const openAddress = async (usage: string | null) => {
+      query$.next(address(usage));
+      fixture.detectChanges();
+      await settle();
+      await settle();
+    };
+
+    it('opens the usage the address names', async () => {
+      expect(drawer()).toBeNull();
+      await openAddress('u2');
+      expect(drawer()).toBeTruthy();
+      expect((el().querySelector('[formControlName="unit"]') as HTMLInputElement).value).toBe('Inf Bat 12');
+      // The usage is in the list of the year: no extra request.
+      expect(facade.find).not.toHaveBeenCalled();
+    });
+
+    it('writes the usage to the address when its drawer opens, and takes it out when the drawer closes', async () => {
+      rows()[0].querySelector<HTMLButtonElement>('[data-testid="shots-edit"]')?.click();
+      fixture.detectChanges();
+      expect(router.navigate).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { usage: 'u3' }, queryParamsHandling: 'merge', replaceUrl: true }));
+
+      // The router answers: the address now names the usage.
+      await openAddress('u3');
+      el().querySelector<HTMLButtonElement>('.slim-sheet__close')?.click();
+      fixture.detectChanges();
+      expect(drawer()).toBeNull();
+      expect(router.navigate).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { usage: null } }));
+      // A reload while the address still names the usage does not reopen it.
+      facade.usages.set([...USAGES]);
+      fixture.detectChanges();
+      await settle();
+      expect(drawer()).toBeNull();
+    });
+
+    it('switches to the year of a usage that is not in the year shown', async () => {
+      const old: UsageResultDto = { ...USAGES[0], id: 'u-old', date: '2025-09-09' };
+      facade.find.mockResolvedValue(old);
+      facade.load.mockClear();
+      await openAddress('u-old');
+      expect(facade.find).toHaveBeenCalledWith(AREA_ID, 'u-old');
+      expect(facade.load).toHaveBeenCalledWith(AREA_ID, 2025);
+      // The list of 2025 arrives: the drawer opens with the usage.
+      facade.usages.set([old]);
+      fixture.detectChanges();
+      await settle();
+      expect(drawer()).toBeTruthy();
+      expect((el().querySelector('[formControlName="date"]') as HTMLInputElement).value).toBe('2025-09-09');
+    });
+
+    it('says so when the address names a usage that does not exist here, and clears the address', async () => {
+      await openAddress('gibt-es-nicht');
+      expect(facade.find).toHaveBeenCalledTimes(1);
+      expect(drawer()).toBeNull();
+      expect(el().querySelector('[data-testid="shots-usage-missing"]')?.textContent).toContain('shots.usage_missing');
+      expect(router.navigate).toHaveBeenLastCalledWith([], expect.objectContaining({ queryParams: { usage: null } }));
     });
   });
 

@@ -51,7 +51,8 @@
       "total": "Shots {{year}} total",
       "count": "Usages recorded",
       "civil_share": "Civil share",
-      "last": "Last usage"
+      "last": "Last usage",
+      "kg": "Explosives {{year}} in total"
     },
     "rooms": "Firing positions",
     "all_rooms": "All firing positions",
@@ -66,7 +67,8 @@
       "category": "Category",
       "weapon": "Weapon / calibre",
       "shots": "Shots",
-      "recorded_by": "Recorded by"
+      "recorded_by": "Recorded by",
+      "kg": "Explosives (kg)"
     },
     "type": {
       "military": "Military",
@@ -149,7 +151,6 @@
       "undo": "Undo"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pcs / kg",
     "export": {
       "date": "Date",
       "source": "Source",
@@ -157,7 +158,8 @@
       "source_elo": "ELO",
       "source_import": "Import",
       "search": "Search"
-    }
+    },
+    "usage_missing": "This usage does not exist on this firing range, or it has been deleted."
   },
   "details": {
     "title": "Details · Receiver points",

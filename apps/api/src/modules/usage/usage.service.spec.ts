@@ -9,7 +9,7 @@ import { DemoSeedMarkerEntity } from '../../mocks/tenant/demo-seed-marker.entity
 import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import { UsageCombinationDto, UsageOverviewDto } from './dto';
 import { UsageModule } from './usage.module';
-import { UsageService } from './usage.service';
+import { UsageService, quantitiesOf, sumQuantities } from './usage.service';
 import { SettingsModule } from '../settings/settings.module';
 
 const NOW = new Date(2026, 11, 31);
@@ -69,10 +69,27 @@ describe('UsageService (5.11 Schusszahlen, B1 6.1.3 Nutzung + Positionen)', () =
     expect(overview.usages.filter((u) => u.positions.length > 1).length).toBeGreaterThan(3);
     // The combination tells the entry which unit the quantity is in (Stück / kg).
     expect(overview.combinations.some((c) => c.quantityUnit === 'kg')).toBe(true);
-    expect(overview.usages.some((u) => u.quantityUnit === 'kg' && u.shots === 12.5)).toBe(true);
+    // Sprengstoff is summed in kg, never as shots.
+    expect(overview.usages.some((u) => u.kg === 12.5 && u.shots === 0)).toBe(true);
     // Persons and the civil kind travel with the usage (B1 6.1.3).
     expect(overview.usages.some((u) => u.usageType === 'civil' && u.civilUsageKind !== null)).toBe(true);
     expect(overview.usages.every((u) => u.personCount !== null)).toBe(true);
+  });
+
+  it('sums a usage per unit: Stück and Kilogramm are never one number', () => {
+    const mixed = quantitiesOf({
+      positions: [
+        { quantity: 1000, quantityUnit: 'shots' },
+        { quantity: '2.500', quantityUnit: 'kg' },
+        { quantity: 0.125, quantityUnit: 'kg' },
+        { quantity: 30.5, quantityUnit: 'shots' },
+      ],
+    });
+    expect(mixed).toEqual({ shots: 1030.5, kg: 2.625 });
+    expect(quantitiesOf({ positions: [] })).toEqual({ shots: 0, kg: 0 });
+    expect(quantitiesOf({})).toEqual({ shots: 0, kg: 0 });
+    // Three decimals, without the noise of binary fractions.
+    expect(sumQuantities([{ shots: 0.1, kg: 0.1 }, { shots: 0.2, kg: 0.2 }])).toEqual({ shots: 0.3, kg: 0.3 });
   });
 
   it('computes the KPIs', () => {
@@ -80,6 +97,8 @@ describe('UsageService (5.11 Schusszahlen, B1 6.1.3 Nutzung + Positionen)', () =
     expect(kpi.year).toBe(YEAR);
     expect(kpi.count).toBe(overview.usages.length);
     expect(kpi.totalShots).toBeCloseTo(overview.usages.reduce((s, u) => s + u.shots, 0), 3);
+    expect(kpi.totalKg).toBeCloseTo(overview.usages.reduce((s, u) => s + u.kg, 0), 3);
+    expect(kpi.totalKg).toBeGreaterThan(0);
     expect(kpi.civilSharePercent).toBeGreaterThan(5);
     expect(kpi.civilSharePercent).toBeLessThan(60);
     expect(kpi.lastDate).toBe(overview.usages[0].date);
@@ -91,7 +110,7 @@ describe('UsageService (5.11 Schusszahlen, B1 6.1.3 Nutzung + Positionen)', () =
     expect(last.usages).toHaveLength(3);
     const empty = await service.overview(mockTenantId, geissalpId, 2019);
     expect(empty.usages).toEqual([]);
-    expect(empty.kpi).toMatchObject({ count: 0, totalShots: 0, civilSharePercent: 0, lastDate: null });
+    expect(empty.kpi).toMatchObject({ count: 0, totalShots: 0, totalKg: 0, civilSharePercent: 0, lastDate: null });
     expect(empty.kpi.years).toEqual([2026, 2025, 2019]);
   });
 

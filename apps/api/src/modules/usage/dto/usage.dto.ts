@@ -33,8 +33,10 @@ export class UsageRoomDto {
   @ApiProperty({ description: 'Aktiv (false = historischer Stellungsraum, keine neue Erfassung)' }) enabled: boolean;
   @ApiProperty({ description: 'Usages of the requested year in this room' })
   usageCount: number;
-  @ApiProperty({ description: 'Quantity of the requested year in this room (shots; kg counted as units)' })
+  @ApiProperty({ description: 'Summe der Mengen in Stück (Schuss) des Jahres in diesem Stellungsraum' })
   shots: number;
+  @ApiProperty({ description: 'Summe der Mengen in Kilogramm (Sprengstoff) des Jahres in diesem Stellungsraum' })
+  kg: number;
 }
 
 /** A zulässige Kombination Waffe/Kaliber of a room (form select, 5.17). */
@@ -82,8 +84,8 @@ export class UsageResultDto {
   @ApiProperty({ type: UsagePositionDto, isArray: true }) positions: UsagePositionDto[];
   @ApiProperty({ description: 'Waffen der Positionen, zusammengefasst («Stgw 90 · 5.6 mm, Pist 75 · 9 mm»)' }) weaponName: string;
   @ApiProperty({ description: 'Waffenkategorie der ersten Position (Filter)' }) category: string;
-  @ApiProperty({ description: 'Summe der Mengen (Stück; kg separat in den Positionen)' }) shots: number;
-  @ApiProperty({ enum: [...QUANTITY_UNIT, 'mixed'], description: 'Einheit der Summe: shots, kg oder mixed' }) quantityUnit: QuantityUnit | 'mixed';
+  @ApiProperty({ description: 'Summe der Positionen in Stück (Schuss); Positionen in Kilogramm zählen nicht mit' }) shots: number;
+  @ApiProperty({ description: 'Summe der Positionen in Kilogramm (Sprengstoff)' }) kg: number;
   @ApiProperty() recordedBy: string;
   @ApiProperty({ enum: USAGE_SOURCE }) source: UsageSource;
   @ApiProperty({ nullable: true, type: String }) externalId: string | null;
@@ -94,9 +96,10 @@ export class UsageResultDto {
 /** KPIs above the table (5.11 mock). */
 export class UsageKpiDto {
   @ApiProperty() year: number;
-  @ApiProperty({ description: 'Shots of the year' }) totalShots: number;
-  @ApiProperty({ description: 'Usages of the year' }) count: number;
-  @ApiProperty({ description: 'Civil share of the shots, 0–100' }) civilSharePercent: number;
+  @ApiProperty({ description: 'Summe der Mengen in Stück (Schuss) des Jahres' }) totalShots: number;
+  @ApiProperty({ description: 'Summe der Mengen in Kilogramm (Sprengstoff) des Jahres' }) totalKg: number;
+  @ApiProperty({ description: 'Anzahl Nutzungen des Jahres' }) count: number;
+  @ApiProperty({ description: 'Anteil der Kategorien Zivil und SAT an den Schüssen (Stück) des Jahres, 0–100' }) civilSharePercent: number;
   @ApiProperty({ nullable: true, type: String, description: 'Last usage date' })
   lastDate: string | null;
   @ApiProperty({ description: 'Years that have usages (for the year select)', type: [Number] })

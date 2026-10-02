@@ -83,11 +83,11 @@ export class UsageService {
       this.settings.usageLockDate(tenantId),
     ]);
 
-    const byRoom = new Map<string, { count: number; shots: number }>();
+    const byRoom = new Map<string, { count: number; quantities: UsageQuantities[] }>();
     for (const usage of usages) {
-      const entry = byRoom.get(usage.roomId) ?? { count: 0, shots: 0 };
+      const entry = byRoom.get(usage.roomId) ?? { count: 0, quantities: [] };
       entry.count++;
-      entry.shots += total(usage);
+      entry.quantities.push(quantitiesOf(usage));
       byRoom.set(usage.roomId, entry);
     }
     const roomById = new Map(rooms.map((r) => [r.id, r]));
@@ -102,7 +102,7 @@ export class UsageService {
         groupName: room.groupName,
         enabled: Boolean(room.enabled),
         usageCount: byRoom.get(room.id)?.count ?? 0,
-        shots: byRoom.get(room.id)?.shots ?? 0,
+        ...sumQuantities(byRoom.get(room.id)?.quantities ?? []),
       })),
       combinations,
       usages: usages.map((usage) => toUsageDto(usage, roomById.get(usage.roomId), combinationById)),
@@ -171,6 +171,11 @@ export class UsageService {
     const usage = await this.repo.findOne({ where: { tenantId, areaId, id }, relations: { positions: true } });
     if (!usage) throw new NotFoundException(`Usage ${id} not found`);
     return usage;
+  }
+
+  /** One usage as the page shows it (B1 5.6: every Nutzung has an address of its own). */
+  async one(tenantId: string, areaId: string, id: string): Promise<UsageResultDto> {
+    return this.toDto(tenantId, areaId, await this.get(tenantId, areaId, id));
   }
 
   async create(tenantId: string, areaId: string, input: UsageInput): Promise<UsageResultDto> {
@@ -324,24 +329,40 @@ export class UsageService {
   }
 
   private kpi(year: number, usages: AreaUsageEntity[], years: number[]): UsageKpiDto {
-    const totalShots = usages.reduce((sum, u) => sum + total(u), 0);
-    // «Zivilanteil»: the categories assessed under Anhang 7 (Zivil, SAT).
-    const civil = usages.filter((u) => countsForAnnex7(u.usageType, false)).reduce((sum, u) => sum + total(u), 0);
+    const all = sumQuantities(usages.map(quantitiesOf));
+    // «Zivilanteil»: the categories assessed under Anhang 7 (Zivil, SAT), as a share of the shots (Stück).
+    const civil = sumQuantities(usages.filter((u) => countsForAnnex7(u.usageType, false)).map(quantitiesOf));
     const lastDate = usages.reduce<string | null>((last, u) => (!last || u.date > last ? u.date : last), null);
     return {
       year,
-      totalShots,
+      totalShots: all.shots,
+      totalKg: all.kg,
       count: usages.length,
-      civilSharePercent: totalShots ? Math.round((civil / totalShots) * 100) : 0,
+      civilSharePercent: all.shots ? Math.round((civil.shots / all.shots) * 100) : 0,
       lastDate,
       years: years.includes(year) ? years : [year, ...years].sort((a, b) => b - a),
     };
   }
 }
 
-/** Sum of the positions' quantities (units, whatever the unit). */
-export function total(usage: AreaUsageEntity): number {
-  return (usage.positions ?? []).reduce((sum, p) => sum + Number(p.quantity), 0);
+/** Quantities per unit: Stück (Schuss) and Kilogramm (Sprengstoff) are never added to each other. */
+export interface UsageQuantities {
+  shots: number;
+  kg: number;
+}
+
+/** Sums of the positions of a usage, per unit. */
+export function quantitiesOf(usage: { positions?: { quantity: number | string; quantityUnit: 'shots' | 'kg' }[] }): UsageQuantities {
+  return sumQuantities((usage.positions ?? []).map((p) => (p.quantityUnit === 'kg' ? { shots: 0, kg: Number(p.quantity) } : { shots: Number(p.quantity), kg: 0 })));
+}
+
+/** Adds quantities per unit; rounded to the three decimals a quantity can have. */
+export function sumQuantities(items: UsageQuantities[]): UsageQuantities {
+  const round = (value: number) => Math.round(value * 1000) / 1000;
+  return {
+    shots: round(items.reduce((sum, item) => sum + item.shots, 0)),
+    kg: round(items.reduce((sum, item) => sum + item.kg, 0)),
+  };
 }
 
 export function toUsageDto(
@@ -362,7 +383,6 @@ export function toUsageDto(
       quantityUnit: p.quantityUnit,
     };
   });
-  const units = new Set(positions.map((p) => p.quantityUnit));
   return {
     id: usage.id,
     areaId: usage.areaId,
@@ -378,8 +398,7 @@ export function toUsageDto(
     positions,
     weaponName: positions.map((p) => p.name).join(', '),
     category: positions[0]?.category ?? '',
-    shots: positions.reduce((s, p) => s + p.quantity, 0),
-    quantityUnit: units.size === 1 ? ([...units][0] as 'shots' | 'kg') : units.size === 0 ? 'shots' : 'mixed',
+    ...quantitiesOf({ positions }),
     recordedBy: usage.recordedBy,
     source: usage.source,
     externalId: usage.externalId ?? null,

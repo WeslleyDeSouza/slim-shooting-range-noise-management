@@ -162,6 +162,83 @@ describe('AdminUsageController (HTTP)', () => {
     await api.http().post(`${base()}/delete`).send({ ids: [] }).expect(400);
   });
 
+  describe('a Nutzung under its own address (B1 5.6, slm 5 / slm 6)', () => {
+    it('returns one usage with its positions, also of another year than the current one', async () => {
+      const listed = overview.usages[0];
+      const one = await api.http().get(`${base()}/${listed.id}`).expect(200);
+      expect(one.body).toEqual(listed);
+
+      const lastYear: UsageOverviewDto = (await api.http().get(overviewOf()).query({ year: 2025 }).expect(200)).body;
+      const old = await api.http().get(`${base()}/${lastYear.usages[0].id}`).expect(200);
+      expect(old.body.date.slice(0, 4)).toBe('2025');
+      expect(old.body.positions.length).toBeGreaterThan(0);
+    });
+
+    it('answers 404 for an unknown id, for the usage of another Schiessplatz and for a deleted usage', async () => {
+      await api.http().get(`${base()}/${randomUUID()}`).expect(404);
+      await api.http().get(`${base()}/not-a-uuid`).expect(400);
+
+      const areas: AreaResultDto[] = (await api.http().get('/api/admin/area').expect(200)).body;
+      const other = areas.find((a) => a.id !== geissalpId) as AreaResultDto;
+      // The id is real, but the usage does not belong to that Schiessplatz.
+      await api.http().get(`${base(other.id)}/${overview.usages[0].id}`).expect(404);
+
+      const created = await api.http().post(base()).send(validUsage()).expect(201);
+      await api.http().post(`${base()}/delete`).send({ ids: [created.body.id] }).expect(200);
+      await api.http().get(`${base()}/${created.body.id}`).expect(404);
+    });
+
+    it('is readable for a read-only role', async () => {
+      await api.http().get(`${base()}/${overview.usages[0].id}`).set(authHeaders(readOnlyUserId)).expect(200);
+    });
+  });
+
+  describe('sums per unit: Stück and Kilogramm are never added to each other', () => {
+    it('moves each sum only by the quantities of its own unit', async () => {
+      const kg = overview.combinations.find((c) => c.quantityUnit === 'kg') as UsageCombinationDto;
+      const pieces = combo();
+      const before: UsageOverviewDto = (await api.http().get(overviewOf()).query({ year: YEAR }).expect(200)).body;
+
+      const explosive = await api
+        .http()
+        .post(base())
+        .send({ ...validUsage(), roomId: kg.roomId, date: `${YEAR}-04-02`, positions: [{ combinationId: kg.combinationId, quantity: 2.5 }] })
+        .expect(201);
+      expect(explosive.body).toMatchObject({ shots: 0, kg: 2.5 });
+      expect(explosive.body).not.toHaveProperty('quantityUnit');
+      const rifle = await api
+        .http()
+        .post(base())
+        .send({ ...validUsage(), date: `${YEAR}-04-02`, positions: [{ combinationId: pieces.combinationId, quantity: 1000 }] })
+        .expect(201);
+      expect(rifle.body).toMatchObject({ shots: 1000, kg: 0 });
+
+      const after: UsageOverviewDto = (await api.http().get(overviewOf()).query({ year: YEAR }).expect(200)).body;
+      // KPI of the year: 1000 Schuss and 2.5 kg, not 1002.5 of anything.
+      expect(after.kpi.totalShots - before.kpi.totalShots).toBeCloseTo(1000, 3);
+      expect(after.kpi.totalKg - before.kpi.totalKg).toBeCloseTo(2.5, 3);
+      // Counters of the two rooms.
+      const room = (o: UsageOverviewDto, id: string) => o.rooms.find((r) => r.id === id) as UsageOverviewDto['rooms'][number];
+      expect(room(after, kg.roomId).kg - room(before, kg.roomId).kg).toBeCloseTo(2.5, 3);
+      expect(room(after, kg.roomId).shots).toBe(room(before, kg.roomId).shots);
+      expect(room(after, pieces.roomId).shots - room(before, pieces.roomId).shots).toBeCloseTo(1000, 3);
+      expect(room(after, pieces.roomId).kg).toBe(room(before, pieces.roomId).kg);
+
+      await api.http().post(`${base()}/delete`).send({ ids: [explosive.body.id, rifle.body.id] }).expect(200);
+    });
+
+    it('adds up to the positions of the list, per unit', () => {
+      const sum = (unit: 'shots' | 'kg') =>
+        overview.usages.reduce((total, u) => total + u.positions.filter((p) => p.quantityUnit === unit).reduce((s, p) => s + p.quantity, 0), 0);
+      expect(overview.kpi.totalShots).toBeCloseTo(sum('shots'), 3);
+      expect(overview.kpi.totalKg).toBeCloseTo(sum('kg'), 3);
+      // The demo data records Sprengstoff, so the two sums really differ.
+      expect(overview.kpi.totalKg).toBeGreaterThan(0);
+      expect(overview.rooms.reduce((s, r) => s + r.kg, 0)).toBeCloseTo(overview.kpi.totalKg, 3);
+      expect(overview.rooms.reduce((s, r) => s + r.shots, 0)).toBeCloseTo(overview.kpi.totalShots, 3);
+    });
+  });
+
   it('lets a read-only role read but not write (galaxy AppsRolesGuard)', async () => {
     const asReader = authHeaders(readOnlyUserId);
     await api.http().get(overviewOf()).set(asReader).expect(200);

@@ -27,7 +27,7 @@ import {
 } from '../calculation/entities';
 import { ImportService } from '../calculation/import.service';
 import { AreaUsageEntity } from '../usage/entities';
-import { UsageService } from '../usage/usage.service';
+import { quantitiesOf, sumQuantities, UsageService } from '../usage/usage.service';
 import { CalculationFilesService, ShotCsvRow, StateBundle, StateExportModel } from './calculation-files.service';
 import {
   CalculationsOverviewDto,
@@ -431,7 +431,7 @@ export class DataCalculationsService {
       out.years.push({
         year,
         usageCount: usages.length,
-        shots: Math.round(usages.reduce((sum, u) => sum + (u.positions ?? []).reduce((s, p) => s + Number(p.quantity), 0), 0) * 1000) / 1000,
+        ...sumQuantities(usages.map(quantitiesOf)),
         importedCount: usages.filter((u) => u.source !== 'manual').length,
       });
     }

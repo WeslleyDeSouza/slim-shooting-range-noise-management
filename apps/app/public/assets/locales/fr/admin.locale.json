@@ -772,7 +772,8 @@
       "col_half_days_work": "Halbtag_Wo",
       "col_half_days_sunday": "Halbtag_So",
       "col_shots_work": "Zahl_Wo",
-      "col_shots_sunday": "Zahl_So"
+      "col_shots_sunday": "Zahl_So",
+      "col_kg": "Explosifs (kg)"
     },
     "dm_system": {
       "title": "Configuration avancée",

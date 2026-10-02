@@ -63,6 +63,13 @@
     </div>
   }
 
+  @if (usageMissing()) {
+    <!-- The address named a usage (`?usage=<id>`) that does not exist here. -->
+    <div class="slim-alert slim-alert--warning shots__readonly" role="alert" data-testid="shots-usage-missing">
+      <div class="slim-alert__body">{{ 'shots.usage_missing' | translate }}</div>
+    </div>
+  }
+
   <div class="shots__kpis" data-testid="shots-kpis">
     <div class="slim-stat">
       <div class="slim-stat__value" data-testid="shots-kpi-total">
@@ -70,6 +77,13 @@
       </div>
       <div class="slim-stat__label">{{ 'shots.kpi.total' | translate: { year: year() } }}</div>
     </div>
+    @if (kpi()?.totalKg) {
+      <!-- Sprengstoff is a sum of its own: kg are never added to the shots. -->
+      <div class="slim-stat">
+        <div class="slim-stat__value" data-testid="shots-kpi-kg">{{ kpi()?.totalKg ?? 0 | number: '1.0-3' }} {{ 'shots.unit_kg' | translate }}</div>
+        <div class="slim-stat__label">{{ 'shots.kpi.kg' | translate: { year: year() } }}</div>
+      </div>
+    }
     <div class="slim-stat">
       <div class="slim-stat__value" data-testid="shots-kpi-count">{{ kpi()?.count ?? 0 }}</div>
       <div class="slim-stat__label">{{ 'shots.kpi.count' | translate }}</div>
@@ -259,7 +273,7 @@
                 <tr class="shots__group">
                   <td colspan="10">
                     {{ row.roomName }}
-                    <b>{{ row.shots | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+                    <app-quantity [shots]="row.shots" [kg]="row.kg" />
                   </td>
                 </tr>
               } @else {
@@ -301,8 +315,7 @@
                   </td>
                   <td [attr.data-label]="'shots.columns.weapon' | translate">{{ row.usage.weaponName }}</td>
                   <td [attr.data-label]="'shots.columns.shots' | translate" class="slim-table__cell--num">
-                    <b>{{ row.usage.shots | number: '1.0-3' }}</b>
-                    <small class="slim-text--muted">{{ (row.usage.quantityUnit === 'kg' ? 'shots.unit_kg' : row.usage.quantityUnit === 'mixed' ? 'shots.unit_mixed' : 'shots.unit_shots') | translate }}</small>
+                    <app-quantity data-testid="shots-quantity" [shots]="row.usage.shots" [kg]="row.usage.kg" />
                   </td>
                   <td [attr.data-label]="'shots.columns.recorded_by' | translate">
                     {{ row.usage.recordedBy }}
@@ -400,7 +413,7 @@
         <span class="slim-table-foot__grow"></span>
         <span>
           {{ 'shots.foot_sum' | translate }}
-          <b>{{ displayedShots() | number: '1.0-0' }}</b> {{ 'shots.unit_shots' | translate }}
+          <app-quantity data-testid="shots-foot-sum" [shots]="displayed().shots" [kg]="displayed().kg" />
         </span>
       </div>
     </section>
@@ -667,12 +680,12 @@
         <div class="slim-sheet__body shots__modal-text">
           @if (pendingDelete().length === 1) {
             <b>{{ pendingDelete()[0].unit }}</b>, {{ pendingDelete()[0].date | date: 'dd.MM.yyyy' }},
-            {{ pendingDelete()[0].weaponName }}, <b>{{ pendingDelete()[0].shots | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+            {{ pendingDelete()[0].weaponName }}, <app-quantity [shots]="pendingDelete()[0].shots" [kg]="pendingDelete()[0].kg" />
             {{ 'shots.delete.text_one' | translate }}
           } @else {
             <b>{{ 'shots.delete.count' | translate: { n: pendingDelete().length } }}</b>
             {{ 'shots.delete.with' | translate }}
-            <b>{{ pendingShots() | number: '1.0-0' }} {{ 'shots.unit_shots' | translate }}</b>
+            <app-quantity [shots]="pending().shots" [kg]="pending().kg" />
             {{ 'shots.delete.text_many' | translate }}
           }
           {{ 'shots.delete.logged' | translate }}

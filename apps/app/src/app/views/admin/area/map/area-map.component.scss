@@ -1,0 +1,42 @@
+@use 'slim/abstracts' as slim;
+
+:host {
+  display: block;
+}
+
+.amap {
+  // Phone: map above the point details; desktop: map takes the width, details beside it.
+  &__layout {
+    display: grid;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+
+  // The Vollansicht uses the height of the window below topbar and context bar.
+  &__map {
+    height: 60vh;
+    min-height: 360px;
+
+    @include slim.mq('lg') {
+      height: calc(100vh - 260px);
+    }
+  }
+
+  &__info {
+    min-width: 0;
+  }
+
+  &__address {
+    margin: 0 0 slim.space(2);
+  }
+
+  &__level {
+    font-weight: slim.font-weight('semibold');
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}

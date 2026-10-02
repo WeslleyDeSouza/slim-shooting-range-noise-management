@@ -139,6 +139,32 @@ describe('AdminCalculationController (HTTP)', () => {
     await api.http().get(`${base()}/run/${randomUUID()}`).expect(404);
   });
 
+  it('serves the Kontingentvergleich of the Schiessplatz: rows per Waffe/Kaliber and the light (B1 5.10, slm 9)', async () => {
+    const res = await api.http().get(`${base()}/quota`).expect(200);
+    expect(res.body).toMatchObject({ fromYear: res.body.year - 2, greenMaxPercent: 100, orangeMaxPercent: 125 });
+    expect(res.body.rows.length).toBeGreaterThan(0);
+    for (const row of res.body.rows) {
+      expect(row).toEqual({
+        combinationId: expect.any(String), name: expect.any(String), quantityUnit: expect.stringMatching(/^(shots|kg)$/),
+        target: expect.any(Number), hasQuota: expect.any(Boolean), basis: row.basis,
+        current: expect.any(Number), currentState: expect.stringMatching(/^(ok|warn|over)$/),
+        average: expect.any(Number), averageState: expect.stringMatching(/^(ok|warn|over)$/),
+      });
+      expect(row.name).not.toBe('');
+    }
+    // The same light as the overview of the Schiessplätze shows for that year.
+    const areas = (await api.http().get('/api/admin/area').expect(200)).body as { id: string; quotaStatus: string; statusYear: number | null }[];
+    const geissalp = areas.find((a) => a.id === geissalpId);
+    if (geissalp?.statusYear === res.body.year) expect(res.body.status).toBe(geissalp.quotaStatus);
+
+    const other = await api.http().get(`${base()}/quota`).query({ year: YEAR - 1 }).expect(200);
+    expect(other.body).toMatchObject({ year: YEAR - 1, fromYear: YEAR - 3 });
+    await api.http().get(`${base()}/quota`).query({ year: 'abc' }).expect(400);
+    await api.http().get(`${base('11111111-1111-4111-8111-111111111111')}/quota`).expect(404);
+    // Readable for the Schiessplatz-Verantwortlichen of this Schiessplatz.
+    await api.http().get(`${base()}/quota`).set(authHeaders(rangeOwnerId)).expect(200);
+  });
+
   it('needs the Immissionsberechnung right for a run (B1 8.1.2): the Schiessplatz-Verantwortlicher gets 403', async () => {
     const asOwner = authHeaders(rangeOwnerId);
     await api.http().get(base()).set(asOwner).expect(200);

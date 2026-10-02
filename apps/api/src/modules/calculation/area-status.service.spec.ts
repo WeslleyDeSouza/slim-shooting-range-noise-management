@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { mockTenantId, testDbSeedBeforeEach, testDbSetup, TESTPLATZ_S, TESTPLATZ_S_DATASET } from '@api-slim/tests';
@@ -12,10 +13,12 @@ import { seedDemoDataset } from '../../mocks/tenant/demo-dataset.seed';
 import type { TenantDataset } from '../../mocks/tenant/tenant-dataset';
 import { AssessmentService } from './assessment.service';
 import { AreaStatusService } from './area-status.service';
+import { QuotaOverviewDto } from './dto';
 import { CalculationModule } from './calculation.module';
 import { CalculationService } from './calculation.service';
 import { AreaCalculationEntity } from './entities';
 import { SettingsModule } from '../settings/settings.module';
+import { SettingsService } from '../settings/settings.service';
 
 /**
  * Traffic lights of the overview (B1 5.9 / 5.10) with their reasons, on
@@ -154,6 +157,80 @@ describe('AreaStatusService (Ampeln mit Grund, Testplatz S)', () => {
       noiseStatus: 'none',
       noiseStatusReason: 'no-usages',
       noiseStatusBasis: TESTPLATZ_S.states.z1,
+    });
+  });
+
+  describe('quotaOverview — «Übersicht Kontingente gemäss Plangenehmigung» (B1 5.10, slm 9)', () => {
+    const rowOf = (overview: QuotaOverviewDto, combinationId: string) => overview.rows.find((r) => r.combinationId === combinationId);
+
+    it('lists every combination with Soll, Ist of the year and Ø of three years, each with its colour', async () => {
+      await setQuotas([{ combinationId: combo.stgw90, shotsPerYear: 2000 }, { combinationId: combo.pist75, shotsPerYear: 100 }]);
+      await shoot('2026-03-02', combo.stgw90, 2100); // Ist 2100: over the Soll, within 125 % → orange
+      await shoot('2025-03-03', combo.stgw90, 300); // Ø (2100 + 300 + 0) / 3 = 800 → green
+      await shoot('2026-03-04', combo.sprengladung, 2.5); // no Kontingent → Soll 0 → red, in kg
+
+      const overview = await service.quotaOverview(mockTenantId, areaId, { now: NOW });
+      expect(overview).toMatchObject({ year: 2026, fromYear: 2024, greenMaxPercent: 100, orangeMaxPercent: 125, status: 'over', reason: 'no-quota' });
+      expect(overview.years).toEqual([2026, 2025]);
+      expect(overview.rows).toHaveLength(3);
+      // Sorted by the name of the combination.
+      expect(overview.rows.map((r) => r.name)).toEqual([...overview.rows.map((r) => r.name)].sort((a, b) => a.localeCompare(b, 'de')));
+
+      expect(rowOf(overview, combo.stgw90)).toMatchObject({
+        name: TESTPLATZ_S.combinations.stgw90, quantityUnit: 'shots', target: 2000, hasQuota: true, basis: 'Test',
+        current: 2100, currentState: 'warn', average: 800, averageState: 'ok',
+      });
+      // A Kontingent without any usage: Ist 0, green.
+      expect(rowOf(overview, combo.pist75)).toMatchObject({ target: 100, hasQuota: true, current: 0, currentState: 'ok', average: 0, averageState: 'ok' });
+      // Usages without Kontingent are listed with Soll 0 and are red at the first unit (B1 5.10).
+      expect(rowOf(overview, combo.sprengladung)).toMatchObject({
+        quantityUnit: 'kg', target: 0, hasQuota: false, basis: null, current: 2.5, currentState: 'over', average: 0.833, averageState: 'over',
+      });
+
+      // The light of the overview is the worst colour of exactly these rows.
+      const light = await service.refresh(mockTenantId, areaId, NOW);
+      expect({ status: light.quotaStatus, reason: light.quotaStatusReason }).toEqual({ status: overview.status, reason: overview.reason });
+    });
+
+    it('compares another year when asked: Ist of that year, Ø of that year and the two before', async () => {
+      await setQuotas([{ combinationId: combo.stgw90, shotsPerYear: 2000 }]);
+      await shoot('2026-03-02', combo.stgw90, 2100);
+      await shoot('2025-03-03', combo.stgw90, 300);
+      await shoot('2023-03-06', combo.stgw90, 9000);
+
+      const overview = await service.quotaOverview(mockTenantId, areaId, { now: NOW, year: 2025 });
+      expect(overview).toMatchObject({ year: 2025, fromYear: 2023 });
+      // Ø 2023–2025 = (9000 + 0 + 300) / 3 = 3100 → above 125 % of 2000.
+      expect(rowOf(overview, combo.stgw90)).toMatchObject({ current: 300, currentState: 'ok', average: 3100, averageState: 'over' });
+      expect(overview.status).toBe('over');
+      expect(overview.years).toEqual([2026, 2025, 2023]);
+    });
+
+    it('follows the thresholds of the erweiterte Konfiguration (B1 5.28)', async () => {
+      await setQuotas([{ combinationId: combo.stgw90, shotsPerYear: 2000 }]);
+      await shoot('2026-03-02', combo.stgw90, 2700); // 135 % of the Soll
+      expect(rowOf(await service.quotaOverview(mockTenantId, areaId, { now: NOW }), combo.stgw90)?.currentState).toBe('over');
+
+      const settings = module.get(SettingsService);
+      await settings.update(mockTenantId, { quotaOrangeMaxPercent: 150 });
+      try {
+        const overview = await service.quotaOverview(mockTenantId, areaId, { now: NOW });
+        expect(overview.orangeMaxPercent).toBe(150);
+        expect(rowOf(overview, combo.stgw90)?.currentState).toBe('warn');
+      } finally {
+        await settings.update(mockTenantId, { quotaOrangeMaxPercent: 125 });
+      }
+    });
+
+    it('without usages in the three years: the Kontingente are listed, the light is grey (no-usages)', async () => {
+      await setQuotas([{ combinationId: combo.stgw90, shotsPerYear: 2000 }]);
+      const overview = await service.quotaOverview(mockTenantId, areaId, { now: NOW });
+      expect(overview).toMatchObject({ status: 'none', reason: 'no-usages' });
+      expect(overview.rows).toEqual([expect.objectContaining({ combinationId: combo.stgw90, target: 2000, current: 0, average: 0 })]);
+    });
+
+    it('answers «not found» for an unknown Schiessplatz', async () => {
+      await expect(service.quotaOverview(mockTenantId, '11111111-1111-4111-8111-111111111111', { now: NOW })).rejects.toBeInstanceOf(NotFoundException);
     });
   });
 

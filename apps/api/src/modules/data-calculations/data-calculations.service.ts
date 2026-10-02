@@ -311,11 +311,11 @@ export class DataCalculationsService {
       await repo.delete({ tenantId, zustandId: state.id, timeGroup: dto.timeGroup });
       for (let i = 0; i < rows.length; i += 200) await repo.save(repo.create(rows.slice(i, i + 200)));
     });
+    // Gaps of the uploaded Zeitgruppe: without the level the shots of that source are not assessable at that point.
     const warnings: string[] = [];
-    if (dto.timeGroup === 'day') {
-      const covered = new Set(rows.map((r) => `${r.immissionPointId}|${r.sourceLineId}`));
-      for (const p of points) for (const s of sources) if (!covered.has(`${p.id}|${s.id}`)) warnings.push(`kein Tag-Pegel für ${p.sonarmsId} × ${s.sourceId}`);
-    }
+    const group = dto.timeGroup === 'day' ? 'Tag' : 'Abend';
+    const covered = new Set(rows.map((r) => `${r.immissionPointId}|${r.sourceLineId}`));
+    for (const p of points) for (const s of sources) if (!covered.has(`${p.id}|${s.id}`)) warnings.push(`kein ${group}-Pegel für ${p.sonarmsId} × ${s.sourceId}`);
     await this.log(tenantId, userId, LogAction.IMPORT, 'STATE', state.id, area, { name: state.name, upload: 'wlr', timeGroup: dto.timeGroup, fileName: dto.fileName ?? null, applied: rows.length, replaced, unknown: unknown.length });
     if (state.isCurrent) await this.refresh(tenantId, areaId);
     return { rows: parsed.rows.length, applied: rows.length, replaced, unknown, errors: [], warnings };

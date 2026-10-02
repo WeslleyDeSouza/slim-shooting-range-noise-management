@@ -65,7 +65,8 @@ export class ImportAbortedException extends BadRequestException {
  * the consistency, and only then writes the complete state in **one**
  * transaction. An unknown Stellungsraum, a duplicate id or a dangling WLR
  * reference aborts; a source without a matching Kombination is a warning
- * (its shots cannot be attributed later — Fachregel O8 shows that).
+ * (its shots cannot be attributed later — Fachregel O8 shows that), and so
+ * is a missing Tag- or Abend-Pegel of an Empfänger × Quelle.
  *
  * The import never creates a permanent reference (Stellungsraum,
  * Kombination): those are maintained in the master data process, then the
@@ -171,10 +172,20 @@ export class ImportService {
       if (wlrKeys.has(key)) findings.push(`WLR: ${row.point} × ${row.source} (${row.timeGroup}) ist doppelt`);
       wlrKeys.add(key);
     }
+    // The evening levels may follow as a WLR NIGHT upload (5.19): a delivery without any is one warning,
+    // single gaps are named per Empfänger × Quelle. Without the level the shots «ausserhalb Werktag» of
+    // that source are not assessable at that point (operating-data.ts, `no-level`).
+    const hasEve = dto.wlr.some((row) => row.timeGroup === 'eve');
+    if (!hasEve && dto.immissionPoints.length && dto.sources.length) {
+      warnings.push('WLR: die Lieferung enthält keine Abend-Pegel (WLR NIGHT) – Schüsse ausserhalb Werktag sind nicht beurteilbar, bis die Datei WLR NIGHT hochgeladen ist');
+    }
     for (const point of dto.immissionPoints) {
       for (const source of dto.sources) {
         if (!wlrKeys.has(`${point.sonarmsId}|${source.sourceId}|day`)) {
           warnings.push(`WLR: kein Tag-Pegel für ${point.sonarmsId} × ${source.sourceId} – Schüsse dieser Quelle sind an diesem Punkt nicht beurteilbar`);
+        }
+        if (hasEve && !wlrKeys.has(`${point.sonarmsId}|${source.sourceId}|eve`)) {
+          warnings.push(`WLR: kein Abend-Pegel für ${point.sonarmsId} × ${source.sourceId} – Schüsse dieser Quelle ausserhalb Werktag sind an diesem Punkt nicht beurteilbar`);
         }
       }
     }

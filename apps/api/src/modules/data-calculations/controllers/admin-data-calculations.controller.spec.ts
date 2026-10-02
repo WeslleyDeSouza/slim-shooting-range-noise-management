@@ -17,7 +17,7 @@ import { DemoSeedMarkerEntity } from '../../../mocks/tenant/demo-seed-marker.ent
 import { AreaModule } from '../../area/area.module';
 import { AreaEntity } from '../../area/entities';
 import { CalculationModule } from '../../calculation/calculation.module';
-import { StateImportDto } from '../../calculation/dto';
+import { ImportValidationDto, StateImportDto } from '../../calculation/dto';
 import { UsageModule } from '../../usage/usage.module';
 import { DataCalculationsModule } from '../data-calculations.module';
 import { CalculationsOverviewDto, DeliveryDto, StateDetailsDto, StateSummaryDto, UploadResultDto } from '../dto';
@@ -174,9 +174,35 @@ describe('AdminDataCalculationsController (HTTP)', () => {
     await api.http().post(`${base()}/import`).send({ fileName: 'x.json', state: unknownRoom }).expect(400);
   });
 
+  it('warns about missing Abend-Pegel — the whole Zeitgruppe or a single Empfänger × Quelle — and still allows the import (5.19)', async () => {
+    const validate = async (state: StateImportDto): Promise<ImportValidationDto> =>
+      (await api.http().post(`${base()}/import/validate`).send({ fileName: 'x.json', state }).expect(200)).body;
+    const eve = { point: 'H1', source: 'Q_HTTP_1', timeGroup: 'eve' as const, lae: 58, lafmax: 68 };
+
+    // Day levels only: one warning for the delivery, not one per pair; the file stays importable.
+    const dayOnly = await validate(stateFile());
+    expect(dayOnly.valid).toBe(true);
+    expect(dayOnly.warnings).toEqual([expect.stringContaining('keine Abend-Pegel (WLR NIGHT)')]);
+
+    // Both Zeitgruppen for every pair: nothing to warn about.
+    expect((await validate(stateFile({ wlr: [...stateFile().wlr, eve] }))).warnings).toEqual([]);
+
+    // A second Empfänger with a day level only: the gap is named.
+    const gap = await validate(
+      stateFile({
+        immissionPoints: [...stateFile().immissionPoints, { sonarmsId: 'H2', code: 'H2', address: 'Testweg 2', sensitivityLevel: 'II', mapX: 20, mapY: 20 }],
+        wlr: [...stateFile().wlr, eve, { point: 'H2', source: 'Q_HTTP_1', timeGroup: 'day', lae: 55, lafmax: 65 }],
+      }),
+    );
+    expect(gap.valid).toBe(true);
+    expect(gap.warnings).toEqual(['WLR: kein Abend-Pegel für H2 × Q_HTTP_1 – Schüsse dieser Quelle ausserhalb Werktag sind an diesem Punkt nicht beurteilbar']);
+  });
+
   it('imports the file, records its name and serves the details per Stellungsraum (5.19, 5.21)', async () => {
     const report = await api.http().post(`${base()}/import`).send({ fileName: 'geissalp_http.gdb.json', state: stateFile() }).expect(201);
     expect(report.body.counts).toMatchObject({ plantParts: 1, sources: 1, immissionPoints: 1, wlr: 1 });
+    // The file carries day levels only: the report of the import says so.
+    expect(report.body.warnings).toEqual([expect.stringContaining('keine Abend-Pegel (WLR NIGHT)')]);
     const stateId: string = report.body.stateId;
 
     const now: CalculationsOverviewDto = (await api.http().get(base()).expect(200)).body;
@@ -199,8 +225,13 @@ describe('AdminDataCalculationsController (HTTP)', () => {
   it('loads a WLR NIGHT file onto the state, replaces the time group and reports unknown receivers', async () => {
     const stateId = (globalThis as { httpStateId?: string }).httpStateId as string;
     const text = 'Empfänger\tGebäude\tQuelle\tWaffe\tElevation\tLAE(MK)\tLAE(GK)\tLAE(Det)\tLAE\tLAFmax\nH1\t\tQ_HTTP_1\tStgw90\t0.1\t58\t50\t0\t58.5\t68\nH9\t\tQ_HTTP_1\tStgw90\t\t\t\t\t50\t60';
+    // A NIGHT file without a level for the state's pair: nothing is applied and the gap is named.
+    const header = text.split('\n')[0];
+    const empty: UploadResultDto = (await api.http().post(`${base()}/state/${stateId}/wlr`).send({ timeGroup: 'eve', text: `${header}\nH9\t\tQ_HTTP_1\tStgw90\t\t\t\t\t50\t60` }).expect(200)).body;
+    expect(empty).toMatchObject({ applied: 0, warnings: ['kein Abend-Pegel für H1 × Q_HTTP_1'] });
+
     const first: UploadResultDto = (await api.http().post(`${base()}/state/${stateId}/wlr`).send({ timeGroup: 'eve', text, fileName: 'eve.wlr' }).expect(200)).body;
-    expect(first).toMatchObject({ rows: 2, applied: 1, replaced: 0, errors: [] });
+    expect(first).toMatchObject({ rows: 2, applied: 1, replaced: 0, errors: [], warnings: [] });
     expect(first.unknown[0]).toContain('H9');
 
     const again: UploadResultDto = (await api.http().post(`${base()}/state/${stateId}/wlr`).send({ timeGroup: 'eve', text }).expect(200)).body;

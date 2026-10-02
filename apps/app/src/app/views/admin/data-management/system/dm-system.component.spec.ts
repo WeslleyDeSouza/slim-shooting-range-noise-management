@@ -62,7 +62,6 @@ describe('DmSystemComponent — Erweiterte Konfiguration (B1 5.28, slm 27)', () 
   let fixture: ComponentFixture<DmSystemComponent>;
   let facade: ReturnType<typeof mockFacade>;
   let canWrite: ReturnType<typeof signal<boolean>>;
-  let reloads: number;
 
   async function setup(options: { settings?: SystemSettingsDto; write?: boolean } = {}): Promise<void> {
     facade = mockFacade(options.settings ?? DEFAULTS);
@@ -78,16 +77,16 @@ describe('DmSystemComponent — Erweiterte Konfiguration (B1 5.28, slm 27)', () 
       .overrideComponent(DmSystemComponent, { remove: { imports: [TranslatePipe] }, add: { imports: [TranslateStubPipe] } })
       .compileComponents();
     fixture = TestBed.createComponent(DmSystemComponent);
-    reloads = 0;
-    TestBed.inject(DataEmitter).subscribe?.(() => reloads++);
     await settle();
   }
 
+  /** Not `whenStable()`: the toast keeps a timer open for seconds. */
   async function settle(): Promise<void> {
     for (let i = 0; i < 3; i++) {
       fixture.detectChanges();
-      await fixture.whenStable();
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
+    fixture.detectChanges();
   }
 
   const el = <T extends Element = HTMLElement>(testId: string): T => fixture.nativeElement.querySelector(`[data-testid="${testId}"]`) as T;
@@ -116,7 +115,7 @@ describe('DmSystemComponent — Erweiterte Konfiguration (B1 5.28, slm 27)', () 
     expect(el<HTMLButtonElement>('dsys-save').disabled).toBe(true);
   });
 
-  it('saves the Sperrdatum, the thresholds and the contacts and reloads the other pages', async () => {
+  it('saves the Sperrdatum, the thresholds and the contacts', async () => {
     await setup();
     type('dsys-lock', '2025-12-31');
     type('dsys-quota-orange', '110');

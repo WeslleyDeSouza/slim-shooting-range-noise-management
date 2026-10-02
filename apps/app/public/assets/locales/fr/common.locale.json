@@ -73,6 +73,11 @@
       "rows_shown": "{{n}} lignes affichées",
       "rows_selected": "{{n}} lignes sélectionnées",
       "failed": "L’export n’a pas pu être créé. Veuillez réessayer."
+    },
+    "table": {
+      "select_all": "Sélectionner toutes les lignes affichées",
+      "select_row": "Sélectionner la ligne",
+      "selected": "{{n}} sélectionnée(s)"
     }
   },
   "status": {

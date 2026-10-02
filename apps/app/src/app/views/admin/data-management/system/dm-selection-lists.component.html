@@ -64,19 +64,33 @@
       <table class="slim-table dlist__table">
         <thead>
           <tr>
-            <th scope="col">{{ prefix + '.label_de' | translate }}</th>
-            <th scope="col">{{ prefix + '.label_fr' | translate }}</th>
-            <th scope="col">{{ prefix + '.label_it' | translate }}</th>
-            <th scope="col">{{ prefix + '.label_en' | translate }}</th>
-            <th scope="col">{{ prefix + '.status' | translate }}</th>
+            <th scope="col" class="slim-table__cell--check">
+              <app-table-select testId="dlist-select-all" [selection]="selection" [shown]="shownCodes()" [label]="'common.table.select_all' | translate" />
+            </th>
+            <th scope="col" appSort="de" [sort]="sort" data-testid="dlist-sort-de">{{ prefix + '.label_de' | translate }}</th>
+            <th scope="col" appSort="fr" [sort]="sort">{{ prefix + '.label_fr' | translate }}</th>
+            <th scope="col" appSort="it" [sort]="sort">{{ prefix + '.label_it' | translate }}</th>
+            <th scope="col" appSort="en" [sort]="sort">{{ prefix + '.label_en' | translate }}</th>
+            <th scope="col" appSort="status" [sort]="sort">{{ prefix + '.status' | translate }}</th>
             @if (!readonly()) {
               <th scope="col" class="slim-table__cell--actions">{{ prefix + '.actions' | translate }}</th>
             }
           </tr>
         </thead>
         <tbody>
-          @for (v of values(); track v.code; let first = $first; let last = $last) {
-            <tr class="slim-table__row" [class.dlist__row--inactive]="!v.enabled" data-testid="dlist-row" [attr.data-code]="v.code">
+          @for (v of rows(); track v.code; let first = $first; let last = $last) {
+            <tr
+              class="slim-table__row"
+              [class.dlist__row--inactive]="!v.enabled"
+              data-testid="dlist-row"
+              [attr.data-code]="v.code"
+              [appSelectRow]="v.code"
+              [selection]="selection"
+              [shown]="shownCodes()"
+            >
+              <td class="slim-table__cell--check">
+                <app-table-select testId="dlist-select" [selection]="selection" [shown]="shownCodes()" [rowId]="v.code" [label]="'common.table.select_row' | translate" />
+              </td>
               <td class="dlist__label">{{ v.labelDe }}</td>
               <td class="dlist__label">{{ v.labelFr ?? '–' }}</td>
               <td class="dlist__label">{{ v.labelIt ?? '–' }}</td>
@@ -89,10 +103,10 @@
               @if (!readonly()) {
                 <td class="slim-table__cell--actions">
                   <div class="slim-row-actions dlist__actions">
-                    <button type="button" class="dlist__icon" data-testid="dlist-up" [disabled]="first || saving()" [attr.title]="prefix + '.move_up' | translate" [attr.aria-label]="prefix + '.move_up' | translate" (click)="move(v, -1)">
+                    <button type="button" class="dlist__icon" data-testid="dlist-up" [disabled]="first || saving() || sorted()" [attr.title]="prefix + '.move_up' | translate" [attr.aria-label]="prefix + '.move_up' | translate" (click)="move(v, -1)">
                       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                     </button>
-                    <button type="button" class="dlist__icon" data-testid="dlist-down" [disabled]="last || saving()" [attr.title]="prefix + '.move_down' | translate" [attr.aria-label]="prefix + '.move_down' | translate" (click)="move(v, 1)">
+                    <button type="button" class="dlist__icon" data-testid="dlist-down" [disabled]="last || saving() || sorted()" [attr.title]="prefix + '.move_down' | translate" [attr.aria-label]="prefix + '.move_down' | translate" (click)="move(v, 1)">
                       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                     </button>
                     <button type="button" class="slim-btn slim-btn--ghost slim-btn--sm" data-testid="dlist-edit" [disabled]="saving()" (click)="edit(v)">{{ 'common.edit' | translate }}</button>

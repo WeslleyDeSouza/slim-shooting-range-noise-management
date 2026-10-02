@@ -134,17 +134,30 @@
         <table class="slim-table slim-table--stack slim-table--compact">
           <thead>
             <tr>
-              <th>{{ prefix + '.col_weapon' | translate }}</th>
-              <th class="slim-table__cell--num">{{ prefix + '.col_max' | translate }}</th>
-              <th>{{ prefix + '.col_basis' | translate }}</th>
+              <th class="slim-table__cell--check">
+                <app-table-select testId="dmm-select-all" [selection]="quotaSelection" [shown]="quotaIds()" [label]="'common.table.select_all' | translate" />
+              </th>
+              <th appSort="name" [sort]="quotaSort" data-testid="dmm-sort-name">{{ prefix + '.col_weapon' | translate }}</th>
+              <th appSort="max" [sort]="quotaSort" class="slim-table__cell--num" data-testid="dmm-sort-max">{{ prefix + '.col_max' | translate }}</th>
+              <th appSort="basis" [sort]="quotaSort">{{ prefix + '.col_basis' | translate }}</th>
               @if (!readonly()) {
                 <th class="slim-table__cell--actions">{{ 'admin.common.actions' | translate }}</th>
               }
             </tr>
           </thead>
           <tbody>
-            @for (q of quotas(); track q.id) {
-              <tr class="slim-table__row" data-testid="dmm-quota-row" [attr.data-combination]="q.name">
+            @for (q of quotaRows(); track q.id) {
+              <tr
+                class="slim-table__row"
+                data-testid="dmm-quota-row"
+                [attr.data-combination]="q.name"
+                [appSelectRow]="q.id"
+                [selection]="quotaSelection"
+                [shown]="quotaIds()"
+              >
+                <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                  <app-table-select testId="dmm-select" [selection]="quotaSelection" [shown]="quotaIds()" [rowId]="q.id" [label]="'common.table.select_row' | translate" />
+                </td>
                 <td [attr.data-label]="prefix + '.col_weapon' | translate">
                   <span class="dmm__weapon">{{ q.name }}</span>
                   @if (!q.assigned) {
@@ -175,7 +188,7 @@
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="readonly() ? 3 : 4" class="slim-table__cell--wrap">
+                <td [attr.colspan]="readonly() ? 4 : 5" class="slim-table__cell--wrap">
                   <div class="slim-empty">
                     @if (loading()) {
                       <span class="slim-spinner"></span>

@@ -5,10 +5,12 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { AreaRoomDto } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../../../common/table-select.component';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { tableExport, TableExportData } from '../../../../../../core/table/table-export';
+import { TableSelection } from '../../../../../../core/table/table-selection';
 import { areaIdSignal } from '../../_context/area-id';
 
 const I18N = 'admin.dm_area_general';
@@ -61,7 +63,7 @@ interface DetailRow {
 @Component({
   selector: 'app-dm-area-general-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, TableExportComponent],
+  imports: [RouterLink, TranslatePipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective],
   templateUrl: './dm-area-general-overview.component.html',
   styleUrl: './dm-area-general-overview.component.scss',
 })
@@ -147,9 +149,13 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
   });
 
   /** The Stellungsräume as shown (search and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly selection = new TableSelection();
+  protected readonly shownIds = computed(() => this.rows().map((row) => row.room.id));
+
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
     const area = this.area();
+    const picked = this.selection.pick(this.rows(), (row) => row.room.id);
     return tableExport<AreaRoomDto>({
       table: EXPORT_TABLE,
       title: t(`${I18N}.rooms_title`),
@@ -160,7 +166,8 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
         { header: t(`${I18N}.col_room_name`), value: (r) => r.name },
         { header: t(`${I18N}.col_active`), value: (r) => t(r.enabled ? 'common.yes' : 'common.no') },
       ],
-      rows: this.rows().map((row) => row.room),
+      rows: picked.rows.map((row) => row.room),
+      selection: picked.selection,
     });
   };
 

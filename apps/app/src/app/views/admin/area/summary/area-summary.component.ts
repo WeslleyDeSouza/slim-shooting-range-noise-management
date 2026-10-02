@@ -11,6 +11,8 @@ import type { AssessmentRowDto, QuotaRowDto, ReceiverAssessmentDto } from '@ui-s
 import { MapPoint, MapViewerComponent } from '@ui-slim/map';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../common/table-sort-header.component';
 import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { AssessmentFacade } from '../../../../core/calculation/assessment.facade';
@@ -18,6 +20,8 @@ import { MapFacade } from '../../../../core/calculation/map.facade';
 import { QuotaFacade } from '../../../../core/calculation/quota.facade';
 import { SelectionListKey, SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../core/table/table-sort';
 
 type ReceiverState = ReceiverAssessmentDto['state'];
 
@@ -40,10 +44,20 @@ const STAND_FIELDS: readonly { key: string; list: SelectionListKey; field: 'spmS
  * Empfangspunkte. Rendered inside AreaContextComponent; data: AreaFacade,
  * QuotaFacade, AssessmentFacade, MapFacade.
  */
+type QuotaSortKey = 'name' | 'target' | 'current' | 'average';
+
+/** What the columns of the Kontingentvergleich are sorted by (B1 5.5.2). */
+const QUOTA_SORT: Record<QuotaSortKey, (row: QuotaRowDto) => SortValue> = {
+  name: (row) => row.name,
+  target: (row) => row.target,
+  current: (row) => row.current,
+  average: (row) => row.average,
+};
+
 @Component({
   selector: 'app-area-summary',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DecimalPipe, RouterLink, TranslatePipe, StatusPillComponent, MapViewerComponent, TableExportComponent],
+  imports: [DecimalPipe, RouterLink, TranslatePipe, StatusPillComponent, MapViewerComponent, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   templateUrl: './area-summary.component.html',
   styleUrl: './area-summary.component.scss',
 })
@@ -82,7 +96,11 @@ export class AreaSummaryComponent extends ComponentBase {
   protected readonly quota = this.quotas.overview;
   protected readonly quotaLoading = this.quotas.loading;
   protected readonly quotaError = this.quotas.error;
-  protected readonly rows = computed<QuotaRowDto[]>(() => this.quota()?.rows ?? []);
+  protected readonly sort = new TableSort<QuotaSortKey>();
+  protected readonly selection = new TableSelection();
+  /** The comparison in the order of the API, or of the chosen column (B1 5.5.2). */
+  protected readonly rows = computed<QuotaRowDto[]>(() => this.sort.apply(this.quota()?.rows ?? [], QUOTA_SORT));
+  protected readonly shownIds = computed(() => this.rows().map((row) => row.combinationId));
   protected readonly withoutQuota = computed(() => this.rows().some((row) => !row.hasQuota));
   protected readonly quotaBasis = computed(() => {
     const q = this.quota();
@@ -190,6 +208,7 @@ export class AreaSummaryComponent extends ComponentBase {
     const t = (key: string, params?: Record<string, unknown>) => this.translate.translate(key, params) ?? key;
     const q = this.quota();
     const unit = (row: QuotaRowDto) => t(row.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots');
+    const picked = this.selection.pick(this.rows(), (row) => row.combinationId);
     return tableExport<QuotaRowDto>({
       table: EXPORT_TABLE,
       title: t('summary.quota.title'),
@@ -208,7 +227,8 @@ export class AreaSummaryComponent extends ComponentBase {
         { header: t('summary.quota.col_average', { from: q?.fromYear ?? '', year: q?.year ?? '' }), value: (row) => row.average },
         { header: t('summary.quota.col_average_state'), value: (row) => t(`status_area.${row.averageState}`) },
       ],
-      rows: this.rows(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

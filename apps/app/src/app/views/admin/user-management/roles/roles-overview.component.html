@@ -56,17 +56,23 @@
       <table class="slim-table slim-table--stack">
         <thead>
           <tr>
-            <th>{{ prefix + '.col_title' | translate }}</th>
-            <th>{{ prefix + '.col_flags' | translate }}</th>
-            <th class="slim-table__cell--num">{{ prefix + '.col_apps' | translate }}</th>
-            <th class="slim-table__cell--num">{{ prefix + '.col_users' | translate }}</th>
-            <th>{{ prefix + '.col_state' | translate }}</th>
+            <th class="slim-table__cell--check">
+              <app-table-select testId="roles-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+            </th>
+            <th appSort="title" [sort]="sort" data-testid="roles-sort-title">{{ prefix + '.col_title' | translate }}</th>
+            <th appSort="flags" [sort]="sort">{{ prefix + '.col_flags' | translate }}</th>
+            <th appSort="apps" [sort]="sort" class="slim-table__cell--num">{{ prefix + '.col_apps' | translate }}</th>
+            <th appSort="users" [sort]="sort" class="slim-table__cell--num" data-testid="roles-sort-users">{{ prefix + '.col_users' | translate }}</th>
+            <th appSort="state" [sort]="sort">{{ prefix + '.col_state' | translate }}</th>
             <th class="slim-table__cell--actions"></th>
           </tr>
         </thead>
         <tbody>
-          @for (role of filtered(); track role.roleId) {
-            <tr>
+          @for (role of rows(); track role.roleId) {
+            <tr class="slim-table__row" data-testid="roles-row" [appSelectRow]="'' + role.roleId" [selection]="selection" [shown]="shownIds()">
+              <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                <app-table-select testId="roles-select" [selection]="selection" [shown]="shownIds()" [rowId]="'' + role.roleId" [label]="'common.table.select_row' | translate" />
+              </td>
               <td [attr.data-label]="prefix + '.col_title' | translate">
                 <div class="um-roles__title">
                   <b>{{ role.title }}</b>
@@ -141,7 +147,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="slim-table__cell--wrap">
+              <td colspan="7" class="slim-table__cell--wrap">
                 <div class="slim-empty">
                   @if (facade.loading()) {
                     <span class="slim-spinner"></span>

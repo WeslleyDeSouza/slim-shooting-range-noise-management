@@ -87,16 +87,21 @@
         <table class="slim-table slim-table--stack">
           <thead>
             <tr>
-              <th>
-                {{ 'simulation.columns.room' | translate }}
-                <span class="sim__th-sub">{{ 'simulation.columns.room_no' | translate }}</span>
+              <th class="slim-table__cell--check">
+                <app-table-select testId="sim-select-all" [selection]="inputSelection" [shown]="rowIds()" [label]="'common.table.select_all' | translate" />
               </th>
-              <th>{{ 'simulation.columns.weapon' | translate }}</th>
-              <th class="slim-table__cell--num">
+              <th appSort="room" [sort]="inputSort" data-testid="sim-sort-room">
+                <span>
+                  {{ 'simulation.columns.room' | translate }}
+                  <span class="sim__th-sub">{{ 'simulation.columns.room_no' | translate }}</span>
+                </span>
+              </th>
+              <th appSort="weapon" [sort]="inputSort">{{ 'simulation.columns.weapon' | translate }}</th>
+              <th appSort="inside" [sort]="inputSort" class="slim-table__cell--num" data-testid="sim-sort-inside">
                 {{ 'simulation.columns.inside' | translate }}
                 <span class="sim__info" [title]="'simulation.columns.inside_info' | translate">i</span>
               </th>
-              <th class="slim-table__cell--num">
+              <th appSort="outside" [sort]="inputSort" class="slim-table__cell--num">
                 {{ 'simulation.columns.outside' | translate }}
                 <span class="sim__info" [title]="'simulation.columns.outside_info' | translate">i</span>
               </th>
@@ -109,7 +114,13 @@
                 [class.sim__row--muted]="!row.hasLevels"
                 [attr.title]="row.hasLevels ? null : ('simulation.no_levels' | translate)"
                 data-testid="sim-row"
+                [appSelectRow]="rowId(row)"
+                [selection]="inputSelection"
+                [shown]="rowIds()"
               >
+                <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                  <app-table-select testId="sim-select" [selection]="inputSelection" [shown]="rowIds()" [rowId]="rowId(row)" [label]="'common.table.select_row' | translate" />
+                </td>
                 <td [attr.data-label]="'simulation.columns.room' | translate">
                   <span class="sim__room">{{ row.roomName }}</span>
                   @if (row.roomNo) {
@@ -150,7 +161,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="4" class="slim-table__cell--wrap">
+                <td colspan="5" class="slim-table__cell--wrap">
                   <div class="slim-empty">
                     @if (loading()) {
                       <span class="slim-spinner"></span>
@@ -165,7 +176,7 @@
           @if (rows().length) {
             <tfoot>
               <tr class="sim__foot">
-                <td colspan="2">{{ 'simulation.total_rows' | translate: { n: rows().length } }}</td>
+                <td colspan="3">{{ 'simulation.total_rows' | translate: { n: rows().length } }}</td>
                 <td class="slim-table__cell--num">
                   {{ fmt(totals().inside) }}
                   @if (totals().inside !== totals().baseInside) {
@@ -414,22 +425,28 @@
             <table class="slim-table slim-table--stack slim-table--compact sim__result">
               <thead>
                 <tr>
-                  <th>{{ 'simulation.result.point' | translate }}</th>
-                  <th class="slim-table__cell--num">{{ 'simulation.result.limit' | translate }}</th>
-                  <th class="slim-table__cell--num">{{ 'simulation.result.current' | translate }}</th>
-                  <th class="slim-table__cell--num">{{ 'simulation.result.simulated' | translate }}</th>
-                  <th class="slim-table__cell--num">{{ 'simulation.result.delta' | translate }}</th>
-                  <th>{{ 'simulation.result.assessment' | translate }}</th>
+                  <th class="slim-table__cell--check">
+                    <app-table-select testId="sim-result-select-all" [selection]="resultSelection" [shown]="resultIds()" [label]="'common.table.select_all' | translate" />
+                  </th>
+                  <th appSort="point" [sort]="resultSort">{{ 'simulation.result.point' | translate }}</th>
+                  <th appSort="limit" [sort]="resultSort" class="slim-table__cell--num">{{ 'simulation.result.limit' | translate }}</th>
+                  <th appSort="current" [sort]="resultSort" class="slim-table__cell--num">{{ 'simulation.result.current' | translate }}</th>
+                  <th appSort="simulated" [sort]="resultSort" class="slim-table__cell--num" data-testid="sim-result-sort-simulated">{{ 'simulation.result.simulated' | translate }}</th>
+                  <th appSort="delta" [sort]="resultSort" class="slim-table__cell--num">{{ 'simulation.result.delta' | translate }}</th>
+                  <th appSort="state" [sort]="resultSort">{{ 'simulation.result.assessment' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
-                @for (r of result()!.receivers; track r.id) {
+                @for (r of resultRows(); track r.id) {
                   <tr
                     class="slim-table__row slim-table__row--clickable"
-                    [class.slim-table__row--selected]="activePin() === r.id"
+                    [class.slim-table__row--selected]="activePin() === r.id || resultSelection.ids().has(r.id)"
                     data-testid="sim-result-row"
                     (click)="selectPin(r.id)"
                   >
+                    <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                      <app-table-select testId="sim-result-select" [selection]="resultSelection" [shown]="resultIds()" [rowId]="r.id" [label]="'common.table.select_row' | translate" />
+                    </td>
                     <td [attr.data-label]="'simulation.result.point' | translate">
                       <b>{{ r.code }}</b> <span class="sim__small sim__small--inline sim__result-addr">{{ r.address }}</span>
                     </td>

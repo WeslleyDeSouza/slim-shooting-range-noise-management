@@ -11,7 +11,11 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { APP_ROUTES, parseRoleSettings } from '@slim/shared';
 import type { RoleEntity } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../common/table-sort-header.component';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../core/table/table-sort';
 import { RolesFacade } from './_data/roles.facade';
 
 const I18N = 'admin.roles';
@@ -23,10 +27,12 @@ const EXPORT_TABLE = 'rollen';
  * Shell-Remotes: Titel, Status, Admin-Rechte-Badge, Anzahl freigeschalteter
  * Apps. Die Berechtigungs-Matrix lebt im Formular.
  */
+type RoleSortKey = 'title' | 'flags' | 'apps' | 'users' | 'state';
+
 @Component({
   selector: 'app-elo-roles-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink, TableExportComponent],
+  imports: [TranslatePipe, RouterLink, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   templateUrl: './roles-overview.component.html',
   styleUrl: './roles-overview.component.scss',
 })
@@ -49,9 +55,24 @@ export class EloRolesOverviewComponent extends ComponentBase {
     return rows.filter((role) => (role.title ?? '').toLowerCase().includes(q));
   });
 
-  /** The table as shown (search applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly sort = new TableSort<RoleSortKey>();
+  protected readonly selection = new TableSelection();
+  /** What the columns are sorted by (B1 5.5.2); «Eigenschaften» by its badges in the order of the cell. */
+  private readonly sortValues: Record<RoleSortKey, (role: RoleEntity) => SortValue> = {
+    title: (role) => role.title,
+    flags: (role) => [role.hasAdminRights, role.isDefault, this.isSystemRole(role), role.sensitiveDataDisplay].map((flag) => (flag ? '0' : '1')).join(''),
+    apps: (role) => role.apps?.length ?? 0,
+    users: (role) => this.userCount(role),
+    state: (role) => !!role.state,
+  };
+  /** The roles as shown: search applied, then in the order of the chosen column. */
+  protected readonly rows = computed(() => this.sort.apply(this.filtered(), this.sortValues));
+  protected readonly shownIds = computed(() => this.rows().map((role) => String(role.roleId)));
+
+  /** The table as shown (search and sorting applied), or the marked rows, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.rows(), (role) => String(role.roleId));
     // The badges of the column «Eigenschaften», in the order of the cell.
     const flags = (role: RoleEntity) =>
       [
@@ -79,7 +100,8 @@ export class EloRolesOverviewComponent extends ComponentBase {
           value: (role) => t(role.state ? 'common.yes' : 'common.no'),
         },
       ],
-      rows: this.filtered(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

@@ -6,6 +6,7 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type { RoomWeaponAssignmentDto, WeaponAssignmentRoomDto } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../../common/table-select.component';
 import { WeaponAssignmentFacade } from '../../../../../core/data-area/weapon-assignment.facade';
 import {
   AssignmentSortKey,
@@ -17,6 +18,7 @@ import {
   sortRooms,
 } from '../../../../../core/data-area/weapon-assignment.logic';
 import { tableExport, TableExportData } from '../../../../../core/table/table-export';
+import { TableSelection } from '../../../../../core/table/table-selection';
 import { areaIdSignal } from '../_context/area-id';
 
 const I18N = 'admin.dm_area_weapons';
@@ -32,12 +34,13 @@ const EXPORT_TABLE_ASSIGNMENTS = 'waffenzuordnung';
  * Erfassung, Waffe, Kaliber, Kategorie. A display: FAQ 52 dropped the
  * maintenance in the UI, the assignments come from the import (9.2) and the
  * DB administration. The room can be preselected with `?room=<id>`. Both
- * tables can be exported as shown (Excel/CSV, 5.5.5).
+ * tables can be exported as shown (Excel/CSV, 5.5.5); of the «Zugeordnete
+ * Waffen» several rows can be marked for the export (5.5.3).
  */
 @Component({
   selector: 'app-dm-area-weapons',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, TableExportComponent],
+  imports: [TranslatePipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective],
   templateUrl: './dm-area-weapons.component.html',
   styleUrl: './dm-area-weapons.component.scss',
 })
@@ -88,6 +91,10 @@ export class DmAreaWeaponsComponent extends ComponentBase {
     assignmentsOfRoom(this.facade.assignments(), this.selectedRoomId(), this.assignmentSort().key, this.assignmentSort().asc),
   );
 
+  /** Marked «Zugeordnete Waffen»; the ids are unique over all Stellungsräume, so a mark stays with its room. */
+  protected readonly selection = new TableSelection();
+  protected readonly shownIds = computed(() => this.assignments().map((a) => a.id));
+
   /** The Stellungsräume as shown (search and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly roomsExportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
@@ -108,6 +115,7 @@ export class DmAreaWeaponsComponent extends ComponentBase {
   /** The «Zugeordnete Waffen» of the chosen Stellungsraum as shown (sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.assignments(), (a) => a.id);
     return tableExport<RoomWeaponAssignmentDto>({
       table: EXPORT_TABLE_ASSIGNMENTS,
       title: t(`${I18N}.assignments_title`),
@@ -119,7 +127,8 @@ export class DmAreaWeaponsComponent extends ComponentBase {
         { header: t(`${I18N}.col_caliber`), value: (a) => a.caliber },
         { header: t(`${I18N}.col_category`), value: (a) => a.categoryName },
       ],
-      rows: this.assignments(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

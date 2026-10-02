@@ -271,6 +271,33 @@ describe('AreaSummaryComponent — Schiessplatz-Nutzungen – Übersicht (B1 5.1
     canOpenCalculations.set(true);
   });
 
+  it('sorts the comparison by a column and exports only the marked rows (B1 5.5.2, 5.5.3)', async () => {
+    await setup();
+    const states = () => all('summary-quota-row').map((row) => row.getAttribute('data-current'));
+    expect(states()).toEqual(['warn', 'over', 'ok']);
+    // Ist of the year ascending: Sprengladung 2.5, Stgw 90 1'200, Pz Hb 74 1'700.
+    (el('summary-sort-current').querySelector('button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(states()).toEqual(['over', 'ok', 'warn']);
+    expect(el('summary-sort-current').getAttribute('aria-sort')).toBe('ascending');
+
+    // The first and the last row as shown are marked: the export holds these two, in this order.
+    const boxes = all('summary-select');
+    boxes[0].click();
+    boxes[2].click();
+    fixture.detectChanges();
+    expect(all('summary-quota-row').map((row) => row.classList.contains('slim-table__row--selected'))).toEqual([true, false, true]);
+    el('summary-export').click();
+    fixture.detectChanges();
+    expect(text(el('summary-export-scope'))).toContain('common.export.rows_selected n=2');
+    el('summary-export-csv').click();
+    for (let i = 0; i < 3; i++) await Promise.resolve();
+    const calls = exportFacade.download.mock.calls;
+    const data = calls[calls.length - 1][0] as TableExportData;
+    expect(data.selection).toBe(true);
+    expect(data.rows.map((row) => row[0])).toEqual(['Sprengladung · kg', 'Pz Hb 74 · 15.5 cm']);
+  });
+
   it('exports the comparison as shown (B1 5.5.5)', async () => {
     await setup();
     el('summary-export').click();

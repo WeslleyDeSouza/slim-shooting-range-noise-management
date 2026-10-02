@@ -7,36 +7,50 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AreaResultDto } from '@ui-slim/apiClient';
-import { statusLabelKey, StatusPillComponent } from '../../../common/status-pill.component';
+import { statusLabelKey, statusRank, StatusPillComponent } from '../../../common/status-pill.component';
 import { TableExportComponent } from '../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../common/table-sort-header.component';
 import {
   AreaFacade,
   AreaStatus,
   needsAttention,
 } from '../../../core/area/area.facade';
 import { tableExport, TableExportData } from '../../../core/table/table-export';
+import { TableSelection } from '../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../core/table/table-sort';
 
 type StatusFilter = '' | AreaStatus;
+type SortKey = 'name' | 'ka' | 'sp' | 'quota' | 'noise';
+
+/** What every column is sorted by (B1 5.5.2); the lights by their severity. */
+const SORT_VALUES: Record<SortKey, (r: AreaResultDto) => SortValue> = {
+  name: (r) => r.name,
+  ka: (r) => r.coordinationSectionNo,
+  sp: (r) => r.sectoralPlanNo,
+  quota: (r) => statusRank(r.quotaStatus),
+  noise: (r) => statusRank(r.noiseStatus),
+};
 
 /** Id of the table in the export: file name (date and extension are added) and logbook. */
 const EXPORT_TABLE = 'schiessplaetze';
 
 /**
  * "Übersicht Schiessplätze" (mock view-plaetze, chapters 5.8 / 5.9):
- * breadcrumbs, year + export (Excel/CSV of the rows shown, 5.5.5), search +
- * status filter, table with traffic-light pills and row actions, pager,
- * legend. Data: AreaFacade.
+ * breadcrumbs, year + export (Excel/CSV of the rows shown or marked, 5.5.5),
+ * search + status filter, table with sortable columns (5.5.2), multi-selection
+ * (5.5.3), traffic-light pills and row actions, pager, legend. Data: AreaFacade.
  */
 @Component({
   selector: 'app-area-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, StatusPillComponent, TableExportComponent],
+  imports: [RouterLink, TranslatePipe, StatusPillComponent, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   styleUrl: './area-overview.component.scss',
   template: `
     <div class="slim-page area">
@@ -187,10 +201,13 @@ const EXPORT_TABLE = 'schiessplaetze';
           <table class="slim-table slim-table--stack slim-table--compact">
             <thead>
               <tr>
-                <th>{{ 'columns.name' | translate }}</th>
-                <th>{{ 'columns.ka' | translate }}</th>
-                <th>{{ 'columns.sp' | translate }}</th>
-                <th>
+                <th class="slim-table__cell--check">
+                  <app-table-select testId="area-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+                </th>
+                <th appSort="name" [sort]="sort" data-testid="area-sort-name">{{ 'columns.name' | translate }}</th>
+                <th appSort="ka" [sort]="sort" data-testid="area-sort-ka">{{ 'columns.ka' | translate }}</th>
+                <th appSort="sp" [sort]="sort">{{ 'columns.sp' | translate }}</th>
+                <th appSort="quota" [sort]="sort" data-testid="area-sort-quota">
                   {{ 'columns.quota' | translate }}
                   <span
                     class="area__info"
@@ -198,7 +215,7 @@ const EXPORT_TABLE = 'schiessplaetze';
                     >i</span
                   >
                 </th>
-                <th>
+                <th appSort="noise" [sort]="sort">
                   {{ 'columns.noise' | translate }}
                   <span
                     class="area__info"
@@ -212,11 +229,18 @@ const EXPORT_TABLE = 'schiessplaetze';
               </tr>
             </thead>
             <tbody>
-              @for (r of filtered(); track r.id) {
+              @for (r of rows(); track r.id) {
                 <tr
                   class="slim-table__row slim-table__row--clickable"
-                  [routerLink]="routes.admin.area.details(r.id)"
+                  data-testid="area-row"
+                  [appSelectRow]="r.id"
+                  [selection]="selection"
+                  [shown]="shownIds()"
+                  (click)="open($event, r.id)"
                 >
+                  <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                    <app-table-select testId="area-select" [selection]="selection" [shown]="shownIds()" [rowId]="r.id" [label]="'common.table.select_row' | translate" />
+                  </td>
                   <td [attr.data-label]="'columns.name' | translate">
                     <a
                       class="area__name"
@@ -268,7 +292,7 @@ const EXPORT_TABLE = 'schiessplaetze';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="6" class="slim-table__cell--wrap">
+                  <td colspan="7" class="slim-table__cell--wrap">
                     <div class="slim-empty">
                       @if (loading()) {
                         <span class="slim-spinner"></span>
@@ -292,6 +316,9 @@ const EXPORT_TABLE = 'schiessplaetze';
                 | translate: { n: filtered().length, total: filtered().length })
               : ('count' | translate: { n: 0 })
           }}</span>
+          @if (selection.count()) {
+            <span data-testid="area-selected">· {{ 'common.table.selected' | translate: { n: selection.count() } }}</span>
+          }
           <span class="slim-table-foot__grow"></span>
           <div class="slim-pager">
             <button
@@ -334,9 +361,12 @@ const EXPORT_TABLE = 'schiessplaetze';
 export class AreaOverviewComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
   protected readonly routes = APP_ROUTES;
+  protected readonly sort = new TableSort<SortKey>();
+  protected readonly selection = new TableSelection();
   protected readonly years = [2026, 2025, 2024];
   protected readonly legend: AreaStatus[] = ['ok', 'warn', 'over', 'incomplete', 'none'];
 
@@ -385,6 +415,16 @@ export class AreaOverviewComponent extends ComponentBase {
     });
   });
 
+  /** The rows as shown: filtered, then in the order of the chosen column (B1 5.5.2). */
+  protected readonly rows = computed(() => this.sort.apply(this.filtered(), SORT_VALUES));
+  protected readonly shownIds = computed(() => this.rows().map((r) => r.id));
+
+  /** A plain click opens the Schiessplatz; Ctrl / Shift + click marks the row (B1 5.5.3). */
+  protected open(event: MouseEvent, id: string): void {
+    if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+    void this.router.navigateByUrl(APP_ROUTES.admin.area.details(id));
+  }
+
   /** Data behind the Kontingent light: the year window the API compared. */
   protected quotaBasis(r: AreaResultDto): string | null {
     if (!r.statusYear) return null;
@@ -397,9 +437,10 @@ export class AreaOverviewComponent extends ComponentBase {
     return this.translate.translate('basis.noise', { state: r.noiseStatusBasis, year: r.statusYear ?? '' }) ?? null;
   }
 
-  /** The table as shown (search and filters applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  /** The table as shown (search, filters and sorting applied), or the marked rows, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.rows(), (r) => r.id);
     const status = (value: StatusFilter) => (value ? t(`status_area.${value}`) : null);
     return tableExport<AreaResultDto>({
       table: EXPORT_TABLE,
@@ -419,7 +460,8 @@ export class AreaOverviewComponent extends ComponentBase {
         { header: t('columns.noise_basis'), value: (r) => r.noiseStatusBasis ?? null },
         { header: t('year'), value: (r) => r.statusYear ?? null },
       ],
-      rows: this.filtered(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

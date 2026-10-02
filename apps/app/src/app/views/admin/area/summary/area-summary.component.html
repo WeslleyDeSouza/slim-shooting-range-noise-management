@@ -95,15 +95,29 @@
       <table class="slim-table slim-table--stack slim-table--compact">
         <thead>
           <tr>
-            <th scope="col">{{ 'summary.quota.col_weapon' | translate }}</th>
-            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_target' | translate }}</th>
-            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_current' | translate: { year: quota()?.year ?? '' } }}</th>
-            <th scope="col" class="slim-table__cell--num">{{ 'summary.quota.col_average' | translate: { from: quota()?.fromYear ?? '', year: quota()?.year ?? '' } }}</th>
+            <th scope="col" class="slim-table__cell--check">
+              <app-table-select testId="summary-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+            </th>
+            <th scope="col" appSort="name" [sort]="sort" data-testid="summary-sort-name">{{ 'summary.quota.col_weapon' | translate }}</th>
+            <th scope="col" appSort="target" [sort]="sort" class="slim-table__cell--num">{{ 'summary.quota.col_target' | translate }}</th>
+            <th scope="col" appSort="current" [sort]="sort" class="slim-table__cell--num" data-testid="summary-sort-current">{{ 'summary.quota.col_current' | translate: { year: quota()?.year ?? '' } }}</th>
+            <th scope="col" appSort="average" [sort]="sort" class="slim-table__cell--num">{{ 'summary.quota.col_average' | translate: { from: quota()?.fromYear ?? '', year: quota()?.year ?? '' } }}</th>
           </tr>
         </thead>
         <tbody>
           @for (row of rows(); track row.combinationId) {
-            <tr class="slim-table__row" data-testid="summary-quota-row" [attr.data-current]="row.currentState" [attr.data-average]="row.averageState">
+            <tr
+              class="slim-table__row"
+              data-testid="summary-quota-row"
+              [attr.data-current]="row.currentState"
+              [attr.data-average]="row.averageState"
+              [appSelectRow]="row.combinationId"
+              [selection]="selection"
+              [shown]="shownIds()"
+            >
+              <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                <app-table-select testId="summary-select" [selection]="selection" [shown]="shownIds()" [rowId]="row.combinationId" [label]="'common.table.select_row' | translate" />
+              </td>
               <td [attr.data-label]="'summary.quota.col_weapon' | translate">
                 {{ row.name }}
                 @if (!row.hasQuota) {

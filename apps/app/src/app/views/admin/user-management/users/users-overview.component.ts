@@ -13,7 +13,9 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { AUTH_STORE } from '@app-galaxy/auth-ui';
 import { APP_ROUTES } from '@slim/shared';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
 import { UsersFacade } from './_data/users.facade';
 import { AdminUser, filterAdminUsers, initialsOf } from './_data/user.model';
 
@@ -66,7 +68,7 @@ function startOfWeek(value: Date): Date {
 @Component({
   selector: 'app-elo-users-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink, DatePipe, TableExportComponent],
+  imports: [TranslatePipe, RouterLink, DatePipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective],
   templateUrl: './users-overview.component.html',
   styleUrl: './users-overview.component.scss',
 })
@@ -82,7 +84,7 @@ export class EloUsersOverviewComponent extends ComponentBase {
 
   readonly query = signal('');
   // Newest login first by default; users without a login sort to the end.
-  readonly sortColumn = signal<'lastName' | 'email' | 'loginLast' | 'createdAt'>('loginLast');
+  readonly sortColumn = signal<'lastName' | 'email' | 'roles' | 'loginLast' | 'createdAt'>('loginLast');
   readonly sortDir = signal<'asc' | 'desc'>('desc');
   readonly initials = initialsOf;
 
@@ -90,9 +92,11 @@ export class EloUsersOverviewComponent extends ComponentBase {
     const rows = filterAdminUsers(this.facade.users(), this.query());
     const column = this.sortColumn();
     const dir = this.sortDir() === 'asc' ? 1 : -1;
+    // The roles as the cell lists them.
+    const value = (user: AdminUser) => (column === 'roles' ? user.roles.join(', ') : (user[column] ?? ''));
     return [...rows].sort((a, b) => {
-      const av = a[column] ?? '';
-      const bv = b[column] ?? '';
+      const av = value(a);
+      const bv = value(b);
       return av < bv ? -dir : av > bv ? dir : 0;
     });
   });
@@ -198,6 +202,9 @@ export class EloUsersOverviewComponent extends ComponentBase {
   );
 
   /** The table as shown (search, sorting and grouping applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly selection = new TableSelection();
+  protected readonly shownIds = computed(() => this.shown().map((user) => String(user.userId)));
+
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
     const date = (value: string, format: string) => {
@@ -206,6 +213,7 @@ export class EloUsersOverviewComponent extends ComponentBase {
         ? formatDate(parsed, format, this.locale)
         : null;
     };
+    const picked = this.selection.pick(this.shown(), (user) => String(user.userId));
     return tableExport<AdminUser>({
       table: EXPORT_TABLE,
       title: t('menu.users'),
@@ -240,7 +248,8 @@ export class EloUsersOverviewComponent extends ComponentBase {
           value: (user) => date(user.createdAt, 'dd.MM.yyyy'),
         },
       ],
-      rows: this.shown(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 
@@ -299,7 +308,7 @@ export class EloUsersOverviewComponent extends ComponentBase {
     this.query.set((event.target as HTMLInputElement).value);
   }
 
-  toggleSort(column: 'lastName' | 'email' | 'loginLast' | 'createdAt'): void {
+  toggleSort(column: 'lastName' | 'email' | 'roles' | 'loginLast' | 'createdAt'): void {
     if (this.sortColumn() === column) {
       this.sortDir.set(this.sortDir() === 'asc' ? 'desc' : 'asc');
     } else {

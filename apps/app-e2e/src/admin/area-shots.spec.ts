@@ -90,6 +90,15 @@ test.describe('area: shot counts', () => {
     await drawer.locator(SHOTS.category).selectOption({ index: 1 });
     await drawer.locator(SHOTS.weapon).selectOption({ index: 1 });
     await drawer.locator(SHOTS.quantity).fill('100');
+    // 08:07 is off the quarter hour (B1 6.2.3): the form stays open and names this rule, not the order of the times.
+    await drawer.locator('[data-testid="shots-time-from"]').fill('08:07');
+    await drawer.locator(SHOTS.save).click();
+    await expect(drawer.locator('[data-testid="shots-time-error"]')).toBeVisible();
+    await expect(drawer.locator('[data-testid="shots-time-error"]')).toContainText('Viertelstunde');
+    await expect(page.locator(SHOTS.row)).toHaveCount(total);
+    await drawer
+      .getByRole('button', { name: /Vormittag|Morning|Matin|Mattina/ })
+      .click();
     await drawer.locator(SHOTS.save).click();
     await expect(page.locator(SHOTS.toast)).toBeVisible();
     await expect(drawer).toBeHidden();

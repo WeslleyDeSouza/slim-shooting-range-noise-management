@@ -21,6 +21,13 @@ const MODIFIER: Record<AreaStatus, string> = {
 };
 
 /** Locale key of the text of a light; «Keine Daten» is said precisely when the API names the reason. */
+/** Order of the states in a sorted column: from «eingehalten» to «keine Angabe». */
+const STATUS_ORDER: readonly AreaStatus[] = ['ok', 'warn', 'over', 'incomplete', 'none'];
+export function statusRank(status: AreaStatus | null | undefined): number | null {
+  const rank = status ? STATUS_ORDER.indexOf(status) : -1;
+  return rank < 0 ? null : rank;
+}
+
 export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | null | undefined): string {
   if (status === 'none' && (reason === 'no-calculation' || reason === 'no-usages')) {
     return `status_area.none_${reason.replace('-', '_')}`;

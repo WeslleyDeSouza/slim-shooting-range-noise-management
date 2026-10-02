@@ -5,16 +5,18 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AreaResultDto } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
 
-type SortKey = 'coordinationSectionNo' | 'sectoralPlanNo' | 'name';
+type SortKey = 'coordinationSectionNo' | 'sectoralPlanNo' | 'name' | 'enabled';
 type ActiveFilter = 'active' | 'inactive' | 'all';
 
 const I18N = 'admin.dm_area';
@@ -36,7 +38,7 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
 @Component({
   selector: 'app-dm-area-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, TableExportComponent],
+  imports: [RouterLink, TranslatePipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective],
   styleUrl: './dm-area-overview.component.scss',
   template: `
     <div class="slim-page dma">
@@ -124,6 +126,9 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
           <table class="slim-table slim-table--stack slim-table--compact">
             <thead>
               <tr>
+                <th class="slim-table__cell--check">
+                  <app-table-select testId="dma-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+                </th>
                 @for (col of columns; track col.key) {
                   <th
                     [attr.aria-sort]="sortKey() === col.key ? (sortAsc() ? 'ascending' : 'descending') : null"
@@ -142,7 +147,6 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
                     </button>
                   </th>
                 }
-                <th>{{ prefix + '.col_active' | translate }}</th>
                 <th class="slim-table__cell--actions">
                   {{ prefix + '.col_nav' | translate }}
                 </th>
@@ -153,8 +157,14 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
                 <tr
                   class="slim-table__row slim-table__row--clickable"
                   [attr.data-testid]="'dma-row-' + r.id"
-                  [routerLink]="routes.admin.dataManagement.area.generalOf(r.id)"
+                  [appSelectRow]="r.id"
+                  [selection]="selection"
+                  [shown]="shownIds()"
+                  (click)="open($event, r.id)"
                 >
+                  <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                    <app-table-select testId="dma-select" [selection]="selection" [shown]="shownIds()" [rowId]="r.id" [label]="'common.table.select_row' | translate" />
+                  </td>
                   <td [attr.data-label]="prefix + '.col_name' | translate">
                     <a
                       class="dma__name"
@@ -208,7 +218,7 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="5" class="slim-table__cell--wrap">
+                  <td colspan="6" class="slim-table__cell--wrap">
                     <div class="slim-empty">
                       @if (loading()) {
                         <span class="slim-spinner"></span>
@@ -230,6 +240,7 @@ const EXPORT_TABLE = 'schiessplaetze_verwaltung';
 })
 export class DmAreaOverviewComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
+  private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
   protected readonly prefix = I18N;
@@ -240,7 +251,9 @@ export class DmAreaOverviewComponent extends ComponentBase {
     { key: 'name', label: 'col_name' },
     { key: 'coordinationSectionNo', label: 'col_ka' },
     { key: 'sectoralPlanNo', label: 'col_sp' },
+    { key: 'enabled', label: 'col_active' },
   ];
+  protected readonly selection = new TableSelection();
 
   /** Actions of 5.14: Allgemein (5.15/5.16), Waffen-Zuordnung (5.17), Berechnungen (5.18). */
   protected readonly rowActions = [
@@ -274,8 +287,8 @@ export class DmAreaOverviewComponent extends ComponentBase {
           (r.sectoralPlanNo ?? '').toLowerCase().includes(q),
       )
       .sort((a, b) => {
-        const x = (a[key] ?? '').toLowerCase();
-        const y = (b[key] ?? '').toLowerCase();
+        const x = String(a[key] ?? '').toLowerCase();
+        const y = String(b[key] ?? '').toLowerCase();
         // Empty values (no Sachplan-Nr.) always sort last.
         if (x === '' && y !== '') return 1;
         if (y === '' && x !== '') return -1;
@@ -283,9 +296,18 @@ export class DmAreaOverviewComponent extends ComponentBase {
       });
   });
 
-  /** The table as shown (search, status filter and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly shownIds = computed(() => this.filtered().map((r) => r.id));
+
+  /** A plain click opens «Allgemein» of the Schiessplatz; Ctrl / Shift + click marks the row (B1 5.5.3). */
+  protected open(event: MouseEvent, id: string): void {
+    if (event.ctrlKey || event.metaKey || event.shiftKey) return;
+    void this.router.navigateByUrl(APP_ROUTES.admin.dataManagement.area.generalOf(id));
+  }
+
+  /** The table as shown (search, status filter and sorting applied), or the marked rows, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.filtered(), (r) => r.id);
     const active = this.active();
     return tableExport<AreaResultDto>({
       table: EXPORT_TABLE,
@@ -300,7 +322,8 @@ export class DmAreaOverviewComponent extends ComponentBase {
         { header: t(`${I18N}.col_sp`), value: (r) => r.sectoralPlanNo ?? null },
         { header: t(`${I18N}.col_active`), value: (r) => t(`${I18N}.${r.enabled ? 'active' : 'inactive'}`) },
       ],
-      rows: this.filtered(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

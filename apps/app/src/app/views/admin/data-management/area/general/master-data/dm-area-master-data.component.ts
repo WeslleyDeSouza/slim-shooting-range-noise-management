@@ -19,10 +19,14 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { AreaQuotaDto, AreaResultDto, AreaUpdateDto, QuotaCombinationOptionDto, SelectionListValueDto } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../../../common/table-sort-header.component';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { tableExport, TableExportData } from '../../../../../../core/table/table-export';
+import { TableSelection } from '../../../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../../../core/table/table-sort';
 import { HasUnsavedChanges } from '../../../../_common/unsaved-changes.guard';
 import { areaIdSignal } from '../../_context/area-id';
 
@@ -87,10 +91,19 @@ interface QuotaOptionGroup {
  * combinations without a Kontingent (Soll 0 → red light, B1 5.10). Roles
  * without the write right see everything disabled. Data: `DataAreaFacade`.
  */
+type QuotaSortKey = 'name' | 'max' | 'basis';
+
+/** What the columns of the Kontingente are sorted by (B1 5.5.2). */
+const QUOTA_SORT: Record<QuotaSortKey, (q: AreaQuotaDto) => SortValue> = {
+  name: (q) => q.name,
+  max: (q) => q.shotsPerYear,
+  basis: (q) => q.basis,
+};
+
 @Component({
   selector: 'app-dm-area-master-data',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, TableExportComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   templateUrl: './dm-area-master-data.component.html',
   styleUrl: './dm-area-master-data.component.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -112,6 +125,11 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   protected readonly area = this.facade.area;
   protected readonly general = this.facade.general;
   protected readonly quotas = this.facade.quotas;
+  protected readonly quotaSort = new TableSort<QuotaSortKey>();
+  protected readonly quotaSelection = new TableSelection();
+  /** The Kontingente in the order of the API, or of the chosen column (B1 5.5.2). */
+  protected readonly quotaRows = computed(() => this.quotaSort.apply(this.quotas(), QUOTA_SORT));
+  protected readonly quotaIds = computed(() => this.quotaRows().map((q) => q.id));
   protected readonly combinations = this.facade.combinations;
   protected readonly loading = this.facade.loading;
   protected readonly saving = this.facade.saving;
@@ -183,6 +201,7 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
     const area = this.area();
+    const picked = this.quotaSelection.pick(this.quotaRows(), (q) => q.id);
     return tableExport<AreaQuotaDto>({
       table: EXPORT_TABLE,
       title: t(`${I18N}.section_quotas`),
@@ -193,7 +212,8 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
         { header: t('admin.dm_weapons.field_unit'), value: (q) => t(`${I18N}.${q.quantityUnit === 'kg' ? 'unit_kg' : 'unit_shots'}`) },
         { header: t(`${I18N}.col_basis`), value: (q) => q.basis ?? null },
       ],
-      rows: this.quotas(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

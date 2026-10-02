@@ -76,13 +76,18 @@
       <table class="slim-table slim-table--stack">
         <thead>
           <tr>
+            <th class="slim-table__cell--check">
+              <app-table-select testId="users-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+            </th>
             <th class="um-users__sort" (click)="toggleSort('lastName')">
               {{ prefix + '.col_name' | translate }}{{ sortMark('lastName') }}
             </th>
             <th class="um-users__sort" (click)="toggleSort('email')">
               {{ prefix + '.col_email' | translate }}{{ sortMark('email') }}
             </th>
-            <th>{{ prefix + '.col_roles' | translate }}</th>
+            <th class="um-users__sort" (click)="toggleSort('roles')">
+              {{ prefix + '.col_roles' | translate }}{{ sortMark('roles') }}
+            </th>
             <th class="um-users__sort" (click)="toggleSort('loginLast')">
               {{ prefix + '.col_login_last' | translate }}{{ sortMark('loginLast') }}
             </th>
@@ -96,7 +101,7 @@
           @for (group of groups(); track group.key) {
             @if (groupByLoginMonth()) {
               <tr class="um-users__group">
-                <td colspan="6" class="slim-table__cell--wrap">
+                <td colspan="7" class="slim-table__cell--wrap">
                   <button type="button" class="um-users__group-btn" (click)="toggleGroup(group.key)">
                     <svg
                       viewBox="0 0 8 12"
@@ -115,7 +120,10 @@
             }
             @if (!isCollapsed(group.key)) {
               @for (user of group.users; track user.userId) {
-                <tr>
+                <tr class="slim-table__row" data-testid="users-row" [appSelectRow]="'' + user.userId" [selection]="selection" [shown]="shownIds()">
+                  <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                    <app-table-select testId="users-select" [selection]="selection" [shown]="shownIds()" [rowId]="'' + user.userId" [label]="'common.table.select_row' | translate" />
+                  </td>
                   <td [attr.data-label]="prefix + '.col_name' | translate">
                     <div class="um-users__person">
                       <span class="slim-avatar slim-avatar--sm um-users__avatar">{{ initials(user) }}</span>
@@ -194,7 +202,7 @@
             }
           } @empty {
             <tr>
-              <td colspan="6" class="slim-table__cell--wrap">
+              <td colspan="7" class="slim-table__cell--wrap">
                 <div class="slim-empty">
                   @if (facade.loading()) {
                     <span class="slim-spinner"></span>

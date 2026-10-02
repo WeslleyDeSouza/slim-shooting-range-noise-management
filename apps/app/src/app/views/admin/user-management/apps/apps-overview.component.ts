@@ -11,7 +11,11 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AppEntity } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../common/table-sort-header.component';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../core/table/table-sort';
 import { AppsFacade } from './_data/apps.facade';
 
 const I18N = 'admin.apps';
@@ -24,10 +28,12 @@ const EXPORT_TABLE = 'apps';
  * `hiddenInMenu`-Toggle direkt in der Zeile (wirkt sofort auf die
  * dynamische Sidebar) und übersetzte `menu.*`-Titel neben dem Roh-Key.
  */
+type AppSortKey = 'title' | 'path' | 'roleKey' | 'category' | 'order' | 'visible';
+
 @Component({
   selector: 'app-elo-apps-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink, TableExportComponent],
+  imports: [TranslatePipe, RouterLink, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   templateUrl: './apps-overview.component.html',
   styleUrl: './apps-overview.component.scss',
 })
@@ -55,9 +61,25 @@ export class EloAppsOverviewComponent extends ComponentBase {
     );
   });
 
-  /** The table as shown (search applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly sort = new TableSort<AppSortKey>();
+  protected readonly selection = new TableSelection();
+  /** What the columns are sorted by (B1 5.5.2): the texts as the cells show them. */
+  private readonly sortValues: Record<AppSortKey, (app: AppEntity) => SortValue> = {
+    title: (app) => this.label(app.title),
+    path: (app) => app.path,
+    roleKey: (app) => app.roleKey,
+    category: (app) => this.facade.categoryTitle(app.categoryId),
+    order: (app) => app.orderIdx,
+    visible: (app) => !app.hiddenInMenu,
+  };
+  /** The apps as shown: search applied, then in the order of the chosen column. */
+  protected readonly rows = computed(() => this.sort.apply(this.filtered(), this.sortValues));
+  protected readonly shownIds = computed(() => this.rows().map((app) => String(app.appId)));
+
+  /** The table as shown (search and sorting applied), or the marked rows, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.rows(), (app) => String(app.appId));
     return tableExport<AppEntity>({
       table: EXPORT_TABLE,
       title: t('menu.apps'),
@@ -78,7 +100,8 @@ export class EloAppsOverviewComponent extends ComponentBase {
           value: (app) => t(app.hiddenInMenu ? 'common.no' : 'common.yes'),
         },
       ],
-      rows: this.filtered(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 

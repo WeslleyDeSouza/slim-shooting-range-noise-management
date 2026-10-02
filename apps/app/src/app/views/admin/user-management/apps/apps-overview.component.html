@@ -57,18 +57,24 @@
       <table class="slim-table slim-table--stack">
         <thead>
           <tr>
-            <th>{{ prefix + '.col_title' | translate }}</th>
-            <th>{{ prefix + '.col_path' | translate }}</th>
-            <th>{{ prefix + '.col_role_key' | translate }}</th>
-            <th>{{ prefix + '.col_category' | translate }}</th>
-            <th class="slim-table__cell--num">{{ prefix + '.col_order' | translate }}</th>
-            <th>{{ prefix + '.col_visible' | translate }}</th>
+            <th class="slim-table__cell--check">
+              <app-table-select testId="apps-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+            </th>
+            <th appSort="title" [sort]="sort" data-testid="apps-sort-title">{{ prefix + '.col_title' | translate }}</th>
+            <th appSort="path" [sort]="sort">{{ prefix + '.col_path' | translate }}</th>
+            <th appSort="roleKey" [sort]="sort">{{ prefix + '.col_role_key' | translate }}</th>
+            <th appSort="category" [sort]="sort">{{ prefix + '.col_category' | translate }}</th>
+            <th appSort="order" [sort]="sort" class="slim-table__cell--num" data-testid="apps-sort-order">{{ prefix + '.col_order' | translate }}</th>
+            <th appSort="visible" [sort]="sort">{{ prefix + '.col_visible' | translate }}</th>
             <th class="slim-table__cell--actions"></th>
           </tr>
         </thead>
         <tbody>
-          @for (app of filtered(); track app.appId) {
-            <tr>
+          @for (app of rows(); track app.appId) {
+            <tr class="slim-table__row" data-testid="apps-row" [appSelectRow]="'' + app.appId" [selection]="selection" [shown]="shownIds()">
+              <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                <app-table-select testId="apps-select" [selection]="selection" [shown]="shownIds()" [rowId]="'' + app.appId" [label]="'common.table.select_row' | translate" />
+              </td>
               <td [attr.data-label]="prefix + '.col_title' | translate">
                 <div class="um-apps__title">
                   <b>{{ label(app.title) }}</b>
@@ -124,7 +130,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="7" class="slim-table__cell--wrap">
+              <td colspan="8" class="slim-table__cell--wrap">
                 <div class="slim-empty">
                   @if (facade.loading()) {
                     <span class="slim-spinner"></span>

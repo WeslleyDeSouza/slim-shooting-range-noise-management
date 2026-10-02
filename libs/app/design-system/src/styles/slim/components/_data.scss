@@ -130,6 +130,37 @@
       text-align: right;
       width: 1%;
     }
+    // Column with the checkbox of the multi-selection.
+    @include mod('check') {
+      width: 1%;
+      padding-right: 0;
+
+      .slim-check__input {
+        margin: 0;
+      }
+    }
+  }
+  // Column title that sorts the table: a button inside the <th>.
+  @include elem('sort') {
+    display: inline-flex;
+    align-items: center;
+    gap: space(1);
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+
+    @include mod('active') {
+      color: color('ink');
+    }
+  }
+  @include elem('sort-mark') {
+    min-width: 1ch;
+    color: color('text-4');
   }
   @include elem('row') {
     @include mod('clickable') {

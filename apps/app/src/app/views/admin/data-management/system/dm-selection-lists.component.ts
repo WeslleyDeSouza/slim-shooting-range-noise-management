@@ -3,8 +3,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type { SelectionListValueDto } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../common/table-sort-header.component';
 import { SelectionListKey, SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../core/table/table-sort';
 
 const I18N = 'admin.dm_lists';
 /** Id of the table in the export: file name (date and extension are added) and logbook. */
@@ -29,10 +33,21 @@ export const SELECTION_LISTS: readonly SelectionListKey[] = [
  * deleted — an inactive value stays readable on the records that use it.
  * Part of the erweiterte Konfiguration (app 45); data: SelectionListsFacade.
  */
+type ValueSortKey = 'de' | 'fr' | 'it' | 'en' | 'status';
+
+/** What the columns of the values are sorted by (B1 5.5.2). */
+const VALUE_SORT: Record<ValueSortKey, (v: SelectionListValueDto) => SortValue> = {
+  de: (v) => v.labelDe,
+  fr: (v) => v.labelFr,
+  it: (v) => v.labelIt,
+  en: (v) => v.labelEn,
+  status: (v) => v.enabled,
+};
+
 @Component({
   selector: 'app-dm-selection-lists',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, TableExportComponent],
+  imports: [ReactiveFormsModule, TranslatePipe, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   templateUrl: './dm-selection-lists.component.html',
   styleUrl: './dm-selection-lists.component.scss',
 })
@@ -51,9 +66,21 @@ export class DmSelectionListsComponent {
     this.facade.lists(); // re-evaluate when the lists change
     return this.facade.values(this.selected());
   });
-  /** The values of the chosen list in their order, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly sort = new TableSort<ValueSortKey>();
+  protected readonly selection = new TableSelection();
+  /**
+   * The values as shown: in the order of the list — the order of the
+   * dropdowns —, or sorted by a column (B1 5.5.2). The order of the list can
+   * only be changed while it is the order shown.
+   */
+  protected readonly rows = computed(() => this.sort.apply(this.values(), VALUE_SORT));
+  protected readonly shownCodes = computed(() => this.rows().map((v) => v.code));
+  protected readonly sorted = computed(() => this.sort.state().key !== null);
+
+  /** The values of the chosen list as shown, or the marked ones, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.selection.pick(this.rows(), (v) => v.code);
     return tableExport<SelectionListValueDto>({
       table: EXPORT_TABLE,
       title: t(`${I18N}.title`),
@@ -66,7 +93,8 @@ export class DmSelectionListsComponent {
         { header: t(`${I18N}.label_en`), value: (v) => v.labelEn },
         { header: t(`${I18N}.status`), value: (v) => t(v.enabled ? `${I18N}.active` : `${I18N}.inactive`) },
       ],
-      rows: this.values(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
   protected readonly saving = this.facade.saving;
@@ -83,6 +111,8 @@ export class DmSelectionListsComponent {
   });
 
   protected select(key: string): void {
+    // The marks belong to the values of one list.
+    this.selection.clear();
     this.selected.set(key as SelectionListKey);
     this.close();
   }

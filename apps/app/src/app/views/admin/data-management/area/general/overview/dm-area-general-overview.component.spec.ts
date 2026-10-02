@@ -10,6 +10,8 @@ import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facad
 import { DmAreaGeneralOverviewComponent, highlight } from './dm-area-general-overview.component';
 import { SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { fakeSelectionLists } from '../../../../../../core/settings/selection-lists.testing';
+import { TableExportData } from '../../../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../../../core/table/table-export.facade';
 
 function room(no: string | null, name: string, enabled = true, sortOrder = 0): AreaRoomDto {
   return { id: `room-${name}`, coordinationSectionNo: no, name, groupName: null, sortOrder, enabled };
@@ -75,6 +77,8 @@ class AccessStub {
 describe('DmAreaGeneralOverviewComponent (5.15)', () => {
   let fixture: ComponentFixture<DmAreaGeneralOverviewComponent>;
   let facade: FacadeStub;
+  /** What the export button hands to the API. */
+  const exportFacade = { download: jest.fn().mockResolvedValue(true) };
   let access: AccessStub;
 
   beforeEach(async () => {
@@ -85,6 +89,7 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
       providers: [
         provideRouter([]),
         { provide: DataAreaFacade, useValue: facade },
+        { provide: TableExportFacade, useValue: exportFacade },
         { provide: AccessFacade, useValue: access },
         { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
         DataEmitter,
@@ -113,7 +118,8 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
 
   const el = <T extends Element = HTMLElement>(selector: string): T => fixture.nativeElement.querySelector(selector) as T;
   const all = (selector: string): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll(selector));
-  const rowNames = () => all('[data-testid="dmo-room-row"]').map((r) => r.querySelectorAll('td')[1].textContent?.trim().split('\n')[0].trim());
+  /** Cells of a row: 0 = box of the multi-selection, 1 = number, 2 = name. */
+  const rowNames = () => all('[data-testid="dmo-room-row"]').map((r) => r.querySelectorAll('td')[2].textContent?.trim().split('\n')[0].trim());
 
   it('shows the Detailansicht of the Schiessplatz with every field of B1 Abbildung 26', () => {
     expect(el('[data-testid="dmo-name"]').textContent).toContain('Geissalp');
@@ -139,7 +145,7 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
     // Rooms without a Koordinationsabschnitts-Nr. show a dash, not an empty cell (B1 5.15 hint).
     const withoutNo = all('[data-testid="dmo-room-row"][data-room-no=""]');
     expect(withoutNo).toHaveLength(2);
-    expect(withoutNo[0].querySelector('td')?.textContent?.trim()).toBe('—');
+    expect(withoutNo[0].querySelectorAll('td')[1].textContent?.trim()).toBe('—');
   });
 
   it('filters the table by free text over number, name and Aktiv (slm 15)', () => {
@@ -180,6 +186,31 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
     fixture.detectChanges();
     expect(rowNames()[0]).toBe('Stellungsrm C 2');
     expect(rowNames().slice(-2)).toEqual(['Stellungsrm Mw Schönenboden, D', 'NGST Schönenboden D oben']);
+  });
+
+  it('exports the Stellungsräume as shown, or only the marked rows (B1 5.5.3, 5.5.5)', async () => {
+    const exported = async (): Promise<TableExportData> => {
+      exportFacade.download.mockClear();
+      el('[data-testid="dmo-export"]').click();
+      fixture.detectChanges();
+      el('[data-testid="dmo-export-csv"]').click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      fixture.detectChanges();
+      return exportFacade.download.mock.calls[0][0] as TableExportData;
+    };
+    const shown = await exported();
+    expect(shown.table).toBe('stellungsraeume');
+    expect(shown.selection).toBe(false);
+    expect(shown.rows.map((row) => row[1])).toEqual(rowNames());
+
+    // Two rows marked with Shift from the first to the second.
+    const boxes = all('[data-testid="dmo-select"]');
+    boxes[0].click();
+    boxes[1].dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+    fixture.detectChanges();
+    const marked = await exported();
+    expect(marked.selection).toBe(true);
+    expect(marked.rows.map((row) => row[1])).toEqual(rowNames().slice(0, 2));
   });
 
   it('offers «Stammdaten bearbeiten» with the write right and «anzeigen» without', () => {

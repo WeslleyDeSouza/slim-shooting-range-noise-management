@@ -306,6 +306,30 @@ describe('AreaSimulationComponent', () => {
     expect(host.querySelector('[data-testid="sim-result-export"]')).toBeNull();
   });
 
+  it('sorts the Schusszahlen by a column and exports only the marked rows (B1 5.5.2, 5.5.3)', async () => {
+    exportFacade.download.mockClear();
+    const host = fixture.nativeElement as HTMLElement;
+    const weapons = () => el('sim-row').map((row) => (row.textContent?.includes('Pz Hb 74') ? 'Pz Hb 74' : 'Stgw 90'));
+    expect(weapons()).toEqual(['Stgw 90', 'Pz Hb 74']);
+    // Innerhalb Werktag ascending: 1'240 before 257'857.
+    (host.querySelector('[data-testid="sim-sort-inside"] button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(weapons()).toEqual(['Pz Hb 74', 'Stgw 90']);
+
+    (host.querySelector('[data-testid="sim-select"]') as HTMLInputElement).click();
+    fixture.detectChanges();
+    (host.querySelector('[data-testid="sim-export"]') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    (host.querySelector('[data-testid="sim-export-csv"]') as HTMLButtonElement).click();
+    await Promise.resolve();
+    const data = exportFacade.download.mock.calls[0][0] as TableExportData;
+    expect(data.selection).toBe(true);
+    expect(data.rows).toHaveLength(1);
+    expect(data.rows[0][2]).toBe('Pz Hb 74 · 15.5 cm Spr Gr');
+    // The total stays the total of all rows.
+    expect(host.querySelector('.sim__foot')?.textContent).toContain('simulation.total_rows');
+  });
+
   it('opens the popover of a pin', () => {
     el('sim-pin')[0].click();
     fixture.detectChanges();

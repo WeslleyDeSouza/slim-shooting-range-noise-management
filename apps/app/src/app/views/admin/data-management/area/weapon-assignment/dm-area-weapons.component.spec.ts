@@ -6,6 +6,8 @@ import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
 import type { AreaResultDto, RoomWeaponAssignmentDto, WeaponAssignmentRoomDto } from '@ui-slim/apiClient';
 import { WeaponAssignmentFacade } from '../../../../../core/data-area/weapon-assignment.facade';
+import { TableExportData } from '../../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../../core/table/table-export.facade';
 import { DmAreaWeaponsComponent } from './dm-area-weapons.component';
 
 const room = (id: string, no: string | null, name: string, assignmentCount: number, enabled = true): WeaponAssignmentRoomDto => ({
@@ -77,14 +79,18 @@ describe('DmAreaWeaponsComponent (5.17 Zuordnung Waffen)', () => {
   let fixture: ComponentFixture<DmAreaWeaponsComponent>;
   let facade: FacadeStub;
   let navigate: jest.SpyInstance;
+  /** What the export buttons hand to the API. */
+  let exportFacade: { download: jest.Mock };
 
   async function setup(query: Record<string, string> = {}): Promise<void> {
     facade = new FacadeStub();
+    exportFacade = { download: jest.fn().mockResolvedValue(true) };
     await TestBed.configureTestingModule({
       imports: [DmAreaWeaponsComponent],
       providers: [
         provideRouter([]),
         { provide: WeaponAssignmentFacade, useValue: facade },
+        { provide: TableExportFacade, useValue: exportFacade },
         DataEmitter,
         { provide: TranslateService, useValue: TRANSLATE_STUB },
         { provide: ActivatedRoute, useValue: routeStub(query) },
@@ -100,7 +106,8 @@ describe('DmAreaWeaponsComponent (5.17 Zuordnung Waffen)', () => {
   const el = <T extends Element = HTMLElement>(selector: string): T => fixture.nativeElement.querySelector(selector) as T;
   const all = (selector: string): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll(selector));
   const roomNames = () => all('[data-testid="dwa-room"]').map((r) => r.getAttribute('data-name'));
-  const cells = (row: HTMLElement) => Array.from(row.querySelectorAll('td')).map((td) => td.textContent?.replace(/\s+/g, ' ').trim());
+  /** The cells with content; the box of the multi-selection is left out. */
+  const cells = (row: HTMLElement) => Array.from(row.querySelectorAll('td:not(.slim-table__cell--check)')).map((td) => td.textContent?.replace(/\s+/g, ' ').trim());
   const rows = () => all('[data-testid="dwa-row"]').map(cells);
   const header = (table: string, label: string) =>
     all(`${table} th button`).find((b) => b.textContent?.includes(label)) as HTMLButtonElement;
@@ -130,8 +137,35 @@ describe('DmAreaWeaponsComponent (5.17 Zuordnung Waffen)', () => {
   it('is a display: no form, no save, no add or delete control (FAQ 52)', async () => {
     await setup();
     expect(el('[data-testid="dwa-readonly"]').textContent).toContain('readonly');
-    expect(all('form, input:not([type="search"]), select, textarea')).toHaveLength(0);
+    // The boxes only mark rows for the export (5.5.3); nothing can be entered.
+    expect(all('form, input:not([type="search"]):not([type="checkbox"]), select, textarea')).toHaveLength(0);
     expect(all('button[type="submit"]')).toHaveLength(0);
+  });
+
+  it('exports the «Zugeordnete Waffen» as shown, or only the marked rows (B1 5.5.3, 5.5.5)', async () => {
+    await setup();
+    const exported = async (): Promise<TableExportData> => {
+      exportFacade.download.mockClear();
+      el('[data-testid="dwa-export"]').click();
+      fixture.detectChanges();
+      el('[data-testid="dwa-export-csv"]').click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      fixture.detectChanges();
+      return exportFacade.download.mock.calls[0][0] as TableExportData;
+    };
+    const all3 = await exported();
+    expect(all3.table).toBe('waffenzuordnung');
+    expect(all3.selection).toBe(false);
+    expect(all3.rows.map((row) => row[1])).toEqual(['Mg 51', 'Pist 75', 'Stgw 90']);
+
+    const boxes = all('[data-testid="dwa-select"]');
+    boxes[0].click();
+    boxes[2].click();
+    fixture.detectChanges();
+    expect(all('[data-testid="dwa-row"]').map((row) => row.classList.contains('slim-table__row--selected'))).toEqual([true, false, true]);
+    const marked = await exported();
+    expect(marked.selection).toBe(true);
+    expect(marked.rows.map((row) => row[1])).toEqual(['Mg 51', 'Stgw 90']);
   });
 
   it('shows the assignments of the chosen room and writes ?room= (deep link)', async () => {

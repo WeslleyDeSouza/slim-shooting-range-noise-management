@@ -160,6 +160,9 @@
         <table class="slim-table slim-table--stack slim-table--compact" data-testid="dwa-assignments">
           <thead>
             <tr>
+              <th class="slim-table__cell--check">
+                <app-table-select testId="dwa-select-all" [selection]="selection" [shown]="shownIds()" [label]="'common.table.select_all' | translate" />
+              </th>
               @for (col of assignmentColumns; track col.key) {
                 <th [attr.aria-sort]="assignmentSort().key === col.key ? (assignmentSort().asc ? 'ascending' : 'descending') : null">
                   <button
@@ -178,7 +181,17 @@
           </thead>
           <tbody>
             @for (a of assignments(); track a.id) {
-              <tr class="slim-table__row" [class.dwa__assignment--inactive]="!a.enabled" data-testid="dwa-row">
+              <tr
+                class="slim-table__row"
+                [class.dwa__assignment--inactive]="!a.enabled"
+                data-testid="dwa-row"
+                [appSelectRow]="a.id"
+                [selection]="selection"
+                [shown]="shownIds()"
+              >
+                <td class="slim-table__cell--check" [attr.data-label]="'common.table.select_row' | translate">
+                  <app-table-select testId="dwa-select" [selection]="selection" [shown]="shownIds()" [rowId]="a.id" [label]="'common.table.select_row' | translate" />
+                </td>
                 <td [attr.data-label]="prefix + '.col_entry_name' | translate" class="dwa__strong">
                   {{ a.entryName }}
                   @if (!a.enabled) {
@@ -191,7 +204,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="4" class="slim-table__cell--wrap">
+                <td colspan="5" class="slim-table__cell--wrap">
                   <div class="slim-empty">
                     @if (loading()) {
                       <span class="slim-spinner"></span>

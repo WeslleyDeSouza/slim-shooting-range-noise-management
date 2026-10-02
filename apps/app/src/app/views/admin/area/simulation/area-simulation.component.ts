@@ -19,8 +19,13 @@ import type {
   SimulationRowDto,
 } from '@ui-slim/apiClient';
 import { MapPoint, MapViewerComponent } from '@ui-slim/map';
+import { statusRank } from '../../../../common/status-pill.component';
 import { TableExportComponent } from '../../../../common/table-export.component';
+import { TableSelectComponent, TableSelectRowDirective } from '../../../../common/table-select.component';
+import { TableSortHeaderComponent } from '../../../../common/table-sort-header.component';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { TableSelection } from '../../../../core/table/table-selection';
+import { SortValue, TableSort } from '../../../../core/table/table-sort';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
 import { rowKey, SimulationFacade } from '../../../../core/calculation/simulation.facade';
@@ -52,10 +57,35 @@ const BADGE: Record<LightState, string> = {
 const EXPORT_INPUT = 'simulation_schusszahlen';
 const EXPORT_RESULT = 'simulation_resultat';
 
+type InputSortKey = 'room' | 'weapon' | 'inside' | 'outside';
+type ResultSortKey = 'point' | 'limit' | 'current' | 'simulated' | 'delta' | 'state';
+
+/** One line of the Schusszahlen: a Stellungsraum with a Waffe/Kaliber. */
+const inputRowId = (row: SimulationRowDto): string => `${row.roomId}|${row.combinationId}`;
+
+/**
+ * What the columns are sorted by (B1 5.5.2). The Schusszahlen by the Ist of
+ * the year, so a row keeps its place while its value is overridden.
+ */
+const INPUT_SORT: Record<InputSortKey, (row: SimulationRowDto) => SortValue> = {
+  room: (row) => `${row.roomName} ${row.roomNo ?? ''}`,
+  weapon: (row) => `${row.weapon} ${row.caliber}`,
+  inside: (row) => row.inside,
+  outside: (row) => row.outside,
+};
+const RESULT_SORT: Record<ResultSortKey, (r: SimulationResultReceiverDto) => SortValue> = {
+  point: (r) => r.code,
+  limit: (r) => r.limit,
+  current: (r) => r.current,
+  simulated: (r) => r.simulated,
+  delta: (r) => r.delta,
+  state: (r) => statusRank(r.simulatedState),
+};
+
 @Component({
   selector: 'app-area-simulation',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent, TableExportComponent],
+  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
   styleUrl: './area-simulation.component.scss',
   templateUrl: './area-simulation.component.html',
 })
@@ -87,7 +117,18 @@ export class AreaSimulationComponent extends ComponentBase {
   protected readonly scaleFactors = SCALE_FACTORS;
 
   protected readonly base = this.facade.base;
-  protected readonly rows = this.facade.rows;
+  protected readonly inputSort = new TableSort<InputSortKey>();
+  protected readonly inputSelection = new TableSelection();
+  /** The Schusszahlen in the order of the API, or of the chosen column (B1 5.5.2). */
+  protected readonly rows = computed(() => this.inputSort.apply(this.facade.rows(), INPUT_SORT));
+  protected readonly rowIds = computed(() => this.rows().map(inputRowId));
+  protected readonly rowId = inputRowId;
+
+  protected readonly resultSort = new TableSort<ResultSortKey>();
+  protected readonly resultSelection = new TableSelection();
+  /** The Empfangspunkte of the result in the order of the API, or of the chosen column. */
+  protected readonly resultRows = computed(() => this.resultSort.apply(this.result()?.receivers ?? [], RESULT_SORT));
+  protected readonly resultIds = computed(() => this.resultRows().map((r) => r.id));
   protected readonly receivers = this.facade.receivers;
   protected readonly values = this.facade.values;
   protected readonly result = this.facade.result;
@@ -158,6 +199,7 @@ export class AreaSimulationComponent extends ComponentBase {
   /** The Schusszahlen of the simulation as shown: the Ist of the year and the values the simulation runs with. */
   protected readonly inputExportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const picked = this.inputSelection.pick(this.rows(), inputRowId);
     return tableExport<SimulationRowDto>({
       table: EXPORT_INPUT,
       title: t('simulation.inputs_title'),
@@ -175,14 +217,16 @@ export class AreaSimulationComponent extends ComponentBase {
         { header: t('simulation.export.outside_current'), value: (row) => row.outside },
         { header: t('simulation.export.outside_simulated'), value: (row) => this.value(row, 'outside') },
       ],
-      rows: this.rows(),
+      rows: picked.rows,
+      selection: picked.selection,
     });
   };
 
   /** The result of the last simulation: one line per Empfangspunkt and limit. */
   protected readonly resultExportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
-    const lines = (this.result()?.receivers ?? []).flatMap((receiver) => {
+    const picked = this.resultSelection.pick(this.resultRows(), (r) => r.id);
+    const lines = picked.rows.flatMap((receiver) => {
       const simulated = receiver.simulatedRows ?? [];
       return simulated.length
         ? simulated.map((row) => ({
@@ -214,6 +258,7 @@ export class AreaSimulationComponent extends ComponentBase {
         { header: t('simulation.result.assessment'), value: (l) => t(`status_area.${l.state}`) },
       ],
       rows: lines,
+      selection: picked.selection,
     });
   };
 

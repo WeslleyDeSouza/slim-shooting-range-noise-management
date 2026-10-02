@@ -20,9 +20,9 @@ const DM = String.raw`^/admin/data-management`;
 export const HELP_TOPICS: readonly HelpTopic[] = [
   { id: 'general', steps: 5, match: null },
   { id: 'home', steps: 3, match: /^\/admin\/?$/ },
-  { id: 'areas', steps: 5, match: /^\/admin\/area\/?$/ },
+  { id: 'areas', steps: 6, match: /^\/admin\/area\/?$/ },
   { id: 'area_overview', steps: 2, match: new RegExp(`${AREA}/overview$`) },
-  { id: 'shots', steps: 5, match: new RegExp(`${AREA}/shots$`) },
+  { id: 'shots', steps: 7, match: new RegExp(`${AREA}/shots$`) },
   { id: 'details', steps: 5, match: new RegExp(`${AREA}/details$`) },
   { id: 'simulation', steps: 4, match: new RegExp(`${AREA}/simulation$`) },
   { id: 'map', steps: 5, match: new RegExp(`${AREA}/map$`) },

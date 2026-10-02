@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
@@ -57,6 +57,7 @@ export class DmSystemComponent extends ComponentBase implements HasUnsavedChange
   private readonly facade = inject(SettingsFacade);
   private readonly access = inject(AccessFacade);
   private readonly fb = inject(FormBuilder);
+  private readonly changes = inject(ChangeDetectorRef);
 
   protected readonly prefix = I18N;
   protected readonly settings = this.facade.settings;
@@ -289,5 +290,8 @@ export class DmSystemComponent extends ComponentBase implements HasUnsavedChange
     );
     this.dirty.set(false);
     this.submitted.set(false);
+    // The form is filled without events, and the template reads form values (the lock date, the colours):
+    // without this the view keeps what it drew before the settings arrived.
+    this.changes.markForCheck();
   }
 }

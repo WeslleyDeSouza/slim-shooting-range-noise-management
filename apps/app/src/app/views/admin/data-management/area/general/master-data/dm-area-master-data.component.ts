@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -95,6 +96,7 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly changes = inject(ChangeDetectorRef);
 
   protected readonly prefix = I18N;
   protected readonly lists = inject(SelectionListsFacade);
@@ -294,6 +296,9 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
     );
     this.form.markAsPristine();
     this.dirty.set(false);
+    // Filled without events while the template reads form values (the options of the lists):
+    // without this the view keeps what it drew before the data arrived.
+    this.changes.markForCheck();
   }
 
   // --- Kontingente -----------------------------------------------------------

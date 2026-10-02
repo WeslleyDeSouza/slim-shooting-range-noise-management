@@ -22,6 +22,9 @@ const SHOTS = {
   missing: '[data-testid="shots-usage-missing"]',
 } as const;
 
+/** Byte order mark at the start of an exported CSV file. */
+const BOM = String.fromCharCode(0xfeff);
+
 /** Row of the column titles in an exported sheet (below the block of eight rows and the separator). */
 const TITLE_ROW = 10;
 
@@ -82,7 +85,7 @@ test.describe('export of tables', () => {
     const download = await exportAs(page, 'area-export', 'csv');
     expect(download.suggestedFilename()).toMatch(/^schiessplaetze_\d{4}-\d{2}-\d{2}\.csv$/);
 
-    const lines = readFileSync(await download.path(), 'utf8').replace(/^﻿/, '').trim().split('\r\n');
+    const lines = readFileSync(await download.path(), 'utf8').replace(BOM, '').trim().split(/\r?\n/);
     expect(lines[0].split(';').slice(0, 2)).toEqual(['Bezeichnung', 'Koordinationsabschnitt-Nr.']);
     expect(lines).toHaveLength(10);
     expect(lines.some((line) => line.startsWith('Geissalp;1104.020;'))).toBe(true);
@@ -122,8 +125,9 @@ test.describe('a usage under its own address', () => {
     await expect(page.locator(SHOTS.drawer)).toBeVisible();
     await expect(page).toHaveURL(/\/shots\?usage=[0-9a-f-]{36}$/);
     const address = page.url();
-    const unit = await page.locator(`${SHOTS.drawer} [formControlName="unit"]`).inputValue();
-    expect(unit).not.toBe('');
+    const unitField = page.locator(`${SHOTS.drawer} [formControlName="unit"]`);
+    await expect(unitField).not.toHaveValue('');
+    const unit = await unitField.inputValue();
 
     // Closing takes the usage out of the address again.
     await page.locator(`${SHOTS.drawer} .slim-sheet__close`).click();

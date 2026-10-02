@@ -37,7 +37,8 @@
         "s2": "«Solo necessità d’intervento» e i filtri per semaforo restringono l’elenco.",
         "s3": "Un clic su una riga apre i dettagli; i simboli a fine riga conducono a panoramica, colpi, dettagli e simulazione.",
         "s4": "Semaforo: verde = rispettato, arancione = da verificare, rosso = superato, grigio = nessuna base, tratteggiato = non valutabile.",
-        "s5": "I valori soglia e i colori dei semafori provengono dalla configurazione avanzata."
+        "s5": "I valori soglia e i colori dei semafori provengono dalla configurazione avanzata.",
+        "s6": "«Esporta» scrive le righe visualizzate in un file Excel o CSV; la ricerca e i filtri valgono anche per il file."
       },
       "area_overview": {
         "title": "Piazza di tiro – panoramica",
@@ -52,7 +53,9 @@
         "s2": "Sono proposte le combinazioni arma/calibro assegnate al settore delle postazioni.",
         "s3": "Modificare ed eliminare con i simboli a fine riga; un’eliminazione può essere annullata subito dopo.",
         "s4": "Ricerca, filtri ed elenco dei settori delle postazioni restringono la tabella.",
-        "s5": "Gli utilizzi fino alla data di blocco compresa sono bloccati (simbolo del lucchetto): non possono essere registrati, modificati o eliminati."
+        "s5": "Gli utilizzi fino alla data di blocco compresa sono bloccati (simbolo del lucchetto): non possono essere registrati, modificati o eliminati.",
+        "s6": "«Esporta» scrive gli utilizzi visualizzati in un file Excel o CSV – se alcuni utilizzi sono selezionati, soltanto quelli. Colpi e chilogrammi (esplosivi) sono sommati separatamente.",
+        "s7": "Ogni utilizzo ha un proprio indirizzo: quando la sua finestra è aperta, l’indirizzo della pagina porta direttamente a questo utilizzo e può essere trasmesso."
       },
       "details": {
         "title": "Dettagli – punti di ricezione",

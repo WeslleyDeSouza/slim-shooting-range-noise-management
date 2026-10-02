@@ -219,6 +219,16 @@ describe('DmSystemComponent — Erweiterte Konfiguration (B1 5.28, slm 27)', () 
     expect(el('dsys-manual-none')).not.toBeNull();
   });
 
+  it('redraws the mask when the settings arrive after it was rendered: «Sperre aufheben» appears with the Sperrdatum', async () => {
+    await setup();
+    expect(el('dsys-lock-clear')).toBeNull();
+    // The answer of the API comes later than the first rendering (found by the e2e test of the Sperrdatum).
+    facade.settings.set({ ...DEFAULTS, usageLockDate: '2025-12-31' });
+    await settle();
+    expect(el<HTMLInputElement>('dsys-lock').value).toBe('2025-12-31');
+    expect(el('dsys-lock-clear')).not.toBeNull();
+  });
+
   it('is read-only without the right to write', async () => {
     await setup({ write: false, settings: { ...DEFAULTS, usageLockDate: '2025-12-31' } });
     expect(el('dsys-readonly')).not.toBeNull();

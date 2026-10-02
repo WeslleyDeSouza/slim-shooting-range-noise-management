@@ -37,7 +37,8 @@
         "s2": "«Nur Handlungsbedarf» und die Filter je Ampel schränken die Liste ein.",
         "s3": "Ein Klick auf eine Zeile öffnet die Details; die Symbole am Zeilenende führen zu Übersicht, Schusszahlen, Details und Simulation.",
         "s4": "Ampel: grün = eingehalten, orange = zu prüfen, rot = überschritten, grau = keine Grundlage, gestreift = nicht beurteilbar.",
-        "s5": "Die Schwellenwerte und Farben der Ampeln stammen aus der erweiterten Konfiguration."
+        "s5": "Die Schwellenwerte und Farben der Ampeln stammen aus der erweiterten Konfiguration.",
+        "s6": "«Exportieren» schreibt die angezeigten Zeilen als Excel- oder CSV-Datei; Suche und Filter gelten auch für die Datei."
       },
       "area_overview": {
         "title": "Schiessplatz – Übersicht",
@@ -52,7 +53,9 @@
         "s2": "Zur Auswahl stehen die Kombinationen Waffe/Kaliber, die dem Stellungsraum zugeordnet sind.",
         "s3": "Bearbeiten und Löschen über die Symbole am Zeilenende; ein Löschen lässt sich direkt danach rückgängig machen.",
         "s4": "Suche, Filter und die Liste der Stellungsräume schränken die Tabelle ein.",
-        "s5": "Nutzungen bis und mit dem Sperrdatum sind gesperrt (Schloss-Symbol): Sie können nicht erfasst, geändert oder gelöscht werden."
+        "s5": "Nutzungen bis und mit dem Sperrdatum sind gesperrt (Schloss-Symbol): Sie können nicht erfasst, geändert oder gelöscht werden.",
+        "s6": "«Exportieren» schreibt die angezeigten Nutzungen als Excel- oder CSV-Datei – sind Nutzungen markiert, nur diese. Schuss und Kilogramm (Sprengstoff) werden getrennt summiert.",
+        "s7": "Jede Nutzung hat eine eigene Adresse: Ist ihr Fenster geöffnet, führt die Adresse der Seite direkt zu dieser Nutzung und lässt sich weitergeben."
       },
       "details": {
         "title": "Details – Empfangspunkte",

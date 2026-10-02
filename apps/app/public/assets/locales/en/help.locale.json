@@ -37,7 +37,8 @@
         "s2": "“Need for action only” and the filters per traffic light narrow the list.",
         "s3": "A click on a row opens the details; the symbols at the end of the row lead to overview, shot counts, details and simulation.",
         "s4": "Traffic light: green = complied with, orange = to be checked, red = exceeded, grey = no basis, striped = cannot be assessed.",
-        "s5": "The thresholds and colours of the traffic lights come from the advanced configuration."
+        "s5": "The thresholds and colours of the traffic lights come from the advanced configuration.",
+        "s6": "“Export” writes the rows shown to an Excel or CSV file; search and filters apply to the file as well."
       },
       "area_overview": {
         "title": "Shooting range – overview",
@@ -52,7 +53,9 @@
         "s2": "The weapon/calibre combinations assigned to the firing position area are offered.",
         "s3": "Edit and delete with the symbols at the end of the row; a deletion can be undone right afterwards.",
         "s4": "Search, filters and the list of firing position areas narrow the table.",
-        "s5": "Usages up to and including the lock date are locked (lock symbol): they cannot be recorded, changed or deleted."
+        "s5": "Usages up to and including the lock date are locked (lock symbol): they cannot be recorded, changed or deleted.",
+        "s6": "“Export” writes the usages shown to an Excel or CSV file – if usages are marked, only those. Shots and kilograms (explosives) are summed separately.",
+        "s7": "Every usage has an address of its own: while its panel is open, the address of the page leads straight to this usage and can be passed on."
       },
       "details": {
         "title": "Details – receiver points",

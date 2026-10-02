@@ -116,7 +116,9 @@ describe('AdminDataAreaController (HTTP)', () => {
     expect(updated.body).toMatchObject({ classification: 'problematic', spmState: 'in_progress', annex7Overall: true, planningApproval: 'Militärische Plangenehmigung vom 01.02.2026' });
 
     const bad = await api.http().patch(url(geissalpId)).send({ classification: 'whatever' }).expect(400);
-    expect(bad.body.message).toEqual(expect.arrayContaining([expect.stringContaining('classification')]));
+    // The value must be an active entry of the Auswahlliste «classification» (slm 1).
+    expect(bad.body.message).toContain('«whatever»');
+    expect(bad.body.message).toContain('«classification»');
     await api.http().patch(url(geissalpId)).send({ name: '' }).expect(400);
 
     // The Koordinationsabschnitts-Nr. stays unique across the tenant.

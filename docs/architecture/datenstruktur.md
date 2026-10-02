@@ -125,6 +125,7 @@ Drei Ebenen wie in B1 Kap. 10 (Abb. 43); vollständiges ERD: [uml.mmd](uml.mmd) 
   Grenzwert (`laerm_gruen_bis_db`, `laerm_orange_bis_db`; FAQ 166), Ampelfarben (`farbe_gruen/orange/rot`) und die
   Kontaktangaben des Hauptmenüs (`fachkontakt_*`, `systemkontakt_*`). Jede Spalte ist nullbar: leer heisst «Standard»
   (B1 5.10: 100 % / 125 %, −5 dB / 0 dB, Farben des Designs).
+- **Wert einer Auswahlliste** `auswahlliste_wert` (`slm 1`): `liste` (Schlüssel der Liste, z. B. `spm_state`), `code` (stabiler Schlüssel, der auf den Datensätzen steht), `bezeichnung_de/fr/it/en`, `reihenfolge`, `aktiv`. Eine Liste, die niemand geändert hat, hat keine Zeilen – dann gelten die Auslieferungswerte aus `selection-lists.defaults.ts`; die erste Änderung kopiert sie in die Tabelle.
 - **Benutzerhandbuch** `benutzerhandbuch`: das hochgeladene PDF je Mandant (`dateiname`, `groesse`, `inhalt` als BLOB,
   `hochgeladen_von`); ein Upload ersetzt das bisherige Dokument.
 

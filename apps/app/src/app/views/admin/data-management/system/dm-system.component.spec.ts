@@ -6,6 +6,8 @@ import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import type { ManualInfoDto, SystemSettingsDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../core/access/access.facade';
+import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
+import { fakeSelectionLists } from '../../../../core/settings/selection-lists.testing';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { AMPEL_DEFAULT_COLORS, DmSystemComponent, THRESHOLD_DEFAULTS } from './dm-system.component';
 
@@ -70,6 +72,7 @@ describe('DmSystemComponent — Erweiterte Konfiguration (B1 5.28, slm 27)', () 
       imports: [DmSystemComponent],
       providers: [
         { provide: SettingsFacade, useValue: facade },
+        { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
         { provide: AccessFacade, useValue: { canWrite: () => canWrite, load: jest.fn() } },
         DataEmitter,
       ],

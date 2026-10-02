@@ -1,0 +1,156 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { labelOf, SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
+import { fakeSelectionLists, testListValue } from '../../../../core/settings/selection-lists.testing';
+import { DmSelectionListsComponent } from './dm-selection-lists.component';
+
+@Pipe({ name: 'translate' })
+class TranslateStubPipe implements PipeTransform {
+  transform(key: string): string {
+    return key;
+  }
+}
+
+describe('DmSelectionListsComponent — Pflege der Auswahllisten (B1 5.3, slm 1)', () => {
+  let fixture: ComponentFixture<DmSelectionListsComponent>;
+  let lists: ReturnType<typeof fakeSelectionLists>;
+
+  async function setup(readonly = false): Promise<void> {
+    lists = fakeSelectionLists();
+    await TestBed.configureTestingModule({ imports: [DmSelectionListsComponent], providers: [{ provide: SelectionListsFacade, useValue: lists }] })
+      .overrideComponent(DmSelectionListsComponent, { remove: { imports: [TranslatePipe] }, add: { imports: [TranslateStubPipe] } })
+      .compileComponents();
+    fixture = TestBed.createComponent(DmSelectionListsComponent);
+    fixture.componentRef.setInput('readonly', readonly);
+    await settle();
+  }
+
+  async function settle(): Promise<void> {
+    for (let i = 0; i < 3; i++) {
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+  }
+
+  const el = <T extends Element = HTMLElement>(testId: string): T => fixture.nativeElement.querySelector(`[data-testid="${testId}"]`) as T;
+  const rows = (): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll('[data-testid="dlist-row"]'));
+  const codes = () => rows().map((r) => r.getAttribute('data-code'));
+  const type = (testId: string, value: string) => {
+    const input = el<HTMLInputElement>(testId);
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+  };
+  const choose = async (key: string) => {
+    const select = el<HTMLSelectElement>('dlist-list');
+    select.value = key;
+    select.dispatchEvent(new Event('change'));
+    await settle();
+  };
+
+  it('shows the values of the chosen list with their labels and status', async () => {
+    await setup();
+    expect(Array.from(el<HTMLSelectElement>('dlist-list').options).map((o) => o.value)).toEqual([
+      'classification',
+      'recalculation_state',
+      'remediation_project_state',
+      'spm_state',
+      'noise_remediation_state',
+      'project_state',
+      'civil_usage_kind',
+    ]);
+    expect(codes()).toEqual(['open', 'in_progress', 'completed']);
+    expect(rows()[0].textContent).toContain('open (DE)');
+    expect(rows()[0].textContent).toContain('open (FR)');
+    expect(rows()[0].querySelector('[data-testid="dlist-status"]')?.textContent).toContain('admin.dm_lists.active');
+
+    await choose('civil_usage_kind');
+    expect(codes()).toEqual(['obligatory', 'field_shooting', 'other']);
+  });
+
+  it('adds a value: the German label is mandatory, the other languages optional', async () => {
+    await setup();
+    el<HTMLButtonElement>('dlist-add').click();
+    await settle();
+    el<HTMLFormElement>('dlist-form').dispatchEvent(new Event('submit'));
+    await settle();
+    expect(lists.calls).toHaveLength(0);
+    expect(fixture.nativeElement.querySelector('.slim-field--invalid')).not.toBeNull();
+
+    type('dlist-label-de', '  Sistiert ');
+    type('dlist-label-fr', 'Suspendu');
+    el<HTMLFormElement>('dlist-form').dispatchEvent(new Event('submit'));
+    await settle();
+    expect(lists.calls).toEqual([{ kind: 'create', key: 'spm_state', body: { labelDe: 'Sistiert', labelFr: 'Suspendu', labelIt: null, labelEn: null } }]);
+    expect(el('dlist-form')).toBeNull();
+    expect(rows()).toHaveLength(4);
+    expect(rows()[3].textContent).toContain('Sistiert');
+  });
+
+  it('changes the labels of a value', async () => {
+    await setup();
+    rows()[1].querySelector<HTMLButtonElement>('[data-testid="dlist-edit"]')?.click();
+    await settle();
+    expect(el<HTMLInputElement>('dlist-label-de').value).toBe('in_progress (DE)');
+    type('dlist-label-de', 'In Arbeit');
+    type('dlist-label-it', 'In elaborazione');
+    el<HTMLFormElement>('dlist-form').dispatchEvent(new Event('submit'));
+    await settle();
+    expect(lists.calls).toEqual([
+      { kind: 'update', key: 'spm_state', code: 'in_progress', body: { labelDe: 'In Arbeit', labelFr: 'in_progress (FR)', labelIt: 'In elaborazione', labelEn: null } },
+    ]);
+    expect(rows()[1].textContent).toContain('In Arbeit');
+  });
+
+  it('sets a value inactive and active again, but never the last active one', async () => {
+    await setup();
+    const toggle = (i: number) => rows()[i].querySelector<HTMLButtonElement>('[data-testid="dlist-toggle"]') as HTMLButtonElement;
+    toggle(0).click();
+    await settle();
+    expect(lists.calls[0]).toEqual({ kind: 'update', key: 'spm_state', code: 'open', body: { enabled: false } });
+    expect(rows()[0].querySelector('[data-testid="dlist-status"]')?.textContent).toContain('admin.dm_lists.inactive');
+    expect(toggle(0).textContent).toContain('admin.dm_lists.activate');
+
+    toggle(1).click();
+    await settle();
+    // One active value is left: its switch is disabled.
+    expect(toggle(2).disabled).toBe(true);
+    toggle(0).click();
+    await settle();
+    expect(lists.calls[2]).toEqual({ kind: 'update', key: 'spm_state', code: 'open', body: { enabled: true } });
+    expect(toggle(2).disabled).toBe(false);
+  });
+
+  it('moves a value: the two neighbours swap their positions', async () => {
+    await setup();
+    expect(rows()[0].querySelector<HTMLButtonElement>('[data-testid="dlist-up"]')?.disabled).toBe(true);
+    expect(rows()[2].querySelector<HTMLButtonElement>('[data-testid="dlist-down"]')?.disabled).toBe(true);
+    rows()[2].querySelector<HTMLButtonElement>('[data-testid="dlist-up"]')?.click();
+    await settle();
+    expect(lists.calls).toEqual([
+      { kind: 'update', key: 'spm_state', code: 'completed', body: { sortOrder: 2 } },
+      { kind: 'update', key: 'spm_state', code: 'in_progress', body: { sortOrder: 3 } },
+    ]);
+    expect(codes()).toEqual(['open', 'completed', 'in_progress']);
+  });
+
+  it('only shows the lists without the right to write', async () => {
+    await setup(true);
+    expect(rows()).toHaveLength(3);
+    expect(el('dlist-add')).toBeNull();
+    expect(el('dlist-edit')).toBeNull();
+    expect(el('dlist-toggle')).toBeNull();
+  });
+});
+
+describe('labelOf — label of a list value in the language of the user', () => {
+  const value = testListValue('open', { labelDe: 'Offen', labelFr: 'Ouvert', labelIt: null, labelEn: '' });
+
+  it('takes the label of the language and falls back to German', () => {
+    expect(labelOf(value, 'de')).toBe('Offen');
+    expect(labelOf(value, 'fr')).toBe('Ouvert');
+    expect(labelOf(value, 'it')).toBe('Offen');
+    expect(labelOf(value, 'en')).toBe('Offen');
+    expect(labelOf(value, null)).toBe('Offen');
+  });
+});

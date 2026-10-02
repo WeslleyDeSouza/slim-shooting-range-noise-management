@@ -174,4 +174,52 @@ test.describe('erweiterte Konfiguration (5.28)', () => {
       await save(page);
     }
   });
+
+  test('maintains an Auswahlliste: a new value is offered in the Stammdaten, an inactive one is not (slm 1)', async ({ page }) => {
+    const LIST = {
+      pick: '[data-testid="dlist-list"]',
+      add: '[data-testid="dlist-add"]',
+      labelDe: '[data-testid="dlist-label-de"]',
+      labelFr: '[data-testid="dlist-label-fr"]',
+      save: '[data-testid="dlist-save"]',
+      row: '[data-testid="dlist-row"]',
+      toggle: '[data-testid="dlist-toggle"]',
+      status: '[data-testid="dlist-status"]',
+    } as const;
+    // Values cannot be deleted, so every run adds its own.
+    const label = `Sistiert ${Date.now()}`;
+    const spmSelect = page.locator('[data-testid="dmm-spm_state"]');
+    const openMasterData = async () => {
+      await page.goto(ROUTES.area);
+      await page.locator('.slim-table tbody tr.slim-table__row').first().click();
+      await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/details$/);
+      const areaId = page.url().split('/').slice(-2)[0];
+      await page.goto(`/admin/data-management/area/${areaId}/general/master-data`);
+      await expect(spmSelect).toBeVisible();
+    };
+
+    await open(page);
+    await page.locator(LIST.pick).selectOption('spm_state');
+    await expect(page.locator(LIST.row).first()).toContainText('Offen');
+    await page.locator(LIST.add).click();
+    await page.locator(LIST.labelDe).fill(label);
+    await page.locator(LIST.labelFr).fill('Suspendu');
+    await page.locator(LIST.save).click();
+    const added = page.locator(LIST.row).filter({ hasText: label });
+    await expect(added).toHaveCount(1);
+    await expect(added.locator(LIST.status)).toHaveText('Aktiv');
+
+    // The Stammdaten of a Schiessplatz offer the new value.
+    await openMasterData();
+    await expect(spmSelect.locator('option', { hasText: label })).toHaveCount(1);
+
+    // Inactive: no longer offered.
+    await open(page);
+    await page.locator(LIST.pick).selectOption('spm_state');
+    await page.locator(LIST.row).filter({ hasText: label }).locator(LIST.toggle).click();
+    await expect(page.locator(LIST.row).filter({ hasText: label }).locator(LIST.status)).toHaveText('Inaktiv');
+    await openMasterData();
+    await expect(spmSelect.locator('option', { hasText: 'Offen' })).toHaveCount(1);
+    await expect(spmSelect.locator('option', { hasText: label })).toHaveCount(0);
+  });
 });

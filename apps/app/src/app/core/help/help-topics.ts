@@ -33,7 +33,7 @@ export const HELP_TOPICS: readonly HelpTopic[] = [
   { id: 'dm_weapons', steps: 4, match: new RegExp(`${DM}/weapons(/|$)`) },
   { id: 'users', steps: 3, match: new RegExp(`${DM}/(users|roles|apps)(/|$)`) },
   { id: 'logs', steps: 2, match: new RegExp(`${DM}/logs$`) },
-  { id: 'system', steps: 5, match: new RegExp(`${DM}/system$`) },
+  { id: 'system', steps: 6, match: new RegExp(`${DM}/system$`) },
 ];
 
 export const GENERAL_HELP_TOPIC = HELP_TOPICS[0];

@@ -87,7 +87,7 @@
               </td>
               @if (!readonly()) {
                 <td class="slim-table__cell--actions">
-                  <div class="slim-row-actions">
+                  <div class="slim-row-actions dlist__actions">
                     <button type="button" class="dlist__icon" data-testid="dlist-up" [disabled]="first || saving()" [attr.title]="prefix + '.move_up' | translate" [attr.aria-label]="prefix + '.move_up' | translate" (click)="move(v, -1)">
                       <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 10l4-4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                     </button>

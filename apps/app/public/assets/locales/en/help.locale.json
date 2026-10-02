@@ -138,7 +138,8 @@
         "s2": "User manual: upload, replace or remove a PDF. It appears in the main menu.",
         "s3": "Thresholds planning approval: limits of the quota traffic light in percent of the target.",
         "s4": "Thresholds receiver points: limits of the noise traffic light as deviation from the limit value in dB.",
-        "s5": "Traffic light colours and contact details of the main menu; “Restore defaults” resets thresholds and colours."
+        "s5": "Traffic light colours and contact details of the main menu; “Restore defaults” resets thresholds and colours.",
+        "s6": "Selection lists: add values of the selection fields, rename them, change their order or deactivate them."
       }
     }
   }

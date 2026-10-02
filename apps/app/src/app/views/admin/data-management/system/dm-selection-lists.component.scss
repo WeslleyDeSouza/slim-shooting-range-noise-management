@@ -49,6 +49,12 @@
     color: slim.color('text-3');
   }
 
+  // One line per value: arrows, edit, switch next to each other.
+  &__actions {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
   &__icon {
     display: inline-grid;
     place-items: center;

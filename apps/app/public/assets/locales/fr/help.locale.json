@@ -138,7 +138,8 @@
         "s2": "Manuel d’utilisation : téléverser, remplacer ou supprimer un PDF. Il apparaît dans le menu principal.",
         "s3": "Seuils approbation des plans : limites du feu du contingent en pour cent de la valeur cible.",
         "s4": "Seuils points de réception : limites du feu du bruit comme écart par rapport à la valeur limite, en dB.",
-        "s5": "Couleurs des feux et coordonnées du menu principal ; « Rétablir les valeurs par défaut » réinitialise les seuils et les couleurs."
+        "s5": "Couleurs des feux et coordonnées du menu principal ; « Rétablir les valeurs par défaut » réinitialise les seuils et les couleurs.",
+        "s6": "Listes de sélection : ajouter des valeurs aux champs de sélection, les renommer, modifier leur ordre ou les désactiver."
       }
     }
   }

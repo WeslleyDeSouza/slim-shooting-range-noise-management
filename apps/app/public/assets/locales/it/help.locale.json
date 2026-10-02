@@ -138,7 +138,8 @@
         "s2": "Manuale d’uso: caricare, sostituire o rimuovere un PDF. Compare nel menu principale.",
         "s3": "Valori soglia approvazione dei piani: limiti del semaforo del contingente in percento del valore nominale.",
         "s4": "Valori soglia punti di ricezione: limiti del semaforo del rumore come scostamento dal valore limite in dB.",
-        "s5": "Colori dei semafori e dati di contatto del menu principale; «Ripristinare i valori predefiniti» reimposta valori soglia e colori."
+        "s5": "Colori dei semafori e dati di contatto del menu principale; «Ripristinare i valori predefiniti» reimposta valori soglia e colori.",
+        "s6": "Elenchi di selezione: aggiungere valori ai campi di selezione, rinominarli, cambiarne l’ordine o disattivarli."
       }
     }
   }

@@ -138,7 +138,8 @@
         "s2": "Benutzerhandbuch: PDF hochladen, ersetzen oder entfernen. Es erscheint im Hauptmenü.",
         "s3": "Schwellenwerte Plangenehmigung: Grenzen der Kontingent-Ampel in Prozent des Solls.",
         "s4": "Schwellenwerte Empfangspunkte: Grenzen der Lärm-Ampel als Abweichung vom Grenzwert in dB.",
-        "s5": "Ampelfarben und Kontaktangaben des Hauptmenüs; «Standard wiederherstellen» setzt Schwellenwerte und Farben zurück."
+        "s5": "Ampelfarben und Kontaktangaben des Hauptmenüs; «Standard wiederherstellen» setzt Schwellenwerte und Farben zurück.",
+        "s6": "Auswahllisten: Werte der Auswahlfelder hinzufügen, umbenennen, in der Reihenfolge verschieben oder inaktivieren."
       }
     }
   }

@@ -275,7 +275,7 @@ Zuordnung jeder B1-Anforderung zum Umsetzungskapitel (FAQ 8: Beilage ausserhalb 
 <!-- compact -->
 | ID | Anforderung | Kapitel | Status |
 | --- | --- | --- | --- |
-| slm 1 | Auswahllisten durch Admin pflegbar | 5.3, 6.1 | Z |
+| slm 1 | Auswahllisten durch Admin pflegbar | 5.3, 6.1 | P (Pflege der Auswahllisten der Stammdaten und der zivilen Nutzungsart umgesetzt; fachlich fixe Listen bleiben fest) |
 | slm 2 | Kartenviewer swisstopo, LV95, Layer, PDF-Export | 5.2 | T (Viewer mit swisstopo-Hintergrund, Layern, PDF-/Bild-Export und Vollansicht vorhanden; Server-Druckdienst und zusätzliche Layer LP5, FAQ 13 ausstehend) |
 | slm 3 | Tabellenfunktionen (Suche, Sortierung, Filter, Selektion, Export) | 5.3 | T (Suche, Sortierung, Filter, Selektion, XLSX vorhanden; vollständiger Umfang ausstehend) |
 | slm 4 | Nutzbar ohne Berechnungsgrundlage | 5.1 | P |

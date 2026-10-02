@@ -81,6 +81,7 @@ apps/app-e2e/src/actors/
   fachablaeufe/                     rollenübergreifende Fachabläufe mit festgelegtem Soll (Abschnitt 7)
     protokoll-vorlage.md            Ausgangslage → Aktion → Soll → Ist → Beleg
     prio1-kernablaeufe.spec.ts      8 Fälle · prio2-datenfluss.spec.ts 6 Fälle · prio3-betrieb.spec.ts 2 Fälle
+                                    laufen seit 02.10.2026: 1.6, 1.7 und 3.2 (a)–(c) gegen den Demo-Datensatz; Rest Skelett
     faq-praezisierungen.spec.ts     2 Fälle, laufen (kein Skelett): FAQ 52 Rechte 5.17, FAQ 19 / 98 Anhang 7 nach A7X
   fixtures/
     platz-s.md                      Testplatz S: synthetischer Platz mit Handrechnung (Soll-Tabelle); Dataset + Referenzwerte
@@ -112,7 +113,7 @@ Frontend-Ausblenden ist kein Ersatz für serverseitige Autorisierung. Für verbo
 ## 7. Fachabläufe mit festgelegtem Soll-Ergebnis
 
 Vollständige Abläufe zuerst – sie zeigen, ob Oberfläche, Datenmodell und Berechnung zusammen funktionieren.
-Vorbereitet in `fachablaeufe/` (`fixme`, ausser `faq-praezisierungen.spec.ts`), Protokoll je Lauf nach `fachablaeufe/protokoll-vorlage.md`.
+Vorbereitet in `fachablaeufe/` (`fixme`, ausser `faq-praezisierungen.spec.ts` und den Fällen 1.6, 1.7, 3.2), Protokoll je Lauf nach `fachablaeufe/protokoll-vorlage.md`.
 Soll-Werte kommen aus der Empa-Referenz (B1.4, `criterias/support/criteria.ts` `B14_CONTROL`), aus der
 Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel – **nie** aus dem aktuellen Ergebnis der Anwendung.
 
@@ -124,8 +125,8 @@ Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel �
 | 1 | 1.4 Kombination ohne passende Quelle | A01 | Zeitraum 2025: E1 «nicht beurteilbar», nie grün, bis Übersicht/Startseite/Export |
 | 1 | 1.5 Σ Gewichte null / einzelne null | A01 | Z3 verweigert (Default), Z2 Verhältnis → 51.1 / 57.1 |
 | 1 | 1.6 Platz ohne Berechnungsgrundlage | A03 | Hinterrhein: Nutzungen sichtbar, Ampel «Keine Daten» (nicht aus dem Seed) |
-| 1 | 1.7 Verantwortlicher A öffnet Platz B (URL + API) | A02 | 403 `AREA_SCOPE`, keine Datenfragmente |
-| 1 | 1.8 Fachseite/API ohne abgeschlossene MFA | T04 | Login/2FA-Seite, API 401, erst nach Code 200 |
+| 1 | 1.7 Verantwortlicher A öffnet Platz B (URL + API) | A02 | 403 aus der Regel `area-scope` (Meldung, kein Code in der Antwort), keine Datenfragmente; Hinweis `area-not-found` statt 403-Seite |
+| 1 | 1.8 Fachseite/API ohne abgeschlossene MFA | T04 | Login/2FA-Seite, API 401, erst nach Code 200 – blockiert: MFA ist in der Demo ausgeschaltet (galaxy-Auth-Bibliothek) |
 | 2 | 2.1 FGDB mit unbekanntem Stellungsraum | A01 | Warnung mit Ko-Nr., Abbruch, Zähler unverändert |
 | 2 | 2.2 ELO sendet dieselbe Nutzung erneut | S01 | genau eine Nutzung; Antwort gemäss Vertrag; danach E1 57.4 |
 | 2 | 2.3 Mehrere Positionen, Dezimalmengen | A01 / S01 | 333 / 12 / 0.125 kg exakt, Kontingent-Ist 666 |
@@ -133,7 +134,7 @@ Handrechnung `fixtures/platz-s.md` oder aus einer fachlich bestätigten Regel �
 | 2 | 2.5 Gemischte Baujahre + Simulation | A01 | IGW-Zeile 58.0 / PW-Zeile 50.3; A7 39.5 / 30.8; ×10 nur S2 → PW 60.3 rot |
 | 2 | 2.6 Ergebnis exportieren | A01 (A03 negativ) | Werte, Zustand, Zeitraum, «incomplete» wie Anzeige; 5.20 für A03 403 |
 | 3 | 3.1 Zehn Benutzer während einer Berechnung | mehrere | B1 12.5 Antwortzeiten, keine Blockade; Umgebung im Protokoll |
-| 3 | 3.2 Kartendienst fällt aus | S03 | klarer Fehlerzustand, Rest bedienbar; Stub ausgewiesen |
+| 3 | 3.2 Kartendienst fällt aus | S03 | klarer Fehlerzustand, Rest bedienbar; Stub ausgewiesen. Befund 02.10.2026: antwortet der Dienst gar nicht, fehlt der Hinweis (Teilfall `fixme`) |
 
 Mathematische Randfälle laufen **nicht** durch den Browser: Kernel-Tests in `libs/shared/lsv` (grün) plus die
 ausführbaren Service-Fälle `apps/api/src/modules/calculation/rechenfaelle.spec.ts` (25 grün, Soll aus `platz-s.md`;

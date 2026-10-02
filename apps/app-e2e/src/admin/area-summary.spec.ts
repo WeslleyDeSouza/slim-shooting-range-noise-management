@@ -68,9 +68,10 @@ test.describe('area: overview (5.10)', () => {
 
     // The light is the same one the list of the Schiessplätze shows.
     await page.goto(ROUTES.area);
-    const listLight = page.locator('.slim-table tbody tr').first().locator('td').nth(3).locator('.slim-badge');
+    // Cells of a row: box of the multi-selection, Bezeichnung, the two numbers, then the Kontingent light.
+    const listLight = page.locator('.slim-table tbody tr').first().locator('td').nth(4).locator('.slim-badge');
     await expect(listLight).toBeVisible();
-    expect(await colourOf(page, '.slim-table tbody tr:first-child td:nth-child(4) .slim-badge')).toBe(worst);
+    expect(await colourOf(page, '.slim-table tbody tr:first-child td:nth-child(5) .slim-badge')).toBe(worst);
   });
 
   test('compares another year and exports the table', async ({ page }) => {

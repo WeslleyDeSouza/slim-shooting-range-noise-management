@@ -122,14 +122,20 @@ test.describe('table functions: sorting, multi-selection, export of the selectio
     const levels = file.lines.map((line) => Number(line[8]));
     expect(levels).toEqual([...levels].sort((a, b) => a - b));
 
-    // Two marked rows of the Betriebsdaten Anhang 9.
-    await page.locator('[data-testid="dcd-tab-a9"]').click();
-    await expect.poll(() => rows.count()).toBeGreaterThan(1);
+    // Two marked levels: the file holds these two, and the menu says so.
     const boxes = page.locator('[data-testid="dcd-select"]');
     await boxes.nth(0).click();
     await boxes.nth(1).click();
+    const marked = await exportCsv(page, 'dcd-export');
+    expect(marked.scope).toContain('ausgewählte');
+    expect(marked.lines.map((line) => Number(line[8]))).toEqual(levels.slice(0, 2));
+
+    // Another tab is another table with its own file; the marks do not carry over.
+    await page.locator('[data-testid="dcd-tab-a9"]').click();
+    await expect(page.locator('[data-testid="dcd-a9"]')).toBeVisible();
     const a9 = await exportCsv(page, 'dcd-export');
     expect(a9.fileName).toMatch(/^betriebsdaten_anhang9_/);
-    expect(a9.lines).toHaveLength(2);
+    expect(a9.scope).toContain('angezeigte');
+    expect(a9.lines).toHaveLength(await rows.count());
   });
 });

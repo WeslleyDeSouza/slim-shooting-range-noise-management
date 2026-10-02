@@ -1,5 +1,7 @@
-import { FIXTURE_AREAS, tags } from '../support/actors';
-import { test } from '../support/test';
+import type { APIResponse } from '@playwright/test';
+
+import { ACTORS, FIXTURE_AREAS, tags } from '../support/actors';
+import { expect, test, type ActorFixtures } from '../support/test';
 
 /**
  * Fachabläufe Priorität 1 — vollständige Abläufe mit vorher festgelegtem Soll-Ergebnis
@@ -11,9 +13,44 @@ import { test } from '../support/test';
  * (`B14_CONTROL`, `libs/shared/lsv/src/lib/fixtures/b14-demo.fixture.ts`), aus der Handrechnung
  * `fixtures/platz-s.md` oder aus einer bestätigten Fachregel – nie aus der Anwendung.
  *
- * Skelett: alle Fälle `test.fixme`; Skelette zählen nicht als bestanden.
+ * 1.6 und 1.7 laufen gegen den Demo-Datensatz; die übrigen Fälle sind Skelette (`test.fixme`) –
+ * Skelette zählen nicht als bestanden.
  */
-const { S } = FIXTURE_AREAS;
+const { A, B, C, S } = FIXTURE_AREAS;
+
+/** Ampelfarben und der Rahmen von «nicht beurteilbar» – «Keine Daten» trägt keine davon. */
+const COLOURED = /slim-badge--(success|warning|danger|outline)/;
+
+/** Meldung der Regel `area-scope` (apps/api/src/modules/area/scope/area-scope.rule.ts) in der 403-Antwort. */
+const AREA_SCOPE_MESSAGE = 'Not assigned to this Schiessplatz';
+
+type Api = ActorFixtures['apiAs'];
+
+interface AreaRow {
+  id: string;
+  name: string;
+  noiseStatus: string;
+  noiseStatusReason: string | null;
+  noiseStatusBasis: string | null;
+}
+
+interface UsageOverview {
+  kpi: { totalShots: number; count: number };
+  combinations: { roomId: string; combinationId: string; quantityUnit: string; enabled: boolean }[];
+  usages: { id: string }[];
+}
+
+/** Antwort als JSON; ein anderer Status als 200 bricht mit dem Text der Antwort ab. */
+async function jsonOf<T>(call: Promise<APIResponse>): Promise<T> {
+  const res = await call;
+  expect(res.status(), await res.text()).toBe(200);
+  return (await res.json()) as T;
+}
+
+/** Die Schiessplätze, die der angemeldete Akteur sieht. */
+function areasOf(apiAs: Api): Promise<AreaRow[]> {
+  return jsonOf<AreaRow[]>(apiAs.get('/api/admin/area'));
+}
 
 test.describe('Prio 1 · Kernabläufe', () => {
   test.fixme(
@@ -108,33 +145,198 @@ test.describe('Prio 1 · Kernabläufe', () => {
     },
   );
 
-  test.fixme(
+  test(
     '1.6 Platz ohne Berechnungsgrundlage öffnen (Interessent) – Nutzungen sichtbar, keine erfundene Lärmampel',
     { annotation: tags({ actor: 'A03', prio: 1, useCase: '4.6', slm: [4, 8, 9] }) },
-    async () => {
+    async ({ page, signInAs, apiAs }) => {
       // Ausgangslage: Platz C (Hinterrhein, 0 Berechnungen) – zusätzlich eine Nutzung auf C erfassen (als A01), damit
-      //               «Nutzungsdaten bleiben sichtbar» prüfbar ist; Demo-Seed heute: 0 Nutzungen auf Hinterrhein.
+      //               «Nutzungsdaten bleiben sichtbar» prüfbar ist; Demo-Seed: 0 Nutzungen auf Hinterrhein.
       // Aktion:       als A03 Übersicht → Hinterrhein → Übersicht/Schusszahlen/Details/Simulation.
       // Soll (slm 4, 5.10): Schusszahlen listen die Nutzung und summieren; Details «keine Berechnungsgrundlage»;
-      //               Ampel Lärm = «Keine Daten» (none) in Übersicht, Kontextleiste, Startseite – nicht grün, nicht
+      //               Ampel Lärm = «Keine Daten» (none) in Übersicht und Kontextleiste – nicht grün, nicht
       //               «nicht beurteilbar» (das ist O8 und setzt eine Grundlage voraus); Kontingent-Ampel unabhängig davon.
-      //               Bekannter Widerspruch im Demo-Seed (validierung-fachlich.md 4): Thun/Bière tragen Seed-Ampeln ohne
-      //               Grundlage – für diesen Fall muss die Ampel aus der Berechnung kommen, nicht aus dem Seed.
-      // Ist:          –
-      // Beleg:        Screenshots + GET summary.
+      //               Kein Platz ohne Berechnung trägt eine Lärmampel: sie kommt aus der Berechnung, nicht aus dem Seed.
+      //               Simulation: Rollenmatrix B1 8.1.2 gibt dem Interessenten kein Recht (X) → API 403, nichts Erfundenes.
+      // Nicht geprüft: Startseite – ihre Kennzahlen zählen je Platz die schlechtere der beiden Ampeln (Kontingent / Lärm),
+      //               ein Lärm-Anteil allein ist dort nicht ablesbar.
+      // Beleg:        Playwright-Trace; Antworten GET area, usage/overview, calculation/assessment.
+      const year = new Date().getFullYear();
+      const QUANTITY = 120;
+      const UNIT = `Fachablauf 1.6 ${Date.now()}`;
+
+      await signInAs('A01');
+      const area = (await areasOf(apiAs)).find((a) => a.name === C.name);
+      expect(area, `${C.name} fehlt im Demo-Datensatz`).toBeTruthy();
+      const base = `/api/admin/area/${area?.id}`;
+      expect(await jsonOf<unknown[]>(apiAs.get(`${base}/calculation`)), `${C.name} muss ohne Berechnung sein`).toEqual([]);
+      const before = await jsonOf<UsageOverview>(apiAs.get(`${base}/usage/overview?year=${year}`));
+      expect(before.usages, `${C.name} muss ${year} ohne Nutzung sein`).toHaveLength(0);
+      const combination = before.combinations.find((c) => c.enabled && c.quantityUnit === 'shots');
+      expect(combination, `${C.name} braucht eine zulässige Kombination in Schuss`).toBeTruthy();
+
+      let usageId: string | undefined;
+      try {
+        const created = await apiAs.post(`${base}/usage`, {
+          data: {
+            roomId: combination?.roomId,
+            unit: UNIT,
+            date: `${year}-01-08`,
+            timeFrom: '08:00',
+            timeTo: '10:00',
+            usageType: 'military',
+            positions: [{ combinationId: combination?.combinationId, quantity: QUANTITY }],
+          },
+        });
+        expect(created.status(), await created.text()).toBe(201);
+        usageId = ((await created.json()) as { id: string }).id;
+
+        await signInAs('A03');
+
+        // Server: keine Lärmampel ohne Berechnung – für Hinterrhein und für jeden anderen Platz ohne Berechnung.
+        const areas = await areasOf(apiAs);
+        const c = areas.find((a) => a.id === area?.id);
+        expect(c).toMatchObject({ noiseStatus: 'none', noiseStatusReason: 'no-calculation', noiseStatusBasis: null });
+        for (const a of areas) {
+          const states = await jsonOf<unknown[]>(apiAs.get(`/api/admin/area/${a.id}/calculation`));
+          if (!states.length) expect(a.noiseStatus, `${a.name} hat keine Berechnung, trägt aber eine Lärmampel`).toBe('none');
+        }
+
+        // Server: die Nutzung bleibt sichtbar und wird summiert; beurteilt wird nichts.
+        const overview = await jsonOf<UsageOverview>(apiAs.get(`${base}/usage/overview?year=${year}`));
+        expect(overview.usages.map((u) => u.id)).toEqual([usageId]);
+        expect(overview.kpi).toMatchObject({ totalShots: QUANTITY, count: 1 });
+        const assessment = await jsonOf<{ calculation: unknown; receivers: unknown[] }>(apiAs.get(`${base}/calculation/assessment`));
+        expect(assessment.calculation).toBeNull();
+        expect(assessment.receivers).toEqual([]);
+        expect((await apiAs.get(`${base}/calculation/simulation`)).status()).toBe(403);
+
+        // Übersicht Schiessplätze: Lärmampel ohne Farbe, mit dem Grund.
+        await page.goto('/admin/area');
+        const noise = page.locator('[data-testid="area-row"]', { hasText: C.name }).locator('app-status-pill').nth(1).locator('.slim-badge');
+        await expect(noise).toHaveText(/Keine (Daten|Berechnungsgrundlage)/);
+        await expect(noise).toHaveAttribute('data-reason', 'no-calculation');
+        await expect(noise).not.toHaveClass(COLOURED);
+
+        // Kontextleiste und Übersicht des Platzes.
+        await page.goto(`/admin/area/${area?.id}/overview`);
+        const barNoise = page.locator('.area-ctx__status app-status-pill').nth(1).locator('.slim-badge');
+        await expect(barNoise).toHaveText(/Keine (Daten|Berechnungsgrundlage)/);
+        await expect(barNoise).not.toHaveClass(COLOURED);
+        const summaryNoise = page.locator('[data-testid="summary-light-noise"] .slim-badge');
+        await expect(summaryNoise).toHaveAttribute('data-reason', 'no-calculation');
+        await expect(summaryNoise).not.toHaveClass(COLOURED);
+
+        // Schusszahlen: die Nutzung steht in der Tabelle und in den Kennzahlen.
+        await page.goto(`/admin/area/${area?.id}/shots`);
+        const row = page.locator('[data-testid="shots-row"]');
+        await expect(row).toHaveCount(1);
+        await expect(row).toContainText(UNIT);
+        await expect(row.locator('[data-testid="shots-quantity"]')).toContainText(String(QUANTITY));
+        await expect(page.locator('[data-testid="shots-kpi-total"]')).toHaveText(String(QUANTITY));
+        await expect(page.locator('[data-testid="shots-kpi-count"]')).toHaveText('1');
+
+        // Details: Hinweis statt Beurteilung, keine Empfangspunkte, keine Zähler.
+        await page.goto(`/admin/area/${area?.id}/details`);
+        await expect(page.locator('.slim-empty__title')).toHaveText('Keine Berechnungsgrundlage');
+        await expect(page.locator('[data-testid="details-counts"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="details-pin"]')).toHaveCount(0);
+
+        // Simulation: nichts Erfundenes auf der Seite (das Recht fehlt, siehe 403 oben).
+        await page.goto(`/admin/area/${area?.id}/simulation`);
+        await expect(page.locator('[data-testid="area-tab-simulation"]')).toBeVisible();
+        await expect(page.locator('[data-testid="sim-pin"]')).toHaveCount(0);
+        await expect(page.locator('[data-testid="sim-result-row"]')).toHaveCount(0);
+      } finally {
+        if (usageId) {
+          await signInAs('A01');
+          await apiAs.post(`${base}/usage/delete`, { data: { ids: [usageId] } });
+        }
+      }
     },
   );
 
-  test.fixme(
+  test(
     '1.7 Verantwortlicher für Platz A öffnet Platz B per URL und API – serverseitig verweigert',
     { annotation: tags({ actor: 'A02', prio: 1, useCase: '4.10', slm: [6, 8, 35], matrix: '5.9 W/R-O' }) },
-    async () => {
+    async ({ page, signInAs, apiAs }) => {
       // Ausgangslage: A02 = Geissalp/Thun; Id von Bière bekannt (als A01 gelesen).
       // Aktion:       als A02 alle Area-Routen mit {B} per URL; alle Area-Endpunkte mit {B} per apiAs (GET/POST/PATCH).
-      // Soll:         UI 403-Seite ohne Datenfragmente (kein Name/keine KPI von Bière im DOM); API 403 mit Code AREA_SCOPE;
-      //               Übersicht/Summary ohne B. Detailliert in a02-platzverantwortlicher/uc-4.10 (Fall «fremder Platz»).
-      // Ist:          –
-      // Beleg:        Network-Log der 403-Antworten, Screenshot der 403-Seite.
+      // Soll:         API 403 aus der Regel `area-scope`, ohne Daten von Bière in der Antwort; Liste und Summary ohne B;
+      //               UI ohne Datenfragmente (kein Name, keine Nummer von Bière im DOM), keine Seite des Platzes gerendert,
+      //               keine erfolgreiche Anfrage mit der Id von B. Gegenprobe: der eigene Platz A antwortet 200.
+      // Abweichungen vom ersten Drehbuch (Lauf 02.10.2026):
+      //               1. Die Antwort trägt keinen Code `AREA_SCOPE`: der galaxy-RulesGuard gibt nur die Meldung der Regel
+      //                  weiter («Not assigned to this Schiessplatz»). Geprüft wird die Meldung; ein maschinenlesbarer Code fehlt.
+      //               2. Die Anwendung hat keine 403-Seite. Sie zeigt den Hinweis «Schiessplatz nicht gefunden … oder Sie
+      //                  haben keinen Zugriff darauf» (`area-not-found`) und rendert die Seiten des Platzes nicht.
+      // Beleg:        Playwright-Trace mit den 403-Antworten.
+      await signInAs('A01');
+      const all = await areasOf(apiAs);
+      const own = all.find((a) => a.name === A.name);
+      const foreign = all.find((a) => a.name === B.name);
+      expect(own && foreign, `${A.name} und ${B.name} müssen im Demo-Datensatz sein`).toBeTruthy();
+
+      await signInAs('A02');
+
+      // Listen: nur die zugeordneten Plätze.
+      const mine = await areasOf(apiAs);
+      expect(mine.map((a) => a.name).sort()).toEqual([...(ACTORS.A02.areas ?? [])].sort());
+      expect(await jsonOf<{ total: number }>(apiAs.get('/api/admin/area/summary'))).toMatchObject({ total: mine.length });
+
+      // Gegenprobe: der eigene Platz ist erreichbar – die 403 unten kommen nicht aus einer kaputten Sitzung.
+      expect((await apiAs.get(`/api/admin/area/${own?.id}`)).status()).toBe(200);
+      expect((await apiAs.get(`/api/admin/area/${own?.id}/usage/overview`)).status()).toBe(200);
+
+      // Fremder Platz: jeder Endpunkt mit der Id von B antwortet 403 mit der Meldung der Regel – auch die
+      // schreibenden, bevor die Eingabe geprüft wird.
+      const b = `/api/admin/area/${foreign?.id}`;
+      const dm = `/api/admin/data/area/${foreign?.id}`;
+      const scoped: [string, () => Promise<APIResponse>][] = [
+        ['GET area', () => apiAs.get(b)],
+        ['PATCH area', () => apiAs.patch(b, { data: { name: 'fremd' } })],
+        ['GET usage/overview', () => apiAs.get(`${b}/usage/overview`)],
+        ['POST usage', () => apiAs.post(`${b}/usage`, { data: {} })],
+        ['POST usage/delete', () => apiAs.post(`${b}/usage/delete`, { data: { ids: [] } })],
+        ['GET calculation', () => apiAs.get(`${b}/calculation`)],
+        ['GET calculation/assessment', () => apiAs.get(`${b}/calculation/assessment`)],
+        ['GET calculation/quota', () => apiAs.get(`${b}/calculation/quota`)],
+        ['GET calculation/map', () => apiAs.get(`${b}/calculation/map`)],
+        ['GET calculation/simulation', () => apiAs.get(`${b}/calculation/simulation`)],
+        ['POST calculation/simulation', () => apiAs.post(`${b}/calculation/simulation`, { data: {} })],
+        ['GET data/area', () => apiAs.get(dm)],
+        ['GET data/area/weapon-assignment', () => apiAs.get(`${dm}/weapon-assignment`)],
+      ];
+      for (const [name, call] of scoped) {
+        const res = await call();
+        const body = await res.text();
+        expect(res.status(), `${name}: ${body}`).toBe(403);
+        expect(body, name).toContain(AREA_SCOPE_MESSAGE);
+        expect(body, name).not.toContain(B.name);
+      }
+      // Berechnungen der Datenverwaltung: A02 hat das Recht gar nicht (Matrix 5.18–5.21 X) – 403, egal aus welchem Grund.
+      expect((await apiAs.get(`${dm}/calculations`)).status()).toBe(403);
+
+      // Oberfläche: Adresse mit der Id von B – Hinweis statt Seite, nichts von Bière im DOM, keine Antwort mit Daten.
+      const leaked: string[] = [];
+      page.on('response', (response) => {
+        if (response.url().includes(String(foreign?.id)) && response.url().includes('/api/') && response.status() < 400) {
+          leaked.push(`${response.status()} ${response.url()}`);
+        }
+      });
+      const addresses = [
+        ...['overview', 'shots', 'details', 'simulation', 'map'].map((p) => `/admin/area/${foreign?.id}/${p}`),
+        ...['general/overview', 'general/master-data', 'weapon-assignment', 'calculations/overview'].map(
+          (p) => `/admin/data-management/area/${foreign?.id}/${p}`,
+        ),
+      ];
+      for (const address of addresses) {
+        await page.goto(address);
+        await expect(page.locator('[data-testid="area-not-found"]'), address).toBeVisible();
+        await expect(page.locator('[data-testid="area-page"]'), address).toHaveCount(0);
+        await expect(page.locator('body'), address).not.toContainText(B.name);
+        await expect(page.locator('body'), address).not.toContainText(B.coordinationSectionNo);
+      }
+      expect(leaked).toEqual([]);
     },
   );
 
@@ -142,6 +344,8 @@ test.describe('Prio 1 · Kernabläufe', () => {
     '1.8 Fachseite und API ohne abgeschlossene MFA aufrufen – kein Zugriff vor vollständiger Anmeldung',
     { annotation: tags({ actor: 'T04', prio: 1, slm: [35, 56] }) },
     async () => {
+      // Blockiert:    MFA ist in der Demo ausgeschaltet (Entscheid 02.10.2026) und wird über die galaxy-Auth-Bibliothek
+      //               eingeschaltet; der Fall läuft erst auf einer Umgebung mit eingeschalteter MFA.
       // Ausgangslage: Konto mit 2FA (E2E_T04_*; MAIL_HOST für den Code, sonst Code aus dem Test-Postfach/DB-Stub –
       //               als Stub ausweisen). Kein storageState.
       // Aktion:       Login mit Passwort → Weiterleitung /auth/two-fa-login; OHNE Code: /admin/area aufrufen,

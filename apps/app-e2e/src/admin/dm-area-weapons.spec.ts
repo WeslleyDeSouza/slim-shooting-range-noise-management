@@ -95,7 +95,8 @@ test.describe('data management: Schiessplatz › Zuordnung Waffen', () => {
 
     await expect(page.locator(DM.readonly)).toContainText('nur einsehbar');
     const mask = page.locator('app-dm-area-weapons');
-    await expect(mask.locator('form, select, textarea, input:not([type="search"]), button[type="submit"]')).toHaveCount(0);
+    // The boxes of the table only mark rows for the export (B1 5.5.3); nothing can be entered or saved.
+    await expect(mask.locator('form, select, textarea, input:not([type="search"]):not([type="checkbox"]), button[type="submit"]')).toHaveCount(0);
   });
 
   test('follows the Schiessplatz of the context bar', async ({ page }) => {

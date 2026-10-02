@@ -550,7 +550,7 @@
                   <div class="slim-field">
                     <label class="slim-field__label" [for]="'shots-category-' + i">{{ 'shots.columns.category' | translate }}</label>
                     <select class="slim-select" [id]="'shots-category-' + i" formControlName="category" [attr.data-testid]="i === 0 ? 'shots-category' : null">
-                      <option value="">{{ 'forms.all' | translate }}</option>
+                      <option value="">{{ 'filter.all' | translate }}</option>
                       @for (c of formCategories(); track c) {
                         <option [value]="c">{{ 'shots.category.' + c | translate }}</option>
                       }

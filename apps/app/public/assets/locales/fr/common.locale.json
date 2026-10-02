@@ -98,6 +98,7 @@
     "sysadmin": "Administration système",
     "application": "Application",
     "version": "Version",
+    "build": "État du {{date}} · {{commit}}",
     "more": "Plus",
     "documentation": "Documentation",
     "data": "Données",

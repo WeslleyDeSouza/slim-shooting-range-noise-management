@@ -1,0 +1,11 @@
+:host {
+  display: block;
+}
+
+.build-stamp {
+  // Second line: date and hash keep their width while the digits change.
+  &__build {
+    display: block;
+    font-variant-numeric: tabular-nums;
+  }
+}

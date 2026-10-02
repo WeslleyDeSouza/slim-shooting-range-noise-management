@@ -23,9 +23,11 @@ import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
 import { AccessFacade } from '../../../core/access/access.facade';
 import { AreaSwitcherComponent } from './area-switcher.component';
+import { BuildStampComponent } from './build-stamp.component';
 import { AreaFacade } from '../../../core/area/area.facade';
 import { AuthFacade } from '../../auth/auth.facade';
 import { resetWelcome } from '../home/welcome-dialog.component';
+import { BUILD_INFO } from '../../../../environments/build-info';
 
 interface NavItem {
   key: string;
@@ -63,6 +65,7 @@ interface AreaPage {
     SlimThemeToggleComponent,
     LanguageSwitchComponent,
     AreaSwitcherComponent,
+    BuildStampComponent,
   ],
   host: { '(document:click)': 'onDocumentClick($event)' },
   template: `
@@ -224,7 +227,7 @@ interface AreaPage {
                   </svg>
                   <span class="admin-layout__menu-text"
                     >{{ 'shell.version' | translate
-                    }}<small>SLIM {{ version }}</small></span
+                    }}<small>SLIM {{ version }}@if (build.commit) { · {{ build.commit }} }</small></span
                   >
                 </div>
                 <div class="slim-menu__divider slim-u-mobile-only"></div>
@@ -540,8 +543,8 @@ interface AreaPage {
           }
         </nav>
         }
-        <div class="slim-sidebar__footer slim-text--muted slim-text--xs">
-          {{ 'shell.org' | translate }} · SLIM {{ version }}
+        <div class="slim-sidebar__footer slim-text--muted slim-text--xs" data-testid="shell-version">
+          <app-build-stamp [info]="build" />
         </div>
       </aside>
 
@@ -592,7 +595,9 @@ export class AdminLayoutComponent extends ComponentBase {
   private readonly translate = inject(TranslateService);
 
   protected readonly routes = APP_ROUTES;
-  protected readonly version = '0.0.1';
+  /** Which build is running (tools/build-info.js stamps it in the CI build). */
+  protected readonly build = BUILD_INFO;
+  protected readonly version = BUILD_INFO.version;
   protected readonly summary = this.area.summary;
   protected readonly openMenu = signal<'main' | 'user' | null>(null);
 

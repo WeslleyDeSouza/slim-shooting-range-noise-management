@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "ng-swagger": "node tools/swagger.generator.js",
+    "build-info": "node tools/build-info.js",
     "graph:build": "nx graph --groupByFolder --file=graph.json",
     "all": "concurrently \"npx nx serve api\" \"npx nx serve app\"",
     "start": "npm run all",

@@ -422,20 +422,28 @@ export class AreaShotsComponent extends ComponentBase {
     for (const p of usage?.positions ?? [{ category: '', combinationId: '', quantity: 0 }]) {
       this.positions.push(this.positionGroup(p.category, p.combinationId, p.quantity));
     }
-    this.form.reset({
-      roomId: usage?.roomId ?? this.room() ?? '',
-      unit: usage?.unit ?? '',
-      date: usage?.date ?? '',
-      timeFrom: usage?.timeFrom ?? '',
-      timeTo: usage?.timeTo ?? '',
-      usageType: usage?.usageType ?? 'military',
-      civilUsageKind: usage?.civilUsageKind ?? '',
-      personCount: usage?.personCount ?? null,
-      positions: this.positions.getRawValue(),
-      note: usage?.note ?? '',
-    });
-    if (this.readonly()) this.form.disable();
-    else this.form.enable();
+    // Filled and enabled without the per-control events: `enable()` re-emits the value of every
+    // control, and the event of `roomId` runs the room-change handler, which clears category and
+    // Waffe/Kaliber of the positions given here (an edited Nutzung opened with «Bitte wählen»).
+    // One group event afterwards updates the view.
+    this.form.reset(
+      {
+        roomId: usage?.roomId ?? this.room() ?? '',
+        unit: usage?.unit ?? '',
+        date: usage?.date ?? '',
+        timeFrom: usage?.timeFrom ?? '',
+        timeTo: usage?.timeTo ?? '',
+        usageType: usage?.usageType ?? 'military',
+        civilUsageKind: usage?.civilUsageKind ?? '',
+        personCount: usage?.personCount ?? null,
+        positions: this.positions.getRawValue(),
+        note: usage?.note ?? '',
+      },
+      { emitEvent: false },
+    );
+    if (this.readonly()) this.form.disable({ emitEvent: false });
+    else this.form.enable({ emitEvent: false });
+    this.form.updateValueAndValidity();
     this.dirty.set(false);
     this.drawerOpen.set(true);
   }

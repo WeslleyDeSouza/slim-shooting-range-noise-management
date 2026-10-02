@@ -27,7 +27,7 @@ Noch nicht ins Lösungskonzept eingearbeitet:
 | FAQ | Stelle | Inhalt der Antwort |
 | --- | --- | --- |
 | 37, 70 | 6.4 | Unterlagen auf Deutsch; Schulung bei Bedarf auch auf Französisch oder Italienisch, vor Ort (Bern und weitere Standorte), rund ein halber Tag, 2–3 Personen je Schulung. |
-| 52 | 5.1, Matrix slm 17 | Pflegefunktion im UI entfällt; 5.17 ist Anzeige, Pflege über Import bzw. DB-Administration; Rechtematrix 8.1.2 für 5.17 von R/W auf R. |
+| 52 | 5.1, Matrix slm 17 | Pflegefunktion im UI entfällt; 5.17 ist Anzeige, Pflege über Import bzw. DB-Administration; Rechtematrix 8.1.2 für 5.17 von R/W auf R. Im Code erledigt (02.10.2026): Maske 5.17 als Anzeige umgesetzt, Recht 48 auf «read»; im Text steht slm 17 noch als «Zuordnungsmaske ausstehend». |
 | 97, 138, 170 | 2.2, Risikotabelle 6.5 | Vorbestehende Komponenten bleiben bei der Entwicklerin; Nutzungsrecht nach Art. 6.2.4, Quellcode-Lieferung (Art. 2.9.1), Deklaration in der SBOM; im Projekt erstellte Erweiterungen sind Arbeitsergebnisse der Bestellerin. |
 | 121, 176 | 2.2, 3.2 | FGDB bleibt Angebotsbasis; Import/Export über eine klar abgegrenzte Verarbeitungsschicht, damit ein Wechsel auf GeoPackage/INTERLIS mit vertretbarem Aufwand möglich ist (Change LP5). |
 | 142 | 5.4, Summary | Basislösung für Desktop und Tablet (mindestens 1600 × 1200); Smartphone nur für die mobile Erfassungsmaske mit QR-Zugriff (LP1b). |

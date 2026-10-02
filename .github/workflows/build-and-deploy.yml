@@ -265,6 +265,8 @@ jobs:
       - name: Build applications
         run: |
           npx nx run api:build && npm run ng-swagger
+          # Stamp the app with version, commit and commit date (sidebar footer «Stand …»).
+          npm run build-info
           npx nx run-many --target=build --projects=api,app --configuration=production
           npm run ngsw
           ls dist/apps

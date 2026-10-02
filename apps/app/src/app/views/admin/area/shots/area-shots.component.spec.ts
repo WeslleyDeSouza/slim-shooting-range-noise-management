@@ -236,6 +236,50 @@ describe('AreaShotsComponent', () => {
     expect(el().querySelector('[data-testid="shots-toast"]')?.textContent).toContain('shots.toast.created');
   });
 
+  it('opens a usage for editing with its Stellungsraum, category and Waffe/Kaliber preselected, and saves a changed quantity', async () => {
+    // u2 (Inf Bat 12, 17.06.2026): two positions on r1 — Stgw 90 (1000 Schuss) and Sprengladung (2.5 kg).
+    const row = Array.from(rows()).find((r) => r.textContent?.includes('Inf Bat 12')) as HTMLElement;
+    row.querySelector<HTMLButtonElement>('[data-testid="shots-edit"]')?.click();
+    fixture.detectChanges();
+    await settle();
+
+    const component = fixture.componentInstance as unknown as {
+      form: { getRawValue(): { roomId: string; positions: { category: string; combinationId: string; quantity: number }[] } };
+      positions: { at(i: number): { controls: Record<string, { setValue(v: unknown): void }> } };
+      save(): Promise<void>;
+    };
+    // The form model carries the stored positions …
+    expect(component.form.getRawValue().roomId).toBe('r1');
+    expect(component.form.getRawValue().positions).toEqual([
+      { category: 'handguns', combinationId: 'c1', quantity: 1000 },
+      { category: 'artillery', combinationId: 'c3', quantity: 2.5 },
+    ]);
+    // … and the selects show them (not «Bitte wählen»).
+    const lines = el().querySelectorAll('[data-testid="shots-position"]');
+    expect(lines.length).toBe(2);
+    const selects = (line: Element) => Array.from(line.querySelectorAll<HTMLSelectElement>('select'));
+    expect(selects(lines[0]).map((x) => x.value)).toEqual(['handguns', 'c1']);
+    expect(selects(lines[1]).map((x) => x.value)).toEqual(['artillery', 'c3']);
+    expect(selects(lines[0])[1].selectedOptions[0].textContent?.trim()).toBe('Stgw 90 · 5.6 mm');
+
+    // Changing only the quantity saves without touching the Waffe/Kaliber.
+    component.positions.at(0).controls['quantity'].setValue(1200);
+    fixture.detectChanges();
+    await component.save();
+    await settle();
+    expect(facade.create).not.toHaveBeenCalled();
+    expect(facade.updateUsage).toHaveBeenCalledWith(
+      'u2',
+      expect.objectContaining({
+        roomId: 'r1',
+        positions: [
+          { combinationId: 'c1', quantity: 1200 },
+          { combinationId: 'c3', quantity: 2.5 },
+        ],
+      }),
+    );
+  });
+
   it('requires the civil kind for «Zivil» and rejects times off the quarter hour', async () => {
     el().querySelector<HTMLButtonElement>('[data-testid="shots-new"]')?.click();
     fixture.detectChanges();

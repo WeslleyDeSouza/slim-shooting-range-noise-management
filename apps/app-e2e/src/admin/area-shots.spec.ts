@@ -109,4 +109,68 @@ test.describe('area: shot counts', () => {
     await page.locator(SHOTS.deleteConfirm).click();
     await expect(page.locator(SHOTS.row)).toHaveCount(total);
   });
+
+  test('edits a usage: Stellungsraum, category and Waffe/Kaliber are preselected, only the quantity changes', async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const unit = `E2E Bearbeiten ${Date.now()}`;
+
+    await page.goto(ROUTES.area);
+    await page
+      .locator('.slim-table tbody tr')
+      .first()
+      .locator('[data-testid="area-action-shots"]')
+      .click();
+    await expect.poll(() => page.locator(SHOTS.row).count()).toBeGreaterThan(10);
+    const total = await page.locator(SHOTS.row).count();
+
+    // A usage of our own to edit, so no row of the demo is touched.
+    await page.locator(SHOTS.newButton).click();
+    const drawer = page.locator(SHOTS.drawer);
+    await drawer.locator('#shots-room').selectOption({ index: 1 });
+    await drawer.locator('#shots-unit').fill(unit);
+    await drawer.getByRole('button', { name: /Heute|Today|Aujourd|Oggi/ }).click();
+    await drawer.getByRole('button', { name: /Vormittag|Morning|Matin|Mattina/ }).click();
+    await drawer.locator(SHOTS.category).selectOption({ index: 1 });
+    await drawer.locator(SHOTS.weapon).selectOption({ index: 1 });
+    await drawer.locator(SHOTS.quantity).fill('100');
+    const room = await drawer.locator('#shots-room').inputValue();
+    const category = await drawer.locator(SHOTS.category).inputValue();
+    const weapon = await drawer.locator(SHOTS.weapon).inputValue();
+    expect(weapon).not.toBe('');
+    await drawer.locator(SHOTS.save).click();
+    await expect(drawer).toBeHidden();
+    const created = page.locator(SHOTS.row).filter({ hasText: unit });
+    await expect(created).toHaveCount(1);
+
+    // Edit: the drawer shows what was stored — not «Bitte wählen» in the weapon select.
+    await created.locator('[data-testid="shots-edit"]').click();
+    await expect(drawer).toBeVisible();
+    await expect(drawer.locator('#shots-room')).toHaveValue(room);
+    await expect(drawer.locator('#shots-unit')).toHaveValue(unit);
+    await expect(drawer.locator(SHOTS.category)).toHaveValue(category);
+    await expect(drawer.locator(SHOTS.weapon)).toHaveValue(weapon);
+    await expect(drawer.locator(SHOTS.quantity)).toHaveValue('100');
+
+    // Only the quantity changes; the save needs no new pick of the weapon.
+    await drawer.locator(SHOTS.quantity).fill('150');
+    await drawer.locator(SHOTS.save).click();
+    await expect(drawer).toBeHidden();
+    await expect(created).toContainText('150');
+    await expect(page.locator(SHOTS.row)).toHaveCount(total + 1);
+
+    // Stored: reopening shows the same weapon and the new quantity.
+    await created.locator('[data-testid="shots-edit"]').click();
+    await expect(drawer.locator(SHOTS.weapon)).toHaveValue(weapon);
+    await expect(drawer.locator(SHOTS.quantity)).toHaveValue('150');
+    await drawer.locator('.slim-sheet__close').click(); // nothing changed, so no «verwerfen?» dialog
+    await expect(drawer).toBeHidden();
+
+    // Leave the data as we found it.
+    await created.locator('[data-testid="shots-delete"]').click();
+    await page.locator(SHOTS.deleteConfirm).click();
+    await expect(page.locator(SHOTS.row)).toHaveCount(total);
+  });
 });

@@ -94,6 +94,14 @@ export class DmAreaWeaponsComponent extends ComponentBase {
         if (pick && pick.id !== current) this.selectedRoomId.set(pick.id);
       });
     });
+    // The switcher keeps this component and only changes `:areaId`: load the
+    // other Schiessplatz (the first value is handled by getData()).
+    effect(() => {
+      const id = this.areaId();
+      untracked(() => {
+        if (id && this.facade.areaId() && this.facade.areaId() !== id) void this.facade.load(id);
+      });
+    });
   }
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit (the area id is set by the context route). */

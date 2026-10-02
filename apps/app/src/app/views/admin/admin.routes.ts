@@ -168,10 +168,14 @@ export const ADMIN_ROUTES: Routes = [
                   },
                 ],
               },
-              placeholder(S.weaponAssignment, {
-                title: 'menu.area_weapon_assignment',
-                crumbs: DM_AREA,
-              }),
+              // Zuordnung Waffen (5.17): Stellungsräume + zugeordnete Kombinationen, nur Anzeige (FAQ 52)
+              {
+                path: S.weaponAssignment,
+                loadComponent: () =>
+                  import('./data-management/area/weapon-assignment/dm-area-weapons.component').then(
+                    (c) => c.DmAreaWeaponsComponent,
+                  ),
+              },
               // Berechnungen: tabs Übersicht (5.18) · Import (5.19) · Export (5.20) · Details (5.21)
               {
                 path: S.calculations,

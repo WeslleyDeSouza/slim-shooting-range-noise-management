@@ -23,6 +23,7 @@ interface WeaponAssignmentState {
 export class WeaponAssignmentFacade extends SignalStore<WeaponAssignmentState> {
   private readonly api = inject(AdminDataAreaWeaponsService);
 
+  readonly areaId = this.select((s) => s.areaId);
   readonly area = this.select((s) => s.model?.area ?? null);
   readonly rooms = this.select((s) => s.model?.rooms ?? []);
   readonly assignments = this.select((s) => s.model?.assignments ?? []);

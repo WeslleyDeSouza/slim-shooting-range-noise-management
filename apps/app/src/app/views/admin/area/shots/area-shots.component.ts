@@ -24,7 +24,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type {
   SelectionListValueDto,
   UsageCombinationDto,
@@ -32,9 +32,11 @@ import type {
   UsageResultDto,
   UsageRoomDto,
 } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 
 /** Sortable columns of the table. */
@@ -88,6 +90,8 @@ interface Toast {
 }
 
 const TOAST_MS = 6000;
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'schusszahlen';
 const QUICK_TIMES = {
   morning: ['08:00', '11:30'],
   afternoon: ['13:30', '17:00'],
@@ -109,13 +113,13 @@ function usageFormValidator(group: {
 /**
  * «Schiessplatz – Schusszahlen» (B1 5.11, mock `_mocks/area/index.html`):
  * KPIs, Stellungsräume with counts, the year's usages with filters, sorting,
- * bulk delete + undo, and the create / edit drawer. Renders inside the area
+ * export (Excel/CSV, 5.5.5), bulk delete + undo, and the create / edit drawer. Renders inside the area
  * context (`AreaContextComponent`), data from `UsageFacade`.
  */
 @Component({
   selector: 'app-area-shots',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, DatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, DatePipe, TableExportComponent],
   templateUrl: './area-shots.component.html',
   styleUrl: './area-shots.component.scss',
 })
@@ -134,6 +138,7 @@ export class AreaShotsComponent extends ComponentBase {
   });
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly categories = WEAPON_CATEGORIES;
@@ -262,6 +267,50 @@ export class AreaShotsComponent extends ComponentBase {
   protected readonly units = computed(() =>
     [...new Set(this.usages().map((u) => u.unit))].sort((a, b) => a.localeCompare(b)),
   );
+
+  /**
+   * The table for the Excel-/CSV-Export (B1 5.5.5, slm 3): the marked usages
+   * when some are marked (5.5.3), otherwise all usages shown — both in the
+   * order of the table. One row per usage, as in the table.
+   */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const marked = this.selected();
+    const shown = this.filtered();
+    const rows = marked.size ? shown.filter((u) => marked.has(u.id)) : shown;
+    const joined = (set: ReadonlySet<string>, prefix: string) => [...set].map((code) => t(prefix + code)).join(', ');
+    return tableExport<UsageResultDto>({
+      table: EXPORT_TABLE,
+      title: t('shots.title'),
+      subtitle: this.areaLabel(),
+      selection: marked.size > 0,
+      filters: [
+        { label: t('shots.columns.room'), value: this.roomName() },
+        { label: t('shots.date_from'), value: swissDate(this.dateFrom()) },
+        { label: t('shots.date_to'), value: swissDate(this.dateTo()) },
+        { label: t('shots.export.search'), value: this.query().trim() },
+        { label: t('shots.columns.type'), value: joined(this.typeFilter(), 'shots.type.') },
+        { label: t('shots.columns.category'), value: joined(this.categoryFilter(), 'shots.category.') },
+      ],
+      columns: [
+        { header: t('shots.columns.room'), value: (u) => u.roomName },
+        { header: t('shots.columns.unit'), value: (u) => u.unit },
+        { header: t('shots.export.date'), value: (u) => swissDate(u.date) },
+        { header: t('shots.form.from'), value: (u) => u.timeFrom },
+        { header: t('shots.form.to'), value: (u) => u.timeTo },
+        { header: t('shots.columns.type'), value: (u) => t(`shots.type.${u.usageType}`) },
+        { header: t('shots.form.civil_kind'), value: (u) => (u.civilUsageKind ? this.lists.label('civil_usage_kind', u.civilUsageKind) : null) },
+        { header: t('shots.columns.category'), value: (u) => t(`shots.category.${u.category}`) },
+        { header: t('shots.columns.weapon'), value: (u) => u.weaponName },
+        { header: t('shots.columns.shots'), value: (u) => u.shots },
+        { header: t('shots.form.quantity_unit'), value: (u) => t(u.quantityUnit === 'kg' ? 'shots.unit_kg' : u.quantityUnit === 'mixed' ? 'shots.unit_mixed' : 'shots.unit_shots') },
+        { header: t('shots.form.persons'), value: (u) => u.personCount },
+        { header: t('shots.columns.recorded_by'), value: (u) => u.recordedBy },
+        { header: t('shots.export.source'), value: (u) => t(`shots.export.source_${u.source}`) },
+      ],
+      rows,
+    });
+  };
 
   // Drawer / form --------------------------------------------------------
   protected readonly drawerOpen = signal(false);
@@ -663,4 +712,10 @@ function toIsoDate(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
+}
+
+/** `YYYY-MM-DD` as `DD.MM.YYYY`; an empty date stays empty. */
+function swissDate(date: string | null | undefined): string {
+  const [year, month, day] = (date ?? '').split('-');
+  return year && month && day ? `${day}.${month}.${year}` : '';
 }

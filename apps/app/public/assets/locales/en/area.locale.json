@@ -2,12 +2,12 @@
   "title": "Shooting ranges overview",
   "subtitle": "Quotas and noise exposure at a glance.",
   "year": "Year",
-  "export": "Export",
   "search_placeholder": "Search shooting range or coordination section no.",
   "filter": {
     "all": "All",
     "attention": "Needs action only",
-    "attention_info": "Only ranges whose quota or noise light shows «To review» or «Exceeded»."
+    "attention_info": "Only ranges whose quota or noise light shows «To review» or «Exceeded».",
+    "search": "Search"
   },
   "scope_lock": "Authorised shooting ranges only",
   "count": "{{n}} shooting ranges",
@@ -43,7 +43,6 @@
   "shots": {
     "title": "Shot counts",
     "subtitle": "Range usages of {{area}}, the basis of the noise calculation.",
-    "export_soon": "Export (Excel) of the filtered usages – coming soon",
     "new": "Record usage",
     "readonly_notice": "You have read access to this shooting range. Recording, editing and deleting are not possible.",
     "lock_notice": "Recording shot counts is locked up to and including {{date}}. Usages up to this date can no longer be recorded, edited or deleted.",
@@ -150,7 +149,15 @@
       "undo": "Undo"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pcs / kg"
+    "unit_mixed": "pcs / kg",
+    "export": {
+      "date": "Date",
+      "source": "Source",
+      "source_manual": "Recorded in SLIM",
+      "source_elo": "ELO",
+      "source_import": "Import",
+      "search": "Search"
+    }
   },
   "details": {
     "title": "Details · Receiver points",

@@ -20,23 +20,7 @@
           }
         </select>
       </label>
-      <button
-        type="button"
-        class="slim-btn"
-        disabled
-        [attr.title]="'shots.export_soon' | translate"
-      >
-        <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M8 2v8M8 10l-3-3M8 10l3-3M2.5 13.5h11"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span class="slim-btn__label">{{ 'export' | translate }}</span>
-      </button>
+      <app-table-export testId="shots-export" [source]="exportSource" [disabled]="!filtered().length" />
       @if (!readonly()) {
         <button
           type="button"

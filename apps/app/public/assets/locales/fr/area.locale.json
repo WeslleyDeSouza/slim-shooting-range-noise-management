@@ -2,12 +2,12 @@
   "title": "Aperçu des places de tir",
   "subtitle": "Contingents et nuisances sonores en un coup d'œil.",
   "year": "Année",
-  "export": "Exporter",
   "search_placeholder": "Rechercher une place de tir ou un n° de secteur de coordination",
   "filter": {
     "all": "Tous",
     "attention": "Uniquement à traiter",
-    "attention_info": "Uniquement les places de tir dont le feu contingent ou bruit indique « À vérifier » ou « Dépassé »."
+    "attention_info": "Uniquement les places de tir dont le feu contingent ou bruit indique « À vérifier » ou « Dépassé ».",
+    "search": "Recherche"
   },
   "scope_lock": "Uniquement les places de tir autorisées",
   "count": "{{n}} places de tir",
@@ -43,7 +43,6 @@
   "shots": {
     "title": "Nombre de coups",
     "subtitle": "Utilisations de la place de tir {{area}}, base du calcul du bruit.",
-    "export_soon": "Export (Excel) des utilisations filtrées – à venir",
     "new": "Saisir une utilisation",
     "readonly_notice": "Vous avez un droit de lecture pour cette place de tir. Saisir, modifier et supprimer ne sont pas possibles.",
     "lock_notice": "La saisie des coups tirés est verrouillée jusqu’au {{date}} inclus. Les utilisations jusqu’à cette date ne peuvent plus être saisies, modifiées ni supprimées.",
@@ -150,7 +149,15 @@
       "undo": "Annuler"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pièces / kg"
+    "unit_mixed": "pièces / kg",
+    "export": {
+      "date": "Date",
+      "source": "Origine",
+      "source_manual": "Saisi dans SLIM",
+      "source_elo": "ELO",
+      "source_import": "Import",
+      "search": "Recherche"
+    }
   },
   "details": {
     "title": "Détails · Points de réception",

@@ -2,12 +2,12 @@
   "title": "Panoramica piazze di tiro",
   "subtitle": "Contingenti e immissioni di rumore a colpo d'occhio.",
   "year": "Anno",
-  "export": "Esporta",
   "search_placeholder": "Cerca piazza di tiro o n. settore di coordinamento",
   "filter": {
     "all": "Tutti",
     "attention": "Solo da trattare",
-    "attention_info": "Solo piazze di tiro il cui semaforo contingente o rumore indica «Da verificare» o «Superato»."
+    "attention_info": "Solo piazze di tiro il cui semaforo contingente o rumore indica «Da verificare» o «Superato».",
+    "search": "Ricerca"
   },
   "scope_lock": "Solo piazze di tiro autorizzate",
   "count": "{{n}} piazze di tiro",
@@ -43,7 +43,6 @@
   "shots": {
     "title": "Numero di colpi",
     "subtitle": "Utilizzi della piazza di tiro {{area}}, base del calcolo del rumore.",
-    "export_soon": "Esportazione (Excel) degli utilizzi filtrati – in arrivo",
     "new": "Registrare un utilizzo",
     "readonly_notice": "Per questa piazza di tiro dispone solo del diritto di lettura. Registrare, modificare ed eliminare non è possibile.",
     "lock_notice": "La registrazione dei colpi è bloccata fino al {{date}} compreso. Gli utilizzi fino a questa data non possono più essere registrati, modificati o eliminati.",
@@ -150,7 +149,15 @@
       "undo": "Annulla"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pezzi / kg"
+    "unit_mixed": "pezzi / kg",
+    "export": {
+      "date": "Data",
+      "source": "Origine",
+      "source_manual": "Registrato in SLIM",
+      "source_elo": "ELO",
+      "source_import": "Importazione",
+      "search": "Ricerca"
+    }
   },
   "details": {
     "title": "Dettagli · Punti di ricezione",

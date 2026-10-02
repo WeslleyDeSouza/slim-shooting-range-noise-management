@@ -24,8 +24,8 @@ import { tableExport, TableExportData } from '../../../core/table/table-export';
 
 type StatusFilter = '' | AreaStatus;
 
-/** File name of the export (date and extension are added). */
-const EXPORT_FILE = 'schiessplaetze';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'schiessplaetze';
 
 /**
  * "Übersicht Schiessplätze" (mock view-plaetze, chapters 5.8 / 5.9):
@@ -400,9 +400,16 @@ export class AreaOverviewComponent extends ComponentBase {
   /** The table as shown (search and filters applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
+    const status = (value: StatusFilter) => (value ? t(`status_area.${value}`) : null);
     return tableExport<AreaResultDto>({
-      fileName: EXPORT_FILE,
-      sheet: t('title'),
+      table: EXPORT_TABLE,
+      title: t('title'),
+      filters: [
+        { label: t('filter.search'), value: this.query().trim() },
+        { label: t('columns.quota'), value: status(this.quotaFilter()) },
+        { label: t('columns.noise'), value: status(this.noiseFilter()) },
+        { label: t('filter.attention'), value: this.attention() ? t('common.yes') : null },
+      ],
       columns: [
         { header: t('columns.name'), value: (r) => r.name },
         { header: t('columns.ka'), value: (r) => r.coordinationSectionNo },

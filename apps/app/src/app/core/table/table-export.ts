@@ -1,11 +1,14 @@
-import { buildXlsx, CellValue } from './xlsx-writer';
+import type { TableExportDto, TableExportFilterDto } from '@ui-slim/apiClient';
 
 /**
  * Export of a table to Excel or CSV (B1 5.5.5, slm 3). A page describes its
  * table with `tableExport()` at the moment of the click, so the file holds
- * the rows as they are shown: filtered and sorted, or the selected rows.
+ * the rows as they are shown: filtered and sorted, or the selected rows
+ * (5.5.3). The file itself is written by the API (`admin/export/table`,
+ * layout of the ELO exports) and the export is logged there.
  */
-export type ExportFormat = 'xlsx' | 'csv';
+export type ExportFormat = TableExportDto['format'];
+export type CellValue = string | number | null | undefined;
 
 export interface ExportColumn<T> {
   /** Column title, already translated. */
@@ -14,67 +17,50 @@ export interface ExportColumn<T> {
   value: (row: T) => CellValue;
 }
 
-/** A table ready to be written: titles and cell values. */
-export interface TableExportData {
-  /** File name without date and extension, e.g. `schiessplaetze`. */
-  fileName: string;
-  /** Name of the sheet (Excel). */
-  sheet: string;
-  header: string[];
-  rows: CellValue[][];
+/** A table as the API takes it, without the format. */
+export type TableExportData = Omit<TableExportDto, 'format' | 'lang'>;
+
+export interface TableExportDefinition<T> {
+  /** Id of the table = file name without date and extension, e.g. `schiessplaetze`. */
+  table: string;
+  /** Title in the block on top of the sheet, already translated. */
+  title: string;
+  /** Addition to the title, e.g. the Schiessplatz. */
+  subtitle?: string | null;
+  /** Filters that are set; entries without a value are left out. */
+  filters?: readonly { label: string; value: string | number | null | undefined }[];
+  /** `rows` are the selected rows, not all rows shown. */
+  selection?: boolean;
+  columns: readonly ExportColumn<T>[];
+  rows: readonly T[];
 }
 
-export function tableExport<T>(definition: { fileName: string; sheet: string; columns: readonly ExportColumn<T>[]; rows: readonly T[] }): TableExportData {
+/** The API shows at most this many filters in the block. */
+const MAX_FILTERS = 6;
+
+export function tableExport<T>(definition: TableExportDefinition<T>): TableExportData {
+  const filters: TableExportFilterDto[] = (definition.filters ?? [])
+    .filter((filter) => filter.value !== null && filter.value !== undefined && String(filter.value).trim() !== '')
+    .slice(0, MAX_FILTERS)
+    .map((filter) => ({ label: plain(filter.label), value: String(filter.value) }));
   return {
-    fileName: definition.fileName,
-    sheet: definition.sheet,
-    header: definition.columns.map((column) => column.header),
-    rows: definition.rows.map((row) => definition.columns.map((column) => column.value(row))),
+    table: definition.table,
+    title: plain(definition.title),
+    subtitle: definition.subtitle ?? null,
+    filters,
+    selection: !!definition.selection,
+    header: definition.columns.map((column) => plain(column.header)),
+    rows: definition.rows.map((row) => definition.columns.map((column) => column.value(row) ?? null)),
   };
 }
 
-const CSV_SEPARATOR = ';';
-const CSV_LINE_END = '\r\n';
-/** Byte order mark: Excel reads the file as UTF-8 only with it. */
-const CSV_BOM = '﻿';
-
-/** CSV as Excel in Switzerland opens it: semicolon, CRLF, UTF-8 with BOM. */
-export function toCsv(data: TableExportData): string {
-  const lines = [data.header, ...data.rows].map((row) => row.map(csvCell).join(CSV_SEPARATOR));
-  return CSV_BOM + lines.join(CSV_LINE_END) + CSV_LINE_END;
+/** Titles of the masks carry soft hyphens for narrow columns; a file must not. */
+function plain(text: string): string {
+  return text.replace(/\u00AD/g, '');
 }
 
-function csvCell(value: CellValue): string {
-  if (value === null || value === undefined) return '';
-  if (typeof value === 'number') return Number.isFinite(value) ? String(value) : '';
-  const text = guardFormula(value);
-  return /[";\r\n]/.test(text) || text !== text.trim() ? `"${text.replace(/"/g, '""')}"` : text;
-}
-
-/**
- * A text that starts with `=`, `+`, `-` or `@` would be run as a formula when
- * the CSV is opened in a spreadsheet; an apostrophe in front makes it text.
- */
-function guardFormula(text: string): string {
-  return /^[=+\-@\t\r]/.test(text) ? `'${text}` : text;
-}
-
-export function toXlsx(data: TableExportData): Uint8Array {
-  return buildXlsx(data.sheet, data.header, data.rows);
-}
-
-/** `<name>_<YYYY-MM-DD>.<format>`, as the other exports of the application. */
-export function exportFileName(name: string, format: ExportFormat, date = new Date()): string {
+/** `<table>_<YYYY-MM-DD>.<format>`, as the other exports of the application. */
+export function exportFileName(table: string, format: ExportFormat, date = new Date()): string {
   const day = [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
-  return `${name}_${day}.${format}`;
-}
-
-const MIME: Record<ExportFormat, string> = {
-  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  csv: 'text/csv;charset=utf-8',
-};
-
-export function exportBlob(data: TableExportData, format: ExportFormat): Blob {
-  const content: BlobPart = format === 'xlsx' ? (toXlsx(data) as BlobPart) : toCsv(data);
-  return new Blob([content], { type: MIME[format] });
+  return `${table}_${day}.${format}`;
 }

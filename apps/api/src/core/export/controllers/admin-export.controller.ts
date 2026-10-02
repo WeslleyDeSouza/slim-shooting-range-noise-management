@@ -40,7 +40,8 @@ export class AdminExportController {
   @Post('table')
   @HttpCode(200)
   @ApiOperation({ summary: 'Tabelle einer Maske als Excel- oder CSV-Datei (B1 5.5.5); wird protokolliert' })
-  @ApiProduces(MIME.xlsx, MIME.csv)
+  // One media type in the contract, so the generated client has one method; the response names the real type.
+  @ApiProduces('application/octet-stream')
   @ApiOkResponse({ schema: { type: 'string', format: 'binary' }, description: 'Die Datei (xlsx mit Kopfblock und fixierten Kopfzeilen, oder csv)' })
   @ApiBadRequestResponse({ description: 'Eine Zeile hat mehr Zellen als die Tabelle Spalten' })
   async table(

@@ -71,7 +71,8 @@
       "xlsx": "Excel (.xlsx)",
       "csv": "CSV (.csv)",
       "rows_shown": "{{n}} righe visualizzate",
-      "rows_selected": "{{n}} righe selezionate"
+      "rows_selected": "{{n}} righe selezionate",
+      "failed": "Non è stato possibile creare l’esportazione. Riprovare."
     }
   },
   "status": {

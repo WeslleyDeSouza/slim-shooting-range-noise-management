@@ -2,12 +2,12 @@
   "title": "Übersicht Schiessplätze",
   "subtitle": "Kontingente und Lärmbelastung im Blick.",
   "year": "Jahr",
-  "export": "Exportieren",
   "search_placeholder": "Schiessplatz oder Koordinationsabschnitt-Nr. suchen",
   "filter": {
     "all": "Alle",
     "attention": "Nur Handlungsbedarf",
-    "attention_info": "Nur Schiessplätze, deren Kontingent- oder Lärmampel «Zu prüfen» oder «Überschritten» zeigt."
+    "attention_info": "Nur Schiessplätze, deren Kontingent- oder Lärmampel «Zu prüfen» oder «Überschritten» zeigt.",
+    "search": "Suche"
   },
   "scope_lock": "Nur berechtigte Schiessplätze",
   "count": "{{n}} Schiessplätze",
@@ -43,7 +43,6 @@
   "shots": {
     "title": "Schusszahlen",
     "subtitle": "Schiessplatz-Nutzungen des Platzes {{area}}, Grundlage für die Lärmberechnung.",
-    "export_soon": "Export (Excel) der gefilterten Nutzungen – folgt",
     "new": "Nutzung erfassen",
     "readonly_notice": "Sie haben Leseberechtigung für diesen Schiessplatz. Erfassen, Bearbeiten und Löschen sind nicht möglich.",
     "lock_notice": "Die Schusszahlenerfassung ist bis und mit {{date}} gesperrt. Nutzungen bis zu diesem Datum können nicht mehr erfasst, bearbeitet oder gelöscht werden.",
@@ -150,7 +149,15 @@
       "undo": "Rückgängig"
     },
     "unit_kg": "kg",
-    "unit_mixed": "Stück / kg"
+    "unit_mixed": "Stück / kg",
+    "export": {
+      "date": "Datum",
+      "source": "Herkunft",
+      "source_manual": "Erfasst in SLIM",
+      "source_elo": "ELO",
+      "source_import": "Import",
+      "search": "Suche"
+    }
   },
   "details": {
     "title": "Details · Empfangspunkte",

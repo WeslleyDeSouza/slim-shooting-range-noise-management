@@ -71,7 +71,8 @@
       "xlsx": "Excel (.xlsx)",
       "csv": "CSV (.csv)",
       "rows_shown": "{{n}} angezeigte Zeilen",
-      "rows_selected": "{{n}} ausgewählte Zeilen"
+      "rows_selected": "{{n}} ausgewählte Zeilen",
+      "failed": "Der Export konnte nicht erstellt werden. Bitte erneut versuchen."
     }
   },
   "status": {

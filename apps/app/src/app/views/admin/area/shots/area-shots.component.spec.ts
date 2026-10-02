@@ -2,15 +2,18 @@ import { Pipe, PipeTransform, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type {
   UsageCombinationDto,
   UsageKpiDto,
   UsageResultDto,
   UsageRoomDto,
 } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
+import { TableExportData } from '../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 import { AreaShotsComponent, minutesBetween } from './area-shots.component';
 import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
@@ -78,6 +81,8 @@ describe('AreaShotsComponent', () => {
     remove: jest.Mock;
     restore: jest.Mock;
   };
+  /** What the export button hands to the API. */
+  let exportFacade: { download: jest.Mock };
 
   const el = () => fixture.nativeElement as HTMLElement;
   /** Let pending promises settle without waiting for the 6 s toast timer. */
@@ -102,6 +107,7 @@ describe('AreaShotsComponent', () => {
       remove: jest.fn().mockResolvedValue(['u1']),
       restore: jest.fn().mockResolvedValue(['u1']),
     };
+    exportFacade = { download: jest.fn().mockResolvedValue(true) };
 
     // The area id lives on the parent route (`/admin/area/:id/shots`).
     const paramMap = { get: (k: string) => (k === 'id' ? AREA_ID : null) };
@@ -113,11 +119,18 @@ describe('AreaShotsComponent', () => {
         { provide: UsageFacade, useValue: facade },
         { provide: SettingsFacade, useValue: { usageLockDate: lockDate } },
         { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
+        { provide: TableExportFacade, useValue: exportFacade },
+        // Keys pass through, as in the pipe stub.
+        { provide: TranslateService, useValue: { translate: (key: string) => key, lang: 'de' } },
         { provide: AreaFacade, useValue: { byId: () => ({ id: AREA_ID, name: 'Geissalp', coordinationSectionNo: '1104.020' }) } },
         { provide: ActivatedRoute, useValue: { parent: parentRoute, paramMap: of(paramMap), snapshot: parentRoute.snapshot } },
       ],
     })
       .overrideComponent(AreaShotsComponent, {
+        remove: { imports: [TranslatePipe] },
+        add: { imports: [TranslateStubPipe] },
+      })
+      .overrideComponent(TableExportComponent, {
         remove: { imports: [TranslatePipe] },
         add: { imports: [TranslateStubPipe] },
       })
@@ -344,6 +357,82 @@ describe('AreaShotsComponent', () => {
     component.form.controls['timeFrom'].setValue('08:15');
     await component.save();
     expect(facade.create).toHaveBeenCalledWith(expect.objectContaining({ civilUsageKind: 'field_shooting', timeFrom: '08:15' }));
+  });
+
+  describe('export of the table (B1 5.5.5, slm 3)', () => {
+    const exportAs = async (format: 'xlsx' | 'csv'): Promise<TableExportData> => {
+      (el().querySelector('[data-testid="shots-export"]') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      (el().querySelector(`[data-testid="shots-export-${format}"]`) as HTMLButtonElement).click();
+      await settle();
+      expect(exportFacade.download).toHaveBeenLastCalledWith(expect.anything(), format);
+      return exportFacade.download.mock.calls.at(-1)[0] as TableExportData;
+    };
+    const column = (data: TableExportData, header: string) => data.rows.map((row) => row[data.header.indexOf(header)]);
+
+    it('holds every usage shown, in the order of the table, with all its attributes', async () => {
+      const data = await exportAs('xlsx');
+      expect(data.table).toBe('schusszahlen');
+      expect(data.subtitle).toBe('1104.020 Geissalp');
+      expect(data.selection).toBe(false);
+      expect(data.header).toEqual([
+        'shots.columns.room', 'shots.columns.unit', 'shots.export.date', 'shots.form.from', 'shots.form.to', 'shots.columns.type', 'shots.form.civil_kind',
+        'shots.columns.category', 'shots.columns.weapon', 'shots.columns.shots', 'shots.form.quantity_unit', 'shots.form.persons', 'shots.columns.recorded_by', 'shots.export.source',
+      ]);
+      // Newest first, as the table is sorted.
+      expect(column(data, 'shots.columns.unit')).toEqual(['Schützenverein Geissalp', 'Inf Bat 12', 'K1']);
+      expect(data.rows[0]).toEqual([
+        'Stellungsrm B 2', 'Schützenverein Geissalp', '21.06.2026', '13:30', '17:00', 'shots.type.civil', 'obligatory (DE)',
+        'shots.category.handguns', 'Stgw 90 · 5.6 mm', 2400, 'shots.unit_shots', 22, 'ELO-Import', 'shots.export.source_elo',
+      ]);
+      // A usage with Stück and kg: the quantity is a number, the unit says that it is mixed.
+      expect(data.rows[1].slice(9, 11)).toEqual([1002.5, 'shots.unit_mixed']);
+      expect(data.rows[2][6]).toBeNull();
+    });
+
+    it('follows the filters and the sorting of the table and names the filters', async () => {
+      const search = el().querySelector<HTMLInputElement>('[data-testid="shots-search"]') as HTMLInputElement;
+      search.value = 'stgw';
+      search.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      el().querySelectorAll<HTMLButtonElement>('.slim-chip')[0].click(); // military
+      fixture.detectChanges();
+
+      const data = await exportAs('csv');
+      expect(column(data, 'shots.columns.unit')).toEqual(['Inf Bat 12']);
+      expect(data.filters).toEqual(
+        expect.arrayContaining([
+          { label: 'shots.export.search', value: 'stgw' },
+          { label: 'shots.columns.type', value: 'shots.type.military' },
+        ]),
+      );
+      // The date range of the year is always a filter of this table.
+      expect(data.filters?.map((f) => f.label)).toEqual(expect.arrayContaining(['shots.date_from', 'shots.date_to']));
+      expect(data.filters?.some((f) => f.label === 'shots.columns.category')).toBe(false);
+    });
+
+    it('holds only the marked usages when some are marked (B1 5.5.3)', async () => {
+      const boxes = Array.from(rows()).map((r) => r.querySelector<HTMLInputElement>('input[type="checkbox"]') as HTMLInputElement);
+      // Mark the newest and the oldest usage.
+      for (const box of [boxes[0], boxes[2]]) {
+        box.checked = true;
+        box.dispatchEvent(new Event('change'));
+      }
+      fixture.detectChanges();
+
+      const data = await exportAs('xlsx');
+      expect(data.selection).toBe(true);
+      expect(column(data, 'shots.columns.unit')).toEqual(['Schützenverein Geissalp', 'K1']);
+    });
+
+    it('cannot be started when the table is empty', () => {
+      const search = el().querySelector<HTMLInputElement>('[data-testid="shots-search"]') as HTMLInputElement;
+      search.value = 'gibt es nicht';
+      search.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+      expect(rows().length).toBe(0);
+      expect((el().querySelector('[data-testid="shots-export"]') as HTMLButtonElement).disabled).toBe(true);
+    });
   });
 
   it('asks before deleting and offers undo afterwards', async () => {

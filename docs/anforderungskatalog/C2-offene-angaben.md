@@ -23,7 +23,8 @@ Einsetzen beide Word-Dateien neu erzeugen (Abschnitt 6).
 | `[OFFEN: Qualitätssicherung]` | Z3 Abschnitte 3 und 6.1 | Name, Mitarbeiter/in von [PLATZHALTER FIRMA]. |
 | `[OFFEN: Betrieb / Sicherheit]` | Z3 Abschnitte 3 und 6.1 | Name, Mitarbeiter/in von [PLATZHALTER FIRMA]. |
 | `[OFFEN: Stellvertretung Projektleitung]`, `[… Lead-Business-Analyst/in]`, `[… Lead-Applikationsentwickler]`, `[… Applikationsentwicklung]`, `[… Qualitätssicherung]`, `[… Betrieb / Sicherheit]` | Z3 Abschnitt 6.1 | Je Rolle eine namentliche Stellvertretung (E3, E4). |
-| `[OFFEN: Pensen je Person und PI]` | Z3 Abschnitt 6.1 | Verteilung der Stunden je Person auf die fünf PI (Z3 verlangt Pensen; FAQ 133). Im Plan steht nur das Durchschnittspensum über 16 Monate. |
+| `[OFFEN: Aufteilung LP1b bestätigen]` | Z3 Abschnitt 1 | Bestätigung beider Firmen für 500 h Technologiepartnerin (Realisierung) und 250 h [PLATZHALTER FIRMA] (Analyse und Abstimmung, unabhängige Qualitätssicherung und Abnahmetests, Einführungsunterstützung); danach den Platzhalter entfernen. |
+| `[OFFEN: Pensen je Person und PI]` | Z3 Abschnitt 6.1 | Verteilung der Stunden je Person auf Planungsphase und vier PI (Z3 verlangt Pensen; FAQ 133). Im Plan steht nur das Durchschnittspensum über 16 Monate. |
 
 Ohne Platzhalter, aber ebenfalls einzusetzen:
 
@@ -38,8 +39,8 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 | --- | --- | --- |
 | Stundentabelle LP1a (Z3 Abschnitt 6) | **Vorschlag, vor Freigabe zu bestätigen.** Die Tabelle der Version 0.2 (4'000 h) ist mit dem Faktor 0.7 auf 2'800 h skaliert: Projektleitung 280, Business Analyse 315, Architektur 245, Entwicklung 1'015, Tests/QS 385, Migration/Dokumentation/Einführung/Betriebsübergabe 315, Reserve 245. Aufteilung auf die Firmen: Architektur und Entwicklung ganz bei der Technologiepartnerin (1'260); Projektleitung, Tests/QS und Migration/Dokumentation/Einführung ganz bei [PLATZHALTER FIRMA] (980); Reserve im Verhältnis der Gesamtanteile (125 / 120); Business Analyse als Ausgleich (65 / 250), damit 1'450 + 1'350 entsteht. | Aufteilung je Arbeitspaket; ob [PLATZHALTER FIRMA] Projektleitung und Business Analyse führt; ob die Tests der Technologiepartnerin im Paket Entwicklung richtig abgebildet sind. **Rückmeldung 02.10.2026:** Die Skalierung mit 0.7 ist keine Herleitung. Vor der Freigabe braucht es eine Schätzung von unten nach oben je verbleibendem Arbeitspaket; Grundlage ist der Stand je Anforderung in der Matrix (offen: FGDB über GDAL slm 19–21, ELO-Endpunkte slm 28–30, Excel-Import slm 37, PostgreSQL/PostGIS und Views slm 38, Export B1.6 slm 40, Gesamtstatistik slm 41, Zuweisung Benutzer slm 26, Rest slm 3, Migration, Betriebsaufbau, Abnahmen, Dokumentation, Schulungsunterlagen). Eine Aussage «MVP zu x % fertig» steht in C2 und Z3 nicht und soll ohne Nachweis auch nicht hinein. |
 | Rollen je Firma (Z3 Abschnitt 3) | Projektleitung und Lead-Business-Analyse bei [PLATZHALTER FIRMA] (folgt aus der Stundenaufteilung), Lead-Applikationsentwickler bei der Technologiepartnerin. Nach FAQ 133 müssen die drei Lead-Personen ihre Rolle mit dem höchsten Pensum ausüben und an der Präsentation (Z6) auftreten; eine Person darf zwei der drei Rollen bündeln. | Firma und Person je Lead-Rolle. |
-| Stunden je Rolle (Z3 Abschnitt 6.1) | Skaliert mit dem Faktor 0.7 aus Version 0.2; Durchschnittspensum = Stunden / (16 Monate × 160 h). Die Pensen liegen zwischen 10 % und 30 %. | **Entschieden 02.10.2026:** Pensen in dieser Höhe sind für die Schlüsselrollen vertretbar, weil das Projektvolumen reduziert wurde; die Begründung steht in Z3 6.1. Offen bleibt die Verteilung je Person und PI. **Rechnung geprüft 02.10.2026:** Basis sind 16 Monate (fünf PI zu drei Monaten plus Abschlussmonat) × 160 h = 2'560 h je Vollzeitstelle; Rollenstunden 280 + 250 + 765 + 560 + 385 + 315 = 2'555 h, plus Reserve 245 h = 2'800 h. Wer nur mit den 15 Monaten der fünf PI rechnet, kommt auf weniger Stunden; die Basis steht jetzt ausdrücklich in Z3 6.1. Die tatsächliche Verfügbarkeit der Personen ist separat zu bestätigen. |
-| Maximalaufwand 2'800 h statt 4'000 h (C2 Kapitel 1 und 6.5, Z3 Abschnitte 1, 6, 15) | Als verbindlicher Maximalaufwand der Anbieterin formuliert. | Die Fragen, ob eine geringere Stundenmenge angeboten werden kann und wie sie im Preisblatt und bei Z1 abgebildet wird, sind unbeantwortet (FAQ 61–63, 151, 169; verwandt 145–148). FAQ 59 nennt die 4'000 h die «einheitliche Bewertungs- und Kostendachgrundlage», FAQ 137 verlangt alle Muss-Anforderungen innerhalb von LP1a. Vor Abgabe klären: Darstellung im Preisblatt C3, und ob eine Stundenangabe im Lösungskonzept (Z2) zulässig ist oder als Preisangabe gilt (Teil A liegt nicht im Repository). |
+| Stunden je Rolle (Z3 Abschnitt 6.1) | Skaliert mit dem Faktor 0.7 aus Version 0.2; Durchschnittspensum = Stunden / (16 Monate × 160 h). Die Pensen liegen zwischen 10 % und 30 %. | **Entschieden 02.10.2026:** Pensen in dieser Höhe sind für die Schlüsselrollen vertretbar, weil das Projektvolumen reduziert wurde; die Begründung steht in Z3 6.1. Offen bleibt die Verteilung je Person und PI. **Rechnung geprüft 02.10.2026:** Basis sind 16 Monate (Planungsphase von drei Monaten, vier PI zu drei Monaten und Abschlussmonat) × 160 h = 2'560 h je Vollzeitstelle; Rollenstunden nach Z3 6.1 (Stand 02.10.2026) 280 + 250 + 765 + 560 + 385 + 190 + 120 = 2'550 h, plus Reserve 250 h = 2'800 h. Wer nur mit den 15 Monaten bis Ende PI 4 rechnet, kommt auf weniger Stunden; die Basis steht jetzt ausdrücklich in Z3 6.1. Die tatsächliche Verfügbarkeit der Personen ist separat zu bestätigen. |
+| Maximalaufwand 2'800 h statt 4'000 h (C2 Kapitel 1 und 6.5, Z3 Abschnitte 1, 6, 15) | Als verbindlicher Maximalaufwand der Anbieterin formuliert. | **Geklärt 02.10.2026:** FAQ 59 (geändert), 61–63, 126, 151 und 169 lassen für LP1a eine verbindlich geringere Stundenzahl zu. Sie wird im Preisblatt eingetragen; Z1 bewertet die angebotenen Stunden mal Stundenansatz; verrechnet werden höchstens die angebotenen Stunden, der ganze Muss-Umfang ist darin zu erbringen, Mehraufwand wird nicht vergütet und das Risiko trägt die Entwicklerin (FAQ 126). Z3 Abschnitte 1, 6 und 15 sind nachgeführt. Offen bleibt: die 2'800 Stunden im Preisblatt C3 V2 eintragen (liegt nicht im Repository), und ob eine Stundenangabe im Lösungskonzept (Z2) zulässig ist oder als Preisangabe gilt (Teil A liegt nicht im Repository). |
 | Stundensatz | In Version 0.2 des Plans stand «CHF 115/h = CHF 460'000». Der Satz ist aus dem Plan entfernt; Preise gehören ins Preisblatt. | Stundensatz im Preisblatt C3. |
 | ELO (C2 Kapitel 1, 3.1, 6.5; Z3 Abschnitt 1) | «Die Technologiepartnerin hat ELO entwickelt»; beide Seiten der Schnittstelle sind ihr bekannt. Die Schnittstelle selbst (slm 28–30) ist **nicht umgesetzt** und so ausgewiesen (Matrix Status Z). | Aussage zur ELO-Urheberschaft mit Referenz belegen. FAQ 17 und 177: Die ELO-seitige Spezifikation verantwortet die Auftraggeberin «unter Zuzug der ELO-Entwicklerfirma» – die Doppelrolle im Angebot offenlegen. **Entschieden 02.10.2026:** Der Status Z für slm 28–30 bleibt in der Matrix; Datenmodell und Validierungsregeln sind vorhanden, die Endpunkte werden in LP1 gebaut. |
 | Begriff «Entwicklerin» | **Entschieden 02.10.2026:** In C2 und Z3 heisst die Subunternehmerin durchgehend «Technologiepartnerin». «Entwicklerin» ist nach dem Rahmenvertrag (Art. 1.1) die Vertragspartnerin der Bestellerin, also [PLATZHALTER FIRMA]; das Wort steht in C2 nur noch in diesem Sinn (Kapitel 1). | Art. 1.1 am Vertragstext prüfen – der Rahmenvertrag liegt nicht im Repository. |
@@ -51,13 +52,15 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 | Barrierefreiheit (C2 Kapitel 5.4) | SLIM **orientiert sich** an eCH-0059 / WCAG 2.1 AA (Tastaturbedienung, Kontraste), in Anlehnung an die Richtlinien der armasuisse. | **Entschieden 02.10.2026:** keine verbindliche Konformitätszusage und kein Audit, weil die Auftraggeberin nach FAQ 9 und 128 keine speziellen Anforderungen stellt. Die Zusagen zu Tagged PDF, Screenreader-Prüfung und automatisierter Prüfung im Build sind gestrichen. |
 | FGDB über GDAL (C2 Kapitel 2.2, 3.2, 6.5; Z3 M2) | Verbindliche Zusage: Lesen und Schreiben über GDAL, Validierung zu Projektbeginn mit den Testdaten von KOMZ Lärm. | Im Prototyp nicht erprobt (JSON statt FGDB, GDAL nicht installiert, keine Beispiel-FGDB). Schema wird erst im Projekt festgelegt (FAQ 99, 176). Konvertierungsweg bei Lücken (Werkzeug, Lizenzen, Aufwand) ist nicht konkretisiert. |
 | PostgreSQL/PostGIS | Als erste Aufgabe in LP1 zugesagt (C2 2.2, 6.5; Z3 M2). In Version 0.3 stand «wird vor Abgabe nachgezogen». | Der Start gegen PostgreSQL ist weiterhin durch die Typzuordnung in `@app-galaxy/*` blockiert. |
-| Programm-Inkremente (Z3 Abschnitt 2) | Fünf PI zu drei Monaten als Planung. | FAQ 69 nennt vier bis sechs PI; Zuschnitt bestätigen. |
+| Programm-Inkremente (Z3 Abschnitt 2) | Planungsphase von drei Monaten und vier PI zu drei Monaten als Planung. | FAQ 69 nennt vier bis sechs PI; Zuschnitt bestätigen. |
 | Termine (Z3 Abschnitt 4) | Schlussabnahme Januar/Februar 2028, Einführung März 2028, drei Monate Reserve bis 30.06.2028 (FAQ 50). | Terminplan mit beiden Firmen bestätigen. |
+| Meilenstein M1 (Z3 Abschnitt 4) | **Abstimmungsvorschlag 02.10.2026:** M1 verlangt die formelle Abnahme der Machbarkeitsanalyse, die Prüfung und fachliche Bewertung der vorhandenen Funktionen sowie die abgestimmte Zielarchitektur mit Überführungsplan; die technische Überführung auf PostgreSQL/PostGIS wird erst bis M2 nachgewiesen. Vorher stand «in die vereinbarte Architektur überführt». | Formulierung mit beiden Firmen bestätigen; die Abnahme der Machbarkeitsanalyse am Rahmenvertrag prüfen (Art. 2.2.1 ist nur aus der Rückmeldung belegt, der Vertrag liegt nicht im Repository). |
+| Aufteilung LP1b (Z3 Abschnitt 1) | 750 h: 500 h Technologiepartnerin, 250 h [PLATZHALTER FIRMA]; die Aufgaben der 250 h sind ein Vorschlag aus der Preisplanung und keine bestätigte Zusage der Firma. | Aufteilung und Aufgaben bestätigen, mit dem Preisblatt C3 abgleichen. |
 | Schulung (C2 Kapitel 6.4, Z3 Abschnitt 9) | 100 % durch Trainer von [PLATZHALTER FIRMA]; bei Bedarf Französisch oder Italienisch; eine zusätzliche Trainerschulung je Erweiterungsrelease. | Sprachkompetenz der Trainer; Annahme mit Preisblatt LP3 abgleichen. |
 | Italienische Fachübersetzung (C2 Kapitel 5.4) | «Im Angebot enthalten», ohne Büro. | Büro beauftragen. |
 | Demo (C2 Kapitel 6.5) | «Läuft auf Schweizer Infrastruktur», eingefroren, tägliche Rücksetzung. | Standort der Demo-Instanz belegen (E1 Kapitel 5.2 führt ihn als offen); Demo auf den Stand vom 02.10.2026 bringen. |
 | Support (C2 Kapitel 6.3, Z3 Abschnitt 13) | 2nd und 3rd Level bei [PLATZHALTER FIRMA]; Codeänderungen durch die Technologiepartnerin über die CI/CD-Pipeline. | Besetzung, Stellvertretung, Bereitschaft und Eskalation; Vertrag zwischen [PLATZHALTER FIRMA] und der Technologiepartnerin über die Reaktionszeiten im 3rd Level. |
-| Testzahlen (C2 Kapitel 6.1) | 422 API-Tests, 232 Oberflächen-Tests, 27 Tests der Kartenbibliothek, alle bestanden am 02.10.2026. Für End-to-End- und Kriterien-Fälle steht keine Zahl. | Zahlen bei Abgabe mit dem letzten Lauf abgleichen. |
+| Testzahlen (C2 Kapitel 6.1) | 434 API-Tests, 296 Oberflächen-Tests, 27 Tests der Kartenbibliothek, alle bestanden am 02.10.2026 (Lauf auf Commit `d790156`). Für End-to-End- und Kriterien-Fälle steht keine Zahl. | Zahlen bei Abgabe mit dem letzten Lauf abgleichen. |
 
 ## 3. Stand der Matrix
 
@@ -65,10 +68,11 @@ Die Matrix in C2 ist am 02.10.2026 mit `umsetzungsstand.md`, `fachliche-abweichu
 Abnahmeprotokolls abgeglichen. P bezeichnet den beschriebenen Umsetzungsstand, keine Abnahme.
 
 - Neu P: slm 2 (Kartenviewer; massstabstreuer Server-Druck steht aus), slm 17 (Anzeige gemäss FAQ 52), slm 33 (A7X als
-  Standard, Kernversion 1.4.0). Bereits P und bestätigt: slm 1, 5, 27, 53.
+  Standard, Kernversion 1.5.0). Bereits P und bestätigt: slm 1, 5, 27, 53.
 - Von T auf Z zurückgestuft, weil die Funktion selbst fehlt: slm 28 und 29 (ELO-Endpunkte); slm 9 (Seite 5.10) ist seit dem 02.10.2026 umgesetzt und wieder P.
 - Von P auf T zurückgestuft: slm 21 (Grundlage JSON statt FGDB).
-- Unverändert offen: slm 3 (Export erst in zwei Tabellen), 19, 20, 26, 36–41, 57.
+- Unverändert offen: slm 3 (Export und Mehrfachselektion seit dem 02.10.2026 in den Fachtabellen; Spaltenfilter,
+  Spaltenauswahl und persistente Filter fehlen), 19, 20, 26, 36–41, 57.
 - Die bewussten Abweichungen (ein Farbsatz für beide Ampeln, feste Vergleichsoperatoren, fest bleibende Auswahllisten,
   «nicht beurteilbar») stehen in `fachliche-abweichungen.md` und brauchen die Zustimmung der Auftraggeberin; im Konzept
   sind die festen Listen und «nicht beurteilbar» erwähnt, die beiden Punkte zur Abbildung 40 nicht.
@@ -76,15 +80,19 @@ Abnahmeprotokolls abgeglichen. P bezeichnet den beschriebenen Umsetzungsstand, k
 ## 4. Stand der FAQ-Grundlage
 
 `FAQ-Export.md` entspricht dem PDF-Export des Forums vom 02.10.2026
-(`docs/FAQ_Schiesslärmimmissionsmanagement_01_10_2026.pdf`): 182 Fragen, 167 beantwortet, 15 offen (53, 61–63, 126,
-145–152, 154, 169), letzte Antwort vom 23.09.2026. Abgleich am 02.10.2026 Frage für Frage (Status, Antworttext, Datum):
-keine fehlende Frage, keine abweichende Antwort. Zwei Antworten tragen im PDF den Status «Antwort geändert» (30, 37);
-der Export führt sie als beantwortet mit Änderungsdatum.
+(`docs/FAQ_Schiesslärmimmissionsmanagement_01_10_2026.pdf`): 182 Fragen, 182 beantwortet, keine offen. Am 02.10.2026, 12:29, beantwortet:
+53, 61–63, 126, 145–152, 154, 169. Abgleich am 02.10.2026 Frage für Frage (Status, Antworttext, Datum):
+keine fehlende Frage, keine abweichende Antwort. Drei Antworten tragen im PDF den Status «Antwort geändert» (30, 37, 59);
+der Export führt sie als beantwortet mit Änderungsdatum. FAQ 59 nennt die 4'000 Stunden für LP1a seit dem 02.10.2026
+ein Maximum. Das Forum führt zudem «Beilage A1 Software-Entwicklungsvertrag (agil) V2» und «Beilage C3 Preisblatt V2»
+als ergänzende Unterlagen; beide liegen nicht im Repository.
 
 In Version 1.0 eingearbeitet: FAQ 13, 17, 19, 28, 32, 36–38, 49, 50, 51, 52, 59, 66, 69, 70, 93, 97, 98, 99, 115, 116,
 117, 120, 121, 128, 132, 133, 136–138, 140, 142, 157, 158, 160, 164–166, 170–174, 176, 177, 180.
 
-Nicht eingearbeitet, weil ohne Antwort: FAQ 53 (Bereiche ohne KI), 61–63, 151, 169 (geringere Stundenmenge LP1a).
+Am 02.10.2026 beantwortet: FAQ 53 (KI-Einsatz; in den E1-Konzepten, Kapitel 7, eingearbeitet, Geltung ab der
+Eingabefrist 19.10.2026). Am 02.10.2026 beantwortet und in Z3 (Abschnitte 1, 6
+und 15) eingearbeitet: FAQ 59 (geändert), 61–63, 126, 151, 169 (geringere Stundenmenge LP1a ist zulässig).
 
 ## 5. Vor der Freigabe prüfen
 
@@ -123,7 +131,7 @@ einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
 | --- | --- | --- |
 | Quellcode auf GitHub.com | nicht in der Schweiz | vor der Eingabefrist auf das eigene GitLab in der Schweiz umziehen, GitHub-Repository löschen, Datum und Beleg ins Konzept der Technologiepartnerin (Kapitel 10, Nr. 1) |
 | Pipeline auf GitHub Actions | nicht in der Schweiz | vor der Eingabefrist verlegen (Nr. 2) |
-| Datum der Eingabefrist | `[OFFEN: Datum der Eingabefrist]` in beiden Konzepten | eintragen |
+| Datum der Eingabefrist | 19.10.2026, in beiden Konzepten eingetragen | erledigt |
 | KI-Werkzeuge | deklariert sind ab der Eingabefrist ausschliesslich Infomaniak AI Services (Schweiz) | Programmierassistent und Vorübersetzung vor der Eingabefrist umstellen; Vertrag und Standortbestätigung beilegen |
 
 **Quellen, die im Repository fehlen**
@@ -131,12 +139,12 @@ einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
 | Punkt | Bemerkung |
 | --- | --- |
 | Wortlaut von E1 (Teil A) | Der Geltungsbeginn «ab Eingabefrist» ist aus der Rückmeldung zum Entwurf übernommen; Teil A liegt nicht im Repository. Am Originaltext prüfen. |
-| Antwort auf FAQ 53 vom 02.10.2026 | `FAQ-Export.md` hat den Stand 01.10.2026 und führt FAQ 53 als offen. Die Konzepte geben die Antwort so wieder, wie sie in der Rückmeldung beschrieben ist (Deklaration von Art, Umfang und Verwendung; Vorgaben GS-VBS; vertragliche Regelung). Den Export vom 02.10. einspielen und den Wortlaut prüfen. |
+| Antwort auf FAQ 53 vom 02.10.2026 | Erledigt: `FAQ-Export.md` führt die Antwort im Wortlaut. Die Konzepte geben sie zutreffend wieder (Deklaration von Art, Umfang und Verwendung; Vorgaben GS-VBS; vertragliche Regelung). Die Antwort selbst nennt keinen Geltungsbeginn; «ab der Eingabefrist 19.10.2026» folgt aus dem Geltungsbeginn von E1 (Zeile oben). |
 | Formvorgaben für das Konzept (Teil C) | nicht geprüft |
 
 **Einzutragen (Platzhalter in den Konzepten)**
 
-- Beide: verantwortliche Person und Funktion; Datum der Eingabefrist.
+- Beide: verantwortliche Person und Funktion.
 - Generalunternehmerin: Hosting-Anbieter und Rechenzentren; zweiter Backup-Standort; SMTP-Anbieter;
   Monitoring-Produkt; Werkzeuge für Backlog, Tickets, Dokumentation und Dateiaustausch; Ablage der Importdateien;
   Standort der Demo-Instanz; Standort des Supports und Fernzugriff aus dem Ausland ja/nein; Schlüsselverwaltung beim
@@ -171,4 +179,5 @@ C2 Kapitel 6.3 muss dieselbe KI-Regel und dieselbe Aufteilung der Parteien nenne
 | C2 2.3 «Demo- neben Produktivmandant» | gestrichen; neu: reale und synthetische Daten liegen nie in derselben Instanz | – |
 | C2 Status slm 2 und slm 53 | auf T gesetzt (Server-Druck bzw. Inhalt des Handbuchs stehen aus) | – |
 | C2 Lasttest | Teiltests ab PI 1, vollständiger Nachweis auf der Zielplattform bis M4 (Dezember 2027), wie Z3 | – |
-| C2 Quellenstand Frageforum | unverändert «Stand 01.10.2026 (182 Fragen, 167 beantwortet)» | Der Export vom 02.10.2026 liegt nicht im Repository; nach dem Einspielen Zahl und Datum im Deckblatt-Kommentar nachführen. |
+| C2 Quellenstand Frageforum | nachgeführt: «Stand 02.10.2026 (182 Fragen, alle beantwortet)» im Deckblatt-Kommentar von C2 und in Z3 (Abschnitte 1 und 15) | – |
+| Import der Berechnungsdaten: Abbruch oder Warnung (C2 3.2) | **Vorgeschlagene Zielregel, keine bestätigte Vorgabe:** Unbekannte Waffen, nicht auflösbare Zuordnungen und fehlende, für die Beurteilung erforderliche WLR-Werte brechen den Import ab; nicht berechnungsrelevante Lücken sind Warnungen; fehlende Pegel werden nie durch Nullwerte ersetzt. Der Prototyp warnt in beiden Fällen und importiert (C2 3.2 nennt das als heutigen Stand). | Durch KOMZ Lärm bestätigen. Zu klären ist dabei, wie die Regel zu einer getrennt nachgelieferten Datei WLR NIGHT (B1 5.19) passt: Prüfung beim Import oder erst beim Setzen von «aktuell gültig». |

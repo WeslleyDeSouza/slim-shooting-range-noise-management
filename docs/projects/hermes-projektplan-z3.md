@@ -25,27 +25,27 @@ Technologiepartnerin und Subunternehmerin verbindlich für die Entwicklung einge
 
 | Paket | Behandlung im Plan | Leistungserbringung |
 |---|---|---|
-| LP1a | Grundauftrag: Projektmanagement, Design, Architektur, agile Planung, Realisierung und Einführung der zwingenden Anforderungen. Angeboten mit einem Maximalaufwand von 2'800 Stunden (Kostendach der Ausschreibung: 4'000 Stunden) | Technologiepartnerin 1'450 h, [PLATZHALTER FIRMA] 1'350 h (Abschnitt 6) |
-| LP1b | Option: mobile Erfassungsmaske als ELO-Ersatz und Simulation, gemeinsam abgerufen, 750 Stunden (FAQ 66, 117); Realisierung nach Abruf | Technologiepartnerin |
+| LP1a | Grundauftrag: Projektmanagement, Design, Architektur, agile Planung, Realisierung und Einführung der zwingenden Anforderungen. Angeboten mit einem Maximalaufwand von 2'800 Stunden (vorgegebenes Maximum der Ausschreibung: 4'000 Stunden) | Technologiepartnerin 1'450 h, [PLATZHALTER FIRMA] 1'350 h (Abschnitt 6) |
+| LP1b | Option: mobile Erfassungsmaske als ELO-Ersatz und Simulation, gemeinsam abgerufen, 750 Stunden (FAQ 66, 117); Realisierung nach Abruf | Technologiepartnerin 500 h (Realisierung), [PLATZHALTER FIRMA] 250 h (Analyse und Abstimmung, unabhängige Qualitätssicherung und Abnahmetests, Einführungsunterstützung) [OFFEN: Aufteilung LP1b bestätigen] |
 | LP2 | Lizenzen einschliesslich Drittlizenzen; Deklaration im Preisblatt. Die eingesetzten Open-Source-Komponenten sind lizenzkostenfrei; an den vorbestehenden Komponenten der Technologiepartnerin erhält die Auftraggeberin über [PLATZHALTER FIRMA] das unentgeltliche Nutzungsrecht gemäss Art. 6.2.4 Rahmenvertrag | – |
 | LP3 | Option Schulung: 10 initiale und 2 wiederkehrende Schulungen (Abschnitt 9) | [PLATZHALTER FIRMA], zu 100 % durch eigene Trainer |
 | LP4 | Option Applikationsbetrieb, Wartung und Support im SaaS-Modell über die Betriebsphase von zehn Jahren (Abschnitt 13); Infrastruktur- und Hostingkosten sind gemäss FAQ 30, 67 und 131 in LP4 einzurechnen | [PLATZHALTER FIRMA] |
 | LP5a / LP5b | Gesondert beauftragte Erweiterungen während Projekt bzw. Betrieb; keine stillschweigende Finanzierung unerledigter Muss-Anforderungen | Entwicklung: Technologiepartnerin; Überführung in den Betrieb: [PLATZHALTER FIRMA] |
 
 Massgebende Projektquellen: Teil A (Z3), Teil B insbesondere 2.3.1–2.3.3 und 2.9, B1 samt Beilagen, Rahmenvertrag mit
-Abnahmevorschriften (A1, A1.2) und das Frageforum mit Stand 01.10.2026 (182 Fragen, 167 beantwortet). Vertragsaussagen
-werden mit Dokument und Artikelnummer belegt; beantwortete Fragen gelten als Auskunft der Auftraggeberin, unbeantwortete
-Fragen sind keine Entscheidung (Abschnitt 15).
+Abnahmevorschriften (A1, A1.2) und das Frageforum mit Stand 02.10.2026 (182 Fragen, alle beantwortet). Vertragsaussagen
+werden mit Dokument und Artikelnummer belegt; die Antworten im Frageforum gelten als Auskunft der Auftraggeberin
+(Abschnitt 15).
 
 **Vorhandener Prototyp (MVP) und ELO-Erfahrung als Ausgangspunkt:** Die Technologiepartnerin bringt einen lauffähigen Prototyp
 von SLIM ein und hat ELO entwickelt, das System auf der anderen Seite der Schnittstelle. Beides reduziert das
 Umsetzungsrisiko für den Bund; darauf beruhen der angebotene Maximalaufwand von 2'800 statt 4'000 Stunden für LP1a
 und die geplante produktive Einführung im März 2028, drei Monate vor dem vertraglichen Termin (Abschnitt 4).
 Stand 02.10.2026 sind im Prototyp umgesetzt: Anmeldung, Rollen und Objektregeln, Übersicht mit berechneten Ampeln, die
-Masken Schusszahlen, Details und Simulation, der GIS-Kartenviewer, die Datenverwaltung, Auswahllisten, erweiterte
+Schiessplatz-Übersicht 5.10 (slm 9), die Masken Schusszahlen, Details und Simulation, der GIS-Kartenviewer, die Datenverwaltung, Auswahllisten, erweiterte
 Konfiguration, Hilfe, das Datenmodell nach B1 Kapitel 10 und der gegen Beilage B1.4 geprüfte Berechnungskern. Noch
 nicht umgesetzt sind insbesondere die ELO-Schnittstelle (slm 28–30), der FGDB-Zugriff über GDAL (slm 19–21), der Betrieb
-auf PostgreSQL/PostGIS mit Views (slm 38), die Seite 5.10 (slm 9), der Excel-Import der Schusszahlen (slm 37) und die
+auf PostgreSQL/PostGIS mit Views (slm 38), der Excel-Import der Schusszahlen (slm 37) und die
 Exporte nach B1.6 und MPV (slm 40, 41). Der Stand je Anforderung steht in der Matrix des Lösungskonzepts.
 
 Vorhandene Funktionen werden zu Projektbeginn gemeinsam überprüft, fachlich validiert und in die vereinbarte
@@ -134,7 +134,7 @@ ELO-Testumgebung), Integration und Abnahme bestimmt.
 | Meilenstein | Zieltermin | Ergebnisse und Entscheidungskriterien |
 |---|---|---|
 | M0 – Projektstart abgestimmt | Januar 2027 | Auftrag und Kompetenzen geklärt, Team verfügbar, Mitwirkungsplan, Zugänge, PMP und Start-Backlog abgestimmt |
-| M1 – Planungsphase abgeschlossen, Nachtrag unterzeichnet | März 2027 | Nachtrag nach Art. 2.2.6 unterzeichnet (MMP und Mindestleistung festgelegt); vorhandene Funktionen gemeinsam überprüft, fachlich validiert und in die vereinbarte Architektur überführt; bestätigter Restumfang; Architektur, Datenmodell nach B1 Kapitel 10, Fachregeln, Sicherheits-/Betriebsansatz, priorisierter Backlog, Test- und Migrationsansatz und Aufwandprognose nachvollziehbar |
+| M1 – Planungsphase abgeschlossen, Nachtrag unterzeichnet | März 2027 | Machbarkeitsanalyse (Art. 2.2.1) von der Bestellerin formell abgenommen; Nachtrag nach Art. 2.2.6 unterzeichnet (MMP und Mindestleistung festgelegt); vorhandene Funktionen geprüft und fachlich bewertet; Zielarchitektur und Überführungsplan abgestimmt – die technische Überführung auf PostgreSQL/PostGIS wird bis M2 nachgewiesen; bestätigter Restumfang; Architektur, Datenmodell nach B1 Kapitel 10, Fachregeln, Sicherheits-/Betriebsansatz, priorisierter Backlog, Test- und Migrationsansatz und Aufwandprognose nachvollziehbar |
 | M2 – Technische Integrationsbasis nachgewiesen (PI 1) | Juni 2027 | PostgreSQL/PostGIS, unabhängige Zustände, FGDB-Import und -Export über GDAL mit den Testdaten von KOMZ Lärm und ELO-Verbindung auf der Akzeptanzumgebung geprüft |
 | M3 – Fachlicher Durchstich mit dokumentiertem Review (PI 2) | September 2027 | Die im Prototyp vorhandene Kette Nutzungen → Betriebsdaten → Quellenverteilung → Anhang 7/9 → Beurteilung und Anzeige läuft auf der Zielarchitektur mit Daten der Auftraggeberin und unabhängigen Sollwerten; fachliches Review durch KOMZ Lärm dokumentiert (Zwischenreviews ab M1) |
 | M4 – Fachoberflächen vollständig, Lasttest bestanden (PI 3) | Dezember 2027 | Gesamter geschuldeter Umfang für die Anwenderprüfung bereit; Lasttest nach B1 12.5 bestanden; Dokumentation, Rollen, Migration und Betriebsabläufe prüfbar; Restmängel klassifiziert |
@@ -192,10 +192,11 @@ Ergebnis auf dem Akzeptanzsystem demonstrierbar. Ein grüner Unit-Testlauf erset
 ## 6. Ressourcen- und Aufwandsplanung
 
 LP1a wird mit einem Maximalaufwand von **2'800 Stunden** angeboten: **1'450 Stunden der Technologiepartnerin** und **1'350
-Stunden von [PLATZHALTER FIRMA]**. Das Kostendach der Ausschreibung beträgt 4'000 Stunden (Preisblatt C3). Die Differenz erklärt
-sich aus dem vorhandenen Prototyp und der ELO-Erfahrung der Technologiepartnerin (Abschnitt 1). Die Anbieterin realisiert den
-Grundauftrag mit sämtlichen Muss-Anforderungen innerhalb dieses Maximalaufwands; vergütet wird der tatsächliche
-Aufwand (Rahmenvertrag Art. 3.1).
+Stunden von [PLATZHALTER FIRMA]**. Die im Preisblatt C3 vorgegebenen 4'000 Stunden sind ein Maximum; eine geringere
+Stundenzahl darf verbindlich angeboten werden (FAQ 59, 61–63, 169). Die Differenz erklärt sich aus dem vorhandenen
+Prototyp und der ELO-Erfahrung der Technologiepartnerin (Abschnitt 1). Die Anbieterin realisiert den Grundauftrag mit
+sämtlichen Muss-Anforderungen innerhalb der angebotenen 2'800 Stunden; vergütet wird der tatsächliche Aufwand, höchstens
+bis zu dieser Obergrenze (Rahmenvertrag Art. 3.1, FAQ 126).
 
 Die Technologiepartnerin führt Architektur, Integration und Entwicklung. [PLATZHALTER FIRMA] führt Projektleitung, Business Analyse,
 Qualitätssicherung, Dokumentation, Einführung und Betriebsübergabe.
@@ -328,7 +329,7 @@ die Applikationsverantwortlichen zur vorgezogenen Produktivsetzung befähigt sin
 | Fachliche Sonderfälle ungeklärt | Falsche Beurteilung oder Abnahmeverzug | Fachentscheidregister, Review durch KOMZ Lärm, unabhängige Sollwerte; Business Analyse |
 | Daten oder ELO-Zugänge verspätet | Integration und Migration verschoben | Mitwirkungsplan und frühe Eskalation; Projektleitungen AG und Lieferantin |
 | Schlüsselpersonen fallen aus | Lieferfähigkeit sinkt | Benannte Stellvertretungen, Wissenstransfer, nachvollziehbare Dokumentation, Ersatz innert 14 Tagen (E4); Projektleitung |
-| Restumfang höher als angenommen | Maximalaufwand von 2'800 Stunden reicht nicht | Bestätigter Restumfang bei M1, monatliche Prognose bei Fertigstellung, Aufwandsreserve von 245 Stunden; Projektleitung / Lead-Applikationsentwickler |
+| Restumfang höher als angenommen | Maximalaufwand von 2'800 Stunden reicht nicht | Bestätigter Restumfang bei M1, monatliche Prognose bei Fertigstellung, Aufwandsreserve von 250 Stunden; Projektleitung / Lead-Applikationsentwickler |
 | Übergabe zwischen zwei Firmen (Entwicklung und Betrieb) | Reibungsverluste, unklare Zuständigkeit bei Störungen | Rolle Betrieb / Sicherheit von [PLATZHALTER FIRMA] ab Projektbeginn im Team, gemeinsame CI/CD-Pipeline, dokumentierter Übergabeprozess, Gesamtverantwortung bei [PLATZHALTER FIRMA] (Abschnitt 13) |
 | Sicherheits- und Betriebsanforderungen spät geprüft | Keine Produktivfreigabe | Kontinuierliche Prüfung, Restore- und Lasttests vor M5; Betrieb / Qualitätssicherung |
 | Nutzungsrechte an vorbestehender Software | Übergabe- und Nutzungsrechte strittig | Deklaration als vorbestehend, Nutzungsrecht nach Art. 6.2.4, Quellcode-Lieferung und SBOM (Lösungskonzept 2.2); Anbieterin |
@@ -343,7 +344,7 @@ Product Owner ändert kein vertragliches Kostendach. Zu einem Change Request nim
 Arbeitstagen Stellung (Rahmenvertrag Art. 2.15).
 
 Werkzeuge: Der Quellcode liegt in einem selbst betriebenen GitLab, Container-Images und Pakete in einem selbst
-betriebenen Nexus; beide laufen ab Projektbeginn auf Schweizer Infrastruktur. Die CI/CD-Pipeline (Build, Lint,
+betriebenen Nexus; beide laufen ab der Eingabefrist auf Schweizer Infrastruktur. Die CI/CD-Pipeline (Build, Lint,
 automatisierte Tests, Bereitstellung auf Akzeptanz und Produktion) ist der einzige Weg von der Entwicklung in den
 Betrieb. Backlog, Tickets, Dokumentenablage und Testnachweise werden in Werkzeugen mit Datenhaltung in der Schweiz
 geführt. Die Standorte aller Werkzeuge mit Applikations- oder Projektdaten weist das Datenhaltungskonzept (E1) aus.
@@ -397,17 +398,17 @@ Erweiterungen laufen über LP5.
 - Die Optionen LP1b, LP3, LP4 und LP5 werden nach Abruf geplant; ihre Stunden sind nicht in den 2'800 Stunden von
   LP1a enthalten.
 
-## 15. Berücksichtigte Auskünfte der Auftraggeberin (Frageforum, Stand 01.10.2026)
+## 15. Berücksichtigte Auskünfte der Auftraggeberin (Frageforum, Stand 02.10.2026)
 
 | Thema | Auskunft | Umsetzung in diesem Plan |
 |---|---|---|
 | Schlussabnahme und Termin 30.06.2028 | FAQ 50: rund 30 Tage Schlussabnahmetests; der Termin bezeichnet die produktive Einführung nach Schlussabnahme und Schlussgenehmigung | M5 Schlussabnahme, M6 Einführung im März 2028, rund drei Monate Reserve (Abschnitt 4) |
 | Verbindlichkeit von B1 | FAQ 51, 68: B1 in der Fassung bei Vertragsabschluss ist verbindliche Leistungsgrundlage; Konkretisierungen gehören zu LP1a, inhaltliche Abweichungen zu LP5a | Änderungsprozess (Abschnitt 11) |
-| Kostendach LP1a | FAQ 59, 137: 4'000 Stunden als einheitliche Bewertungs- und Kostendachgrundlage; sämtliche Muss-Anforderungen sind innerhalb von LP1a zu realisieren | Maximalaufwand 2'800 Stunden (Abschnitt 6) |
-| Geringere Stundenmenge für LP1a | FAQ 61–63, 151, 169: am 01.10.2026 unbeantwortet | Die 2'800 Stunden sind die verbindliche Obergrenze der Anbieterin innerhalb des Kostendachs; das Preisblatt wird nach den Vorgaben der Auftraggeberin ausgefüllt |
+| Kostendach LP1a | FAQ 59 (geändert am 02.10.2026), 126, 137: Die im Preisblatt vorgegebenen 4'000 Stunden sind ein Maximum; das Kostendach des Grundauftrags ergibt sich aus der angebotenen Stundenzahl und dem angebotenen Stundenansatz; sämtliche Muss-Anforderungen sind innerhalb von LP1a zu realisieren, Mehraufwand wird nicht vergütet | Maximalaufwand 2'800 Stunden (Abschnitt 6) |
+| Geringere Stundenmenge für LP1a | FAQ 61–63, 151, 169 (beantwortet am 02.10.2026): Für LP1a darf eine verbindlich geringere Maximalstundenzahl angeboten und im Preisblatt eingetragen werden; für Z1 zählen die angebotenen Stunden multipliziert mit dem Stundenansatz; der gesamte Leistungsumfang ist innerhalb dieser Stunden zu erbringen, verrechnet werden höchstens die angebotenen Stunden; die Mengen der Optionen bleiben unverändert | Die 2'800 Stunden sind die verbindliche Obergrenze der Anbieterin und werden so im Preisblatt C3 eingetragen |
 | Stundenumfang LP1b | FAQ 66, 117: 750 Stunden; Erfassungsmaske und Simulation werden gemeinsam abgerufen | Abschnitt 1 |
 | Infrastruktur- und Hostingkosten | FAQ 30, 67, 131, 143, 174: Betriebsumgebungen in LP4; Akzeptanzsystem und weitere Projektumgebungen während der Projektphase in LP1 | Abschnitte 1 und 13 |
-| Programm-Inkremente | FAQ 69: vier bis sechs PI von rund drei Monaten; PI-Angebote werden nicht separat vergütet | Fünf PI (Abschnitt 2) |
+| Programm-Inkremente | FAQ 69: vier bis sechs PI von rund drei Monaten; PI-Angebote werden nicht separat vergütet | Vier PI nach der Planungsphase (Abschnitt 2) |
 | Schulungen LP3 | FAQ 36–38, 70: zehn initiale, zwei wiederkehrende Schulungen; vor Ort, rund ein halber Tag, rund drei Personen, Unterlagen auf Deutsch | Abschnitt 9 |
 | ELO-Schnittstelle | FAQ 17, 91, 177: Spezifikation und Anpassungen auf Seite ELO bei der Auftraggeberin, Testumgebung zu Projektbeginn | Abschnitte 4 und 12 |
 | Initiale Daten | FAQ 28: Format im Projekt, Qualitätssicherung bei der Auftraggeberin, rund drei Monate Aufbereitung | Abschnitte 4 und 12 |

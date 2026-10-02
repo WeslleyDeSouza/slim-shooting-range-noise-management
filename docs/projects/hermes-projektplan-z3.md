@@ -48,8 +48,9 @@ nicht umgesetzt sind insbesondere die ELO-Schnittstelle (slm 28–30), der FGDB-
 auf PostgreSQL/PostGIS mit Views (slm 38), der Excel-Import der Schusszahlen (slm 37) und die
 Exporte nach B1.6 und MPV (slm 40, 41). Der Stand je Anforderung steht in der Matrix des Lösungskonzepts.
 
-Vorhandene Funktionen werden zu Projektbeginn gemeinsam überprüft, fachlich validiert und in die vereinbarte
-Architektur überführt; die Releaseplanung wird anhand des bestätigten Restumfangs konkretisiert. Der Prototyp verkürzt
+Vorhandene Funktionen werden in der Planungsphase gemeinsam geprüft und fachlich bewertet, Zielarchitektur und
+Überführungsplan werden bis M1 abgestimmt; die technische Überführung auf PostgreSQL/PostGIS wird bis M2 nachgewiesen
+(Abschnitt 4). Die Releaseplanung wird anhand des bestätigten Restumfangs konkretisiert. Der Prototyp verkürzt
 die Realisierung, ersetzt aber weder die Mitwirkung der Auftraggeberin noch Integration und Abnahme. Er ist
 vorbestehende Software der Technologiepartnerin (Lösungskonzept 2.2); seine Erstellung wird nicht als Projektaufwand verrechnet.
 
@@ -317,7 +318,8 @@ zur Einführung und zwei wiederkehrende über die Laufzeit, z. B. bei Wechsel de
 Geschult werden die Applikationsverantwortlichen der Auftraggeberin, die danach die Benutzer schulen und den 1st-Level-
 Support leisten: vor Ort (Bern und weitere Standorte), rund ein halber Tag, zwei bis drei Personen je Schulung,
 Unterlagen auf Deutsch, Durchführung bei Bedarf auch auf Französisch oder Italienisch (FAQ 37, 70). Die initialen
-Schulungen finden nach dem Einführungskandidaten (M4) und vor der produktiven Einführung (M6, März 2028) statt, damit
+Schulungen finden nach Bereitstellung des Einführungskandidaten (M5, Januar 2028) und vor der produktiven Einführung
+(M6, März 2028) statt, damit
 die Applikationsverantwortlichen zur vorgezogenen Produktivsetzung befähigt sind.
 
 ## 10. Risiken und Massnahmen

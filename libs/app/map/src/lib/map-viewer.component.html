@@ -2,7 +2,7 @@
   <!-- The map itself; focusable so the arrow keys pan and +/- zoom. -->
   <div #target class="gis__map" tabindex="0" role="application" [attr.aria-label]="prefix + '.label' | translate"></div>
 
-  <!-- Empfangspunkte: real buttons, placed on the map by the engine. -->
+  <!-- Empfangspunkte: real buttons in a layer above the map, positioned by the engine on every frame. -->
   <div class="gis__pins">
     @for (p of pins(); track p.id) {
       <button

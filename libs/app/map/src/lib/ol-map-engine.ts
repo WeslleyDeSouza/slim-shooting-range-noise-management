@@ -1,5 +1,4 @@
 import OlMap from 'ol/Map';
-import Overlay from 'ol/Overlay';
 import View from 'ol/View';
 import { boundingExtent, buffer, createEmpty, extend as extendExtent, isEmpty } from 'ol/extent';
 import WKT from 'ol/format/WKT';
@@ -21,8 +20,11 @@ const EXPORT_TIMEOUT_MS = 12_000;
  * OpenLayers behind the `MapEngine` interface (slm 2): view, tiles and data
  * in CH1903+ / LV95, so no reprojection is involved. Background maps are
  * swisstopo WMTS layers fetched live (B1 5.4.2, no caching in SLIM), the
- * Anlagenteile a vector layer, the Empfangspunkte DOM pins held as overlays
- * (keyboard, screen reader and tests reach them like any button).
+ * Anlagenteile a vector layer. The Empfangspunkte are the buttons the viewer
+ * renders (keyboard, screen reader and tests reach them like any button);
+ * they stay where the framework put them and are only positioned here, on
+ * every rendered frame — moving them into the map would take them away
+ * from the framework that owns them.
  */
 export function createOlMapEngine(target: HTMLElement, config: MapConfig, handlers: MapEngineHandlers): MapEngine {
   const projection = new Projection({ code: config.projection, units: 'm', extent: config.extent });
@@ -85,8 +87,22 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     interactions: defaultInteractions({ altShiftDragRotate: false, pinchRotate: false }),
   });
 
-  let pins: { overlay: Overlay; east: number; north: number }[] = [];
+  let pins: MapPin[] = [];
   let pinsVisible = config.layers.points.visible;
+  /** Zoomstufe a running zoom animation heads for, so quick clicks add up. */
+  let targetZoom: number | null = null;
+
+  /** Places every pin at the pixel of its coordinate (`--x` / `--y` of the design-system pin). */
+  const positionPins = () => {
+    for (const pin of pins) {
+      const pixel = pinsVisible ? map.getPixelFromCoordinate([pin.east, pin.north]) : null;
+      pin.element.style.display = pixel ? '' : 'none'; // the pin sets its own `display`, the `hidden` attribute would lose
+      if (pixel) {
+        pin.element.style.setProperty('--x', `${Math.round(pixel[0])}px`);
+        pin.element.style.setProperty('--y', `${Math.round(pixel[1])}px`);
+      }
+    }
+  };
 
   const emitView = () => {
     const center = view.getCenter();
@@ -94,7 +110,11 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     if (!center || !resolution) return;
     handlers.view({ zoom: Math.round(view.getZoom() ?? 0), resolution, center: [center[0], center[1]] });
   };
-  map.on('moveend', emitView);
+  map.on('moveend', () => {
+    targetZoom = null;
+    emitView();
+  });
+  map.on('postrender', positionPins);
   map.on('pointermove', (event) => handlers.pointer(event.dragging ? null : [event.coordinate[0], event.coordinate[1]]));
   const leave = () => handlers.pointer(null);
   map.getViewport().addEventListener('pointerleave', leave);
@@ -139,13 +159,8 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
     },
 
     setPins(next: MapPin[]) {
-      for (const pin of pins) map.removeOverlay(pin.overlay);
-      pins = next.map((pin) => {
-        // The pin anchors itself (bottom centre, design system `slim-map__pin`), so the overlay sits at the coordinate.
-        const overlay = new Overlay({ element: pin.element, position: pinsVisible ? [pin.east, pin.north] : undefined, positioning: 'top-left', stopEvent: true });
-        map.addOverlay(overlay);
-        return { overlay, east: pin.east, north: pin.north };
-      });
+      pins = next;
+      positionPins();
     },
 
     setLayerVisible(layer, visible) {
@@ -154,14 +169,17 @@ export function createOlMapEngine(target: HTMLElement, config: MapConfig, handle
         return;
       }
       pinsVisible = visible;
-      for (const pin of pins) pin.overlay.setPosition(visible ? [pin.east, pin.north] : undefined);
+      positionPins();
     },
 
     fit,
 
     zoomBy(delta) {
-      const zoom = view.getZoom() ?? 0;
-      view.animate({ zoom: Math.max(0, Math.min(config.zoom.resolutions.length - 1, Math.round(zoom) + delta)), duration: 150 });
+      // From the Zoomstufe the view is heading for: a second click during the animation must not be lost.
+      const from = targetZoom ?? Math.round(view.getZoom() ?? 0);
+      targetZoom = Math.max(0, Math.min(config.zoom.resolutions.length - 1, from + delta));
+      view.cancelAnimations();
+      view.animate({ zoom: targetZoom, duration: 150 });
     },
 
     exportImage(request: MapExportRequest): Promise<MapExportImage> {

@@ -87,9 +87,14 @@ test.describe('map viewer (slm 2)', () => {
   test('shows the LV95 coordinates under the mouse (5.4.4)', async ({ page }) => {
     await mockMapTiles(page);
     await openDetails(page);
+    // The map sits below the fold of the page: bring it into the window before the mouse goes there.
+    await page.locator(MAP.viewer).scrollIntoViewIfNeeded();
     const box = await page.locator(MAP.viewer).boundingBox();
     expect(box).not.toBeNull();
-    await page.mouse.move((box?.x ?? 0) + (box?.width ?? 0) / 2, (box?.y ?? 0) + (box?.height ?? 0) / 2);
+    // A spot of the map without a pin or a control, reached like a real mouse does: with a movement.
+    const [x, y] = [(box?.x ?? 0) + (box?.width ?? 0) * 0.3, (box?.y ?? 0) + (box?.height ?? 0) * 0.45];
+    await page.mouse.move(x - 20, y - 20);
+    await page.mouse.move(x, y, { steps: 5 });
     // Geissalp of the demo lies around 2’618’400 / 1’176’900.
     await expect(page.locator(MAP.coordinates)).toHaveText(/2’61[78]’\d{3}, 1’17[67]’\d{3}/);
   });

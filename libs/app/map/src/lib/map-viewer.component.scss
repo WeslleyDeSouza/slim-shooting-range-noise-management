@@ -26,13 +26,16 @@
     }
   }
 
-  // Holder of the pins until the engine moves them onto the map.
+  // Layer of the pins above the map: the engine sets their position, the layer itself lets the map through.
   &__pins {
     position: absolute;
-    inset: 0 auto auto 0;
-    width: 0;
-    height: 0;
+    inset: 0;
     overflow: hidden;
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
   }
 
   &__state {

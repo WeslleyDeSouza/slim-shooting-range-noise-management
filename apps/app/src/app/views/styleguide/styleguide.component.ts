@@ -354,10 +354,19 @@ interface SwatchDef {
               </ul>
               <div class="slim-table-wrap">
                 <table class="slim-table slim-table--stack">
-                  <thead><tr><th>Schiessplatz</th><th>Datum</th><th class="slim-table__cell--num">Schüsse</th><th>Status</th></tr></thead>
+                  <thead>
+                    <tr>
+                      <th class="slim-table__cell--check"><input type="checkbox" class="slim-check__input" aria-label="Alle Zeilen auswählen" /></th>
+                      <th aria-sort="ascending"><button type="button" class="slim-table__sort slim-table__sort--active">Schiessplatz <span class="slim-table__sort-mark" aria-hidden="true">▴</span></button></th>
+                      <th><button type="button" class="slim-table__sort">Datum <span class="slim-table__sort-mark" aria-hidden="true"></span></button></th>
+                      <th class="slim-table__cell--num"><button type="button" class="slim-table__sort">Schüsse <span class="slim-table__sort-mark" aria-hidden="true"></span></button></th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
                   <tbody>
                     @for (row of rows; track row.id) {
                       <tr class="slim-table__row slim-table__row--clickable">
+                        <td class="slim-table__cell--check"><input type="checkbox" class="slim-check__input" aria-label="Zeile auswählen" /></td>
                         <td data-label="Schiessplatz">{{ row.place }}</td>
                         <td data-label="Datum">{{ row.date }}</td>
                         <td data-label="Schüsse" class="slim-table__cell--num">{{ row.shots }}</td>

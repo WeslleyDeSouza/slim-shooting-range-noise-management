@@ -179,8 +179,8 @@ Font: `'Helvetica Now', 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, sans-ser
   `slim-empty` (`__icon __title __text __action`), `slim-avatar` (`--sm --lg`)
 - **Data**: `slim-list` (`__item --interactive __leading __content __title __meta __trailing`;
   `--divided --card`), `slim-toolbar` (`__grow __meta __lock`), `slim-search` (`__input __icon`),
-  `slim-filter`, `slim-table-wrap` + `slim-table` (`__cell--num --wrap --actions`,
-  `__row--clickable --selected`; `--striped --dense --stack`), `slim-table-foot` (`__grow`),
+  `slim-filter`, `slim-table-wrap` + `slim-table` (`__cell--num --wrap --actions --check`,
+  `__row--clickable --selected`, `__sort --active` + `__sort-mark`; `--striped --dense --stack`), `slim-table-foot` (`__grow`),
   `slim-pager` (`__btn --active`), `slim-legend` (`__item`), `slim-row-actions`, `slim-segmented`
   (`__item --active`; `--block`), `slim-tabs` (`__tab --active`), `slim-kv` (`__key __value`)
 - **Overlay**: `slim-sheet` (`__backdrop __panel __handle __header __title __close __body __footer`;

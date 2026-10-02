@@ -144,5 +144,57 @@
       "no_usages": "Nessun utilizzo registrato nell’anno e nei due anni precedenti. Nessuna registrazione non significa zero colpi.",
       "no_quota": "Almeno una combinazione sparata non ha contingente: valore previsto 0, ogni colpo conta come superamento (B1 5.10)."
     }
+  },
+  "map": {
+    "label": "Carta della piazza di tiro con le parti d'impianto e i punti di ricezione",
+    "failed": "Non è stato possibile caricare la carta.",
+    "tiles_failed": "Carta di sfondo non disponibile. Gli oggetti sono visualizzati senza sfondo.",
+    "points_without_coordinates": "{{n}} punti di ricezione senza coordinate non sono visualizzati.",
+    "reset": "Ripristinare la vista predefinita",
+    "layers": "Livelli e legenda",
+    "fullscreen": "Vista completa in una nuova scheda",
+    "zoom_in": "Ingrandire",
+    "zoom_out": "Ridurre",
+    "zoom_level": "Livello di zoom {{n}} di {{total}}",
+    "coordinates": "Coordinate",
+    "layer": {
+      "plant_parts": "Parti d'impianto",
+      "points": "Punti di ricezione"
+    },
+    "legend": {
+      "ok": "Valore limite rispettato",
+      "warn": "Riserva inferiore a 5 dB",
+      "over": "Valore limite superato",
+      "none": "Non valutato"
+    },
+    "base": {
+      "switch": "Cambiare la carta di sfondo",
+      "light": "Carta di base",
+      "imagery": "Immagine aerea",
+      "topo": "Carta nazionale"
+    },
+    "export": {
+      "title": "Esportare la carta",
+      "format": "Formato",
+      "format_pdf": "PDF (A4 orizzontale)",
+      "format_image": "Immagine (JPEG)",
+      "resolution": "Risoluzione",
+      "extras": "Indicazioni supplementari",
+      "extra": {
+        "title": "Titolo",
+        "copyright": "Copyright",
+        "date": "Data e ora",
+        "disclaimer": "Avvertenza legale",
+        "scale": "Scala",
+        "center": "Coordinate del centro"
+      },
+      "run": "Esportare",
+      "failed": "L'esportazione non è riuscita. Riprovare.",
+      "default_title": "Estratto di carta",
+      "printed": "Stampato il {{date}}",
+      "scale": "Scala {{scale}}",
+      "center": "Centro {{coordinates}} (MN95)",
+      "disclaimer": "Estratto da SLIM. Carta di sfondo: Ufficio federale di topografia swisstopo. Solo a titolo informativo, senza valore legale."
+    }
   }
 }

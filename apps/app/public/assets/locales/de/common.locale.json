@@ -144,5 +144,57 @@
       "no_usages": "Im Jahr und den zwei Vorjahren sind keine Nutzungen erfasst. Keine Einträge bedeuten nicht null Schüsse.",
       "no_quota": "Mindestens eine beschossene Kombination hat kein Kontingent: Soll 0, jeder Schuss zählt als Überschreitung (B1 5.10)."
     }
+  },
+  "map": {
+    "label": "Karte des Schiessplatzes mit Anlagenteilen und Empfangspunkten",
+    "failed": "Die Karte konnte nicht geladen werden.",
+    "tiles_failed": "Hintergrundkarte nicht erreichbar. Die Objekte werden ohne Hintergrund angezeigt.",
+    "points_without_coordinates": "{{n}} Empfangspunkte ohne Koordinaten sind nicht dargestellt.",
+    "reset": "Auf Standardansicht zurücksetzen",
+    "layers": "Ebenen und Legende",
+    "fullscreen": "Vollansicht in neuem Tab",
+    "zoom_in": "Vergrössern",
+    "zoom_out": "Verkleinern",
+    "zoom_level": "Zoomstufe {{n}} von {{total}}",
+    "coordinates": "Koordinaten",
+    "layer": {
+      "plant_parts": "Anlagenteile",
+      "points": "Empfangspunkte"
+    },
+    "legend": {
+      "ok": "Grenzwert eingehalten",
+      "warn": "Reserve unter 5 dB",
+      "over": "Grenzwert überschritten",
+      "none": "Nicht beurteilt"
+    },
+    "base": {
+      "switch": "Hintergrundkarte wechseln",
+      "light": "Basiskarte",
+      "imagery": "Luftbild",
+      "topo": "Landeskarte"
+    },
+    "export": {
+      "title": "Karte exportieren",
+      "format": "Format",
+      "format_pdf": "PDF (A4 quer)",
+      "format_image": "Bild (JPEG)",
+      "resolution": "Auflösung",
+      "extras": "Zusatzangaben",
+      "extra": {
+        "title": "Titel",
+        "copyright": "Copyright",
+        "date": "Datum und Uhrzeit",
+        "disclaimer": "Rechtlicher Hinweis",
+        "scale": "Massstab",
+        "center": "Koordinaten des Zentrums"
+      },
+      "run": "Exportieren",
+      "failed": "Der Export ist fehlgeschlagen. Bitte erneut versuchen.",
+      "default_title": "Kartenausschnitt",
+      "printed": "Gedruckt am {{date}}",
+      "scale": "Massstab {{scale}}",
+      "center": "Zentrum {{coordinates}} (LV95)",
+      "disclaimer": "Auszug aus SLIM. Hintergrundkarte: Bundesamt für Landestopografie swisstopo. Nur zur Information, nicht rechtsverbindlich."
+    }
   }
 }

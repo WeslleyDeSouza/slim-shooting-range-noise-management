@@ -144,5 +144,57 @@
       "no_usages": "Aucune utilisation saisie pour l’année et les deux années précédentes. Aucune entrée ne signifie pas zéro coup.",
       "no_quota": "Au moins une combinaison tirée n’a pas de contingent : cible 0, chaque coup compte comme dépassement (B1 5.10)."
     }
+  },
+  "map": {
+    "label": "Carte de la place de tir avec les parties d'installation et les points de réception",
+    "failed": "La carte n'a pas pu être chargée.",
+    "tiles_failed": "Carte de fond indisponible. Les objets sont affichés sans fond.",
+    "points_without_coordinates": "{{n}} points de réception sans coordonnées ne sont pas affichés.",
+    "reset": "Revenir à l'affichage par défaut",
+    "layers": "Couches et légende",
+    "fullscreen": "Vue complète dans un nouvel onglet",
+    "zoom_in": "Agrandir",
+    "zoom_out": "Réduire",
+    "zoom_level": "Niveau de zoom {{n}} sur {{total}}",
+    "coordinates": "Coordonnées",
+    "layer": {
+      "plant_parts": "Parties d'installation",
+      "points": "Points de réception"
+    },
+    "legend": {
+      "ok": "Valeur limite respectée",
+      "warn": "Réserve inférieure à 5 dB",
+      "over": "Valeur limite dépassée",
+      "none": "Non évalué"
+    },
+    "base": {
+      "switch": "Changer la carte de fond",
+      "light": "Carte de base",
+      "imagery": "Image aérienne",
+      "topo": "Carte nationale"
+    },
+    "export": {
+      "title": "Exporter la carte",
+      "format": "Format",
+      "format_pdf": "PDF (A4 paysage)",
+      "format_image": "Image (JPEG)",
+      "resolution": "Résolution",
+      "extras": "Indications complémentaires",
+      "extra": {
+        "title": "Titre",
+        "copyright": "Copyright",
+        "date": "Date et heure",
+        "disclaimer": "Mention légale",
+        "scale": "Échelle",
+        "center": "Coordonnées du centre"
+      },
+      "run": "Exporter",
+      "failed": "L'exportation a échoué. Veuillez réessayer.",
+      "default_title": "Extrait de carte",
+      "printed": "Imprimé le {{date}}",
+      "scale": "Échelle {{scale}}",
+      "center": "Centre {{coordinates}} (MN95)",
+      "disclaimer": "Extrait de SLIM. Carte de fond : Office fédéral de topographie swisstopo. À titre d'information uniquement, sans valeur juridique."
+    }
   }
 }

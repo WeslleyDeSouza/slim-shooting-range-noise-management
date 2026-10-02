@@ -144,5 +144,57 @@
       "no_usages": "No usages recorded in the year and the two years before. No entries does not mean zero shots.",
       "no_quota": "At least one shot combination has no quota: target 0, every shot counts as an exceedance (B1 5.10)."
     }
+  },
+  "map": {
+    "label": "Map of the shooting range with installation parts and receiver points",
+    "failed": "The map could not be loaded.",
+    "tiles_failed": "Background map not available. The objects are shown without a background.",
+    "points_without_coordinates": "{{n}} receiver points without coordinates are not shown.",
+    "reset": "Reset to the default view",
+    "layers": "Layers and legend",
+    "fullscreen": "Full view in a new tab",
+    "zoom_in": "Zoom in",
+    "zoom_out": "Zoom out",
+    "zoom_level": "Zoom level {{n}} of {{total}}",
+    "coordinates": "Coordinates",
+    "layer": {
+      "plant_parts": "Installation parts",
+      "points": "Receiver points"
+    },
+    "legend": {
+      "ok": "Limit met",
+      "warn": "Margin below 5 dB",
+      "over": "Limit exceeded",
+      "none": "Not assessed"
+    },
+    "base": {
+      "switch": "Change background map",
+      "light": "Base map",
+      "imagery": "Aerial image",
+      "topo": "National map"
+    },
+    "export": {
+      "title": "Export map",
+      "format": "Format",
+      "format_pdf": "PDF (A4 landscape)",
+      "format_image": "Image (JPEG)",
+      "resolution": "Resolution",
+      "extras": "Additional information",
+      "extra": {
+        "title": "Title",
+        "copyright": "Copyright",
+        "date": "Date and time",
+        "disclaimer": "Legal notice",
+        "scale": "Scale",
+        "center": "Coordinates of the centre"
+      },
+      "run": "Export",
+      "failed": "The export failed. Please try again.",
+      "default_title": "Map extract",
+      "printed": "Printed on {{date}}",
+      "scale": "Scale {{scale}}",
+      "center": "Centre {{coordinates}} (LV95)",
+      "disclaimer": "Extract from SLIM. Background map: Federal Office of Topography swisstopo. For information only, not legally binding."
+    }
   }
 }

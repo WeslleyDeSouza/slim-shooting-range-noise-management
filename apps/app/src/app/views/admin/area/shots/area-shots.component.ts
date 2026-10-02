@@ -642,6 +642,14 @@ export class AreaShotsComponent extends ComponentBase {
     return this.submitted() && c.invalid;
   }
 
+  /** The text for the violated rule of the Zeitraum: missing, off the quarter hour (B1 6.2.3), or «Bis» not after «Von». */
+  protected timeErrorKey(): string {
+    const { timeFrom, timeTo } = this.form.controls;
+    if (timeFrom.hasError('required') || timeTo.hasError('required')) return 'shots.form.err_time_required';
+    if (timeFrom.hasError('quarterHour') || timeTo.hasError('quarterHour')) return 'shots.form.err_time_quarter';
+    return 'shots.form.err_time';
+  }
+
   protected invalidPosition(index: number, control: keyof PositionForm): boolean {
     const c = this.positions.at(index)?.controls[control];
     return this.submitted() && Boolean(c?.invalid);

@@ -407,6 +407,7 @@
           </div>
         } @else {
           <div class="sim__result-actions">
+            <p class="slim-field__hint sim__rounding" data-testid="sim-rounding">{{ 'rounding_note' | translate }}</p>
             <app-table-export testId="sim-result-export" [small]="true" [source]="resultExportSource" [disabled]="stale()" />
           </div>
           <div class="slim-table-wrap sim__table-wrap">

@@ -12,6 +12,7 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { LogItemDto } from '@ui-slim/apiClient';
+import { saveBlob } from '../../../core/download';
 import { LogsFacade, SYSTEM_USER } from './_data/logs.facade';
 
 const I18N = 'admin.logs';
@@ -311,12 +312,7 @@ export class AppLogsComponent extends ComponentBase {
     try {
       const blob = await this.facade.exportXlsx(this.translate.lang);
       const stamp = new Date().toISOString().slice(0, 10);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `logbuch_export_${stamp}.xlsx`;
-      link.click();
-      URL.revokeObjectURL(url);
+      saveBlob(blob, `logbuch_export_${stamp}.xlsx`);
     } catch {
       this.exportError.set(true);
     } finally {

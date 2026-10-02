@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 
 /**
@@ -320,7 +321,16 @@ test.describe('data management: Schiessplatz › Berechnungen', () => {
     await year.locator(DM.exportYearCheck).check();
     const csv = page.waitForEvent('download');
     await page.locator(DM.exportShots).click();
-    expect((await csv).suggestedFilename()).toBe(`schusszahlen_${new Date().getFullYear()}.csv`);
+    const shots = await csv;
+    expect(shots.suggestedFilename()).toBe(`schusszahlen_${new Date().getFullYear()}.csv`);
+    // The file holds one line per Nutzungsposition with unit, Personen and Zeitraum (slm 40).
+    const lines = readFileSync(await shots.path(), 'utf8').replace(String.fromCharCode(0xfeff), '').trim().split(/\r?\n/);
+    expect(lines[0].split(';')).toEqual([
+      'Datum', 'Von', 'Bis', 'Stellungsraum', 'Koordinationsabschnitts-Nr.', 'Einheit', 'Nutzungskategorie',
+      'Zivile Nutzungsart', 'Waffe / Kaliber', 'Menge', 'Mengeneinheit', 'Personen', 'Erfasser', 'Quelle',
+    ]);
+    expect(lines.length).toBeGreaterThan(5);
+    expect(lines[1].split(';')[0]).toMatch(new RegExp(`^${new Date().getFullYear()}-\\d{2}-\\d{2}$`));
 
     // A new empty Berechnungszustand in the E2E delivery: ZustandID from the Koordinationsabschnitt.
     await page.locator(DM.newState).click();

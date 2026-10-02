@@ -346,6 +346,27 @@ describe('AreaShotsComponent', () => {
     );
   });
 
+  it('names the violated rule of the Zeitraum: missing, off the quarter hour, «Bis» not after «Von»', () => {
+    el().querySelector<HTMLButtonElement>('[data-testid="shots-new"]')?.click();
+    fixture.detectChanges();
+    const component = fixture.componentInstance as unknown as { form: { controls: Record<string, { setValue(v: unknown): void }> } };
+    const times = (from: string, to: string): string => {
+      component.form.controls['timeFrom'].setValue(from);
+      component.form.controls['timeTo'].setValue(to);
+      el().querySelector<HTMLButtonElement>('[data-testid="shots-save"]')?.click();
+      fixture.detectChanges();
+      const error = el().querySelector('[data-testid="shots-time-error"]');
+      // The text only shows while the field is marked invalid.
+      expect(error?.closest('.slim-field')?.classList.contains('slim-field--invalid')).toBe(true);
+      return error?.textContent?.trim() ?? '';
+    };
+    expect(times('', '')).toBe('shots.form.err_time_required');
+    // 11:30 is after 08:07: the quarter hour is the rule that is violated.
+    expect(times('08:07', '11:30')).toBe('shots.form.err_time_quarter');
+    expect(times('11:30', '08:00')).toBe('shots.form.err_time');
+    expect(facade.create).not.toHaveBeenCalled();
+  });
+
   it('requires the civil kind for «Zivil» and rejects times off the quarter hour', async () => {
     el().querySelector<HTMLButtonElement>('[data-testid="shots-new"]')?.click();
     fixture.detectChanges();

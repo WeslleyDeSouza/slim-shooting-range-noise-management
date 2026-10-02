@@ -227,6 +227,8 @@ describe('AreaSummaryComponent — Schiessplatz-Nutzungen – Übersicht (B1 5.1
     // E1 is red after Anhang 7 but orange after Anhang 9.
     expect(pins[0].getAttribute('aria-label')).toBe('E1, details.state.warn');
     expect(all('summary-point').map((p) => p.getAttribute('data-state'))).toEqual(['warn', 'ok']);
+    // The page says that the assessment rounds the level to whole dB.
+    expect(text(el('summary-rounding'))).toContain('rounding_note');
     expect(el<HTMLAnchorElement>('map-fullscreen')?.getAttribute('href') ?? fixture.nativeElement.innerHTML).toContain('/admin/area/area-1/map?state=calc-1');
   });
 

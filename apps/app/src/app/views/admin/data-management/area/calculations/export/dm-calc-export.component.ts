@@ -8,6 +8,7 @@ import { SLIM_APP_ID } from '@slim/shared';
 import type { StateSummaryDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { toggleSelection } from '../../../../../../core/data-calculations/calculations.logic';
+import { saveBlob } from '../../../../../../core/download';
 import { DataCalculationsFacade } from '../../../../../../core/data-calculations/data-calculations.facade';
 import { areaIdSignal } from '../../_context/area-id';
 import { BUILD_YEAR_OPTIONS } from '../overview/dm-calc-overview.component';
@@ -111,7 +112,7 @@ export class DmCalcExportComponent extends ComponentBase {
     if (!ids.length || this.readonly()) return;
     const blob = await this.facade.exportStates(this.areaId(), ids);
     if (!blob) return;
-    this.download(blob, `berechnungszustaende_${new Date().toISOString().slice(0, 10)}.json`);
+    saveBlob(blob, `berechnungszustaende_${new Date().toISOString().slice(0, 10)}.json`);
     this.showToast({ key: `${I18N}.toast_exported`, params: { n: ids.length } });
   }
 
@@ -120,17 +121,8 @@ export class DmCalcExportComponent extends ComponentBase {
     if (!years.length || this.readonly()) return;
     const blob = await this.facade.exportShots(this.areaId(), years);
     if (!blob) return;
-    this.download(blob, `schusszahlen_${[...years].sort().join('-')}.csv`);
+    saveBlob(blob, `schusszahlen_${[...years].sort().join('-')}.csv`);
     this.showToast({ key: `${I18N}.toast_exported`, params: { n: years.length } });
-  }
-
-  private download(blob: Blob, name: string): void {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = name;
-    a.click();
-    URL.revokeObjectURL(url);
   }
 
   // --- Neuer Berechnungszustand -------------------------------------------------

@@ -302,8 +302,14 @@
   // Result -----------------------------------------------------------------
   &__result-actions {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: slim.space(3);
     padding: slim.space(2) slim.space(4) 0;
+  }
+
+  &__rounding {
+    margin: 0;
   }
 
   &__progress {

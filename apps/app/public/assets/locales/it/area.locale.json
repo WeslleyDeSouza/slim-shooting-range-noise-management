@@ -133,7 +133,8 @@
       "positions": "Armi / calibri e quantità",
       "add_position": "Altra arma / calibro",
       "remove_position": "Rimuovi posizione",
-      "err_time_quarter": "Orari al quarto d'ora (00, 15, 30, 45)."
+      "err_time_quarter": "L’ora di inizio e l’ora di fine vanno indicate al quarto d’ora (minuti 00, 15, 30 o 45).",
+      "err_time_required": "Indicare l’ora di inizio e l’ora di fine."
     },
     "delete": {
       "title_one": "Eliminare l’utilizzo?",
@@ -416,5 +417,6 @@
       "list": "Punti di ricezione",
       "color_rule": "Il colore di un punto di ricezione indica la valutazione secondo l’allegato 9 OIF."
     }
-  }
+  },
+  "rounding_note": "Per la valutazione il livello è arrotondato al dB intero (60,4 dB vale 60 dB, 60,5 dB vale 61 dB); il livello è mostrato con un decimale."
 }

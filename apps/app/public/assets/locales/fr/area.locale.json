@@ -133,7 +133,8 @@
       "positions": "Armes / calibres et quantités",
       "add_position": "Autre arme / calibre",
       "remove_position": "Supprimer la position",
-      "err_time_quarter": "Heures au quart d'heure (00, 15, 30, 45)."
+      "err_time_quarter": "Les heures de début et de fin doivent être indiquées au quart d’heure (minutes 00, 15, 30 ou 45).",
+      "err_time_required": "Veuillez indiquer l’heure de début et l’heure de fin."
     },
     "delete": {
       "title_one": "Supprimer l’utilisation ?",
@@ -416,5 +417,6 @@
       "list": "Points de réception",
       "color_rule": "La couleur d’un point de réception indique l’évaluation selon l’annexe 9 OPB."
     }
-  }
+  },
+  "rounding_note": "Pour l’évaluation, le niveau est arrondi au dB entier (60,4 dB compte comme 60 dB, 60,5 dB comme 61 dB) ; le niveau est affiché avec une décimale."
 }

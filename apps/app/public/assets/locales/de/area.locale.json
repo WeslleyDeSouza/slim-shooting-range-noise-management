@@ -133,7 +133,8 @@
       "positions": "Waffen / Kaliber und Mengen",
       "add_position": "Weitere Waffe / Kaliber",
       "remove_position": "Position entfernen",
-      "err_time_quarter": "Zeiten auf die Viertelstunde (00, 15, 30, 45)."
+      "err_time_quarter": "Von- und Bis-Zeit sind auf die Viertelstunde anzugeben (Minuten 00, 15, 30 oder 45).",
+      "err_time_required": "Bitte Von- und Bis-Zeit angeben."
     },
     "delete": {
       "title_one": "Nutzung löschen?",
@@ -416,5 +417,6 @@
       "list": "Empfangspunkte",
       "color_rule": "Die Farbe eines Empfangspunkts zeigt die Beurteilung nach Anhang 9 LSV."
     }
-  }
+  },
+  "rounding_note": "Für die Beurteilung wird der Pegel auf ganze dB gerundet (60.4 dB gilt als 60 dB, 60.5 dB als 61 dB); angezeigt wird der Pegel mit einer Dezimale."
 }

@@ -133,7 +133,8 @@
       "positions": "Weapons / calibres and quantities",
       "add_position": "Another weapon / calibre",
       "remove_position": "Remove position",
-      "err_time_quarter": "Times on the quarter hour (00, 15, 30, 45)."
+      "err_time_quarter": "Start and end time must be on the quarter hour (minutes 00, 15, 30 or 45).",
+      "err_time_required": "Please enter the start and end time."
     },
     "delete": {
       "title_one": "Delete usage?",
@@ -416,5 +417,6 @@
       "list": "Receiver points",
       "color_rule": "The colour of a receiver point shows the assessment under Annex 9 of the Noise Abatement Ordinance."
     }
-  }
+  },
+  "rounding_note": "For the assessment the level is rounded to whole dB (60.4 dB counts as 60 dB, 60.5 dB as 61 dB); the level is shown with one decimal."
 }

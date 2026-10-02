@@ -18,6 +18,7 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { CaliberDto, WeaponCategoryDto, WeaponCombinationDto, WeaponDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../core/access/access.facade';
+import { saveBlob } from '../../../../core/download';
 import {
   DataWeaponsFacade,
   WeaponInputByKind,
@@ -433,12 +434,7 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
   protected async exportXlsx(): Promise<void> {
     const blob = await this.facade.exportXlsx(this.translate.lang || 'de');
     if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `waffen_stammdaten_${new Date().toISOString().slice(0, 10)}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
+    saveBlob(blob, `waffen_stammdaten_${new Date().toISOString().slice(0, 10)}.xlsx`);
     this.showToast({ key: `${I18N}.toast_exported` });
   }
 

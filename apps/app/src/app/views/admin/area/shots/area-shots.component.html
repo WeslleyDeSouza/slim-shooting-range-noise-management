@@ -516,13 +516,13 @@
               </div>
             }
             <div class="shots__f2">
-              <input class="slim-input" type="time" formControlName="timeFrom" [attr.aria-label]="'shots.form.from' | translate" data-testid="shots-time-from" />
-              <input class="slim-input" type="time" formControlName="timeTo" [attr.aria-label]="'shots.form.to' | translate" data-testid="shots-time-to" />
+              <input class="slim-input" type="time" step="900" formControlName="timeFrom" [attr.aria-label]="'shots.form.from' | translate" data-testid="shots-time-from" />
+              <input class="slim-input" type="time" step="900" formControlName="timeTo" [attr.aria-label]="'shots.form.to' | translate" data-testid="shots-time-to" />
             </div>
             @if (duration(); as d) {
               <p class="slim-field__hint">{{ 'shots.form.duration' | translate: { h: d.h, m: d.m } }}</p>
             }
-            <p class="slim-field__error">{{ 'shots.form.err_time' | translate }}</p>
+            <p class="slim-field__error" data-testid="shots-time-error">{{ timeErrorKey() | translate }}</p>
           </div>
 
           <div class="shots__f2">

@@ -181,6 +181,11 @@ describe('AreaDetailsComponent', () => {
     expect(data.filters).toEqual(expect.arrayContaining([{ label: 'details.calc.basis', value: 'Initiale Aufnahme' }]));
   });
 
+  it('says that the assessment compares the level rounded to whole dB (B1.2 10.4)', () => {
+    const note = (fixture.nativeElement as HTMLElement).querySelector('[data-testid="details-rounding"]');
+    expect(note?.textContent).toContain('rounding_note');
+  });
+
   it('loads the assessment of the parent route area once', fakeAsync(() => {
     tick(20); // ComponentBase calls getData() after 10 ms
     expect(facade.load).toHaveBeenCalledTimes(1);

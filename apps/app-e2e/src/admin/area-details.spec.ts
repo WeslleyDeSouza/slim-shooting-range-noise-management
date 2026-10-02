@@ -1,10 +1,13 @@
 import { expect, test } from '@playwright/test';
+import { mockMapTiles } from '../support/map';
 import { ROUTES } from '../support/selectors';
 
 /**
  * Schiessplatz – Details · Empfangspunkte (B1 5.12). Signed in via the
  * setup project; data is the demo dataset (Geissalp: 6 receivers, two
- * calculation states, E1 over the IGW on the initial state).
+ * calculation states, E1 over the IGW on the initial state). The map is the
+ * GIS-Kartenviewer (slm 2, see area-map.spec.ts); its background tiles are
+ * answered locally.
  */
 const DETAILS = {
   tab: '[data-testid="area-tab-details"]',
@@ -20,6 +23,7 @@ const DETAILS = {
 } as const;
 
 test.beforeEach(async ({ page }) => {
+  await mockMapTiles(page);
   await page.goto(ROUTES.area);
   // First row of the overview is 1104.020 Geissalp (sorted by number).
   await page.locator('.slim-table tbody tr.slim-table__row').first().click();

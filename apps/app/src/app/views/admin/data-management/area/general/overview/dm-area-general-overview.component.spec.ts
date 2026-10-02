@@ -8,6 +8,8 @@ import type { AreaGeneralDto, AreaRoomDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { DmAreaGeneralOverviewComponent, highlight } from './dm-area-general-overview.component';
+import { SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
+import { fakeSelectionLists } from '../../../../../../core/settings/selection-lists.testing';
 
 function room(no: string | null, name: string, enabled = true, sortOrder = 0): AreaRoomDto {
   return { id: `room-${name}`, coordinationSectionNo: no, name, groupName: null, sortOrder, enabled };
@@ -84,6 +86,7 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
         provideRouter([]),
         { provide: DataAreaFacade, useValue: facade },
         { provide: AccessFacade, useValue: access },
+        { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
         DataEmitter,
         {
           provide: TranslateService,
@@ -117,10 +120,10 @@ describe('DmAreaGeneralOverviewComponent (5.15)', () => {
     expect(el('[data-testid="dmo-field-coordination_no"]').textContent).toContain('1104.020');
     // No Sachplan-Nr. → «nicht im Sachplan Militär», never an empty cell.
     expect(el('[data-testid="dmo-field-sectoral_plan_no"]').textContent).toContain('not_in_sectoral_plan');
-    expect(el('[data-testid="dmo-field-classification"]').textContent).toContain('options.classification.unproblematic');
+    expect(el('[data-testid="dmo-field-classification"]').textContent).toContain('unproblematic (DE)'); // label of the Auswahlliste (slm 1)
     // Baujahr comes from the current calculation state, read-only.
     expect(el('[data-testid="dmo-field-build_year"]').textContent).toContain('options.build_year.mixed');
-    expect(el('[data-testid="dmo-field-spm_state"]').textContent).toContain('options.spm_state.completed');
+    expect(el('[data-testid="dmo-field-spm_state"]').textContent).toContain('completed (DE)');
     // A state that is not maintained yet says so instead of showing nothing.
     expect(el('[data-testid="dmo-field-project_state"]').textContent).toContain('not_set');
     expect(el('[data-testid="dmo-active-badge"]').textContent).toContain('active');

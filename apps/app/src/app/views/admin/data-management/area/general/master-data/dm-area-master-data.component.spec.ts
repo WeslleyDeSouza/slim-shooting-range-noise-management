@@ -8,6 +8,8 @@ import type { AreaGeneralDto, AreaQuotaDto, AreaResultDto, QuotaCombinationOptio
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
 import { DmAreaMasterDataComponent } from './dm-area-master-data.component';
+import { SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
+import { fakeSelectionLists } from '../../../../../../core/settings/selection-lists.testing';
 
 const AREA: AreaResultDto = {
   id: 'area-1',
@@ -98,6 +100,7 @@ describe('DmAreaMasterDataComponent (5.16)', () => {
         provideRouter([]),
         { provide: DataAreaFacade, useValue: facade },
         { provide: AccessFacade, useValue: access },
+        { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
         DataEmitter,
         {
           provide: TranslateService,

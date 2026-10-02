@@ -13,6 +13,8 @@ import { AreaFacade } from '../../../../core/area/area.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { UsageFacade } from '../../../../core/usage/usage.facade';
 import { AreaShotsComponent, minutesBetween } from './area-shots.component';
+import { SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
+import { fakeSelectionLists } from '../../../../core/settings/selection-lists.testing';
 
 /** Keys pass through; interpolation like the real pipe (`{{n}}`). */
 @Pipe({ name: 'translate' })
@@ -110,6 +112,7 @@ describe('AreaShotsComponent', () => {
       providers: [
         { provide: UsageFacade, useValue: facade },
         { provide: SettingsFacade, useValue: { usageLockDate: lockDate } },
+        { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
         { provide: AreaFacade, useValue: { byId: () => ({ id: AREA_ID, name: 'Geissalp', coordinationSectionNo: '1104.020' }) } },
         { provide: ActivatedRoute, useValue: { parent: parentRoute, paramMap: of(paramMap), snapshot: parentRoute.snapshot } },
       ],

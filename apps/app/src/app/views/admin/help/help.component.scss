@@ -1,0 +1,56 @@
+@use 'slim/abstracts' as slim;
+
+// Online-Hilfe (slm 53). Block `ohelp`.
+.ohelp {
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: slim.space(4);
+    align-items: start;
+
+    @include slim.mq('lg') {
+      grid-template-columns: minmax(220px, 1fr) minmax(0, 3fr);
+    }
+  }
+
+  &__toc {
+    @include slim.mq('lg') {
+      position: sticky;
+      top: slim.space(4);
+    }
+  }
+
+  &__toc-list {
+    display: grid;
+    gap: slim.space(1);
+    margin: 0;
+    padding: slim.space(3) slim.space(4) slim.space(4) slim.space(8);
+  }
+
+  &__toc-link {
+    color: slim.color('link');
+  }
+
+  &__topics {
+    display: grid;
+    gap: slim.space(4);
+    min-width: 0;
+  }
+
+  &__topic {
+    // The anchor target stays visible below the sticky header.
+    scroll-margin-top: slim.space(16);
+  }
+
+  &__intro {
+    margin: 0 0 slim.space(3);
+    color: slim.color('text-2');
+  }
+
+  &__steps {
+    display: grid;
+    gap: slim.space(2);
+    margin: 0;
+    padding-left: slim.space(5);
+  }
+}

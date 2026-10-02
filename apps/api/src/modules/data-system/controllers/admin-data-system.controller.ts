@@ -90,11 +90,11 @@ export class AdminDataSystemController {
     schema: {
       type: 'object',
       required: ['file'],
-      properties: { file: { type: 'string', format: 'binary', description: 'PDF-Dokument, höchstens 20 MB' } },
+      properties: { file: { type: 'string', format: 'binary', description: 'PDF-Dokument, höchstens 15 MB' } },
     },
   })
   @ApiCreatedResponse({ type: ManualInfoDto })
-  @ApiBadRequestResponse({ description: 'Keine Datei, kein PDF oder grösser als 20 MB' })
+  @ApiBadRequestResponse({ description: 'Keine Datei, kein PDF oder grösser als 15 MB' })
   async uploadManual(@GetTenantId() tenantId: string, @GetUserId() userId: string, @UploadedFile() file?: UploadedManual): Promise<ManualInfoDto> {
     if (!file?.buffer) throw new BadRequestException('Es wurde keine Datei übermittelt (Feld «file»).');
     // Browsers send the name as UTF-8, the parser reads it as Latin-1.

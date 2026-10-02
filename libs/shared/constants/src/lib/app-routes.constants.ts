@@ -43,6 +43,8 @@ export const ROUTE_SEGMENT = {
   edit: 'edit',
   mgdmExport: 'mgdm-export',
   system: 'system',
+  /** Online-Hilfe (B1 12.4, slm 53) */
+  help: 'help',
 
   styleguide: 'styleguide',
 } as const;
@@ -63,6 +65,8 @@ export const APP_ROUTES = {
   admin: {
     root: join(S.admin),
     home: join(S.admin),
+    /** Online-Hilfe: every help topic on one page (slm 53) */
+    help: join(S.admin, S.help),
     /** Übersicht Schiessplätze */
     area: {
       root: join(S.admin, S.area),

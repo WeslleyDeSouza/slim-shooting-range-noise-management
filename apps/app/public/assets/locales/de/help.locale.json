@@ -1,0 +1,145 @@
+{
+  "help": {
+    "ui": {
+      "button": "Hilfe zu dieser Seite (F1)",
+      "title": "Hilfe",
+      "page": "Hilfe zu dieser Seite",
+      "open_manual": "Ganze Online-Hilfe öffnen",
+      "online": "Online-Hilfe",
+      "pdf": "Benutzerhandbuch (PDF) herunterladen",
+      "no_pdf": "Es ist kein Benutzerhandbuch als PDF hinterlegt.",
+      "toc": "Inhalt",
+      "manual_title": "Online-Hilfe",
+      "manual_subtitle": "Alle Hilfethemen der Applikation auf einer Seite. Die Hilfe zur aktuellen Seite öffnen Sie mit dem Fragezeichen in der Kopfzeile oder mit F1.",
+      "back_to_top": "Zum Inhalt"
+    },
+    "topics": {
+      "general": {
+        "title": "Allgemeine Bedienung",
+        "intro": "SLIM gliedert sich in die Bereiche «Schiessplätze» und «Datenverwaltung». Die Seitenleiste führt zu den Bereichen; die Kopfzeile enthält Sprache, Darstellung, Hilfe, Hauptmenü und Benutzerkonto.",
+        "s1": "Sprache: DE, EN, FR oder IT in der Kopfzeile wählen. Die Wahl bleibt gespeichert.",
+        "s2": "Darstellung: Mit dem Mond-Symbol zwischen heller und dunkler Darstellung wechseln.",
+        "s3": "Hilfe zur aktuellen Seite: Fragezeichen in der Kopfzeile oder Taste F1.",
+        "s4": "Hauptmenü (drei Linien): Benutzerhandbuch als PDF, Online-Hilfe, Kontaktangaben und Version der Applikation.",
+        "s5": "Sie sehen die Bereiche und Schiessplätze, für die Ihre Rolle berechtigt ist."
+      },
+      "home": {
+        "title": "Einstiegsseite",
+        "intro": "Die Einstiegsseite zeigt Kennzahlen zu den Schiessplätzen und führt zu den Bereichen der Applikation.",
+        "s1": "Die Kacheln öffnen die Übersicht der Schiessplätze und die Datenverwaltung.",
+        "s2": "Die Kennzahlen zählen die Schiessplätze nach Ampelstatus; der Hinweis auf Handlungsbedarf öffnet die gefilterte Übersicht.",
+        "s3": "Mit dem Stern in der Seitenleiste merken Sie sich häufig benötigte Schiessplätze als Lesezeichen."
+      },
+      "areas": {
+        "title": "Übersicht Schiessplätze",
+        "intro": "Die Tabelle zeigt die Schiessplätze, für die Sie berechtigt sind, mit den Ampeln «Einhaltung Kontingent» und «Lärmbelastung».",
+        "s1": "Suche nach Bezeichnung oder Koordinationsabschnitt-Nr.",
+        "s2": "«Nur Handlungsbedarf» und die Filter je Ampel schränken die Liste ein.",
+        "s3": "Ein Klick auf eine Zeile öffnet die Details; die Symbole am Zeilenende führen zu Übersicht, Schusszahlen, Details und Simulation.",
+        "s4": "Ampel: grün = eingehalten, orange = zu prüfen, rot = überschritten, grau = keine Grundlage, gestreift = nicht beurteilbar.",
+        "s5": "Die Schwellenwerte und Farben der Ampeln stammen aus der erweiterten Konfiguration."
+      },
+      "area_overview": {
+        "title": "Schiessplatz – Übersicht",
+        "intro": "Die Kontextleiste zeigt den gewählten Schiessplatz mit seinen beiden Ampeln und führt zu Schusszahlen, Details und Simulation.",
+        "s1": "Über das Auswahlfeld mit Nummer und Name wechseln Sie den Schiessplatz, ohne den Bereich zu verlassen.",
+        "s2": "Der Inhalt dieser Seite (Vergleich mit den Kontingenten der Plangenehmigung) ist in dieser Version noch nicht verfügbar."
+      },
+      "shots": {
+        "title": "Schusszahlen",
+        "intro": "Hier erfassen und verwalten Sie die Schiessplatz-Nutzungen eines Jahres. Sie sind die Grundlage der Lärmberechnung.",
+        "s1": "«Nutzung erfassen»: Stellungsraum, Einheit, Datum, Zeit von/bis in Viertelstunden, Nutzungsart und eine oder mehrere Positionen aus Waffe/Kaliber und Menge angeben.",
+        "s2": "Zur Auswahl stehen die Kombinationen Waffe/Kaliber, die dem Stellungsraum zugeordnet sind.",
+        "s3": "Bearbeiten und Löschen über die Symbole am Zeilenende; ein Löschen lässt sich direkt danach rückgängig machen.",
+        "s4": "Suche, Filter und die Liste der Stellungsräume schränken die Tabelle ein.",
+        "s5": "Nutzungen bis und mit dem Sperrdatum sind gesperrt (Schloss-Symbol): Sie können nicht erfasst, geändert oder gelöscht werden."
+      },
+      "details": {
+        "title": "Details – Empfangspunkte",
+        "intro": "Die Seite zeigt die Beurteilung der Lärmbelastung je Empfangspunkt für den gewählten Berechnungszustand und Zeitraum.",
+        "s1": "Berechnungsgrundlage und Betrachtungszeitraum oben wählen; weicht der Zustand vom aktuellen ab, wird die Abweichung angezeigt.",
+        "s2": "Ein Klick auf einen Empfangspunkt der Karte zeigt seine Beurteilung nach Anhang 9 und Anhang 7 LSV mit Grenzwert, Beurteilungspegel und Reserve.",
+        "s3": "Die Farbe eines Punkts entspricht der schlechtesten anwendbaren Beurteilung. Planungswerte gelten für Anlageteile nach 1985.",
+        "s4": "«Liste» zeigt dieselben Punkte als Tabelle, die schlechteste Beurteilung zuerst.",
+        "s5": "Ohne importierte Berechnung ist keine Beurteilung möglich; der Hinweis führt zur Datenverwaltung › Berechnungen."
+      },
+      "simulation": {
+        "title": "Simulation",
+        "intro": "Mit der Simulation berechnen Sie die Lärmbelastung nach Anhang 9 LSV für hypothetische Schusszahlen. Es werden keine Daten verändert.",
+        "s1": "«Werte überschreiben» macht die Tabelle der jährlichen Schusszahlen editierbar; die Faktoren skalieren alle Werte.",
+        "s2": "«Simulation ausführen» berechnet die Beurteilungspegel mit den geänderten Werten.",
+        "s3": "Karte und Resultat-Tabelle zeigen den simulierten Zustand; der Ist-Zustand bleibt als kleiner Punkt neben dem Empfangspunkt sichtbar.",
+        "s4": "«Zurücksetzen» stellt die aktuellen Werte wieder her."
+      },
+      "map": {
+        "title": "Karte",
+        "intro": "Die Karte zeigt die Anlagenteile und Empfangspunkte eines Schiessplatzes auf Hintergrundkarten von swisstopo.",
+        "s1": "Zoomen mit + und −, dem Mausrad oder Doppelklick; das Haus-Symbol stellt den Ausgangsausschnitt wieder her.",
+        "s2": "Am unteren Rand stehen Massstabsbalken, Massstab und die Koordinaten der Mausposition in CH1903+ / LV95.",
+        "s3": "Die Hintergrundkarte wechseln Sie unten links; unter «Ebenen» blenden Sie Anlagenteile und Empfangspunkte ein oder aus.",
+        "s4": "«Exportieren» erstellt den Kartenausschnitt als PDF oder Bild, wahlweise mit Titel, Datum, Massstab und weiteren Angaben.",
+        "s5": "«Vollansicht» öffnet die Karte in einem neuen Tab."
+      },
+      "dm_areas": {
+        "title": "Datenverwaltung – Schiessplätze",
+        "intro": "Die Liste führt zur Verwaltung der einzelnen Schiessplätze.",
+        "s1": "Suche über Bezeichnung, Koordinationsabschnitt-Nr. und Sachplan-Nr.; Filter für aktive und inaktive Schiessplätze.",
+        "s2": "Die Aktionen einer Zeile öffnen «Allgemein», «Zuordnung Waffen» und «Berechnungen» des Schiessplatzes.",
+        "s3": "Ein Klick auf einen Spaltentitel sortiert die Tabelle."
+      },
+      "dm_general": {
+        "title": "Schiessplatz – Allgemein",
+        "intro": "«Übersicht» zeigt die Stellungsräume des Schiessplatzes, «Stammdaten» seine Kerndaten und die Kontingente gemäss Plangenehmigung.",
+        "s1": "Stammdaten: Bezeichnung, Koordinationsabschnitt-Nr., Sachplan-Nr., Aktiv-Status und Stände bearbeiten und speichern.",
+        "s2": "Kontingente: je Waffe/Kaliber die maximale Schusszahl erfassen. Sie sind das Soll der Kontingent-Ampel.",
+        "s3": "Ungespeicherte Änderungen werden beim Verlassen der Seite nachgefragt."
+      },
+      "dm_area_weapons": {
+        "title": "Zuordnung Waffen",
+        "intro": "Die Seite zeigt, welche Kombinationen Waffe/Kaliber in welchem Stellungsraum zulässig sind.",
+        "s1": "Stellungsraum wählen; seine zugeordneten Kombinationen werden angezeigt.",
+        "s2": "Die Zuordnung stammt aus der importierten Berechnung und wird hier angezeigt, nicht bearbeitet.",
+        "s3": "Bei den Schusszahlen lassen sich die zugeordneten Kombinationen erfassen."
+      },
+      "dm_calculations": {
+        "title": "Berechnungen",
+        "intro": "Hier verwalten Sie die Immissionsberechnungen (sonARMS) eines Schiessplatzes mit ihren Berechnungszuständen.",
+        "s1": "Übersicht: Lieferungen und Zustände. Der Zeiger «aktuell» bestimmt den Zustand der Beurteilung, der Zeiger «MGDM» den Zustand für das Geodatenmodell.",
+        "s2": "Import: Berechnungsdatei wählen und prüfen lassen; die Prüfhinweise erscheinen vor dem Import.",
+        "s3": "Zu einem Zustand lassen sich Pegeldateien (WLR) und Betriebsdaten hochladen.",
+        "s4": "Export: Berechnungszustände und Schusszahlen als Datei herunterladen.",
+        "s5": "Details: Inhalte eines Zustands einsehen."
+      },
+      "dm_weapons": {
+        "title": "Waffen",
+        "intro": "Stammdaten der Waffen: Kombinationen Waffe/Kaliber, Waffen, Kaliber und Waffenkategorien.",
+        "s1": "Liste oben wählen, einen Eintrag anklicken und bearbeiten oder einen neuen Eintrag erfassen.",
+        "s2": "Bezeichnungen sind in DE, FR und IT erfassbar. Inaktive Einträge bleiben für bestehende Nutzungen erhalten.",
+        "s3": "Ein Eintrag, der noch verwendet wird, kann nicht gelöscht werden; seine Verwendung wird angezeigt.",
+        "s4": "«Export» lädt die Liste als Excel-Datei herunter."
+      },
+      "users": {
+        "title": "Benutzer, Rollen und Apps",
+        "intro": "Die Benutzerverwaltung vergibt Berechtigungen nach Rollen.",
+        "s1": "Benutzer erfassen oder bearbeiten und ihnen eine Rolle zuweisen.",
+        "s2": "Rollen legen je Applikationsbereich fest, ob gelesen oder geschrieben werden darf.",
+        "s3": "«Apps» zeigt die Applikationsbereiche, auf die sich die Rechte beziehen."
+      },
+      "logs": {
+        "title": "Logbuch",
+        "intro": "Das Logbuch zeigt Anmeldungen und protokollierte Änderungen.",
+        "s1": "Die Filter schränken die Einträge ein.",
+        "s2": "Die Liste lässt sich als Excel-Datei exportieren."
+      },
+      "system": {
+        "title": "Erweiterte Konfiguration",
+        "intro": "Einstellungen, die für die ganze Applikation gelten. Ändern kann sie die Rolle Applikationsadministrator/in.",
+        "s1": "Sperrdatum: Nutzungen bis und mit diesem Datum können nicht mehr erfasst, geändert oder gelöscht werden.",
+        "s2": "Benutzerhandbuch: PDF hochladen, ersetzen oder entfernen. Es erscheint im Hauptmenü.",
+        "s3": "Schwellenwerte Plangenehmigung: Grenzen der Kontingent-Ampel in Prozent des Solls.",
+        "s4": "Schwellenwerte Empfangspunkte: Grenzen der Lärm-Ampel als Abweichung vom Grenzwert in dB.",
+        "s5": "Ampelfarben und Kontaktangaben des Hauptmenüs; «Standard wiederherstellen» setzt Schwellenwerte und Farben zurück."
+      }
+    }
+  }
+}

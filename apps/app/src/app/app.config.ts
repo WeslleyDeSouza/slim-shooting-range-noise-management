@@ -36,7 +36,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withViewTransitions(),
-      withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
+      // `anchorScrolling`: a link with a fragment goes to that element (topics of the online help, slm 53).
+      withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
     ),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
     provideServiceWorker('ngsw-worker.js', {
@@ -50,7 +51,8 @@ export const appConfig: ApplicationConfig = {
     // Language choice persists in localStorage `app.lang`, default `de`.
     provideTranslate({
       language: 'de',
-      initialLocalesFiles: ['common', 'forms'],
+      // `help`: the kontextsensitive Hilfe must answer at once on every page (slm 53).
+      initialLocalesFiles: ['common', 'forms', 'help'],
       languages: LANGUAGES_CONSTANTS.LANGUAGE_DEFAULT_IDS_APP.filter((lang) =>
         (APP_LANGUAGES as readonly string[]).includes(lang.name),
       ),

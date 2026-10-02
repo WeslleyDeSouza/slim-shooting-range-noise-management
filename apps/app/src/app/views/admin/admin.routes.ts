@@ -334,6 +334,12 @@ export const ADMIN_ROUTES: Routes = [
         ],
       },
 
+      // Online-Hilfe (B1 12.4, slm 53): every signed-in user; the texts are the locale section `help` (loaded at start).
+      {
+        path: S.help,
+        loadComponent: () => import('./help/help.component').then((c) => c.HelpComponent),
+      },
+
       // Catch-all inside the layout
       {
         path: '**',

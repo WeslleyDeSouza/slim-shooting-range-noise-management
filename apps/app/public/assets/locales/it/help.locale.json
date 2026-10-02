@@ -1,0 +1,145 @@
+{
+  "help": {
+    "ui": {
+      "button": "Aiuto su questa pagina (F1)",
+      "title": "Aiuto",
+      "page": "Aiuto su questa pagina",
+      "open_manual": "Aprire tutto l’aiuto online",
+      "online": "Aiuto online",
+      "pdf": "Scaricare il manuale d’uso (PDF)",
+      "no_pdf": "Non è depositato alcun manuale d’uso in PDF.",
+      "toc": "Indice",
+      "manual_title": "Aiuto online",
+      "manual_subtitle": "Tutti i temi di aiuto dell’applicazione su una pagina. L’aiuto sulla pagina corrente si apre con il punto interrogativo nell’intestazione o con F1.",
+      "back_to_top": "All’indice"
+    },
+    "topics": {
+      "general": {
+        "title": "Uso generale",
+        "intro": "SLIM è suddiviso nei settori «Piazze di tiro» e «Gestione dati». La barra laterale conduce ai settori; l’intestazione contiene lingua, aspetto, aiuto, menu principale e conto utente.",
+        "s1": "Lingua: scegliere DE, EN, FR o IT nell’intestazione. La scelta resta memorizzata.",
+        "s2": "Aspetto: passare dalla visualizzazione chiara a quella scura con il simbolo della luna.",
+        "s3": "Aiuto sulla pagina corrente: punto interrogativo nell’intestazione o tasto F1.",
+        "s4": "Menu principale (tre linee): manuale d’uso in PDF, aiuto online, dati di contatto e versione dell’applicazione.",
+        "s5": "Vedete i settori e le piazze di tiro per i quali il vostro ruolo è autorizzato."
+      },
+      "home": {
+        "title": "Pagina iniziale",
+        "intro": "La pagina iniziale mostra gli indicatori sulle piazze di tiro e conduce ai settori dell’applicazione.",
+        "s1": "I riquadri aprono la panoramica delle piazze di tiro e la gestione dati.",
+        "s2": "Gli indicatori contano le piazze di tiro secondo lo stato del semaforo; l’avviso di necessità d’intervento apre la panoramica filtrata.",
+        "s3": "Con la stella nella barra laterale si memorizzano come segnalibri le piazze di tiro usate di frequente."
+      },
+      "areas": {
+        "title": "Panoramica delle piazze di tiro",
+        "intro": "La tabella mostra le piazze di tiro per le quali siete autorizzati, con i semafori «Rispetto del contingente» ed «Esposizione al rumore».",
+        "s1": "Ricerca per designazione o numero della sezione di coordinamento.",
+        "s2": "«Solo necessità d’intervento» e i filtri per semaforo restringono l’elenco.",
+        "s3": "Un clic su una riga apre i dettagli; i simboli a fine riga conducono a panoramica, colpi, dettagli e simulazione.",
+        "s4": "Semaforo: verde = rispettato, arancione = da verificare, rosso = superato, grigio = nessuna base, tratteggiato = non valutabile.",
+        "s5": "I valori soglia e i colori dei semafori provengono dalla configurazione avanzata."
+      },
+      "area_overview": {
+        "title": "Piazza di tiro – panoramica",
+        "intro": "La barra di contesto mostra la piazza di tiro scelta con i suoi due semafori e conduce a colpi, dettagli e simulazione.",
+        "s1": "Con il campo di selezione con numero e nome si cambia piazza di tiro senza lasciare il settore.",
+        "s2": "Il contenuto di questa pagina (confronto con i contingenti dell’approvazione dei piani) non è ancora disponibile in questa versione."
+      },
+      "shots": {
+        "title": "Colpi",
+        "intro": "Qui si registrano e si gestiscono gli utilizzi di una piazza di tiro per un anno. Sono la base del calcolo del rumore.",
+        "s1": "«Registrare un utilizzo»: indicare settore delle postazioni, unità, data, ora da/a in quarti d’ora, tipo di utilizzo e una o più posizioni arma/calibro con la quantità.",
+        "s2": "Sono proposte le combinazioni arma/calibro assegnate al settore delle postazioni.",
+        "s3": "Modificare ed eliminare con i simboli a fine riga; un’eliminazione può essere annullata subito dopo.",
+        "s4": "Ricerca, filtri ed elenco dei settori delle postazioni restringono la tabella.",
+        "s5": "Gli utilizzi fino alla data di blocco compresa sono bloccati (simbolo del lucchetto): non possono essere registrati, modificati o eliminati."
+      },
+      "details": {
+        "title": "Dettagli – punti di ricezione",
+        "intro": "La pagina mostra la valutazione dell’esposizione al rumore per punto di ricezione per lo stato di calcolo e il periodo scelti.",
+        "s1": "Scegliere in alto la base di calcolo e il periodo; se lo stato differisce da quello attuale, è indicato lo scostamento.",
+        "s2": "Un clic su un punto di ricezione della carta mostra la sua valutazione secondo gli allegati 9 e 7 OIF con valore limite, livello di valutazione e riserva.",
+        "s3": "Il colore di un punto corrisponde alla valutazione applicabile peggiore. I valori di pianificazione valgono per le parti d’impianto successive al 1985.",
+        "s4": "«Elenco» mostra gli stessi punti come tabella, la valutazione peggiore per prima.",
+        "s5": "Senza un calcolo importato non è possibile alcuna valutazione; l’avviso conduce a Gestione dati › Calcoli."
+      },
+      "simulation": {
+        "title": "Simulazione",
+        "intro": "Con la simulazione si calcola l’esposizione al rumore secondo l’allegato 9 OIF per numeri di colpi ipotetici. Nessun dato viene modificato.",
+        "s1": "«Sovrascrivere i valori» rende modificabile la tabella dei colpi annui; i fattori scalano tutti i valori.",
+        "s2": "«Eseguire la simulazione» calcola i livelli di valutazione con i valori modificati.",
+        "s3": "Carta e tabella dei risultati mostrano lo stato simulato; lo stato effettivo resta visibile come piccolo punto accanto al punto di ricezione.",
+        "s4": "«Reimpostare» ripristina i valori attuali."
+      },
+      "map": {
+        "title": "Carta",
+        "intro": "La carta mostra le parti d’impianto e i punti di ricezione di una piazza di tiro su carte di sfondo di swisstopo.",
+        "s1": "Zoom con + e −, la rotella del mouse o un doppio clic; il simbolo della casa ripristina l’estratto iniziale.",
+        "s2": "In basso si trovano la barra di scala, la scala e le coordinate della posizione del mouse in CH1903+ / LV95.",
+        "s3": "La carta di sfondo si cambia in basso a sinistra; sotto «Livelli» si mostrano o nascondono parti d’impianto e punti di ricezione.",
+        "s4": "«Esportare» crea l’estratto della carta come PDF o immagine, a scelta con titolo, data, scala e altre indicazioni.",
+        "s5": "«Vista completa» apre la carta in una nuova scheda."
+      },
+      "dm_areas": {
+        "title": "Gestione dati – piazze di tiro",
+        "intro": "L’elenco conduce all’amministrazione delle singole piazze di tiro.",
+        "s1": "Ricerca per designazione, numero della sezione di coordinamento e numero del piano settoriale; filtro per piazze di tiro attive e inattive.",
+        "s2": "Le azioni di una riga aprono «Generale», «Assegnazione armi» e «Calcoli» della piazza di tiro.",
+        "s3": "Un clic sul titolo di una colonna ordina la tabella."
+      },
+      "dm_general": {
+        "title": "Piazza di tiro – generale",
+        "intro": "«Panoramica» mostra i settori delle postazioni della piazza di tiro, «Dati di base» i suoi dati principali e i contingenti secondo l’approvazione dei piani.",
+        "s1": "Dati di base: modificare e salvare designazione, numero della sezione di coordinamento, numero del piano settoriale, stato attivo e stati.",
+        "s2": "Contingenti: registrare il numero massimo di colpi per arma/calibro. Sono il valore nominale del semaforo del contingente.",
+        "s3": "Lasciando la pagina viene chiesta conferma se vi sono modifiche non salvate."
+      },
+      "dm_area_weapons": {
+        "title": "Assegnazione armi",
+        "intro": "La pagina mostra quali combinazioni arma/calibro sono ammesse in quale settore delle postazioni.",
+        "s1": "Scegliere un settore delle postazioni; sono mostrate le combinazioni assegnate.",
+        "s2": "L’assegnazione proviene dal calcolo importato; qui è visualizzata, non modificata.",
+        "s3": "Nei colpi si possono registrare le combinazioni assegnate."
+      },
+      "dm_calculations": {
+        "title": "Calcoli",
+        "intro": "Qui si gestiscono i calcoli delle immissioni (sonARMS) di una piazza di tiro con i loro stati di calcolo.",
+        "s1": "Panoramica: forniture e stati. Il puntatore «attuale» determina lo stato della valutazione, il puntatore «MGDM» lo stato per il modello di geodati.",
+        "s2": "Importazione: scegliere un file di calcolo e farlo verificare; le osservazioni della verifica compaiono prima dell’importazione.",
+        "s3": "Per uno stato si possono caricare file dei livelli (WLR) e dati d’esercizio.",
+        "s4": "Esportazione: scaricare stati di calcolo e colpi come file.",
+        "s5": "Dettagli: consultare i contenuti di uno stato."
+      },
+      "dm_weapons": {
+        "title": "Armi",
+        "intro": "Dati di base delle armi: combinazioni arma/calibro, armi, calibri e categorie di armi.",
+        "s1": "Scegliere un elenco in alto, fare clic su una voce e modificarla, oppure registrare una nuova voce.",
+        "s2": "Le designazioni si possono registrare in DE, FR e IT. Le voci inattive restano per gli utilizzi esistenti.",
+        "s3": "Una voce ancora utilizzata non può essere eliminata; il suo utilizzo è indicato.",
+        "s4": "«Esportazione» scarica l’elenco come file Excel."
+      },
+      "users": {
+        "title": "Utenti, ruoli e app",
+        "intro": "L’amministrazione degli utenti assegna le autorizzazioni per ruolo.",
+        "s1": "Registrare o modificare utenti e assegnare loro un ruolo.",
+        "s2": "I ruoli stabiliscono per ogni settore dell’applicazione se è consentita la lettura o la scrittura.",
+        "s3": "«App» mostra i settori dell’applicazione a cui si riferiscono i diritti."
+      },
+      "logs": {
+        "title": "Registro",
+        "intro": "Il registro mostra gli accessi e le modifiche registrate.",
+        "s1": "I filtri restringono le voci.",
+        "s2": "L’elenco può essere esportato come file Excel."
+      },
+      "system": {
+        "title": "Configurazione avanzata",
+        "intro": "Impostazioni valide per tutta l’applicazione. Possono essere modificate dal ruolo di amministratore/trice dell’applicazione.",
+        "s1": "Data di blocco: gli utilizzi fino a questa data compresa non possono più essere registrati, modificati o eliminati.",
+        "s2": "Manuale d’uso: caricare, sostituire o rimuovere un PDF. Compare nel menu principale.",
+        "s3": "Valori soglia approvazione dei piani: limiti del semaforo del contingente in percento del valore nominale.",
+        "s4": "Valori soglia punti di ricezione: limiti del semaforo del rumore come scostamento dal valore limite in dB.",
+        "s5": "Colori dei semafori e dati di contatto del menu principale; «Ripristinare i valori predefiniti» reimposta valori soglia e colori."
+      }
+    }
+  }
+}

@@ -36,8 +36,11 @@ export const DEFAULT_AMPEL_THRESHOLDS: AmpelThresholds = {
 /** The fields an administrator can change (`PATCH admin/data/system`); `undefined` = leave as is. */
 export type SettingsPatch = Partial<Omit<SystemSettingsDto, 'manual'>>;
 
-/** Largest Benutzerhandbuch the API stores. */
-export const MANUAL_MAX_BYTES = 20 * 1024 * 1024;
+/**
+ * Largest Benutzerhandbuch the API stores. Below the 16 MB a MariaDB server accepts in one packet by default
+ * (`max_allowed_packet`) — the PDF travels to the database in a single statement.
+ */
+export const MANUAL_MAX_BYTES = 15 * 1024 * 1024;
 
 const TEXT_FIELDS = ['specialistName', 'specialistPhone', 'specialistEmail', 'sysadminName', 'sysadminPhone', 'sysadminEmail'] as const;
 const COLOR_FIELDS = ['colorOk', 'colorWarn', 'colorOver'] as const;

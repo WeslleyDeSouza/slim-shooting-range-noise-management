@@ -124,7 +124,7 @@ Status: ☐ offen · ◐ teilweise / in Arbeit · ☑ erledigt (Stand 12.09.2026
 | 4.2 | Schiessplatz – Übersicht 5.10: Beurteilung Lärmbelastung (beide Ampeln, Regelwerk), Stand SPM/MPV/Projekt, Kontingent-Tabelle (Soll, Ist laufendes Jahr, Ist Ø 3 Jahre, Farben 100 %/125 %), Karte mit Empfangspunkten; `quotaStatus` wird berechnet statt gespeichert | 9, 8 | 1 | ☐ |
 | 4.3 | Schiessplatz – Details 5.12: Karte + Detailbereich pro Empfangspunkt (Lr vs. PW/IGW je Anhang) | 11 | 0.5 | ☑ (GIS-Karte seit 02.10.2026) |
 | 4.4 | Simulation 5.13: Tabelle Stellungsraum × Kombination mit Schuss innerhalb/ausserhalb Werktag, überschreiben, zurücksetzen, «Simulation ausführen» (Anh. 9) → Karte | 12 | 1 | ☑ |
-| 4.5 | Erweiterte Konfiguration 5.28 komplett: Handbuch-Upload (PDF, im Hauptmenü verlinkt), Ampel-Schwellenwerte und -Farben (Plangenehmigung, Empfangspunkte) | 27, 53 | 0.5 | ☑ 02.10.2026 (Online-Hilfe `slm 53` offen) |
+| 4.5 | Erweiterte Konfiguration 5.28 komplett: Handbuch-Upload (PDF, im Hauptmenü verlinkt), Ampel-Schwellenwerte und -Farben (Plangenehmigung, Empfangspunkte) | 27, 53 | 0.5 | ☑ 02.10.2026 (Online-Hilfe `slm 53` ebenfalls am 02.10.2026) |
 | 4.6 | Startseite mit echten Zahlen (Anzahl Plätze nach Ampel, Datenverwaltung-Zähler inkl. Waffen) und Hinweis «Handlungsbedarf» | 7 | 0.5 | ◐ (Kacheln mit Zählern aus dem Seed, Ampel-Zahlen noch nicht aus der Berechnung) |
 
 ### Sprint 5 – Validierung und Lösungskonzept (M6, 5 PT)

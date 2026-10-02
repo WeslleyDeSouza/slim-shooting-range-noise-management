@@ -1,0 +1,43 @@
+@use 'slim/abstracts' as slim;
+
+// Kontextsensitive Hilfe (slm 53). Block `help`.
+.help {
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: slim.space(5);
+  }
+
+  &__topic {
+    margin: 0 0 slim.space(2);
+    font-size: slim.font-size('lg');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__sub {
+    margin: 0 0 slim.space(2);
+    font-size: slim.font-size('md');
+    font-weight: slim.font-weight('semibold');
+  }
+
+  &__intro {
+    margin: 0 0 slim.space(3);
+    color: slim.color('text-2');
+  }
+
+  &__steps {
+    display: grid;
+    gap: slim.space(2);
+    margin: 0;
+    padding-left: slim.space(5);
+  }
+
+  &__general {
+    padding-top: slim.space(4);
+    border-top: 1px solid slim.color('line');
+  }
+
+  &__footer {
+    flex-wrap: wrap;
+  }
+}

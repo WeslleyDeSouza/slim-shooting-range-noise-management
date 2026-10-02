@@ -24,6 +24,7 @@ import type { AreaResultDto } from '@ui-slim/apiClient';
 import { LanguageSwitchComponent } from '../../../common/language-switch.component';
 import { AccessFacade } from '../../../core/access/access.facade';
 import { saveBlob, SettingsFacade } from '../../../core/settings/settings.facade';
+import { HelpDrawerComponent } from './help-drawer.component';
 import { AreaSwitcherComponent } from './area-switcher.component';
 import { BuildStampComponent } from './build-stamp.component';
 import { AreaFacade } from '../../../core/area/area.facade';
@@ -69,8 +70,9 @@ interface AreaPage {
     LanguageSwitchComponent,
     AreaSwitcherComponent,
     BuildStampComponent,
+    HelpDrawerComponent,
   ],
-  host: { '(document:click)': 'onDocumentClick($event)' },
+  host: { '(document:click)': 'onDocumentClick($event)', '(document:keydown.f1)': 'onHelpKey($event)' },
   template: `
     <div class="slim-shell">
       <!-- Topbar: general controls ------------------------------------ -->
@@ -97,6 +99,22 @@ interface AreaPage {
         <div class="slim-topbar__actions">
           <span class="slim-u-desktop-only"><app-language-switch /></span>
           <slim-theme-toggle />
+
+          <!-- Kontextsensitive Hilfe (slm 53): one button on every page, also F1. -->
+          <button
+            type="button"
+            class="slim-topbar__iconbtn"
+            data-testid="help-button"
+            [attr.title]="'help.ui.button' | translate"
+            [attr.aria-label]="'help.ui.button' | translate"
+            aria-keyshortcuts="F1"
+            (click)="helpOpen.set(true)"
+          >
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.4" />
+              <path d="M6.2 6.3a1.9 1.9 0 113 1.5c-.7.5-1.2.9-1.2 1.7M8 11.6v.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </button>
 
           <div
             class="slim-dropdown"
@@ -175,6 +193,13 @@ interface AreaPage {
                   >
                   </div>
                 }
+                <a class="slim-menu__item" data-testid="menu-online-help" [routerLink]="routes.admin.help" (click)="openMenu.set(null)">
+                  <svg class="slim-menu__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <circle cx="8" cy="8" r="6.3" stroke="currentColor" stroke-width="1.4" />
+                    <path d="M6.2 6.3a1.9 1.9 0 113 1.5c-.7.5-1.2.9-1.2 1.7M8 11.6v.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  </svg>
+                  <span class="admin-layout__menu-text">{{ 'help.ui.online' | translate }}</span>
+                </a>
                 <!-- Kontaktinformationen des Fachverantwortlichen und der Systemadministration (B1 5.9). -->
                 @for (c of contacts(); track c.key) {
                   <div class="slim-menu__item admin-layout__menu-static" [attr.data-testid]="'menu-contact-' + c.id">
@@ -623,6 +648,10 @@ interface AreaPage {
         }
       </nav>
     </div>
+
+    @if (helpOpen()) {
+      <app-help-drawer [url]="url()" [hasManual]="!!manual()" (closed)="helpOpen.set(false)" (manual)="downloadManual()" />
+    }
   `,
   styleUrl: './admin-layout.component.scss',
 })
@@ -638,6 +667,16 @@ export class AdminLayoutComponent extends ComponentBase {
   /** Which build is running (tools/build-info.js stamps it in the CI build). */
   protected readonly build = BUILD_INFO;
   protected readonly version = BUILD_INFO.version;
+
+  /** Kontextsensitive Hilfe (slm 53): open or not, and the address it explains. */
+  protected readonly helpOpen = signal(false);
+  protected readonly url = toSignal(
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
 
   /** Benutzerhandbuch of the erweiterte Konfiguration (B1 5.28), null when none is stored. */
   protected readonly manual = this.settings.manual;
@@ -867,6 +906,12 @@ export class AdminLayoutComponent extends ComponentBase {
     void this.settings.load();
     // The Schiessplatz picker and the bookmarks need the list; the facade deduplicates loads.
     void this.area.load();
+  }
+
+  /** F1 opens the help of the page instead of the help of the browser. */
+  protected onHelpKey(event: Event): void {
+    event.preventDefault();
+    this.helpOpen.set(true);
   }
 
   protected async downloadManual(): Promise<void> {

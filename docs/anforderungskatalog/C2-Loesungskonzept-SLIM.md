@@ -327,7 +327,7 @@ Zuordnung jeder B1-Anforderung zum Umsetzungskapitel (FAQ 8: Beilage ausserhalb 
 | slm 50 | Persistente Einstellungen, Favoriten, Ausblenden nicht autorisierter Funktionen | 5.1, 5.3 | T (Lesezeichen vorhanden; vollständige Persistenz-/Rechte-Nachweise ausstehend) |
 | slm 51 | Deutsche Bezeichnungen der DB-Objekte | 2.3 | T (Tabellen und Teile der Spalten deutsch; übrige Spalten ausstehend) |
 | slm 52 | Ergonomie, Barrierefreiheit | 5.4, 6.3 | T (UI-Grundlagen vorhanden; Barrierefreiheitsnachweis ausstehend) |
-| slm 53 | Handbuch und kontextsensitive Hilfe | 6.4 | Z |
+| slm 53 | Handbuch und kontextsensitive Hilfe | 6.4 | P (Hilfe-Schaltfläche und F1 auf jeder Seite, Online-Hilfe mit 16 Themen in vier Sprachen, Benutzerhandbuch als PDF aus der erweiterten Konfiguration; Inhalt des PDF-Handbuchs und Schulungsunterlagen stehen aus) |
 | slm 54 | Performance, Ressourcenisolation, 10 Nutzer | 4.4, 6.2 | T (Kernmessung vorhanden; Lasttest und Ressourcenisolation ausstehend) |
 | slm 55 | Wartbarkeit, Konfiguration ohne Rekompilierung | 6.1 | T (Architektur, Rollen, i18n vorhanden; Fachparameter-Konfiguration ausstehend) |
 | slm 56 | Authentifizierung, Break-Glass, Login-Logging | 2.4 | T (Auth-/Logging-Grundlagen vorhanden; MFA-Gesamtnachweis und Break-Glass-Prozess ausstehend) |

@@ -1,0 +1,145 @@
+{
+  "help": {
+    "ui": {
+      "button": "Help for this page (F1)",
+      "title": "Help",
+      "page": "Help for this page",
+      "open_manual": "Open the whole online help",
+      "online": "Online help",
+      "pdf": "Download the user manual (PDF)",
+      "no_pdf": "No user manual has been stored as PDF.",
+      "toc": "Contents",
+      "manual_title": "Online help",
+      "manual_subtitle": "All help topics of the application on one page. Open the help for the current page with the question mark in the header or with F1.",
+      "back_to_top": "To the contents"
+    },
+    "topics": {
+      "general": {
+        "title": "General operation",
+        "intro": "SLIM is divided into the areas “Shooting ranges” and “Data management”. The sidebar leads to the areas; the header contains language, appearance, help, main menu and user account.",
+        "s1": "Language: choose DE, EN, FR or IT in the header. The choice is remembered.",
+        "s2": "Appearance: switch between light and dark with the moon symbol.",
+        "s3": "Help for the current page: question mark in the header or the F1 key.",
+        "s4": "Main menu (three lines): user manual as PDF, online help, contact details and version of the application.",
+        "s5": "You see the areas and shooting ranges your role is authorised for."
+      },
+      "home": {
+        "title": "Entry page",
+        "intro": "The entry page shows key figures of the shooting ranges and leads to the areas of the application.",
+        "s1": "The tiles open the overview of the shooting ranges and the data management.",
+        "s2": "The key figures count the shooting ranges by traffic light status; the notice about need for action opens the filtered overview.",
+        "s3": "With the star in the sidebar you bookmark shooting ranges you need often."
+      },
+      "areas": {
+        "title": "Overview of shooting ranges",
+        "intro": "The table shows the shooting ranges you are authorised for, with the traffic lights “Quota compliance” and “Noise exposure”.",
+        "s1": "Search by name or coordination section number.",
+        "s2": "“Need for action only” and the filters per traffic light narrow the list.",
+        "s3": "A click on a row opens the details; the symbols at the end of the row lead to overview, shot counts, details and simulation.",
+        "s4": "Traffic light: green = complied with, orange = to be checked, red = exceeded, grey = no basis, striped = cannot be assessed.",
+        "s5": "The thresholds and colours of the traffic lights come from the advanced configuration."
+      },
+      "area_overview": {
+        "title": "Shooting range – overview",
+        "intro": "The context bar shows the selected shooting range with its two traffic lights and leads to shot counts, details and simulation.",
+        "s1": "With the selector showing number and name you switch the shooting range without leaving the area.",
+        "s2": "The content of this page (comparison with the quotas of the planning approval) is not available in this version yet."
+      },
+      "shots": {
+        "title": "Shot counts",
+        "intro": "Here you record and manage the usages of a shooting range for one year. They are the basis of the noise calculation.",
+        "s1": "“Record usage”: enter firing position area, unit, date, time from/to in quarter hours, type of usage and one or more items of weapon/calibre and quantity.",
+        "s2": "The weapon/calibre combinations assigned to the firing position area are offered.",
+        "s3": "Edit and delete with the symbols at the end of the row; a deletion can be undone right afterwards.",
+        "s4": "Search, filters and the list of firing position areas narrow the table.",
+        "s5": "Usages up to and including the lock date are locked (lock symbol): they cannot be recorded, changed or deleted."
+      },
+      "details": {
+        "title": "Details – receiver points",
+        "intro": "The page shows the assessment of the noise exposure per receiver point for the chosen calculation state and period.",
+        "s1": "Choose the calculation basis and the period at the top; if the state differs from the current one, the deviation is shown.",
+        "s2": "A click on a receiver point of the map shows its assessment under Annex 9 and Annex 7 of the NAO with limit value, rating level and reserve.",
+        "s3": "The colour of a point is the worst applicable assessment. Planning values apply to plant parts built after 1985.",
+        "s4": "“List” shows the same points as a table, the worst assessment first.",
+        "s5": "Without an imported calculation no assessment is possible; the notice leads to Data management › Calculations."
+      },
+      "simulation": {
+        "title": "Simulation",
+        "intro": "With the simulation you calculate the noise exposure under Annex 9 of the NAO for hypothetical shot counts. No data is changed.",
+        "s1": "“Overwrite values” makes the table of yearly shot counts editable; the factors scale all values.",
+        "s2": "“Run simulation” calculates the rating levels with the changed values.",
+        "s3": "Map and result table show the simulated state; the actual state stays visible as a small dot next to the receiver point.",
+        "s4": "“Reset” restores the current values."
+      },
+      "map": {
+        "title": "Map",
+        "intro": "The map shows the plant parts and receiver points of a shooting range on background maps of swisstopo.",
+        "s1": "Zoom with + and −, the mouse wheel or a double click; the house symbol restores the initial extent.",
+        "s2": "At the bottom you find the scale bar, the scale and the coordinates of the mouse position in CH1903+ / LV95.",
+        "s3": "Switch the background map at the bottom left; under “Layers” you show or hide plant parts and receiver points.",
+        "s4": "“Export” creates the map extent as PDF or image, optionally with title, date, scale and further details.",
+        "s5": "“Full view” opens the map in a new tab."
+      },
+      "dm_areas": {
+        "title": "Data management – shooting ranges",
+        "intro": "The list leads to the administration of the individual shooting ranges.",
+        "s1": "Search by name, coordination section number and sectoral plan number; filter for active and inactive shooting ranges.",
+        "s2": "The actions of a row open “General”, “Weapon assignment” and “Calculations” of the shooting range.",
+        "s3": "A click on a column title sorts the table."
+      },
+      "dm_general": {
+        "title": "Shooting range – general",
+        "intro": "“Overview” shows the firing position areas of the shooting range, “Master data” its core data and the quotas of the planning approval.",
+        "s1": "Master data: edit and save name, coordination section number, sectoral plan number, active status and statuses.",
+        "s2": "Quotas: record the maximum shot count per weapon/calibre. They are the target of the quota traffic light.",
+        "s3": "When leaving the page you are asked about unsaved changes."
+      },
+      "dm_area_weapons": {
+        "title": "Weapon assignment",
+        "intro": "The page shows which weapon/calibre combinations are permitted in which firing position area.",
+        "s1": "Choose a firing position area; its assigned combinations are shown.",
+        "s2": "The assignment comes from the imported calculation and is displayed here, not edited.",
+        "s3": "In the shot counts the assigned combinations can be recorded."
+      },
+      "dm_calculations": {
+        "title": "Calculations",
+        "intro": "Here you manage the immission calculations (sonARMS) of a shooting range with their calculation states.",
+        "s1": "Overview: deliveries and states. The pointer “current” determines the state of the assessment, the pointer “MGDM” the state for the geodata model.",
+        "s2": "Import: choose a calculation file and have it checked; the check notes appear before the import.",
+        "s3": "Level files (WLR) and operating data can be uploaded for a state.",
+        "s4": "Export: download calculation states and shot counts as a file.",
+        "s5": "Details: view the contents of a state."
+      },
+      "dm_weapons": {
+        "title": "Weapons",
+        "intro": "Master data of the weapons: weapon/calibre combinations, weapons, calibres and weapon categories.",
+        "s1": "Choose a list at the top, click an entry and edit it, or record a new entry.",
+        "s2": "Names can be recorded in DE, FR and IT. Inactive entries are kept for existing usages.",
+        "s3": "An entry that is still in use cannot be deleted; its use is shown.",
+        "s4": "“Export” downloads the list as an Excel file."
+      },
+      "users": {
+        "title": "Users, roles and apps",
+        "intro": "The user administration grants authorisations by role.",
+        "s1": "Record or edit users and assign them a role.",
+        "s2": "Roles define per application area whether reading or writing is allowed.",
+        "s3": "“Apps” shows the application areas the rights refer to."
+      },
+      "logs": {
+        "title": "Logbook",
+        "intro": "The logbook shows sign-ins and logged changes.",
+        "s1": "The filters narrow the entries.",
+        "s2": "The list can be exported as an Excel file."
+      },
+      "system": {
+        "title": "Advanced configuration",
+        "intro": "Settings that apply to the whole application. They can be changed by the application administrator role.",
+        "s1": "Lock date: usages up to and including this date can no longer be recorded, changed or deleted.",
+        "s2": "User manual: upload, replace or remove a PDF. It appears in the main menu.",
+        "s3": "Thresholds planning approval: limits of the quota traffic light in percent of the target.",
+        "s4": "Thresholds receiver points: limits of the noise traffic light as deviation from the limit value in dB.",
+        "s5": "Traffic light colours and contact details of the main menu; “Restore defaults” resets thresholds and colours."
+      }
+    }
+  }
+}

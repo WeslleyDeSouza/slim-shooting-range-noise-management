@@ -1,0 +1,145 @@
+{
+  "help": {
+    "ui": {
+      "button": "Aide sur cette page (F1)",
+      "title": "Aide",
+      "page": "Aide sur cette page",
+      "open_manual": "Ouvrir toute l’aide en ligne",
+      "online": "Aide en ligne",
+      "pdf": "Télécharger le manuel d’utilisation (PDF)",
+      "no_pdf": "Aucun manuel d’utilisation n’est enregistré en PDF.",
+      "toc": "Sommaire",
+      "manual_title": "Aide en ligne",
+      "manual_subtitle": "Tous les thèmes d’aide de l’application sur une page. L’aide sur la page en cours s’ouvre avec le point d’interrogation dans l’en-tête ou avec F1.",
+      "back_to_top": "Vers le sommaire"
+    },
+    "topics": {
+      "general": {
+        "title": "Utilisation générale",
+        "intro": "SLIM comprend les domaines « Places de tir » et « Gestion des données ». La barre latérale mène aux domaines ; l’en-tête contient la langue, l’affichage, l’aide, le menu principal et le compte d’utilisateur.",
+        "s1": "Langue : choisir DE, EN, FR ou IT dans l’en-tête. Le choix est mémorisé.",
+        "s2": "Affichage : passer du mode clair au mode sombre avec le symbole de la lune.",
+        "s3": "Aide sur la page en cours : point d’interrogation dans l’en-tête ou touche F1.",
+        "s4": "Menu principal (trois lignes) : manuel d’utilisation en PDF, aide en ligne, coordonnées de contact et version de l’application.",
+        "s5": "Vous voyez les domaines et les places de tir pour lesquels votre rôle est autorisé."
+      },
+      "home": {
+        "title": "Page d’accueil",
+        "intro": "La page d’accueil présente des chiffres clés sur les places de tir et mène aux domaines de l’application.",
+        "s1": "Les tuiles ouvrent la vue d’ensemble des places de tir et la gestion des données.",
+        "s2": "Les chiffres clés comptent les places de tir par état du feu ; l’indication d’un besoin d’agir ouvre la vue d’ensemble filtrée.",
+        "s3": "L’étoile de la barre latérale permet de mémoriser comme signets les places de tir souvent utilisées."
+      },
+      "areas": {
+        "title": "Vue d’ensemble des places de tir",
+        "intro": "Le tableau présente les places de tir pour lesquelles vous êtes autorisé, avec les feux « Respect du contingent » et « Exposition au bruit ».",
+        "s1": "Recherche par désignation ou numéro de secteur de coordination.",
+        "s2": "« Uniquement besoin d’agir » et les filtres par feu restreignent la liste.",
+        "s3": "Un clic sur une ligne ouvre les détails ; les symboles en fin de ligne mènent à la vue d’ensemble, aux coups tirés, aux détails et à la simulation.",
+        "s4": "Feu : vert = respecté, orange = à vérifier, rouge = dépassé, gris = pas de base, hachuré = non évaluable.",
+        "s5": "Les seuils et les couleurs des feux proviennent de la configuration avancée."
+      },
+      "area_overview": {
+        "title": "Place de tir – vue d’ensemble",
+        "intro": "La barre de contexte présente la place de tir choisie avec ses deux feux et mène aux coups tirés, aux détails et à la simulation.",
+        "s1": "Le champ de sélection avec numéro et nom permet de changer de place de tir sans quitter le domaine.",
+        "s2": "Le contenu de cette page (comparaison avec les contingents de l’approbation des plans) n’est pas encore disponible dans cette version."
+      },
+      "shots": {
+        "title": "Coups tirés",
+        "intro": "Vous saisissez et gérez ici les utilisations d’une place de tir pour une année. Elles sont la base du calcul du bruit.",
+        "s1": "« Saisir une utilisation » : indiquer le secteur de positions, l’unité, la date, l’heure de/à par quarts d’heure, le genre d’utilisation et une ou plusieurs positions arme/calibre avec la quantité.",
+        "s2": "Les combinaisons arme/calibre attribuées au secteur de positions sont proposées.",
+        "s3": "Modifier et supprimer avec les symboles en fin de ligne ; une suppression peut être annulée immédiatement après.",
+        "s4": "La recherche, les filtres et la liste des secteurs de positions restreignent le tableau.",
+        "s5": "Les utilisations jusqu’à la date de verrouillage incluse sont verrouillées (symbole du cadenas) : elles ne peuvent être ni saisies, ni modifiées, ni supprimées."
+      },
+      "details": {
+        "title": "Détails – points de réception",
+        "intro": "La page présente l’évaluation de l’exposition au bruit par point de réception pour l’état de calcul et la période choisis.",
+        "s1": "Choisir la base de calcul et la période en haut ; si l’état diffère de l’état actuel, l’écart est affiché.",
+        "s2": "Un clic sur un point de réception de la carte affiche son évaluation selon les annexes 9 et 7 OPB avec valeur limite, niveau d’évaluation et réserve.",
+        "s3": "La couleur d’un point correspond à l’évaluation applicable la plus défavorable. Les valeurs de planification s’appliquent aux parties d’installation postérieures à 1985.",
+        "s4": "« Liste » présente les mêmes points sous forme de tableau, l’évaluation la plus défavorable en premier.",
+        "s5": "Sans calcul importé, aucune évaluation n’est possible ; l’indication mène à Gestion des données › Calculs."
+      },
+      "simulation": {
+        "title": "Simulation",
+        "intro": "La simulation calcule l’exposition au bruit selon l’annexe 9 OPB pour des nombres de coups hypothétiques. Aucune donnée n’est modifiée.",
+        "s1": "« Écraser les valeurs » rend modifiable le tableau des nombres de coups annuels ; les facteurs mettent toutes les valeurs à l’échelle.",
+        "s2": "« Exécuter la simulation » calcule les niveaux d’évaluation avec les valeurs modifiées.",
+        "s3": "La carte et le tableau des résultats présentent l’état simulé ; l’état effectif reste visible sous forme de petit point à côté du point de réception.",
+        "s4": "« Réinitialiser » rétablit les valeurs actuelles."
+      },
+      "map": {
+        "title": "Carte",
+        "intro": "La carte présente les parties d’installation et les points de réception d’une place de tir sur des fonds de carte de swisstopo.",
+        "s1": "Zoomer avec + et −, la molette de la souris ou un double-clic ; le symbole de la maison rétablit l’extrait initial.",
+        "s2": "En bas figurent la barre d’échelle, l’échelle et les coordonnées de la position de la souris en CH1903+ / LV95.",
+        "s3": "Le fond de carte se change en bas à gauche ; sous « Couches », vous affichez ou masquez les parties d’installation et les points de réception.",
+        "s4": "« Exporter » crée l’extrait de carte en PDF ou en image, au choix avec titre, date, échelle et autres indications.",
+        "s5": "« Vue complète » ouvre la carte dans un nouvel onglet."
+      },
+      "dm_areas": {
+        "title": "Gestion des données – places de tir",
+        "intro": "La liste mène à l’administration de chaque place de tir.",
+        "s1": "Recherche par désignation, numéro de secteur de coordination et numéro du plan sectoriel ; filtre des places de tir actives et inactives.",
+        "s2": "Les actions d’une ligne ouvrent « Général », « Attribution des armes » et « Calculs » de la place de tir.",
+        "s3": "Un clic sur un titre de colonne trie le tableau."
+      },
+      "dm_general": {
+        "title": "Place de tir – général",
+        "intro": "« Vue d’ensemble » présente les secteurs de positions de la place de tir, « Données de base » ses données principales et les contingents selon l’approbation des plans.",
+        "s1": "Données de base : modifier et enregistrer la désignation, le numéro de secteur de coordination, le numéro du plan sectoriel, le statut actif et les états.",
+        "s2": "Contingents : saisir le nombre de coups maximal par arme/calibre. Ils constituent la valeur cible du feu du contingent.",
+        "s3": "En quittant la page, une question est posée s’il reste des modifications non enregistrées."
+      },
+      "dm_area_weapons": {
+        "title": "Attribution des armes",
+        "intro": "La page indique quelles combinaisons arme/calibre sont admises dans quel secteur de positions.",
+        "s1": "Choisir un secteur de positions ; ses combinaisons attribuées sont affichées.",
+        "s2": "L’attribution provient du calcul importé ; elle est affichée ici et non modifiée.",
+        "s3": "Les combinaisons attribuées peuvent être saisies dans les coups tirés."
+      },
+      "dm_calculations": {
+        "title": "Calculs",
+        "intro": "Vous gérez ici les calculs d’immissions (sonARMS) d’une place de tir avec leurs états de calcul.",
+        "s1": "Vue d’ensemble : livraisons et états. Le pointeur « actuel » détermine l’état de l’évaluation, le pointeur « MGDM » l’état pour le modèle de géodonnées.",
+        "s2": "Import : choisir un fichier de calcul et le faire vérifier ; les remarques de vérification apparaissent avant l’import.",
+        "s3": "Des fichiers de niveaux (WLR) et des données d’exploitation peuvent être téléversés pour un état.",
+        "s4": "Export : télécharger les états de calcul et les coups tirés sous forme de fichier.",
+        "s5": "Détails : consulter le contenu d’un état."
+      },
+      "dm_weapons": {
+        "title": "Armes",
+        "intro": "Données de base des armes : combinaisons arme/calibre, armes, calibres et catégories d’armes.",
+        "s1": "Choisir une liste en haut, cliquer sur une entrée et la modifier, ou saisir une nouvelle entrée.",
+        "s2": "Les désignations peuvent être saisies en DE, FR et IT. Les entrées inactives sont conservées pour les utilisations existantes.",
+        "s3": "Une entrée encore utilisée ne peut pas être supprimée ; son utilisation est affichée.",
+        "s4": "« Export » télécharge la liste sous forme de fichier Excel."
+      },
+      "users": {
+        "title": "Utilisateurs, rôles et apps",
+        "intro": "L’administration des utilisateurs attribue les autorisations par rôle.",
+        "s1": "Saisir ou modifier des utilisateurs et leur attribuer un rôle.",
+        "s2": "Les rôles définissent, par domaine de l’application, si la lecture ou l’écriture est autorisée.",
+        "s3": "« Apps » présente les domaines de l’application auxquels se rapportent les droits."
+      },
+      "logs": {
+        "title": "Journal",
+        "intro": "Le journal présente les connexions et les modifications journalisées.",
+        "s1": "Les filtres restreignent les entrées.",
+        "s2": "La liste peut être exportée sous forme de fichier Excel."
+      },
+      "system": {
+        "title": "Configuration avancée",
+        "intro": "Paramètres valables pour toute l’application. Ils peuvent être modifiés par le rôle d’administrateur/trice de l’application.",
+        "s1": "Date de verrouillage : les utilisations jusqu’à cette date incluse ne peuvent plus être saisies, modifiées ni supprimées.",
+        "s2": "Manuel d’utilisation : téléverser, remplacer ou supprimer un PDF. Il apparaît dans le menu principal.",
+        "s3": "Seuils approbation des plans : limites du feu du contingent en pour cent de la valeur cible.",
+        "s4": "Seuils points de réception : limites du feu du bruit comme écart par rapport à la valeur limite, en dB.",
+        "s5": "Couleurs des feux et coordonnées du menu principal ; « Rétablir les valeurs par défaut » réinitialise les seuils et les couleurs."
+      }
+    }
+  }
+}

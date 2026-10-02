@@ -16,7 +16,8 @@ apps/api/src/
 │   ├── env-loader.ts        # lädt .env VOR allen Imports
 │   ├── guards/              # AuthThrottlerGuard (/api/auth, /api/public)
 │   ├── health-check/        # /api/health, /alive, /ready (Terminus)
-│   └── logger/              # Logbuch core_log_user (slm 56): LoggerService, AUTH_API_LOGGER-Brücke, RequestOriginMiddleware (IP/Gerät), admin/logs
+│   ├── logger/              # Logbuch core_log_user (slm 56): LoggerService, AUTH_API_LOGGER-Brücke, RequestOriginMiddleware (IP/Gerät), admin/logs
+│   └── export/              # Tabellen-Export (slm 3, ELO-Muster): POST admin/export/table, excel-export.ts (Kopfblock, fixierte Kopfzeilen, Autofilter, CSV), grösseres Body-Limit nur für diese Route
 ├── common/docs/             # Swagger (/api/docs) + Generierung von @ui-slim/apiClient, ERD (/erd → docs/architecture/uml.mmd)
 ├── mocks/                   # API_APPS_MAPPING, API_CATEGORY_MAPPING, API_MOCK_DATA (Seed), E-Mail-Parser
 │   └── tenant/              # «SLIM Demo»-Datensatz: tenant.mock.json, tenant-dataset.ts, demo-dataset.seed.ts, Marker-Entity
@@ -62,7 +63,7 @@ apps/app/src/
 ├── app/
 │   ├── app.config.ts        # Router, HttpClient, provideTranslate, provideAuth, ApiConfiguration, provideDesignSystem
 │   ├── app.routes.ts        # /auth, /admin (adminGuard), /styleguide, 404 – Segmente aus ROUTE_SEGMENT
-│   ├── common/              # Wiederverwendbare App-Komponenten (Sprache, Status-Pill)
+│   ├── common/              # Wiederverwendbare App-Komponenten (Sprache, Status-Pill, Export-Schaltfläche app-table-export)
 │   ├── core/
 │   │   ├── store/signal-store.ts   # SignalStore<State>: select() / patch() – Basis der Facades
 │   │   └── area/area.facade.ts     # AreaFacade über AdminAreaService (@ui-slim/apiClient)

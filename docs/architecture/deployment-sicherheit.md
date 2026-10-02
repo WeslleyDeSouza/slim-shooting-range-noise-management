@@ -81,6 +81,7 @@ eine API mit In-Memory-SQLite.
 | Proxy-Vertrauen | `app.set('trust proxy', resolveTrustProxy())` | Client-IP für Throttling aus `X-Forwarded-For` mit `API_TRUST_PROXY` Hops. |
 | Geheimnisse | `.env` (git-ignoriert), `.npmrc` mit Nexus-Token | Der Setup-Wizard schreibt beide; `APP_SECRET` wird generiert, wenn leer. |
 | Nachvollziehbarkeit | galaxy Session-/Login-Logging; `recordedBy`, `createdAt/updatedAt` auf Nutzungen | Ein fachliches Änderungsprotokoll (wer hat welche Nutzung geändert) gibt es noch nicht. |
+| Grösse der Anfragen | JSON-Parser von Nest (100 kB), `tableExportBodyParser()` in `core/export` | Einzige Ausnahme ist der Tabellen-Export `POST /api/admin/export/table` mit 8 MB, weil er die Zeilen einer Maske entgegennimmt; Zeilen (20 000), Spalten (60) und Länge einer Zelle (2 000 Zeichen) sind zusätzlich begrenzt. |
 
 ## Offen für die Produktion
 

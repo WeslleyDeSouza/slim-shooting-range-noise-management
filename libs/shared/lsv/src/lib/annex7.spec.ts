@@ -48,37 +48,40 @@ describe('annex7Level — Beilage B1.4 demo project (sheets A7X / A7p)', () => {
     const { li, lri, lr } = annex7Level(sourcesOf('E1'), B14_HALF_DAYS);
     expect(li.a).toBeCloseTo(90.91582571800603, 6);
     expect(lri.a).toBeCloseTo(73.75060616241248, 6);
-    // Lr equals Lri(a): the empty categories add nothing (unlike the sheet's 0 dB cells).
-    expect(lr).toBeCloseTo(lri.a, 12);
+    // The sheet's five 0 dB cells lift Lr above Lri(a) by 5 / 10^7.375 energy units only.
+    expect(lr).toBeCloseTo(lri.a, 5);
+    expect(annex7Level(sourcesOf('E1'), B14_HALF_DAYS, { emptyCategories: 'skip' }).lr).toBeCloseTo(lri.a, 12);
   });
 
-  it('leaves categories without shots empty and out of the sum (E8 = 28.0)', () => {
-    const result = annex7Level(sourcesOf('E8'), B14_HALF_DAYS);
-    for (const k of ['b', 'c', 'd', 'e', 'f'] as const) {
-      expect(result.li[k]).toBe(LSV_EMPTY_LEVEL);
-      expect(result.lri[k]).toBe(LSV_EMPTY_LEVEL);
-    }
-    expect(roundDb(result.lr)).toBe(28.0);
-    expect(result.lr).toBeCloseTo(28.046311575135064, 6);
-  });
-
-  it('reproduces the A7X sheet (0 dB cells of empty categories summed) with emptyCategories: zero (E8 = 28.1)', () => {
+  it('reproduces the A7X sheet by default: 0 dB cells of empty categories are summed (E8 = 28.1)', () => {
     // 28.046 dB = 637.7 energy units; the five empty categories add 5 × 10^0 → 642.7 units = 28.080 dB.
-    const sheet = annex7Level(sourcesOf('E8'), B14_HALF_DAYS, { emptyCategories: 'zero' });
+    const sheet = annex7Level(sourcesOf('E8'), B14_HALF_DAYS);
+    for (const k of ['b', 'c', 'd', 'e', 'f'] as const) {
+      expect(sheet.li[k]).toBe(LSV_EMPTY_LEVEL);
+      expect(sheet.lri[k]).toBe(LSV_EMPTY_LEVEL);
+    }
     expect(sheet.lr).toBeCloseTo(28.08, 2);
     expect(roundDb(sheet.lr)).toBe(28.1);
+    expect(annex7Level(sourcesOf('E8'), B14_HALF_DAYS, { emptyCategories: 'zero' }).lr).toBe(sheet.lr);
+  });
+
+  it('leaves categories without shots out of the sum with emptyCategories: skip — the kernel output A7p (E8 = 28.0)', () => {
+    const kernel = annex7Level(sourcesOf('E8'), B14_HALF_DAYS, { emptyCategories: 'skip' });
+    expect(roundDb(kernel.lr)).toBe(28.0);
+    expect(kernel.lr).toBeCloseTo(28.046311575135064, 6);
     // Loud receivers are unaffected at display precision (E1: 73.8 either way).
-    const e1 = annex7Level(sourcesOf('E1'), B14_HALF_DAYS, { emptyCategories: 'zero' });
-    expect(roundDb(e1.lr)).toBe(73.8);
+    expect(roundDb(annex7Level(sourcesOf('E1'), B14_HALF_DAYS, { emptyCategories: 'skip' }).lr)).toBe(73.8);
   });
 
   it('raises Lr by exactly 3 dB when every shot count is multiplied by 10 (3·log M, half-days unchanged)', () => {
     // Metamorphic check per annex: Anhang 7 scales with 3·log(M) — unlike
     // Anhang 9, where tenfold shots add 10 dB (see annex9.spec).
-    const base = annex7Level(sourcesOf('E1'), B14_HALF_DAYS);
+    // 'skip' isolates the formula; the constant 0 dB cells of the sheet do not scale with M.
+    const base = annex7Level(sourcesOf('E1'), B14_HALF_DAYS, { emptyCategories: 'skip' });
     const tenfold = annex7Level(
       sourcesOf('E1').map((s) => ({ ...s, shots: s.shots * 10 })),
       B14_HALF_DAYS,
+      { emptyCategories: 'skip' },
     );
     expect(tenfold.li.a).toBeCloseTo(base.li.a, 9); // GEMW is scale-free
     expect(tenfold.lri.a - base.lri.a).toBeCloseTo(3, 9);
@@ -95,8 +98,9 @@ describe('annex7Level — Beilage B1.4 demo project (sheets A7X / A7p)', () => {
       a: { work: 10, sunday: 0 },
       b: { work: 10, sunday: 0 },
     };
-    const single = annex7Level(sources.slice(0, 1), halfDays);
-    const both = annex7Level(sources, halfDays);
+    // 'skip': the exact doubling; the sheet's 0 dB cells would add 5 resp. 4 energy units on top.
+    const single = annex7Level(sources.slice(0, 1), halfDays, { emptyCategories: 'skip' });
+    const both = annex7Level(sources, halfDays, { emptyCategories: 'skip' });
     expect(both.lri.a).toBeCloseTo(both.lri.b, 12);
     expect(both.lr - single.lr).toBeCloseTo(10 * Math.log10(2), 9);
   });
@@ -135,6 +139,7 @@ describe('annex7Level — Beilage B1.4 demo project (sheets A7X / A7p)', () => {
     );
     expect(result.li.a).toBeCloseTo(85, 10);
     expect(result.lri.a).toBe(LSV_EMPTY_LEVEL);
+    // No assessable category at all: «keine Energie», not the 7.8 dB of six 0 dB cells.
     expect(result.lr).toBe(LSV_EMPTY_LEVEL);
   });
 

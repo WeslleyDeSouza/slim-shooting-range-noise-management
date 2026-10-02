@@ -23,13 +23,13 @@ Fälle in `rechenfaelle.spec.ts` (Nummern wie in der Testvorbereitung):
 
 | Fall | Regel | Soll (Anzeige) | Stand |
 |---|---|---|---|
-| 0 | Abgleich Handrechnung → Dataset → Seed → Service: Zähler, Betriebsdaten 1 210 / 200 / 110, Halbtage {1, 1}, Rohpegel 57.14939920 / 38.14477796, DTO 57.1 warn / 38.1 ok; Z2 −6 dB mit E2; Z3 Σ Gewichte 0 → `zero-weights`; 2025 ohne Quelle; **Negativfall** Z2 mit Σ Abend-Gewichte 0 → unvollständig, Mengen sichtbar, Teilwert 49.3233 nie als Ampel | – | 8 ✓ |
+| 0 | Abgleich Handrechnung → Dataset → Seed → Service: Zähler, Betriebsdaten 1 210 / 200 / 110, Halbtage {1, 1}, Rohpegel 57.14939920 / 38.14810540 (A7 nach Formelblatt A7X), DTO 57.1 warn / 38.1 ok; Z2 −6 dB mit E2; Z3 Σ Gewichte 0 → `zero-weights`; 2025 ohne Quelle; **Negativfall** Z2 mit Σ Abend-Gewichte 0 → unvollständig, Mengen sichtbar, Teilwert 49.3233 nie als Ampel | – | 8 ✓ |
 | 1 | Trennung 12:00 (U3 11–13 = ½ + ½) | 38.1; Gegenprobe 11–12 → 37.6 | ✓ |
 | 2a | Kernel: 2 h = ½, 2 h 01 = 1, 2 h 15 = 1 | – | ✓ |
 | 2b | Service, Raster: 08–10 → 29.0; 08–10:15 → 32.0 | | ✓ |
 | 2c | Service, interner Rechentest 08–10:01 → 32.0 | | ✓ |
 | 3 | Feiertag 25.12.2026: A9 57.1 (ohne Kalender 56.6); A7 Zivil am Feiertag 41.4 (ohne 40.0); halber Feiertag 24.12. 50/50 und ½ + ½ | | 3 ✓ |
-| 4 | ×10: Nutzungen → A9 67.1 (Δ 10.000) / A7 41.1 (Δ 3.000); Simulation → 67.1 over, Δ 10.0, Nutzungen unverändert | | 2 ✓ |
+| 4 | ×10: Nutzungen → A9 67.1 (Δ 10.000) / A7 41.1 (Δ Lri 3.000, Δ Lr 2.998 nach A7X); Simulation → 67.1 over, Δ 10.0, Nutzungen unverändert | | 2 ✓ |
 | 5 | Grenzwertvergleich auf ganze dB aus dem Rohwert: 3 900 → 60.4 warn; 3 985 → 60.5 **warn**; 3 990 → 60.5 over; dasselbe in der Simulation (Ist und simuliert) | | 4 ✓ |
 | 6 | Jahresmittel ohne vorzeitige Rundung: 1.25; 2.5/3 auf 1e-9, Anzeige «0.833» | | 2 ✓ |
 | 7 | Mehrere Nutzungen im selben Halbtag: 180 min → 1 (32.5); 120 min → ½ (29.5); Kategorien a/b getrennt, b ohne Quelle → unvollständig | | 3 ✓ |

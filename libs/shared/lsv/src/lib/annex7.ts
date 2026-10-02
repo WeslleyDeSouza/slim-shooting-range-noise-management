@@ -22,19 +22,26 @@ export const ANNEX7_SUNDAY_WEIGHT = 3;
  *     Lri_k = Li_k + 10·log10(Wh_k + 3·Sh_k) + 3·log10(Σ shots_k) − 44
  *     Lr    = ESM(Lri_a … Lri_f)
  *
- * A category without shots has `Li = Lri = LSV_EMPTY_LEVEL` and adds no
- * energy (`emptyCategories: 'skip'`, the default — the sonARMS kernel A7p).
- * The B1.4 formula sheet A7X instead writes 0 dB into those Lri cells and
- * sums them, which lifts a very quiet receiver by a few hundredths — E8:
- * 28.08 instead of 28.05. `emptyCategories: 'zero'` reproduces that sheet
- * (FAQ 19 names A7X the binding template); which reading applies is the
- * Fachstelle's decision and a parameter here, not a code change.
+ * A category without shots has `Li = Lri = LSV_EMPTY_LEVEL`. The B1.4
+ * formula sheet A7X writes 0 dB into those Lri cells and sums them, which
+ * lifts a very quiet receiver by a few hundredths — E8: 28.08 instead of
+ * 28.05. FAQ 19 and 98 name A7X (with its VBA code) the binding template, so
+ * `emptyCategories: 'zero'` is the default; `'skip'` leaves them out of the
+ * sum as the sonARMS kernel output A7p does and stays available for a
+ * documented decision of the Fachstelle.
  * A category with shots but `Wh + 3·Sh = 0` has no assessable time and is
- * treated as empty as well, rather than producing −∞.
+ * treated as empty as well, rather than producing −∞. A receiver without any
+ * assessable category stays `LSV_EMPTY_LEVEL` («keine Energie») in both
+ * readings — six 0 dB cells are not a level.
  */
+export type Annex7EmptyCategories = 'skip' | 'zero';
+
+/** Reading of the binding sheet A7X (FAQ 19 / 98). */
+export const ANNEX7_EMPTY_CATEGORIES_DEFAULT: Annex7EmptyCategories = 'zero';
+
 export interface Annex7Options {
   /** How categories without shots enter the energetic sum over a–f. */
-  emptyCategories?: 'skip' | 'zero';
+  emptyCategories?: Annex7EmptyCategories;
 }
 
 export function annex7Level(
@@ -42,7 +49,7 @@ export function annex7Level(
   halfDays: Annex7HalfDays,
   options: Annex7Options = {},
 ): Annex7Result {
-  const emptyAsZero = options.emptyCategories === 'zero';
+  const emptyAsZero = (options.emptyCategories ?? ANNEX7_EMPTY_CATEGORIES_DEFAULT) === 'zero';
   for (const s of sources) {
     if (!(s.shots >= 0)) {
       throw new Error(`annex7Level: invalid shots for source ${s.sourceId}`);
@@ -75,8 +82,9 @@ export function annex7Level(
           ANNEX7_CONSTANT;
   }
 
+  const assessable = ANNEX7_CATEGORIES.some((k) => lri[k] !== LSV_EMPTY_LEVEL);
   const terms = ANNEX7_CATEGORIES.map((k) =>
-    emptyAsZero && lri[k] === LSV_EMPTY_LEVEL ? 0 : lri[k],
+    emptyAsZero && assessable && lri[k] === LSV_EMPTY_LEVEL ? 0 : lri[k],
   );
   return { li, lri, lr: esm(terms) };
 }

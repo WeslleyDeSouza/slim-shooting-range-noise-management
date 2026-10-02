@@ -176,7 +176,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(point('E1').missing).toEqual([]);
     });
 
-    it('Z1 E1: Rohpegel A9 57.14939920… und A7 38.14477796… (volle Genauigkeit der Gegenrechnung)', async () => {
+    it('Z1 E1: Rohpegel A9 57.14939920… und A7 38.14810540… (volle Genauigkeit der Gegenrechnung, A7 nach Formelblatt A7X)', async () => {
       const { point } = await raw(Y2026, states.z1);
       expect(point('E1').annex9All).toBeCloseTo(REF.z1E1.lr9, RAW);
       expect(point('E1').annex7All).toBeCloseTo(REF.z1E1.lr7, RAW);
@@ -198,7 +198,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(op).toMatchObject({ inside: 1210, outside: 200, civil: 110, sources: ['Q1'] });
     });
 
-    it('Z2: dieselben Nutzungen, E1 −6 dB (51.1494 / 32.1448), E2 nur hier (57.1494); Q1b mit Gewicht 0 bekommt nichts', async () => {
+    it('Z2: dieselben Nutzungen, E1 −6 dB (51.1494 / 32.1580), E2 nur hier (57.1494); Q1b mit Gewicht 0 bekommt nichts', async () => {
       const { point, operating } = await raw(Y2026, states.z2);
       expect(point('E1').annex9All).toBeCloseTo(REF.z2E1.lr9, RAW);
       expect(point('E1').annex7All).toBeCloseTo(REF.z2E1.lr7, RAW);
@@ -264,7 +264,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
   });
 
   describe('1 · Trennung 12:00 (B1 7.4.3)', () => {
-    it('U3 11:00–13:00 zählt ½ Vormittag + ½ Nachmittag: A7 38.1448 → 38.1 – mit U3 11:00–12:00 37.5649 → 37.6', async () => {
+    it('U3 11:00–13:00 zählt ½ Vormittag + ½ Nachmittag: A7 38.1481 → 38.1 – mit U3 11:00–12:00 37.5687 → 37.6', async () => {
       const before = await raw(Y2026, states.z1);
       expect(before.operating.annex7HalfDays.a).toEqual({ work: 1, sunday: 1 });
       expect(before.point('E1').annex7All).toBeCloseTo(REF.z1E1.lr7, RAW);
@@ -289,7 +289,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       return { halfDays: operating.annex7HalfDays.a, shots: operating.annex7Shots.get(refKey(roomId, combo.stgw90)), rawLr7: point('E1').annex7All, row: row(receiver(dto, 'E1'), 7) };
     }
 
-    it('2b · regulärer Pfad (Viertelstundenraster): 08:00–10:00 = ½ Halbtag → 28.9897 → 29.0; 08:00–10:15 = 1 → 32.0', async () => {
+    it('2b · regulärer Pfad (Viertelstundenraster): 08:00–10:00 = ½ Halbtag → 29.0170 → 29.0; 08:00–10:15 = 1 → 32.0137 → 32.0', async () => {
       const twoHours = await alone('10:00');
       expect(twoHours.halfDays).toEqual({ work: 0.5, sunday: 0 });
       expect(twoHours.shots).toBe(100);
@@ -328,7 +328,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(row(receiver(await assessment.assess(mockTenantId, areaId, Y2026), 'E1'), 9)).toMatchObject({ level: 56.6 });
     });
 
-    it('A7: eine Zivil-Nutzung am 25.12.2026 ist ein Sonn-/Feiertags-Halbtag (Sh = 2 → 41.4176), ohne Kalender ein Werk-Halbtag (39.9564)', async () => {
+    it('A7: eine Zivil-Nutzung am 25.12.2026 ist ein Sonn-/Feiertags-Halbtag (Sh = 2 → 41.4192), ohne Kalender ein Werk-Halbtag (39.9586)', async () => {
       await civil('2026-12-25', '09:00', '12:00', 100);
       const withHoliday = await raw(Y2026, states.z1);
       expect(withHoliday.operating.annex7HalfDays.a).toEqual({ work: 1, sunday: 2 });
@@ -354,7 +354,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
   });
 
   describe('4 · ×10 auf alle Mengen: A9 +10 dB, A7 +3 dB (Halbtage unverändert)', () => {
-    it('Nutzungen ×10: Betriebsdaten 12 100 / 2 000, Halbtage {1, 1}, A9 67.1494 (Δ 10.000), A7 41.1448 (Δ 3.000) → over / ok', async () => {
+    it('Nutzungen ×10: Betriebsdaten 12 100 / 2 000, Halbtage {1, 1}, A9 67.1494 (Δ 10.000), A7 41.1464 (Δ 2.998: Lri +3.000, die 0-dB-Zellen des A7X skalieren nicht) → over / ok', async () => {
       const before = await raw(Y2026, states.z1);
       const positions = dataSource.getRepository(UsagePositionEntity);
       const all = await usages.find({ where: { tenantId: mockTenantId, areaId }, relations: { positions: true } });
@@ -365,7 +365,10 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(after.operating.annex9.get(refKey(roomId, combo.stgw90))).toEqual({ inside: 12100, outside: 2000 });
       expect(after.operating.annex7HalfDays.a).toEqual(before.operating.annex7HalfDays.a);
       expect((after.point('E1').annex9All as number) - (before.point('E1').annex9All as number)).toBeCloseTo(10, 6);
-      expect((after.point('E1').annex7All as number) - (before.point('E1').annex7All as number)).toBeCloseTo(3, 6);
+      expect((after.point('E1').annex7All as number) - (before.point('E1').annex7All as number)).toBeCloseTo(REF.z1E1x10.lr7 - REF.z1E1.lr7, RAW);
+      // Lri(a) itself rises by exactly 3 dB (3·log M): take the five 0 dB cells out again.
+      const lriA = (lr: number) => 10 * Math.log10(10 ** (lr / 10) - 5);
+      expect(lriA(after.point('E1').annex7All as number) - lriA(before.point('E1').annex7All as number)).toBeCloseTo(3, 6);
       expect(after.point('E1').annex9All).toBeCloseTo(REF.z1E1x10.lr9, RAW);
       expect(after.point('E1').annex7All).toBeCloseTo(REF.z1E1x10.lr7, RAW);
       const e1 = receiver(await assess(Y2026), 'E1');
@@ -461,7 +464,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
   });
 
   describe('7 · mehrere Nutzungen im selben Halbtag (B1 7.4.3: Minuten je Kalendertag und Kategorie summiert)', () => {
-    it('08:00–09:00 (100) + 09:30–11:30 (50) = 180 min → 1 Werk-Halbtag, M = 150 → 32.5283 → 32.5', async () => {
+    it('08:00–09:00 (100) + 09:30–11:30 (50) = 180 min → 1 Werk-Halbtag, M = 150 → 32.5404 → 32.5', async () => {
       await clearUsages();
       await civil('2026-03-16', '08:00', '09:00', 100);
       await civil('2026-03-16', '09:30', '11:30', 50);
@@ -472,7 +475,7 @@ describe('Rechenfälle durch die Kette (Testplatz S)', () => {
       expect(row(receiver(await assess(Y2026), 'E1'), 7)).toMatchObject({ level: 32.5, state: 'ok' });
     });
 
-    it('08:00–08:30 + 09:30–11:00 = 120 min → ½ (nicht ½ + ½ = 1 je Nutzung) → 29.5180 → 29.5', async () => {
+    it('08:00–08:30 + 09:30–11:00 = 120 min → ½ (nicht ½ + ½ = 1 je Nutzung) → 29.5422 → 29.5', async () => {
       await clearUsages();
       await civil('2026-03-16', '08:00', '08:30', 100);
       await civil('2026-03-16', '09:30', '11:00', 50);

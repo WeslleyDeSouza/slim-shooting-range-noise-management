@@ -253,7 +253,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 ## Quellen und ergänzende Arbeitsunterlagen
 
 - [Beilage A2](Beilage%20A2%20Vorgaben%20Lösungskonzept.pdf)
-- [FAQ-Export vom 11.09.2026](FAQ-Export-2026-09-11.md)
+- [FAQ-Export (Stand 02.10.2026)](FAQ-Export.md)
 - [Fachliche Validierung des Prototyps](validierung-fachlich.md)
 - [Technische Validierung des Prototyps](validierung-technisch.md)
 - Die früher verlinkten Dateien `05-Fachliche-technische-Gegenpruefung-C2.md` und `04-Pruefpunkte-C2-Abgleich-B1-FAQ.md` liegen nicht im Repository.

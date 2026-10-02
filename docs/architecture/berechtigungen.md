@@ -49,7 +49,7 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 | Immissionsberechnung durchführen/speichern 5.10 | `ADMIN_AREA_CALCULATION_RUN` 47 ² | write | – | – | – |
 | Simulation 5.13 | `ADMIN_AREA_SIMULATION` 46 (zusätzlich zu 40) | write | write (W/R-O)¹ | – | – |
 | DV Schiessplatz Übersicht / Areal / Stammdaten 5.14–5.16 | `ADMIN_DATA_AREA` 41 | write | read | read | read |
-| DV Zuordnung Waffen 5.17 | `ADMIN_DATA_AREA_WEAPONS` 48 | root | write (W/R-O)¹ | – | read |
+| DV Zuordnung Waffen 5.17 | `ADMIN_DATA_AREA_WEAPONS` 48 | read ³ | read (R-O)¹ ³ | – | read |
 | DV Berechnungen 5.18–5.21 | `ADMIN_DATA_CALCULATIONS` 42 | root | – | – | read (Lesemodus: Zeiger, Import, Export und Formulare gesperrt) |
 | DV Waffen 5.22–5.25 | `ADMIN_DATA_WEAPONS` 43 | root | read | read | read |
 | DV Benutzer 5.26 | galaxy `APP_ADMIN_USER_LIST` 1 | root | write (W/R-O)¹ | – | read |
@@ -58,6 +58,8 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 
 ¹ «W/R-O» = `settings.ownAreasOnly = true` an der Rolle, erzwungen durch die Regel `area-scope`
 (Abschnitt 4). ² Noch kein Endpunkt – reserviert für «Berechnung speichern» (5.18–5.21).
+³ FAQ 52: Die Pflegefunktion im UI entfällt, slm 17 ist eine Anzeige; die Zuordnungen werden über
+den Import bzw. durch die DB-Administration gepflegt, B1 8.1.2 wird von R/W auf R angepasst.
 
 **Demo-Konten** (Passwort `1234`, `tenant.mock.json`): `slim@demo.ch` (galaxy-Admin, alles),
 `fachspezialist@demo.ch`, `schiessplatz@demo.ch` (Schiessplatz-Verantwortlicher, zugeordnet:

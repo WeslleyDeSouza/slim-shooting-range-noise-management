@@ -62,7 +62,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
       [A.ADMIN_AREA_CALCULATION_RUN]: 'write', // 5.10 Immissionsberechnung R/W
       [A.ADMIN_AREA_SIMULATION]: 'write', // 5.13 R/W
       [A.ADMIN_DATA_AREA]: 'write', // 5.14–5.16 R / R/W
-      [A.ADMIN_DATA_AREA_WEAPONS]: 'root', // 5.17 R/W
+      [A.ADMIN_DATA_AREA_WEAPONS]: 'read', // 5.17 R – FAQ 52: Anzeige, Pflege über Import / DB-Administration
       [A.ADMIN_DATA_CALCULATIONS]: 'root', // 5.18–5.21 R/W
       [A.ADMIN_DATA_WEAPONS]: 'root', // 5.22–5.25 R/W
       [A.ADMIN_DATA_MGDM_EXPORT]: 'write',
@@ -82,7 +82,7 @@ export const SLIM_ROLES: SlimRoleSeed[] = [
       [A.ADMIN_AREA_CALCULATION_RUN]: '',
       [A.ADMIN_AREA_SIMULATION]: 'write', // W/R-O
       [A.ADMIN_DATA_AREA]: 'read',
-      [A.ADMIN_DATA_AREA_WEAPONS]: 'write', // W/R-O
+      [A.ADMIN_DATA_AREA_WEAPONS]: 'read', // 5.17 R-O – FAQ 52: keine Pflegefunktion im UI
       [A.ADMIN_DATA_CALCULATIONS]: '',
       [A.ADMIN_DATA_WEAPONS]: 'read',
       [A.ADMIN_DATA_MGDM_EXPORT]: '',

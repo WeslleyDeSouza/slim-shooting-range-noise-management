@@ -164,9 +164,9 @@ export const B14_EXPECTED_A9: Record<
 };
 
 /**
- * Expected Anhang 7 results (sheets A7X / A7p): Li(a) to two decimals, Lr to
- * one. E8 is 28.0 as the kernel prints it; the Excel sheet sums the 0 dB
- * cells of the empty categories and shows 28.1.
+ * Expected Anhang 7 results (sheet A7X, the binding template — FAQ 19 / 98):
+ * Li(a) to two decimals, Lr to one. E8 is 28.1 because the sheet sums the
+ * 0 dB cells of the empty categories; the kernel output A7p prints 28.0.
  */
 export const B14_EXPECTED_A7: Record<string, { li: number; lr: number }> = {
   E1: { li: 90.92, lr: 73.8 },
@@ -179,6 +179,6 @@ export const B14_EXPECTED_A7: Record<string, { li: number; lr: number }> = {
   E5b: { li: 90.42, lr: 73.3 },
   E6: { li: 81.6, lr: 64.4 },
   E7: { li: 61.26, lr: 44.1 },
-  E8: { li: 45.21, lr: 28.0 },
+  E8: { li: 45.21, lr: 28.1 },
   E9: { li: 85.17, lr: 68.0 },
 };

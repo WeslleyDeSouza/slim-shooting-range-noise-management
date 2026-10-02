@@ -113,9 +113,26 @@ export const USAGE_CATEGORIES = ['military', 'civil', 'blue_light', 'sat'] as co
 export type UsageCategory = (typeof USAGE_CATEGORIES)[number];
 export const ANNEX7_USAGE_CATEGORIES: readonly UsageCategory[] = ['civil', 'sat'];
 
+/**
+ * Categories that enter the Anhang 9 assessment. B1 Tabelle 2 names all of
+ * them, the Betriebsdaten of B1 7.4.5 speak of «Schuss militärisch»; FAQ 165
+ * leaves the decision to KOMZ Lärm at the start of the realisation. Until
+ * then the reading of Tabelle 2 applies — the set is a parameter, not a rule
+ * spread over the code.
+ */
+export const ANNEX9_USAGE_CATEGORIES: readonly UsageCategory[] = USAGE_CATEGORIES;
+
 /** Whether a usage of this category enters the Anhang 7 assessment (B1 Tabelle 2). */
 export function countsForAnnex7(category: UsageCategory, annex7Overall: boolean): boolean {
   return annex7Overall || ANNEX7_USAGE_CATEGORIES.includes(category);
+}
+
+/** Whether a usage of this category enters the Anhang 9 assessment (see `ANNEX9_USAGE_CATEGORIES`). */
+export function countsForAnnex9(
+  category: UsageCategory,
+  categories: readonly UsageCategory[] = ANNEX9_USAGE_CATEGORIES,
+): boolean {
+  return categories.includes(category);
 }
 
 /** Empfindlichkeitsstufe (Art. 43 LSV). */

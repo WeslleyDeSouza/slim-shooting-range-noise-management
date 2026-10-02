@@ -74,12 +74,12 @@ Nur zivile Nutzungen (U2, U3), Gesamtbeurteilung Anhang 7 = nein → Militär bl
 
 - Halbtage: U2 So 09–12 = 3 h > 2 h → **1 Sonn-Halbtag**; U3 Mo 11–13 → 11–12 = 1 h → ½, 12–13 = 1 h → ½ → **1 Werk-Halbtag**
 - Schüsse M = 100 + 10 = **110**; Li(a) = LAFmax_day = **70.0** (eine Quelle)
-- Lri(a) = 70 + 10·log10(Wh + 3·Sh) + 3·log10(M) − 44 = 70 + 10·log10(1 + 3) + 3·2.0414 − 44 = 70 + 6.0206 + 6.1242 − 44 = **38.1448** → Anzeige **38.1 dB**
+- Lri(a) = 70 + 10·log10(Wh + 3·Sh) + 3·log10(M) − 44 = 70 + 10·log10(1 + 3) + 3·2.0414 − 44 = 70 + 6.0206 + 6.1242 − 44 = **38.1448**; Lr nach Formelblatt A7X (fünf leere Kategorien b–f mit je 0 dB energetisch mitsummiert, FAQ 19 / 98): 10·log10(10^3.81448 + 5) = **38.1481** → Anzeige **38.1 dB**
 - Lr = Lri(a) (einzige Kategorie) = **38.1** → grün (IGW 60)
 
-**Fehlerbild Halbtagsgrenze 13:00** (alter Stand): U3 ganz im Vormittag, 2 h → ½ → Wh = 0.5 → Lri = 70 + 5.4407 + 6.1242 − 44 = **37.5649 → 37.6**. Die 0.5 dB sind der Nachweis der 12:00-Regel.
+**Fehlerbild Halbtagsgrenze 13:00** (alter Stand): U3 ganz im Vormittag, 2 h → ½ → Wh = 0.5 → Lri = 70 + 5.4407 + 6.1242 − 44 = 37.5649, Lr (A7X) = **37.5687 → 37.6**. Die 0.5 dB sind der Nachweis der 12:00-Regel.
 
-**Z2** (LAFmax 64.0): Lr = **32.1**. **×10** Schüsse (Halbtage gleich): +3·log10(10) = **+3 dB → 41.1**.
+**Z2** (LAFmax 64.0): Lri = 32.1448, Lr (A7X) = 32.1580 → **32.2**. **×10** Schüsse (Halbtage gleich): Lri +3·log10(10) = +3 dB = 41.1448, Lr (A7X) = 41.1464 → **41.1** (Δ Lr 2.998, weil die 0-dB-Zellen nicht mitskalieren).
 
 ## 6. Soll-Tabelle (für Protokolle)
 
@@ -93,7 +93,7 @@ Nur zivile Nutzungen (U2, U3), Gesamtbeurteilung Anhang 7 = nein → Militär bl
 | Simulation ×10 | Z1 | 2026 | **67.1** | rot | – | – |
 | ohne Feiertag (Fehler) | Z1 | 2026 | 56.6 | – | – | – |
 | Grenze 13:00 (Fehler) | Z1 | 2026 | – | – | 37.6 | – |
-| Variante + Zivil 25.12.2026 09–12, 100 Schuss | Z1 | 2026 | 57.1 | orange | **41.4** (41.4176; Sh = 2) – ohne Feiertag 40.0 | – |
+| Variante + Zivil 25.12.2026 09–12, 100 Schuss | Z1 | 2026 | 57.1 | orange | **41.4** (41.4192; Sh = 2) – ohne Feiertag 40.0 | – |
 | Mittel 2025+2026 | Z1 | 2025–2026 | stgw90: 605 / 100 je Jahr; pist75 25 und sprengladung **1.25 kg** je Jahr (dezimal, nicht gerundet) → O8 wegen fehlender Quellen | – | – | – |
 
 Prüfregel Rundung (Projekthandbuch B1.2 10.4): der Grenzwertvergleich rundet den **ungerundeten** Pegel direkt auf ganze dB

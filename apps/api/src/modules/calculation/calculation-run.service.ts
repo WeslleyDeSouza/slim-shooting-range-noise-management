@@ -3,13 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { createHash } from 'node:crypto';
 import { Repository } from 'typeorm';
 import { AreaQuotaEntity, RoomCombinationEntity } from '../area/entities';
-import { ANNEX7_LIMITS, ANNEX9_LIMITS, NOISE_ROUNDING_DEFAULT, NOISE_WARN_BAND_DB, QUOTA_WARN_FACTOR } from '@slim/lsv';
+import {
+  ANNEX7_EMPTY_CATEGORIES_DEFAULT,
+  ANNEX7_LIMITS,
+  ANNEX7_USAGE_CATEGORIES,
+  ANNEX9_LIMITS,
+  ANNEX9_USAGE_CATEGORIES,
+  NOISE_ROUNDING_DEFAULT,
+  NOISE_WARN_BAND_DB,
+  QUOTA_WARN_FACTOR,
+} from '@slim/lsv';
 import { AssessmentInputs, AssessmentOptions, AssessmentService } from './assessment.service';
 import { CalculationRunDto } from './dto';
 import { CalculationRunEntity } from './entities';
 
 /** Version of the calculation kernel a run was computed with (bumped with every formula change). */
-export const KERNEL_VERSION = '@slim/lsv 1.3.0 (Zeitanteile, gemischte Simulation, A7-Konsistenz)';
+export const KERNEL_VERSION = '@slim/lsv 1.4.0 (Anhang 7 nach Formelblatt A7X: leere Kategorien 0 dB)';
 
 /**
  * Berechnungslauf (B1 5.10 «Durchführen und Abspeichern von Immissions-
@@ -59,6 +68,9 @@ export class CalculationRunService {
       thresholds: { noiseWarnBandDb: NOISE_WARN_BAND_DB, quotaWarnFactor: QUOTA_WARN_FACTOR },
       rounding: NOISE_ROUNDING_DEFAULT,
       annex7Overall: Boolean(reference.area.annex7Overall),
+      // FAQ 19/98 (A7X) and FAQ 165 (Kategorien Anhang 9): what the kernel applied in this run.
+      annex7EmptyCategories: ANNEX7_EMPTY_CATEGORIES_DEFAULT,
+      usageCategories: { annex9: ANNEX9_USAGE_CATEGORIES, annex7: ANNEX7_USAGE_CATEGORIES },
       o8: { onZeroWeights: 'refuse', release: null },
     };
     const quotas = await this.quotas.find({ where: { tenantId, areaId } });

@@ -61,7 +61,7 @@ export const ACTORS: Record<ActorId, Actor> = {
     role: 'slim_range_owner',
     demo: demo('schiessplatz@demo.ch'),
     areas: ['Geissalp', 'Thun'],
-    note: 'B1 4.2.4; W/R-O auf Nutzungen, Simulation, Zuordnung Waffen, Benutzer; X auf Berechnungen.',
+    note: 'B1 4.2.4; W/R-O auf Nutzungen, Simulation, Benutzer; R-O auf Zuordnung Waffen (FAQ 52); X auf Berechnungen.',
   },
   A03: {
     id: 'A03',

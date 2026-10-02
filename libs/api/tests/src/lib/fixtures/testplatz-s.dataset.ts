@@ -187,28 +187,32 @@ export const TESTPLATZ_S = {
  * Independent reference values (platz-s.md, sections 4–6), full double
  * precision from the Python check of 12.09.2026 — NOT from the application.
  * Constant: 10·log10(52·5·12·3600) = 70.5045709478573.
+ * Anhang 7 (`lr7`): Lr of the binding sheet A7X (FAQ 19 / 98), recomputed on
+ * 02.10.2026 — Lr = 10·log10(10^(Lri(a)/10) + 5), the five empty categories
+ * b–f enter with 0 dB each. Lri(a) itself is unchanged (38.1447779687543 for
+ * Z1 E1); the kernel reading A7p would show exactly that value.
  */
 export const TESTPLATZ_S_REFERENCE = {
   /** Anhang 9, Zeitraum 2026: stgw90 inside 1 210 / outside 200. */
-  z1E1: { lae1: 110.82785370316451, lae2: 108.01029995663981, lr9: 57.14939920103325, lr7: 38.1447779687543 },
+  z1E1: { lae1: 110.82785370316451, lae2: 108.01029995663981, lr9: 57.14939920103325, lr7: 38.148105408011915 },
   /** Same usages, state Z2 (WLR −6 dB, Q1b weight 0 → everything on Q1a). */
-  z2E1: { lr9: 51.14939920103325, lr7: 32.1447779687543 },
+  z2E1: { lr9: 51.14939920103325, lr7: 32.15800964198868 },
   /** E2 exists only in Z2/Z3 (WLR 80 / 70, ES III). */
   z2E2: { lr9: 57.14939920103325 },
   /** Fehlerbild: holiday 25.12. not applied (1 310 / 100). */
   z1E1NoHoliday: { lae1: 111.17271295655763, lae2: 105.0, lr9: 56.60724277097697 },
   /** Fehlerbild: half-day boundary at 13:00 (U3 = ½ instead of ½ + ½). */
-  z1E1Noon13: { lr7: 37.56485849897743 },
+  z1E1Noon13: { lr7: 37.56866107865542 },
   /** All 2026 quantities ×10. */
-  z1E1x10: { lr9: 67.14939920103325, lr7: 41.1447779687543 },
+  z1E1x10: { lr9: 67.14939920103325, lr7: 41.14644595750241 },
   /** Case 3, Anhang 7 with an extra civil usage on the holiday 2026-12-25 09:00–12:00, 100 shots (Sh = 2, M = 210). */
-  case3Civil2512: { lr7: 41.41763828434432, lr7NoHoliday: 39.95635792756194 },
+  case3Civil2512: { lr7: 41.41920471856817, lr7NoHoliday: 39.958550777312624 },
   /** Case 5: single military usage inside the workday, N shots (Lr = 24.4954290521427 + 10·log10(N)). */
   case5: { n3900: 60.406075122407685, n3985: 60.49971230946401, n3990: 60.50515800901018 },
   /** Case 2b: one civil usage of 100 shots alone (no U2/U3): 08:00–10:00 = ½ half-day, 08:00–10:15 = 1. */
-  case2b: { lr7HalfDay: 28.989700043360187, lr7FullDay: 32.0 },
+  case2b: { lr7HalfDay: 29.017016086709578, lr7FullDay: 32.0136794980296 },
   /** Case 7: two civil usages in the same morning, 100 + 50 shots: 60 + 120 min = 1 half-day; 30 + 90 min = ½. */
-  case7: { lr7: 32.528273777167044, lr7Half: 29.51797382052723, lr7CategoryAOnly: 28.989700043360187 },
+  case7: { lr7: 32.540388711108115, lr7Half: 29.542169986984508, lr7CategoryAOnly: 29.017016086709578 },
   /**
    * Negative case: Z2 with both sources at weight 0 for the evening group —
    * the 200 shots outside cannot be distributed (O8), what remains is the

@@ -57,6 +57,19 @@ describe('AdminAccessController (HTTP)', () => {
     expect(access[SLIM_APP_ID.ADMIN_DATA_SYSTEM]).toBeUndefined();
   });
 
+  it('gives nobody more than read on «Zuordnung Waffen» 5.17 (FAQ 52: display only, maintained by import)', async () => {
+    await assignAppRole(api.dataSource, mockUserId, SLIM_ROLE.SPECIALIST);
+    expect(byApp((await api.http().get(BASE).expect(200)).body)[SLIM_APP_ID.ADMIN_DATA_AREA_WEAPONS]).toBe('read');
+
+    const rangeOwner = await insertTestUser(api.dataSource);
+    await assignAppRole(api.dataSource, rangeOwner, SLIM_ROLE.RANGE_OWNER);
+    expect(byApp((await api.http().get(BASE).set(authHeaders(rangeOwner)).expect(200)).body)[SLIM_APP_ID.ADMIN_DATA_AREA_WEAPONS]).toBe('read');
+
+    const interested = await insertTestUser(api.dataSource);
+    await assignAppRole(api.dataSource, interested, SLIM_ROLE.INTERESTED);
+    expect(byApp((await api.http().get(BASE).set(authHeaders(interested)).expect(200)).body)[SLIM_APP_ID.ADMIN_DATA_AREA_WEAPONS]).toBeUndefined();
+  });
+
   it('reports read-only for the Interessent and merges the best right over several roles', async () => {
     const userId = await insertTestUser(api.dataSource);
     await assignAppRole(api.dataSource, userId, SLIM_ROLE.INTERESTED);

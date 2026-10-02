@@ -7,6 +7,7 @@ import {
   CalendarOptions,
   annex7HalfDays,
   countsForAnnex7,
+  countsForAnnex9,
   distributeShots,
   splitAnnex9,
   UsageSlot,
@@ -55,7 +56,8 @@ export function calendarOf(holidays: HolidayEntity[]): CalendarOptions {
 
 /**
  * Step 1 (B1 7.4): derive the LSV operating data from the usages of the
- * period. Anhang 9 takes every Nutzungskategorie and splits each position's
+ * period. Anhang 9 takes the categories of `ANNEX9_USAGE_CATEGORIES` (today
+ * every Nutzungskategorie, FAQ 165) and splits each position's
  * quantity into inside / outside the workday (Mo–Fr 07–19, Sa/So and the
  * site's holidays outside, half holidays proportionally); Anhang 7 takes
  * Zivil + SAT (every category with the «Gesamtbeurteilung» flag), only
@@ -75,14 +77,17 @@ export function deriveOperatingData(
 
   for (const usage of usages) {
     const civil = countsForAnnex7(usage.usageType, Boolean(reference.area.annex7Overall));
+    const general = countsForAnnex9(usage.usageType);
     const countedCategories = new Set<Annex7Category>();
     for (const position of usage.positions ?? []) {
       const key = refKey(usage.roomId, position.combinationId);
-      const split = splitAnnex9({ date: usage.date, from: usage.timeFrom, to: usage.timeTo, shots: position.quantity }, calendar);
-      const entry = annex9.get(key) ?? { inside: 0, outside: 0 };
-      entry.inside += split.inside;
-      entry.outside += split.outside;
-      annex9.set(key, entry);
+      if (general) {
+        const split = splitAnnex9({ date: usage.date, from: usage.timeFrom, to: usage.timeTo, shots: position.quantity }, calendar);
+        const entry = annex9.get(key) ?? { inside: 0, outside: 0 };
+        entry.inside += split.inside;
+        entry.outside += split.outside;
+        annex9.set(key, entry);
+      }
 
       const category = combinationById.get(position.combinationId)?.weapon?.annex7Category ?? null;
       if (civil && category) {

@@ -67,14 +67,16 @@ Demo-Projekt: 4 Quellen (`SH300-Links/Rechts_Stgw90/Stgw57`), Betriebsdaten A9 T
 | E5b           | 117.13 | 103.23 | 61.8      | 90.42 | 73.3      |
 | E6            | 108.42 | 94.56  | 53.1      | 81.60 | 64.4      |
 | E7            | 86.26  | 72.95  | 31.0      | 61.26 | 44.1      |
-| E8            | 69.84  | 56.55  | 14.5 ¹    | 45.21 | 28.0 ²    |
+| E8            | 69.84  | 56.55  | 14.5 ¹    | 45.21 | 28.1 ²    |
 | E9            | 108.20 | 95.39  | 52.9      | 85.17 | 68.0      |
 
 ¹ Der sonARMS-Kernel (Blatt A9p) schreibt für E8 LAE2 = 0 und Lr 14.3, weil er Quellen
 unter seiner Relevanzschwelle weglässt; das Formelblatt A9X der Ausschreibung ergibt 14.5 –
 das reproduziert die Bibliothek.
-² Das Formelblatt A7X summiert die 0-dB-Zellen leerer Kategorien und zeigt 28.1; der Kernel
-(A7p) und die Bibliothek lassen leere Kategorien weg → 28.0.
+² Das Formelblatt A7X summiert die 0-dB-Zellen leerer Kategorien und zeigt 28.1. A7X ist gemäss
+FAQ 19 und 98 die verbindliche Vorlage, die Bibliothek rechnet deshalb standardmässig so
+(`emptyCategories: 'zero'`); der Kernel-Ausdruck A7p lässt leere Kategorien weg → 28.0
+(`emptyCategories: 'skip'`, nur nach dokumentiertem Fachentscheid).
 
 Alle zwölf Empfangspunkte beider Anhänge sind als Tests hinterlegt (`annex9.spec.ts`,
 `annex7.spec.ts`), dazu Rand- und Fehlerfälle (keine Schüsse, nur Tag/Abend, Skalierung

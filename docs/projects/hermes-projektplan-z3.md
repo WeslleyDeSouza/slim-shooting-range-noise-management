@@ -12,7 +12,7 @@ andere Phasenbegriffe als HERMES 2022, die Zuordnung ist in Abschnitt 2 ausdrüc
 
 Zugehörige Unterlagen im Repository: [Lösungskonzept C2](../anforderungskatalog/C2-Loesungskonzept-SLIM.md),
 [Prüfstand des Konzepts](../anforderungskatalog/checkliste.md), [Umsetzungsstand des Prototyps](../anforderungskatalog/umsetzungsstand.md),
-[FAQ-Export](../anforderungskatalog/FAQ-Export-2026-09-11.md), [Prototyp-Roadmap](prototyp-roadmap.md).
+[FAQ-Export](../anforderungskatalog/FAQ-Export.md), [Prototyp-Roadmap](prototyp-roadmap.md).
 
 ## 1. Ziel, Umfang und Grundlagen
 
@@ -344,7 +344,7 @@ Lebenszyklusplanung; nicht zehn Jahre Vollzeit-Projektentwicklung und keine gara
 
 Diese Punkte sind in den Unterlagen widersprüchlich oder nicht geregelt. Eine Frage an die Auftraggeberin ist keine
 Entscheidung; bis zur Antwort oder Vertragsklärung gilt die konservative Annahme in der letzten Spalte. Nummern
-beziehen sich auf den [FAQ-Export](../anforderungskatalog/FAQ-Export-2026-09-11.md).
+beziehen sich auf den [FAQ-Export](../anforderungskatalog/FAQ-Export.md).
 
 | Thema | Quelle im Vertrag / in den Unterlagen | Offene Frage | Annahme in diesem Plan |
 |---|---|---|---|

@@ -49,7 +49,7 @@ export enum SLIM_APP_ID {
   ADMIN_AREA_SIMULATION = 46,
   /** Schiessplatz › Immissionsberechnung durchführen und speichern (5.10) — Fachspezialist only */
   ADMIN_AREA_CALCULATION_RUN = 47,
-  /** Datenverwaltung › Schiessplatz › Zuordnung Waffen (5.17) — W/R-O for the Schiessplatz-Verantwortlicher */
+  /** Datenverwaltung › Schiessplatz › Zuordnung Waffen (5.17) — read only for every role (FAQ 52: maintained by import / DB administration) */
   ADMIN_DATA_AREA_WEAPONS = 48,
   /** Datenverwaltung › Logbuch (slm 56: Login-Logging und Auswertung) */
   ADMIN_LOGS = 49,

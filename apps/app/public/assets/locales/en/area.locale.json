@@ -150,12 +150,7 @@
       "undo": "Undo"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pcs / kg",
-    "civil_kind": {
-      "obligatory": "Compulsory shooting",
-      "field_shooting": "Field shooting",
-      "other": "Other"
-    }
+    "unit_mixed": "pcs / kg"
   },
   "details": {
     "title": "Details · Receiver points",

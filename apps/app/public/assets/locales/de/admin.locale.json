@@ -384,42 +384,10 @@
       "not_set": "nicht festgelegt",
       "build_year_note": "Das Baujahr der Anlageteile ergibt sich aus dem aktuell gültigen Zustand «{{state}}» (Berechnungen).",
       "options": {
-        "classification": {
-          "unproblematic": "Platz hinsichtlich Lärms unproblematisch",
-          "problematic": "Platz hinsichtlich Lärms problematisch",
-          "remediation_needed": "Platz mit Sanierungsbedarf"
-        },
         "build_year": {
           "before1985": "Vor 1985",
           "after1985": "Nach 1985",
           "mixed": "Vor / Nach 1985 (Gemischt)"
-        },
-        "recalculation_state": {
-          "not_required": "Nicht erforderlich",
-          "in_progress": "Neuberechnung im Gange",
-          "completed": "Neuberechnung abgeschlossen"
-        },
-        "remediation_project_state": {
-          "not_started": "Nicht gestartet",
-          "concept": "Erarbeitung Lösungsstrategie Konzeptphase",
-          "design": "Projektierung",
-          "implementation": "Umsetzung",
-          "completed": "Abgeschlossen"
-        },
-        "spm_state": {
-          "open": "Offen",
-          "in_progress": "In Bearbeitung",
-          "completed": "Abgeschlossen"
-        },
-        "noise_remediation_state": {
-          "reassessment_needed": "Neubeurteilung nötig",
-          "assessed": "Beurteilung erfolgt",
-          "remediated": "Saniert"
-        },
-        "project_state": {
-          "not_started": "Nicht gestartet",
-          "ongoing": "Laufend",
-          "completed": "Abgeschlossen"
         }
       },
       "rooms_title": "Stellungsräume",
@@ -868,6 +836,47 @@
       "toast_saved": "Erweiterte Konfiguration gespeichert. Die Änderung wird protokolliert.",
       "toast_manual_uploaded": "Benutzerhandbuch hochgeladen.",
       "toast_manual_removed": "Benutzerhandbuch entfernt."
+    },
+    "dm_lists": {
+      "title": "Auswahllisten",
+      "hint": "Werte der Auswahlfelder: hinzufügen, Bezeichnungen ändern, Reihenfolge festlegen oder inaktivieren. Ein inaktiver Wert wird nicht mehr zur Auswahl angeboten, bleibt auf bestehenden Datensätzen aber erhalten.",
+      "list": "Auswahlliste",
+      "lists": {
+        "classification": "Klassierung",
+        "recalculation_state": "Stand Neuberechnung",
+        "remediation_project_state": "Bearbeitungsstand Sanierungsprojekt",
+        "spm_state": "Stand SPM",
+        "noise_remediation_state": "Stand Lärmsanierung",
+        "project_state": "Stand Projekt",
+        "civil_usage_kind": "Zivile Nutzungsart"
+      },
+      "used_in": {
+        "classification": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "recalculation_state": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "remediation_project_state": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "spm_state": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "noise_remediation_state": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "project_state": "Verwendet in: Datenverwaltung › Schiessplatz › Stammdaten.",
+        "civil_usage_kind": "Verwendet in: Schusszahlen, Nutzung der Art «Zivil»."
+      },
+      "add": "Wert hinzufügen",
+      "new_value": "Neuer Wert",
+      "edit_value": "Wert bearbeiten",
+      "label_de": "Bezeichnung DE",
+      "label_fr": "Bezeichnung FR",
+      "label_it": "Bezeichnung IT",
+      "label_en": "Bezeichnung EN",
+      "label_hint": "Fehlt die Bezeichnung einer Sprache, wird die deutsche Bezeichnung angezeigt.",
+      "err_label": "Bitte die Bezeichnung (DE) angeben.",
+      "status": "Status",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "actions": "Aktionen",
+      "activate": "Aktivieren",
+      "deactivate": "Inaktivieren",
+      "last_active": "Der letzte aktive Wert einer Liste kann nicht inaktiviert werden.",
+      "move_up": "Nach oben",
+      "move_down": "Nach unten"
     }
   }
 }

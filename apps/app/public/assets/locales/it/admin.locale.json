@@ -384,42 +384,10 @@
       "not_set": "non definito",
       "build_year_note": "L'anno di costruzione degli impianti deriva dallo stato attualmente valido «{{state}}» (calcoli).",
       "options": {
-        "classification": {
-          "unproblematic": "Piazza senza problemi di rumore",
-          "problematic": "Piazza problematica dal punto di vista del rumore",
-          "remediation_needed": "Piazza con necessità di risanamento"
-        },
         "build_year": {
           "before1985": "Prima del 1985",
           "after1985": "Dopo il 1985",
           "mixed": "Prima / dopo il 1985 (misto)"
-        },
-        "recalculation_state": {
-          "not_required": "Non necessario",
-          "in_progress": "Nuovo calcolo in corso",
-          "completed": "Nuovo calcolo concluso"
-        },
-        "remediation_project_state": {
-          "not_started": "Non avviato",
-          "concept": "Elaborazione della strategia di soluzione, fase concettuale",
-          "design": "Progettazione",
-          "implementation": "Attuazione",
-          "completed": "Concluso"
-        },
-        "spm_state": {
-          "open": "Aperto",
-          "in_progress": "In elaborazione",
-          "completed": "Concluso"
-        },
-        "noise_remediation_state": {
-          "reassessment_needed": "Nuova valutazione necessaria",
-          "assessed": "Valutazione effettuata",
-          "remediated": "Risanato"
-        },
-        "project_state": {
-          "not_started": "Non avviato",
-          "ongoing": "In corso",
-          "completed": "Concluso"
         }
       },
       "rooms_title": "Settori di posizione",
@@ -868,6 +836,47 @@
       "toast_saved": "Configurazione avanzata salvata. La modifica è registrata nel registro.",
       "toast_manual_uploaded": "Manuale d’uso caricato.",
       "toast_manual_removed": "Manuale d’uso rimosso."
+    },
+    "dm_lists": {
+      "title": "Elenchi di selezione",
+      "hint": "Valori dei campi di selezione: aggiungere, modificare le designazioni, stabilire l’ordine o disattivare. Un valore inattivo non è più proposto, ma resta sui record esistenti.",
+      "list": "Elenco di selezione",
+      "lists": {
+        "classification": "Classificazione",
+        "recalculation_state": "Stato del nuovo calcolo",
+        "remediation_project_state": "Stato di avanzamento del progetto di risanamento",
+        "spm_state": "Stato PSM",
+        "noise_remediation_state": "Stato del risanamento fonico",
+        "project_state": "Stato del progetto",
+        "civil_usage_kind": "Tipo di utilizzo civile"
+      },
+      "used_in": {
+        "classification": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "recalculation_state": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "remediation_project_state": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "spm_state": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "noise_remediation_state": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "project_state": "Usato in: Gestione dati › Piazza di tiro › Dati di base.",
+        "civil_usage_kind": "Usato in: Colpi, utilizzo del tipo «Civile»."
+      },
+      "add": "Aggiungere un valore",
+      "new_value": "Nuovo valore",
+      "edit_value": "Modificare il valore",
+      "label_de": "Designazione DE",
+      "label_fr": "Designazione FR",
+      "label_it": "Designazione IT",
+      "label_en": "Designazione EN",
+      "label_hint": "Se manca la designazione di una lingua, è mostrata la designazione tedesca.",
+      "err_label": "Indicare la designazione (DE).",
+      "status": "Stato",
+      "active": "Attivo",
+      "inactive": "Inattivo",
+      "actions": "Azioni",
+      "activate": "Attivare",
+      "deactivate": "Disattivare",
+      "last_active": "L’ultimo valore attivo di un elenco non può essere disattivato.",
+      "move_up": "Verso l’alto",
+      "move_down": "Verso il basso"
     }
   }
 }

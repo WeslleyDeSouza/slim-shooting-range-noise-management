@@ -57,7 +57,6 @@ export const WEAPON_CATEGORIES = [
 ] as const;
 
 /** Zivile Nutzungsart (B1 6.1.3, 11.2.2), API enum CIVIL_USAGE_KIND. */
-export const CIVIL_USAGE_KINDS = ['obligatory', 'field_shooting', 'other'] as const;
 
 /** HH:mm on the quarter hour (B1 6.2.3 / 7.4.1). */
 const QUARTER_HOUR = /^([01]\d|2[0-3]):(00|15|30|45)$/;

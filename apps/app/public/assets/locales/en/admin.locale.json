@@ -384,42 +384,10 @@
       "not_set": "not set",
       "build_year_note": "The year of construction of the facilities comes from the current state “{{state}}” (calculations).",
       "options": {
-        "classification": {
-          "unproblematic": "Range unproblematic regarding noise",
-          "problematic": "Range problematic regarding noise",
-          "remediation_needed": "Range in need of remediation"
-        },
         "build_year": {
           "before1985": "Before 1985",
           "after1985": "After 1985",
           "mixed": "Before / after 1985 (mixed)"
-        },
-        "recalculation_state": {
-          "not_required": "Not required",
-          "in_progress": "Recalculation in progress",
-          "completed": "Recalculation completed"
-        },
-        "remediation_project_state": {
-          "not_started": "Not started",
-          "concept": "Solution strategy, concept phase",
-          "design": "Design",
-          "implementation": "Implementation",
-          "completed": "Completed"
-        },
-        "spm_state": {
-          "open": "Open",
-          "in_progress": "In progress",
-          "completed": "Completed"
-        },
-        "noise_remediation_state": {
-          "reassessment_needed": "Reassessment needed",
-          "assessed": "Assessed",
-          "remediated": "Remediated"
-        },
-        "project_state": {
-          "not_started": "Not started",
-          "ongoing": "Ongoing",
-          "completed": "Completed"
         }
       },
       "rooms_title": "Firing positions",
@@ -868,6 +836,47 @@
       "toast_saved": "Advanced configuration saved. The change is logged.",
       "toast_manual_uploaded": "User manual uploaded.",
       "toast_manual_removed": "User manual removed."
+    },
+    "dm_lists": {
+      "title": "Selection lists",
+      "hint": "Values of the selection fields: add, change labels, set the order or deactivate. An inactive value is no longer offered for selection but is kept on existing records.",
+      "list": "Selection list",
+      "lists": {
+        "classification": "Classification",
+        "recalculation_state": "Recalculation status",
+        "remediation_project_state": "Remediation project status",
+        "spm_state": "SPM status",
+        "noise_remediation_state": "Noise remediation status",
+        "project_state": "Project status",
+        "civil_usage_kind": "Type of civil usage"
+      },
+      "used_in": {
+        "classification": "Used in: Data management › Shooting range › Master data.",
+        "recalculation_state": "Used in: Data management › Shooting range › Master data.",
+        "remediation_project_state": "Used in: Data management › Shooting range › Master data.",
+        "spm_state": "Used in: Data management › Shooting range › Master data.",
+        "noise_remediation_state": "Used in: Data management › Shooting range › Master data.",
+        "project_state": "Used in: Data management › Shooting range › Master data.",
+        "civil_usage_kind": "Used in: Shot counts, usage of the type “Civil”."
+      },
+      "add": "Add value",
+      "new_value": "New value",
+      "edit_value": "Edit value",
+      "label_de": "Label DE",
+      "label_fr": "Label FR",
+      "label_it": "Label IT",
+      "label_en": "Label EN",
+      "label_hint": "If the label of a language is missing, the German label is shown.",
+      "err_label": "Please enter the label (DE).",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "actions": "Actions",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "last_active": "The last active value of a list cannot be deactivated.",
+      "move_up": "Move up",
+      "move_down": "Move down"
     }
   }
 }

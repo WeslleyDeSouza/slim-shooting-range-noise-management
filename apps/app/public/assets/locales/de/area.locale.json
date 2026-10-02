@@ -150,12 +150,7 @@
       "undo": "Rückgängig"
     },
     "unit_kg": "kg",
-    "unit_mixed": "Stück / kg",
-    "civil_kind": {
-      "obligatory": "Obligatorisches Schiessen",
-      "field_shooting": "Feldschiessen",
-      "other": "Anderes"
-    }
+    "unit_mixed": "Stück / kg"
   },
   "details": {
     "title": "Details · Empfangspunkte",

@@ -384,42 +384,10 @@
       "not_set": "non défini",
       "build_year_note": "L'année de construction des installations découle de l'état actuellement valable «{{state}}» (calculs).",
       "options": {
-        "classification": {
-          "unproblematic": "Place sans problème de bruit",
-          "problematic": "Place problématique en matière de bruit",
-          "remediation_needed": "Place nécessitant un assainissement"
-        },
         "build_year": {
           "before1985": "Avant 1985",
           "after1985": "Après 1985",
           "mixed": "Avant / après 1985 (mixte)"
-        },
-        "recalculation_state": {
-          "not_required": "Non nécessaire",
-          "in_progress": "Nouveau calcul en cours",
-          "completed": "Nouveau calcul terminé"
-        },
-        "remediation_project_state": {
-          "not_started": "Non commencé",
-          "concept": "Élaboration de la stratégie de solution, phase de concept",
-          "design": "Étude de projet",
-          "implementation": "Mise en œuvre",
-          "completed": "Terminé"
-        },
-        "spm_state": {
-          "open": "Ouvert",
-          "in_progress": "En cours",
-          "completed": "Terminé"
-        },
-        "noise_remediation_state": {
-          "reassessment_needed": "Nouvelle évaluation nécessaire",
-          "assessed": "Évaluation effectuée",
-          "remediated": "Assaini"
-        },
-        "project_state": {
-          "not_started": "Non commencé",
-          "ongoing": "En cours",
-          "completed": "Terminé"
         }
       },
       "rooms_title": "Secteurs de position",
@@ -868,6 +836,47 @@
       "toast_saved": "Configuration avancée enregistrée. La modification est journalisée.",
       "toast_manual_uploaded": "Manuel d’utilisation téléversé.",
       "toast_manual_removed": "Manuel d’utilisation supprimé."
+    },
+    "dm_lists": {
+      "title": "Listes de sélection",
+      "hint": "Valeurs des champs de sélection : ajouter, modifier les désignations, fixer l’ordre ou désactiver. Une valeur inactive n’est plus proposée, mais reste sur les enregistrements existants.",
+      "list": "Liste de sélection",
+      "lists": {
+        "classification": "Classification",
+        "recalculation_state": "État du nouveau calcul",
+        "remediation_project_state": "État d’avancement du projet d’assainissement",
+        "spm_state": "État PSM",
+        "noise_remediation_state": "État de l’assainissement du bruit",
+        "project_state": "État du projet",
+        "civil_usage_kind": "Genre d’utilisation civile"
+      },
+      "used_in": {
+        "classification": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "recalculation_state": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "remediation_project_state": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "spm_state": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "noise_remediation_state": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "project_state": "Utilisée dans : Gestion des données › Place de tir › Données de base.",
+        "civil_usage_kind": "Utilisée dans : Coups tirés, utilisation du genre « Civil »."
+      },
+      "add": "Ajouter une valeur",
+      "new_value": "Nouvelle valeur",
+      "edit_value": "Modifier la valeur",
+      "label_de": "Désignation DE",
+      "label_fr": "Désignation FR",
+      "label_it": "Désignation IT",
+      "label_en": "Désignation EN",
+      "label_hint": "Si la désignation d’une langue manque, la désignation allemande est affichée.",
+      "err_label": "Veuillez indiquer la désignation (DE).",
+      "status": "Statut",
+      "active": "Active",
+      "inactive": "Inactive",
+      "actions": "Actions",
+      "activate": "Activer",
+      "deactivate": "Désactiver",
+      "last_active": "La dernière valeur active d’une liste ne peut pas être désactivée.",
+      "move_up": "Vers le haut",
+      "move_down": "Vers le bas"
     }
   }
 }

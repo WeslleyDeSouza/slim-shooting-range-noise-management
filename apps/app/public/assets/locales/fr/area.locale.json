@@ -150,12 +150,7 @@
       "undo": "Annuler"
     },
     "unit_kg": "kg",
-    "unit_mixed": "pièces / kg",
-    "civil_kind": {
-      "obligatory": "Tir obligatoire",
-      "field_shooting": "Tir en campagne",
-      "other": "Autre"
-    }
+    "unit_mixed": "pièces / kg"
   },
   "details": {
     "title": "Détails · Points de réception",

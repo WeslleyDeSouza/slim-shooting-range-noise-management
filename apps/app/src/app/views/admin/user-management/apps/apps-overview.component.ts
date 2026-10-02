@@ -10,9 +10,13 @@ import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AppEntity } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 import { AppsFacade } from './_data/apps.facade';
 
 const I18N = 'admin.apps';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'apps';
 
 /**
  * App-Katalog unter `/admin/apps` — die `app_app`-Zeilen, die Menü-
@@ -23,7 +27,7 @@ const I18N = 'admin.apps';
 @Component({
   selector: 'app-elo-apps-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, TableExportComponent],
   templateUrl: './apps-overview.component.html',
   styleUrl: './apps-overview.component.scss',
 })
@@ -50,6 +54,33 @@ export class EloAppsOverviewComponent extends ComponentBase {
         .includes(q),
     );
   });
+
+  /** The table as shown (search applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<AppEntity>({
+      table: EXPORT_TABLE,
+      title: t('menu.apps'),
+      filters: [{ label: t(`${I18N}.search`), value: this.query().trim() }],
+      columns: [
+        { header: t(`${I18N}.col_title`), value: (app) => this.label(app.title) || null },
+        // The raw `menu.*` key under the translated title.
+        { header: t(`${I18N}.field_title`), value: (app) => app.title || null },
+        { header: t(`${I18N}.col_path`), value: (app) => app.path || null },
+        { header: t(`${I18N}.col_role_key`), value: (app) => app.roleKey || null },
+        {
+          header: t(`${I18N}.col_category`),
+          value: (app) => this.facade.categoryTitle(app.categoryId),
+        },
+        { header: t(`${I18N}.col_order`), value: (app) => app.orderIdx },
+        {
+          header: t(`${I18N}.col_visible`),
+          value: (app) => t(app.hiddenInMenu ? 'common.no' : 'common.yes'),
+        },
+      ],
+      rows: this.filtered(),
+    });
+  };
 
   /** ComponentBase ruft dies beim Init und bei jedem DATA_RELOAD-Emit auf. */
   getData(): void {

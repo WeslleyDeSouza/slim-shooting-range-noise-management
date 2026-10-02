@@ -4,12 +4,16 @@ import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { AreaRoomDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../../../common/table-export.component';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
+import { tableExport, TableExportData } from '../../../../../../core/table/table-export';
 import { areaIdSignal } from '../../_context/area-id';
 
 const I18N = 'admin.dm_area_general';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'stellungsraeume';
 
 type RoomSortKey = 'coordinationSectionNo' | 'name' | 'enabled';
 
@@ -50,13 +54,14 @@ interface DetailRow {
  * `slm 15`): the Detailansicht of the Schiessplatz (Kerndaten, Berechnungsart,
  * Klassierung, Baujahr of the current state, the Stände) and the table of the
  * Stellungsräume with free-text search over every shown column, sortable,
- * with the count of rooms without a Koordinationsabschnitts-Nr. Data from
+ * with the count of rooms without a Koordinationsabschnitts-Nr. and the export
+ * (Excel/CSV of the rows shown, 5.5.5). Data from
  * `DataAreaFacade` (loaded by the tab host).
  */
 @Component({
   selector: 'app-dm-area-general-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, TableExportComponent],
   templateUrl: './dm-area-general-overview.component.html',
   styleUrl: './dm-area-general-overview.component.scss',
 })
@@ -140,6 +145,24 @@ export class DmAreaGeneralOverviewComponent extends ComponentBase {
         name: highlight(room.name, q),
       }));
   });
+
+  /** The Stellungsräume as shown (search and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const area = this.area();
+    return tableExport<AreaRoomDto>({
+      table: EXPORT_TABLE,
+      title: t(`${I18N}.rooms_title`),
+      subtitle: area ? `${area.coordinationSectionNo} ${area.name}` : null,
+      filters: [{ label: t('admin.export.search'), value: this.query().trim() }],
+      columns: [
+        { header: t(`${I18N}.col_room_no`), value: (r) => r.coordinationSectionNo ?? null },
+        { header: t(`${I18N}.col_room_name`), value: (r) => r.name },
+        { header: t(`${I18N}.col_active`), value: (r) => t(r.enabled ? 'common.yes' : 'common.no') },
+      ],
+      rows: this.rows().map((row) => row.room),
+    });
+  };
 
   protected sortBy(key: RoomSortKey): void {
     if (this.sortKey() === key) {

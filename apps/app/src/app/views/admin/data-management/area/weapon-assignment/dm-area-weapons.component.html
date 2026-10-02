@@ -26,7 +26,10 @@
     <section class="slim-card slim-card--bleed dwa__rooms" data-testid="dwa-rooms">
       <div class="slim-card__header dwa__head">
         <h2 class="slim-card__title">{{ prefix + '.rooms_title' | translate }}</h2>
-        <span class="slim-badge" data-testid="dwa-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+        <div class="dwa__head-actions">
+          <span class="slim-badge" data-testid="dwa-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+          <app-table-export testId="dwa-rooms-export" [small]="true" [source]="roomsExportSource" [disabled]="!visibleRooms().length" />
+        </div>
       </div>
       <div class="slim-toolbar">
         <div class="slim-search slim-toolbar__grow">
@@ -129,9 +132,12 @@
             {{ prefix + '.detail_none' | translate }}
           }
         </h2>
-        @if (selectedRoom(); as room) {
-          <span class="slim-badge" data-testid="dwa-count">{{ prefix + '.assignments_count' | translate: { n: room.assignmentCount } }}</span>
-        }
+        <div class="dwa__head-actions">
+          @if (selectedRoom(); as room) {
+            <span class="slim-badge" data-testid="dwa-count">{{ prefix + '.assignments_count' | translate: { n: room.assignmentCount } }}</span>
+          }
+          <app-table-export testId="dwa-export" [small]="true" [source]="exportSource" [disabled]="!assignments().length" />
+        </div>
       </div>
 
       @if (selectedRoom(); as room) {

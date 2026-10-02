@@ -173,8 +173,8 @@ flowchart LR
   API["NestJS API · Ist"]
   ELO["ELO REST-Schnittstelle<br/>B1 Kap. 6, slm 28–30"]:::planned
   GIS["GIS-Karte: weitere Layer, Server-Druckdienst<br/>Viewer mit swisstopo-Hintergrund ist umgesetzt"]:::planned
-  IMP["Import Berechnungsgrundlage<br/>FGDB / WLR / Betriebsdaten, 5.19"]:::planned
-  EXP["MGDM-Export, Excel-Exporte<br/>B1 Kap. 9"]:::planned
+  IMP["FGDB direkt lesen und schreiben (GDAL)<br/>heute JSON in der Struktur der FGDB, 5.19 / 5.20"]:::planned
+  EXP["Views für MGDM / ImmoGIS, Gesamtstatistik, Berichte<br/>B1 Kap. 9; der Tabellen-Export ist umgesetzt"]:::planned
   WRK["Asynchrone Berechnung / Worker<br/>NFA slm 54 erlaubt es; heute synchron"]:::planned
   REDIS["Redis<br/>REDIS_URL in .env vorgesehen,<br/>im Code nicht verwendet"]:::planned
 
@@ -193,8 +193,8 @@ flowchart LR
 | --- | --- | --- |
 | ELO-Schnittstelle | Nutzungen tragen `source: 'elo'` als Kennzeichen; der Demo-Datensatz enthält importierte Zeilen. Kein Endpunkt, keine Anbindung. | B1 Kapitel 6, `slm 28`–`slm 30` |
 | GIS-Karte | Kartenviewer `@ui-slim/map` (`libs/app/map`, OpenLayers): swisstopo «Light Base Map» / «Imagery Base Map» (Vector Tiles, live von `vectortiles.geo.admin.ch` und `wmts.geo.admin.ch`), Anlagenteile (WKT) und Empfangspunkte (`east`/`north`) aus LV95, Massstab, Zoomstufen, Koordinatenanzeige, Export PDF/Bild im Browser, Vollansicht. Die Ansicht rechnet in Web Mercator (Projektion der Vector Tiles), angezeigt und gespeichert wird LV95. Schematische SVG-Karte (`mapX`/`mapY`) als Rückfall. | Weitere Layer (FAQ 13), Server-Druckdienst für massstabstreue Ausgaben |
-| Import Berechnungsgrundlage | Zustände und WLR-Werte kommen nur aus dem Demo-Datensatz. | 5.19, `slm 36`ff. |
-| Exporte | Schaltflächen «Exportieren» / «Bericht PDF» sind in den Mocks, nicht angebunden. | B1 Kapitel 9, MGDM |
+| Import Berechnungsgrundlage | Masken 5.18–5.21 umgesetzt: Import der Berechnungsdatei als JSON in der Struktur der FGDB (Strukturprüfung, Validierung ohne Schreiben, Abbruch nach `slm 45`), Upload der WLR- und Betriebsdaten-Dateien, Export der Zustände als JSON-Bündel. Offen: FGDB direkt über GDAL. | 5.19, 5.20, `slm 19`–`21`, `slm 36`ff. |
+| Exporte | Tabellen-Export nach ELO-Muster (`core/export`, `POST admin/export/table`): Excel mit Kopfblock, fixierten Kopfzeilen und Autofilter oder CSV; exportiert werden die angezeigten oder die markierten Zeilen; jeder Export steht im Logbuch. Dazu Waffen-Stammdaten und Logbuch als XLSX, Schusszahlen als CSV. Offen: Views für MGDM / ImmoGIS (`slm 38`), Nutzungen im Format B1.6 (`slm 40`), Gesamtstatistik (`slm 41`), PDF-Berichte. | B1 5.5.5, Kapitel 9 |
 | Worker / Queue / Cache | Berechnung synchron im Request; ausreichend für das Mengengerüst des Prototyps. | `slm 54` (Ø 5 s, max. 10 s; asynchron zulässig) |
 | Redis | Nur `.env.example`; galaxy Replay-Store und pm2-Cluster könnten es nutzen, konfiguriert ist nichts. | Cluster-Betrieb |
-| Datenverwaltung (5.14–5.28) | Routen als Platzhalter vorhanden (`docs/architecture/sitemap.md`). | B1 5.14–5.28 |
+| Datenverwaltung (5.14–5.28) | Umgesetzt: 5.14–5.17, 5.18–5.21, 5.22–5.25, 5.28 (`docs/architecture/sitemap.md`). Offen: Zuweisung der Benutzer zu Schiessplätzen in der Maske (5.26, im Backend vorhanden); 5.27 «MGDM Export» ist laut B1 ein Platzhalter. | B1 5.14–5.28 |

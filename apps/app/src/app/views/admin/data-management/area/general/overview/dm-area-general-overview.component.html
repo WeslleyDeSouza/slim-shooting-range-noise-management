@@ -94,7 +94,10 @@
     <section class="slim-card slim-card--bleed dmo__card" data-testid="dmo-rooms">
       <div class="slim-card__header dmo__rooms-head">
         <h2 class="slim-card__title">{{ prefix + '.rooms_title' | translate }}</h2>
-        <span class="slim-badge" data-testid="dmo-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+        <div class="dmo__rooms-actions">
+          <span class="slim-badge" data-testid="dmo-rooms-count">{{ prefix + '.rooms_count' | translate: { n: rooms().length } }}</span>
+          <app-table-export testId="dmo-export" [small]="true" [source]="exportSource" [disabled]="!rows().length" />
+        </div>
       </div>
       <div class="slim-toolbar">
         <div class="slim-search slim-toolbar__grow">

@@ -103,9 +103,9 @@ flowchart TB
   subgraph Page["slim-page · Schusszahlen"]
     direction TB
     CTX["Kontextleiste mit Reitern · Ampel «Kontingent Jahr»"]
-    HEAD["Titel + Beschreibung · Jahr-Select · Exportieren · Nutzung erfassen"]
+    HEAD["Titel + Beschreibung · Jahr-Select · Exportieren (Excel/CSV: angezeigte oder markierte Nutzungen) · Nutzung erfassen"]
     RO["Hinweisbalken bei Leseberechtigung: erfassen/bearbeiten/löschen gesperrt"]
-    KPI["KPIs: Schuss gesamt · Nutzungen erfasst · Anteil zivil · letzte Nutzung"]
+    KPI["KPIs: Schuss gesamt · Sprengstoff in kg (nur wenn vorhanden) · Nutzungen erfasst · Anteil zivil · letzte Nutzung"]
     subgraph Split["Seitenleiste + Tabelle, ab md nebeneinander"]
       direction LR
       ROOMS["Stellungsräume gruppiert<br/>Zielräume · Stellungsräume · NGST<br/>Zähler je Raum, «Alle»"]
@@ -114,7 +114,7 @@ flowchart TB
         TOOL["Suche · Datum von/bis · Chips Nutzung Mil/Zivil · Kategorie · Filter zurücksetzen"]
         BULK["Auswahlleiste: n ausgewählt · Ausgewählte löschen · Auswahl aufheben"]
         TBL["Tabelle sortierbar: ☐ · Stellungsraum · Nutzungseinheit · Zeitraum · Nutzung · Kategorie · Waffe/Kaliber · Anzahl Schuss · Erfasser (ELO-Kennzeichen) · Bearbeiten/Löschen"]
-        FOOT["Fuss: n von total · Summe Anzeige"]
+        FOOT["Fuss: n von total · Summe der Anzeige je Einheit (Schuss, kg)"]
         TOOL --> BULK --> TBL --> FOOT
       end
     end
@@ -125,6 +125,10 @@ flowchart TB
     Split -.-> MODAL
   end
 ```
+
+Mengen werden je Einheit summiert: Schuss und Kilogramm (Sprengstoff) stehen nie in einer Zahl. Jede Nutzung hat
+eine eigene Adresse (`…/shots?usage=<id>`, B1 5.6): Sie öffnet das Fenster der Nutzung, auch wenn die Nutzung in einem
+anderen Jahr liegt, und die Adresse folgt dem Fenster.
 
 Elemente: Standardfilter laufendes Jahr; Waffenliste nur aus den erlaubten
 Kombinationen Stellungsraum × Waffe (5.17); Zeilen aus der ELO-Schnittstelle sind

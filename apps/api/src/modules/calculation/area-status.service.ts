@@ -1,11 +1,12 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { quotaState, worstState } from '@slim/lsv';
-import { AreaEntity, AreaQuotaEntity, AreaStatus, AreaStatusReason } from '../area/entities';
+import { AreaEntity, AreaQuotaEntity, AreaStatus, AreaStatusReason, WeaponCombinationEntity } from '../area/entities';
 import { SettingsService } from '../settings/settings.service';
 import { UsageService } from '../usage/usage.service';
 import { AssessmentService } from './assessment.service';
+import { QuotaOverviewDto, QuotaRowDto, QuotaState } from './dto/quota-overview.dto';
 
 /**
  * The two traffic lights of the overview (B1 5.9 / 5.10), derived from the
@@ -26,6 +27,8 @@ export class AreaStatusService {
     private readonly areas: Repository<AreaEntity>,
     @InjectRepository(AreaQuotaEntity)
     private readonly quotas: Repository<AreaQuotaEntity>,
+    @InjectRepository(WeaponCombinationEntity)
+    private readonly combinations: Repository<WeaponCombinationEntity>,
     private readonly assessment: AssessmentService,
     @Inject(forwardRef(() => UsageService))
     private readonly usages: UsageService,
@@ -81,14 +84,28 @@ export class AreaStatusService {
    * at the first shot — and the light carries «no-quota» so the UI can say why.
    */
   private async quota(tenantId: string, areaId: string, now: Date): Promise<StatusWithReason> {
-    const year = this.year(now);
-    const [thresholds, quotas, current, previous1, previous2] = await Promise.all([
+    const { status, reason } = await this.quotaOverview(tenantId, areaId, { now });
+    return { status, reason };
+  }
+
+  /**
+   * «Übersicht Kontingente gemäss Plangenehmigung» (B1 5.10, Bedienelement 3):
+   * one row per combination Waffe/Kaliber with its Soll, the Ist of the year
+   * and the Ø of three years, each with its colour. The light of the overview
+   * is the worst colour of these rows — table and light are one computation.
+   */
+  async quotaOverview(tenantId: string, areaId: string, options: { now?: Date; year?: number } = {}): Promise<QuotaOverviewDto> {
+    if (!(await this.areas.existsBy({ tenantId, id: areaId }))) throw new NotFoundException(`Area ${areaId} not found`);
+    const thisYear = this.year(options.now ?? new Date());
+    const year = options.year ?? thisYear;
+    const [thresholds, quotas, current, previous1, previous2, usageYears] = await Promise.all([
       // Schwellenwerte der Kontingent-Ampel in Prozent des Solls (B1 5.28, FAQ 166).
       this.settings.thresholds(tenantId),
       this.quotas.find({ where: { tenantId, areaId } }),
       this.usages.listYear(tenantId, areaId, year),
       this.usages.listYear(tenantId, areaId, year - 1),
       this.usages.listYear(tenantId, areaId, year - 2),
+      this.usages.years(tenantId, areaId),
     ]);
     const sumBy = (rows: typeof current): Map<string, number> => {
       const m = new Map<string, number>();
@@ -97,23 +114,59 @@ export class AreaStatusService {
     };
     const ist = sumBy(current);
     const three = sumBy([...current, ...previous1, ...previous2]);
-    const target = new Map(quotas.map((q) => [q.combinationId, Number(q.shotsPerYear)]));
-    if (!three.size) return { status: 'none', reason: 'no-usages' };
-    const combinations = new Set([...three.keys(), ...target.keys()]);
-    const states: AreaStatus[] = [];
-    let withoutQuota = false;
-    for (const id of combinations) {
-      const soll = target.get(id) ?? 0; // no Kontingent for this combination → Soll 0 (B1 5.10)
-      if (!target.has(id) && (three.get(id) ?? 0) > 0) withoutQuota = true;
-      states.push(quotaState(ist.get(id) ?? 0, soll, thresholds.quotaWarnFactor, thresholds.quotaOkFactor));
-      states.push(quotaState((three.get(id) ?? 0) / 3, soll, thresholds.quotaWarnFactor, thresholds.quotaOkFactor));
-    }
-    return { status: worstState(states), reason: withoutQuota ? 'no-quota' : null };
+    const quotaOf = new Map(quotas.map((q) => [q.combinationId, q]));
+    const ids = [...new Set([...three.keys(), ...quotaOf.keys()])];
+    const combinations = ids.length
+      ? await this.combinations.find({ where: { tenantId, id: In(ids) }, relations: { caliber: true } })
+      : [];
+    const combinationOf = new Map(combinations.map((c) => [c.id, c]));
+    const state = (actual: number, target: number): QuotaState =>
+      quotaState(actual, target, thresholds.quotaWarnFactor, thresholds.quotaOkFactor) as QuotaState;
+
+    const rows = ids
+      .map<QuotaRowDto>((id) => {
+        const quota = quotaOf.get(id);
+        const target = quota ? Number(quota.shotsPerYear) : 0; // no Kontingent for this combination → Soll 0 (B1 5.10)
+        const currentQuantity = round3(ist.get(id) ?? 0);
+        const average = round3((three.get(id) ?? 0) / 3);
+        const combination = combinationOf.get(id);
+        return {
+          combinationId: id,
+          name: combination?.nameDe ?? '',
+          quantityUnit: combination?.caliber?.quantityUnit ?? 'shots',
+          target,
+          hasQuota: !!quota,
+          basis: quota?.basis ?? null,
+          current: currentQuantity,
+          currentState: state(currentQuantity, target),
+          average,
+          averageState: state((three.get(id) ?? 0) / 3, target),
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name, 'de'));
+
+    const withoutQuota = rows.some((row) => !row.hasQuota && (three.get(row.combinationId) ?? 0) > 0);
+    const hasUsages = three.size > 0;
+    return {
+      year,
+      fromYear: year - 2,
+      years: [...new Set([thisYear, year, ...usageYears])].sort((a, b) => b - a),
+      greenMaxPercent: round3(thresholds.quotaOkFactor * 100),
+      orangeMaxPercent: round3(thresholds.quotaWarnFactor * 100),
+      status: hasUsages ? worstState(rows.flatMap((row) => [row.currentState, row.averageState])) : 'none',
+      reason: hasUsages ? (withoutQuota ? 'no-quota' : null) : 'no-usages',
+      rows,
+    };
   }
 
   private year(now: Date): number {
     return Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Zurich', year: 'numeric' }).format(now));
   }
+}
+
+/** Three decimals: the precision of a quantity. */
+function round3(value: number): number {
+  return Math.round(value * 1000) / 1000;
 }
 
 interface StatusWithReason {

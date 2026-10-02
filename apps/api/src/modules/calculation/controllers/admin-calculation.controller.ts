@@ -13,6 +13,7 @@ import {
 import {
   ApiBearerAuth,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
@@ -33,6 +34,8 @@ import {
   CalculationRunDto,
   ImportReportDto,
   MapQueryDto,
+  QuotaOverviewDto,
+  QuotaOverviewQueryDto,
   SimulationBaseDto,
   SimulationResultDto,
   SimulationRunDto,
@@ -134,6 +137,20 @@ export class AdminCalculationController {
     @Query() query: MapQueryDto,
   ): Promise<StateMapDto> {
     return this.calculations.mapOf(tenantId, areaId, query.calculationId);
+  }
+
+  /** B1 5.10 «Übersicht Kontingente gemäss Plangenehmigung»: Soll, Ist des Jahres und Ø über 3 Jahre je Waffe/Kaliber. */
+  @Get('quota')
+  @ApiOperation({ summary: 'Kontingentvergleich des Schiessplatzes (B1 5.10): Zeilen je Waffe/Kaliber und die Ampel daraus' })
+  @ApiParam({ name: 'areaId' })
+  @ApiQuery({ name: 'year', required: false, description: 'Kalenderjahr; Standard: das laufende Jahr' })
+  @ApiOkResponse({ type: QuotaOverviewDto })
+  quota(
+    @GetTenantId() tenantId: string,
+    @Param('areaId', ParseUUIDPipe) areaId: string,
+    @Query() query: QuotaOverviewQueryDto,
+  ): Promise<QuotaOverviewDto> {
+    return this.status.quotaOverview(tenantId, areaId, { year: query.year });
   }
 
   @Get('assessment')

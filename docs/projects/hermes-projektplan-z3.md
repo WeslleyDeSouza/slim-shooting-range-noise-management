@@ -2,8 +2,8 @@
 
 **Version 1.0 · Stand 02.10.2026 · Angebotsfassung**
 
-Anbieterin (Generalunternehmerin): **ongoing** · Subunternehmerin Entwicklung: **[OFFEN: Firmenname Entwicklerin]**
-(nachfolgend «Entwicklerin») · Projektleitung: **[OFFEN: Projektleiter/in]**
+Anbieterin (Generalunternehmerin): **[PLATZHALTER FIRMA]** · Subunternehmerin Entwicklung: **[OFFEN: Firmenname Technologiepartnerin]**
+(nachfolgend «Technologiepartnerin») · Projektleitung: **[OFFEN: Projektleiter/in]**
 
 Dieser Plan ist der Projektplan zum Zuschlagskriterium Z3 und zugleich der lieferantenseitige Projektmanagementplan
 (PMP) nach Teil B 2.3.1. Organisation, Leistungsaufteilung und Aufwand sind verbindlich angeboten. Die Termine sind
@@ -19,25 +19,25 @@ Ziel ist die Detailkonzeption, Realisierung und Einführung von SLIM mit dem ges
 nichtfunktionalen Umfang, nachvollziehbarer Lärmberechnung, unabhängigen Berechnungsständen, ELO-Anbindung und
 geregelter Betriebsübergabe.
 
-**Anbieterorganisation:** ongoing ist Generalunternehmerin und alleinige Vertragspartnerin; sie trägt die
-Gesamtverantwortung und verantwortet Betrieb, Support und Schulung. Die Entwicklerin ist als spezialisierte
+**Anbieterorganisation:** [PLATZHALTER FIRMA] ist Generalunternehmerin und alleinige Vertragspartnerin; sie trägt die
+Gesamtverantwortung und verantwortet Betrieb, Support und Schulung. Die Technologiepartnerin ist als spezialisierte
 Technologiepartnerin und Subunternehmerin verbindlich für die Entwicklung eingebunden (LP1 und LP5).
 
 | Paket | Behandlung im Plan | Leistungserbringung |
 |---|---|---|
-| LP1a | Grundauftrag: Projektmanagement, Design, Architektur, agile Planung, Realisierung und Einführung der zwingenden Anforderungen. Angeboten mit einem Maximalaufwand von 2'800 Stunden (Kostendach der Ausschreibung: 4'000 Stunden) | Entwicklerin 1'450 h, ongoing 1'350 h (Abschnitt 6) |
-| LP1b | Option: mobile Erfassungsmaske als ELO-Ersatz und Simulation, gemeinsam abgerufen, 750 Stunden (FAQ 66, 117); Realisierung nach Abruf | Entwicklerin |
-| LP2 | Lizenzen einschliesslich Drittlizenzen; Deklaration im Preisblatt. Die eingesetzten Open-Source-Komponenten sind lizenzkostenfrei; an den vorbestehenden Komponenten der Entwicklerin erhält die Auftraggeberin das unentgeltliche Nutzungsrecht gemäss Art. 6.2.4 Rahmenvertrag | – |
-| LP3 | Option Schulung: 10 initiale und 2 wiederkehrende Schulungen (Abschnitt 9) | ongoing, zu 100 % durch eigene Trainer |
-| LP4 | Option Applikationsbetrieb, Wartung und Support im SaaS-Modell über die Betriebsphase von zehn Jahren (Abschnitt 13); Infrastruktur- und Hostingkosten sind gemäss FAQ 30, 67 und 131 in LP4 einzurechnen | ongoing |
-| LP5a / LP5b | Gesondert beauftragte Erweiterungen während Projekt bzw. Betrieb; keine stillschweigende Finanzierung unerledigter Muss-Anforderungen | Entwicklung: Entwicklerin; Überführung in den Betrieb: ongoing |
+| LP1a | Grundauftrag: Projektmanagement, Design, Architektur, agile Planung, Realisierung und Einführung der zwingenden Anforderungen. Angeboten mit einem Maximalaufwand von 2'800 Stunden (Kostendach der Ausschreibung: 4'000 Stunden) | Technologiepartnerin 1'450 h, [PLATZHALTER FIRMA] 1'350 h (Abschnitt 6) |
+| LP1b | Option: mobile Erfassungsmaske als ELO-Ersatz und Simulation, gemeinsam abgerufen, 750 Stunden (FAQ 66, 117); Realisierung nach Abruf | Technologiepartnerin |
+| LP2 | Lizenzen einschliesslich Drittlizenzen; Deklaration im Preisblatt. Die eingesetzten Open-Source-Komponenten sind lizenzkostenfrei; an den vorbestehenden Komponenten der Technologiepartnerin erhält die Auftraggeberin über [PLATZHALTER FIRMA] das unentgeltliche Nutzungsrecht gemäss Art. 6.2.4 Rahmenvertrag | – |
+| LP3 | Option Schulung: 10 initiale und 2 wiederkehrende Schulungen (Abschnitt 9) | [PLATZHALTER FIRMA], zu 100 % durch eigene Trainer |
+| LP4 | Option Applikationsbetrieb, Wartung und Support im SaaS-Modell über die Betriebsphase von zehn Jahren (Abschnitt 13); Infrastruktur- und Hostingkosten sind gemäss FAQ 30, 67 und 131 in LP4 einzurechnen | [PLATZHALTER FIRMA] |
+| LP5a / LP5b | Gesondert beauftragte Erweiterungen während Projekt bzw. Betrieb; keine stillschweigende Finanzierung unerledigter Muss-Anforderungen | Entwicklung: Technologiepartnerin; Überführung in den Betrieb: [PLATZHALTER FIRMA] |
 
 Massgebende Projektquellen: Teil A (Z3), Teil B insbesondere 2.3.1–2.3.3 und 2.9, B1 samt Beilagen, Rahmenvertrag mit
 Abnahmevorschriften (A1, A1.2) und das Frageforum mit Stand 01.10.2026 (182 Fragen, 167 beantwortet). Vertragsaussagen
 werden mit Dokument und Artikelnummer belegt; beantwortete Fragen gelten als Auskunft der Auftraggeberin, unbeantwortete
 Fragen sind keine Entscheidung (Abschnitt 15).
 
-**Vorhandener Prototyp (MVP) und ELO-Erfahrung als Ausgangspunkt:** Die Entwicklerin bringt einen lauffähigen Prototyp
+**Vorhandener Prototyp (MVP) und ELO-Erfahrung als Ausgangspunkt:** Die Technologiepartnerin bringt einen lauffähigen Prototyp
 von SLIM ein und hat ELO entwickelt, das System auf der anderen Seite der Schnittstelle. Beides reduziert das
 Umsetzungsrisiko für den Bund; darauf beruhen der angebotene Maximalaufwand von 2'800 statt 4'000 Stunden für LP1a
 und die geplante produktive Einführung im März 2028, drei Monate vor dem vertraglichen Termin (Abschnitt 4).
@@ -51,7 +51,7 @@ Exporte nach B1.6 und MPV (slm 40, 41). Der Stand je Anforderung steht in der Ma
 Vorhandene Funktionen werden zu Projektbeginn gemeinsam überprüft, fachlich validiert und in die vereinbarte
 Architektur überführt; die Releaseplanung wird anhand des bestätigten Restumfangs konkretisiert. Der Prototyp verkürzt
 die Realisierung, ersetzt aber weder die Mitwirkung der Auftraggeberin noch Integration und Abnahme. Er ist
-vorbestehende Software der Entwicklerin (Lösungskonzept 2.2); seine Erstellung wird nicht als Projektaufwand verrechnet.
+vorbestehende Software der Technologiepartnerin (Lösungskonzept 2.2); seine Erstellung wird nicht als Projektaufwand verrechnet.
 
 ## 2. HERMES-Vorgehen und Zuordnung
 
@@ -86,13 +86,13 @@ Anzahl, Dauer und Zuordnung zu den Releases werden in der agilen Planung gemeins
 | Auftraggeber / zuständiges Entscheidungsgremium | Projektfreigaben, Mittel, verbindliche Leistungsänderungen und Abschluss im Rahmen der Kompetenzordnung | Auftraggeberin | AG benennt |
 | Fachprojektleiter / Auftraggebervertreter | Koordination der Mitwirkungen und interne Abstimmung | Auftraggeberin | AG stellt |
 | Product Owner | Fachliche Priorisierung, Refinement und fachliches Feedback; Priorisierung innerhalb des vereinbarten Umfangs ohne Change Request (FAQ 51) | Auftraggeberin | AG stellt |
-| Projektleiter/in | SPOC, Termine, Ressourcen, Reporting, Risiken und Eskalationen; Entscheidungsgrundlagen vorbereiten | ongoing | [OFFEN: Projektleiter/in] |
-| Lead-Business-Analyst/in | Fachregeln, Anforderungskatalog, Abnahmekriterien, Nachverfolgbarkeit und Workshops | ongoing | [OFFEN: Lead-Business-Analyst/in] |
-| Lead-Applikationsentwickler / Architektur | Architektur, Implementierung, Datenmodell, Integrationen, technische Nachweise | Entwicklerin | Weslley De Souza |
-| Applikationsentwicklung | Implementierung, automatisierte Tests, Schnittstellen | Entwicklerin | [OFFEN: Applikationsentwickler/in] |
-| Qualitätssicherung / Testing | Unabhängige Sollwerte, Testplanung, Integrations-, End-to-End- und Lasttests, Nachweisführung | ongoing | [OFFEN: Qualitätssicherung] |
-| Betrieb / Sicherheit | Schweizer Plattform, Berechtigungen, Deployment, Monitoring, Restore, Betriebsübergabe | ongoing | [OFFEN: Betrieb / Sicherheit] |
-| Trainer | Schulungsunterlagen und Durchführung der Schulungen (LP3) | ongoing | Trainer von ongoing |
+| Projektleiter/in | SPOC, Termine, Ressourcen, Reporting, Risiken und Eskalationen; Entscheidungsgrundlagen vorbereiten | [PLATZHALTER FIRMA] | [OFFEN: Projektleiter/in] |
+| Lead-Business-Analyst/in | Fachregeln, Anforderungskatalog, Abnahmekriterien, Nachverfolgbarkeit und Workshops | [PLATZHALTER FIRMA] | [OFFEN: Lead-Business-Analyst/in] |
+| Lead-Applikationsentwickler / Architektur | Architektur, Implementierung, Datenmodell, Integrationen, technische Nachweise | Technologiepartnerin | Weslley De Souza |
+| Applikationsentwicklung | Implementierung, automatisierte Tests, Schnittstellen | Technologiepartnerin | [OFFEN: Applikationsentwickler/in] |
+| Qualitätssicherung / Testing | Unabhängige Sollwerte, Testplanung, Integrations-, End-to-End- und Lasttests, Nachweisführung | [PLATZHALTER FIRMA] | [OFFEN: Qualitätssicherung] |
+| Betrieb / Sicherheit | Schweizer Plattform, Berechtigungen, Deployment, Monitoring, Restore, Betriebsübergabe | [PLATZHALTER FIRMA] | [OFFEN: Betrieb / Sicherheit] |
+| Trainer | Schulungsunterlagen und Durchführung der Schulungen (LP3) | [PLATZHALTER FIRMA] | Trainer von [PLATZHALTER FIRMA] |
 | KOMZ Lärm / Anwendervertretung | Fachliche Prüfung, fachliche Entscheidungen und repräsentative Anwenderszenarien | Auftraggeberin | AG koordiniert |
 
 Projektleiter/in, Lead-Business-Analyst/in und Lead-Applikationsentwickler sind namentlich besetzt (Eignungskriterium
@@ -113,7 +113,7 @@ vor; diese drei Monate bleiben als Terminreserve bestehen.
 
 Möglich macht das der vorhandene Prototyp (MVP): Die Zeit bis M1 dient der gemeinsamen Überprüfung und fachlichen
 Validierung vorhandener Funktionen, nicht ihrem Aufbau; M2 und M3 bauen darauf auf, und der fachliche Durchstich (M3)
-überführt eine Kette, die im Prototyp bereits läuft. Die Schulungen von ongoing (Abschnitt 9) sind auf die Einführung
+überführt eine Kette, die im Prototyp bereits läuft. Die Schulungen von [PLATZHALTER FIRMA] (Abschnitt 9) sind auf die Einführung
 im März 2028 ausgerichtet. Die Termine bleiben von der Mitwirkung der Auftraggeberin (Daten, Fachentscheide,
 ELO-Testumgebung), Integration und Abnahme bestimmt.
 
@@ -125,7 +125,7 @@ ELO-Testumgebung), Integration und Abnahme bestimmt.
 | M3 – Fachlicher Durchstich mit dokumentiertem Review | August 2027 | Die im Prototyp vorhandene Kette Nutzungen → Betriebsdaten → Quellenverteilung → Anhang 7/9 → Beurteilung und Anzeige läuft auf der Zielarchitektur mit Daten der Auftraggeberin und unabhängigen Sollwerten; fachliches Review durch KOMZ Lärm dokumentiert (Zwischenreviews ab M1) |
 | M4 – Einführungskandidat bereit | November 2027 | Gesamter geschuldeter Umfang für die Anwenderprüfung bereit; Dokumentation, Rollen, Migration und Betriebsabläufe prüfbar; Restmängel klassifiziert |
 | M5 – Schlussabnahme und Freigabe der Produktivsetzung | Januar/Februar 2028 | Schlussabnahmetests (rund 30 Tage) gemäss A1.2 bestanden, Schlussgenehmigung erteilt, Migration geprobt, Berechtigungen und Support bereit, Restore und Rollback geprüft |
-| M6 – Einführung (produktive Inbetriebnahme) | März 2028; vertraglicher Termin 30.06.2028 | Produktivmigration durchgeführt, Betrieb an ongoing übergeben (LP4), erste Betriebszeit begleitet, offene Punkte zugeordnet |
+| M6 – Einführung (produktive Inbetriebnahme) | März 2028; vertraglicher Termin 30.06.2028 | Produktivmigration durchgeführt, Betrieb an [PLATZHALTER FIRMA] übergeben (LP4), erste Betriebszeit begleitet, offene Punkte zugeordnet |
 | M7 – Projektabschluss | April 2028 | Ergebnisse übergeben, Projektschlussbeurteilung und Abschlussentscheid |
 
 Ein Review ist keine rechtswirksame Abnahme. Teil- und Schlussabnahmen sowie Zeichnungsberechtigungen richten sich
@@ -137,7 +137,7 @@ vertretende Verzögerung verschiebt den Termin nach Art. 2.11.1 nicht (FAQ 50).
 
 - PostgreSQL/PostGIS und FGDB liegen auf dem kritischen Pfad und werden deshalb bis M2 nachgewiesen. Der Prototyp
   läuft auf SQLite/MariaDB; die Typzuordnung der vorbestehenden Bibliotheken für PostgreSQL ist die erste Aufgabe der
-  Entwicklerin in PI 1. Das FGDB-Schema wird zu Beginn der Realisierung gemeinsam festgelegt, eine Muster-FGDB stellt
+  Technologiepartnerin in PI 1. Das FGDB-Schema wird zu Beginn der Realisierung gemeinsam festgelegt, eine Muster-FGDB stellt
   die Auftraggeberin im Projektverlauf bereit (FAQ 99, 176); die Lese- und Schreibfähigkeit über GDAL wird validiert,
   sobald die Testdaten von KOMZ Lärm vorliegen.
 - ELO-Schnittstelle: Die Auftraggeberin verantwortet die Schnittstellenspezifikation auf Seite ELO unter Zuzug der
@@ -177,16 +177,16 @@ Ergebnis auf dem Akzeptanzsystem demonstrierbar. Ein grüner Unit-Testlauf erset
 
 ## 6. Ressourcen- und Aufwandsplanung
 
-LP1a wird mit einem Maximalaufwand von **2'800 Stunden** angeboten: **1'450 Stunden der Entwicklerin** und **1'350
-Stunden von ongoing**. Das Kostendach der Ausschreibung beträgt 4'000 Stunden (Preisblatt C3). Die Differenz erklärt
-sich aus dem vorhandenen Prototyp und der ELO-Erfahrung der Entwicklerin (Abschnitt 1). Die Anbieterin realisiert den
+LP1a wird mit einem Maximalaufwand von **2'800 Stunden** angeboten: **1'450 Stunden der Technologiepartnerin** und **1'350
+Stunden von [PLATZHALTER FIRMA]**. Das Kostendach der Ausschreibung beträgt 4'000 Stunden (Preisblatt C3). Die Differenz erklärt
+sich aus dem vorhandenen Prototyp und der ELO-Erfahrung der Technologiepartnerin (Abschnitt 1). Die Anbieterin realisiert den
 Grundauftrag mit sämtlichen Muss-Anforderungen innerhalb dieses Maximalaufwands; vergütet wird der tatsächliche
 Aufwand (Rahmenvertrag Art. 3.1).
 
-Die Entwicklerin führt Architektur, Integration und Entwicklung. ongoing führt Projektleitung, Business Analyse,
+Die Technologiepartnerin führt Architektur, Integration und Entwicklung. [PLATZHALTER FIRMA] führt Projektleitung, Business Analyse,
 Qualitätssicherung, Dokumentation, Einführung und Betriebsübergabe.
 
-| Arbeitspaket | Entwicklerin | ongoing | Stunden |
+| Arbeitspaket | Technologiepartnerin | [PLATZHALTER FIRMA] | Stunden |
 |---|---:|---:|---:|
 | Projektleitung, Steuerung, Reporting und Koordination | – | 280 | 280 |
 | Business Analyse, Fachklärung und Anwenderworkshops | 65 | 250 | 315 |
@@ -197,8 +197,8 @@ Qualitätssicherung, Dokumentation, Einführung und Betriebsübergabe.
 | Aufwandsreserve | 125 | 120 | 245 |
 | **Summe LP1a** | **1'450** | **1'350** | **2'800** |
 
-Dies sind Arbeitspakete, keine zusätzlich zu summierenden Personenbudgets. Die automatisierten Tests der Entwicklerin
-gehören zum Paket Entwicklung; das Paket Tests und Qualitätssicherung ist die davon unabhängige Prüfung durch ongoing.
+Dies sind Arbeitspakete, keine zusätzlich zu summierenden Personenbudgets. Die automatisierten Tests der Technologiepartnerin
+gehören zum Paket Entwicklung; das Paket Tests und Qualitätssicherung ist die davon unabhängige Prüfung durch [PLATZHALTER FIRMA].
 Fehlerschleifen sind in den Arbeitspaketen und in der Reserve berücksichtigt. Die Reserve ist weder pauschal
 abrechenbar noch ein Anspruch auf Ausschöpfung des Maximalaufwands.
 
@@ -209,20 +209,22 @@ je Monat.
 
 | Rolle | Firma | Person | Stellvertretung | Stunden | Ø Pensum |
 |---|---|---|---|---:|---:|
-| Projektleiter/in | ongoing | [OFFEN: Projektleiter/in] | [OFFEN: Stellvertretung Projektleitung] | 280 | 11 % |
-| Lead-Business-Analyst/in | ongoing | [OFFEN: Lead-Business-Analyst/in] | [OFFEN: Stellvertretung Lead-Business-Analyst/in] | 250 | 10 % |
-| Lead-Applikationsentwickler / Architektur | Entwicklerin | Weslley De Souza | [OFFEN: Stellvertretung Lead-Applikationsentwickler] | 765 | 30 % |
-| Applikationsentwicklung | Entwicklerin | [OFFEN: Applikationsentwickler/in] | [OFFEN: Stellvertretung Applikationsentwicklung] | 560 | 22 % |
-| Qualitätssicherung / Testing | ongoing | [OFFEN: Qualitätssicherung] | [OFFEN: Stellvertretung Qualitätssicherung] | 385 | 15 % |
-| Betrieb / Sicherheit | ongoing | [OFFEN: Betrieb / Sicherheit] | [OFFEN: Stellvertretung Betrieb / Sicherheit] | 315 | 12 % |
-| Reserve (rollenübergreifend) | Entwicklerin 125 / ongoing 120 | – | – | 245 | – |
+| Projektleiter/in | [PLATZHALTER FIRMA] | [OFFEN: Projektleiter/in] | [OFFEN: Stellvertretung Projektleitung] | 280 | 11 % |
+| Lead-Business-Analyst/in | [PLATZHALTER FIRMA] | [OFFEN: Lead-Business-Analyst/in] | [OFFEN: Stellvertretung Lead-Business-Analyst/in] | 250 | 10 % |
+| Lead-Applikationsentwickler / Architektur | Technologiepartnerin | Weslley De Souza | [OFFEN: Stellvertretung Lead-Applikationsentwickler] | 765 | 30 % |
+| Applikationsentwicklung | Technologiepartnerin | [OFFEN: Applikationsentwickler/in] | [OFFEN: Stellvertretung Applikationsentwicklung] | 560 | 22 % |
+| Qualitätssicherung / Testing | [PLATZHALTER FIRMA] | [OFFEN: Qualitätssicherung] | [OFFEN: Stellvertretung Qualitätssicherung] | 385 | 15 % |
+| Betrieb / Sicherheit | [PLATZHALTER FIRMA] | [OFFEN: Betrieb / Sicherheit] | [OFFEN: Stellvertretung Betrieb / Sicherheit] | 315 | 12 % |
+| Reserve (rollenübergreifend) | Technologiepartnerin 125 / [PLATZHALTER FIRMA] 120 | – | – | 245 | – |
 | **Summe** | | | | **2'800** | |
 
 Die Stunden je Rolle folgen aus den Arbeitspaketen: Architektur (245 h) und Entwicklung (1'015 h) verteilen sich auf
-die beiden Entwicklungsrollen, der Anteil der Entwicklerin an der Business Analyse (65 h, Spezifikation von
+die beiden Entwicklungsrollen, der Anteil der Technologiepartnerin an der Business Analyse (65 h, Spezifikation von
 Schnittstellen und Datenmodell) liegt beim Lead-Applikationsentwickler, das Paket Migration, Dokumentation, Einführung
-und Betriebsübergabe (315 h) bei der Rolle Betrieb / Sicherheit. Die Verteilung der Stunden je Person auf die PI:
-[OFFEN: Pensen je Person und PI]. Die Kapazitäten der Auftraggeberin je Workshop, Review und Abnahme werden im
+und Betriebsübergabe (315 h) bei der Rolle Betrieb / Sicherheit. Die Durchschnittspensen der Schlüsselrollen liegen
+zwischen 10 % und 30 %. Das entspricht dem Projektvolumen: Der Maximalaufwand ist dank des vorhandenen Prototyps auf
+2'800 Stunden reduziert und verteilt sich auf 16 Monate; die Verfügbarkeit ist über die benannten Stellvertretungen
+abgesichert. Die Verteilung der Stunden je Person auf die PI: [OFFEN: Pensen je Person und PI]. Die Kapazitäten der Auftraggeberin je Workshop, Review und Abnahme werden im
 Mitwirkungsplan vereinbart (Abschnitt 12).
 
 ## 7. Ergebnisse und Lieferobjekte
@@ -232,15 +234,15 @@ gemeinsamer Dokumente geführt werden, sofern die Anforderungen vollständig auf
 
 | Ergebnisgruppe | Geforderte / vorgesehene Inhalte | Federführung |
 |---|---|---|
-| Projektmanagement | PMP, Organisation, Termine und Ressourcen, Statusberichte, Entscheidungs-, Risiko- und Änderungsregister | Projektleitung (ongoing) |
-| Fachliche Basis | Detailspezifikation, Backlog, Fachregeln und Akzeptanzkriterien mit B1-Zuordnung | Business Analyse (ongoing) + PO |
-| Architektur und UX | Systemarchitektur, Usability-Konzept, GUI-Guidelines, Rollenkonzept | Architektur (Entwicklerin) + Business Analyse |
-| Integration und Daten | Schnittstellenkonzept, Migrationskonzept, Schema- und Mappingdokumentation | Entwicklung (Entwicklerin) |
-| Qualität | Testkonzept, Qualitätsmanagementplan, Testnachweise, Mängelliste | Qualitätssicherung (ongoing) |
-| Release und Konfiguration | Releasemanagementkonzept, Konfigurationsmanagementplan, nachvollziehbare Builds | Entwicklung (Entwicklerin) + Betrieb (ongoing) |
-| Sicherheit und Betrieb | Informationssicherheitskonzept, Betriebskonzept, IT Service Continuity Management, Backup-, Restore- und Notfallverfahren | Betrieb / Sicherheit (ongoing) |
-| Einführung | Ausbildungskonzept, Einführungskonzept, deutsches Benutzerhandbuch, Schulungsunterlagen, Übergabeprotokolle | Business Analyse + Trainer (ongoing) |
-| Abschluss | Abnahmeunterlagen, offene Punkte mit Verantwortlichen, Projektschlussbeurteilung | Projektleitung (ongoing) |
+| Projektmanagement | PMP, Organisation, Termine und Ressourcen, Statusberichte, Entscheidungs-, Risiko- und Änderungsregister | Projektleitung ([PLATZHALTER FIRMA]) |
+| Fachliche Basis | Detailspezifikation, Backlog, Fachregeln und Akzeptanzkriterien mit B1-Zuordnung | Business Analyse ([PLATZHALTER FIRMA]) + PO |
+| Architektur und UX | Systemarchitektur, Usability-Konzept, GUI-Guidelines, Rollenkonzept | Architektur (Technologiepartnerin) + Business Analyse |
+| Integration und Daten | Schnittstellenkonzept, Migrationskonzept, Schema- und Mappingdokumentation | Entwicklung (Technologiepartnerin) |
+| Qualität | Testkonzept, Qualitätsmanagementplan, Testnachweise, Mängelliste | Qualitätssicherung ([PLATZHALTER FIRMA]) |
+| Release und Konfiguration | Releasemanagementkonzept, Konfigurationsmanagementplan, nachvollziehbare Builds | Entwicklung (Technologiepartnerin) + Betrieb ([PLATZHALTER FIRMA]) |
+| Sicherheit und Betrieb | Informationssicherheitskonzept, Betriebskonzept, IT Service Continuity Management, Backup-, Restore- und Notfallverfahren | Betrieb / Sicherheit ([PLATZHALTER FIRMA]) |
+| Einführung | Ausbildungskonzept, Einführungskonzept, deutsches Benutzerhandbuch, Schulungsunterlagen, Übergabeprotokolle | Business Analyse + Trainer ([PLATZHALTER FIRMA]) |
+| Abschluss | Abnahmeunterlagen, offene Punkte mit Verantwortlichen, Projektschlussbeurteilung | Projektleitung ([PLATZHALTER FIRMA]) |
 
 Konzepte werden iterativ aktualisiert und liegen bei Einführung und Abnahme in konsistenter Endfassung vor. Die
 Architektur-Dokumente des Prototyps sind Ist-Beschreibungen und werden im Projekt zur Zielarchitektur fortgeschrieben.
@@ -269,7 +271,7 @@ schweizweit, insbesondere in Bern.
   beurteilbar» werden auf Service- und Datenbankebene geprüft.
 - ELO-Vertrag, Wiederholungen, Fehler und Berechtigungen werden über Integrationstests abgesichert.
 - Echte FGDB-Dateien werden mit vollständigem Attribut-, Beziehungs- und Geometrieabgleich geprüft.
-- Rollenbezogene Browserabläufe, MFA, Barrierefreiheit (eCH-0059 / WCAG 2.1 AA) und Last mit zehn gleichzeitigen
+- Rollenbezogene Browserabläufe, MFA, Barrierefreiheit (Tastaturbedienung und Kontraste, orientiert an eCH-0059 / WCAG 2.1 AA) und Last mit zehn gleichzeitigen
   Nutzern werden auf der Zielumgebung geprüft.
 - Testläufe werden mit Commit, Datum, Umgebung und Ergebnis dokumentiert; Testgerüste und übersprungene Tests werden
   separat ausgewiesen und gelten nicht als Nachweis.
@@ -280,7 +282,7 @@ schweizweit, insbesondere in Bern.
 - Die erste Betriebszeit wird begleitet; Mängel werden nach den Vertragsregeln priorisiert (A1 Art. 2.12, 2.13.2;
   A1.2 Kapitel 7).
 
-**Schulung (LP3):** Die Schulungen werden zu 100 % durch die Trainer von ongoing durchgeführt: zehn initiale Schulungen
+**Schulung (LP3):** Die Schulungen werden zu 100 % durch die Trainer von [PLATZHALTER FIRMA] durchgeführt: zehn initiale Schulungen
 zur Einführung und zwei wiederkehrende über die Laufzeit, z. B. bei Wechsel der Applikationsverantwortung (FAQ 36, 38).
 Geschult werden die Applikationsverantwortlichen der Auftraggeberin, die danach die Benutzer schulen und den 1st-Level-
 Support leisten: vor Ort (Bern und weitere Standorte), rund ein halber Tag, zwei bis drei Personen je Schulung,
@@ -298,7 +300,7 @@ die Applikationsverantwortlichen zur vorgezogenen Produktivsetzung befähigt sin
 | Daten oder ELO-Zugänge verspätet | Integration und Migration verschoben | Mitwirkungsplan und frühe Eskalation; Projektleitungen AG und Lieferantin |
 | Schlüsselpersonen fallen aus | Lieferfähigkeit sinkt | Benannte Stellvertretungen, Wissenstransfer, nachvollziehbare Dokumentation, Ersatz innert 14 Tagen (E4); Projektleitung |
 | Restumfang höher als angenommen | Maximalaufwand von 2'800 Stunden reicht nicht | Bestätigter Restumfang bei M1, monatliche Prognose bei Fertigstellung, Aufwandsreserve von 245 Stunden; Projektleitung / Lead-Applikationsentwickler |
-| Übergabe zwischen zwei Firmen (Entwicklung und Betrieb) | Reibungsverluste, unklare Zuständigkeit bei Störungen | Rolle Betrieb / Sicherheit von ongoing ab Projektbeginn im Team, gemeinsame CI/CD-Pipeline, dokumentierter Übergabeprozess, Gesamtverantwortung bei ongoing (Abschnitt 13) |
+| Übergabe zwischen zwei Firmen (Entwicklung und Betrieb) | Reibungsverluste, unklare Zuständigkeit bei Störungen | Rolle Betrieb / Sicherheit von [PLATZHALTER FIRMA] ab Projektbeginn im Team, gemeinsame CI/CD-Pipeline, dokumentierter Übergabeprozess, Gesamtverantwortung bei [PLATZHALTER FIRMA] (Abschnitt 13) |
 | Sicherheits- und Betriebsanforderungen spät geprüft | Keine Produktivfreigabe | Kontinuierliche Prüfung, Restore- und Lasttests vor M5; Betrieb / Qualitätssicherung |
 | Nutzungsrechte an vorbestehender Software | Übergabe- und Nutzungsrechte strittig | Deklaration als vorbestehend, Nutzungsrecht nach Art. 6.2.4, Quellcode-Lieferung und SBOM (Lösungskonzept 2.2); Anbieterin |
 
@@ -339,14 +341,14 @@ Beilage A1.1). Verzögerungen werden mit Auswirkung und Handlungsoptionen dokume
 
 ## 13. Übergang in den Betrieb
 
-**Übergabe von der Entwicklung in den Betrieb:** Die Entwicklerin (Subunternehmerin) und die Betriebsorganisation
-(ongoing) arbeiten ab Projektbeginn eng zusammen; die Rolle Betrieb / Sicherheit von ongoing gehört zum Projektteam.
-ongoing verantwortet den vollständigen SaaS-Betrieb über die Betriebsphase von zehn Jahren (LP4) und leistet den
+**Übergabe von der Entwicklung in den Betrieb:** Die Technologiepartnerin (Subunternehmerin) und die Betriebsorganisation
+([PLATZHALTER FIRMA]) arbeiten ab Projektbeginn eng zusammen; die Rolle Betrieb / Sicherheit von [PLATZHALTER FIRMA] gehört zum Projektteam.
+[PLATZHALTER FIRMA] verantwortet den vollständigen SaaS-Betrieb über die Betriebsphase von zehn Jahren (LP4) und leistet den
 2nd- und 3rd-Level-Support gemäss SLA (Reaktion innerhalb von vier Stunden). Codeänderungen im 3rd Level erstellt die
-Entwicklerin; sie gelangen ausschliesslich über die CI/CD-Pipeline von der Entwicklung in den Betrieb. Die
-Gesamtverantwortung gegenüber der Auftraggeberin liegt bei ongoing.
+Technologiepartnerin; sie gelangen ausschliesslich über die CI/CD-Pipeline von der Entwicklung in den Betrieb. Die
+Gesamtverantwortung gegenüber der Auftraggeberin liegt bei [PLATZHALTER FIRMA].
 
-Mit dem Abruf von LP4 aktiviert ongoing die Schweizer SaaS-Plattform, benennt Betriebsverantwortliche und
+Mit dem Abruf von LP4 aktiviert [PLATZHALTER FIRMA] die Schweizer SaaS-Plattform, benennt Betriebsverantwortliche und
 Stellvertretungen und nimmt Ticket- und Hotlineweg sowie Incident-, Problem- und Change-Prozess in Betrieb. Rahmen
 gemäss Teil B: Verfügbarkeit 99 % pro Kalendermonat bezogen auf Mo–Fr 07–19 Uhr; Support Mo–Fr 08–17 Uhr, Reaktion
 innerhalb von vier Stunden, Behebungsbeginn innerhalb von 24 Stunden, Behebung in der Regel innerhalb von 48 Stunden

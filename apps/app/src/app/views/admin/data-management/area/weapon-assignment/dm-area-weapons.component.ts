@@ -3,8 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
-import type { WeaponAssignmentRoomDto } from '@ui-slim/apiClient';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
+import type { RoomWeaponAssignmentDto, WeaponAssignmentRoomDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../../common/table-export.component';
 import { WeaponAssignmentFacade } from '../../../../../core/data-area/weapon-assignment.facade';
 import {
   AssignmentSortKey,
@@ -15,9 +16,13 @@ import {
   RoomSortKey,
   sortRooms,
 } from '../../../../../core/data-area/weapon-assignment.logic';
+import { tableExport, TableExportData } from '../../../../../core/table/table-export';
 import { areaIdSignal } from '../_context/area-id';
 
 const I18N = 'admin.dm_area_weapons';
+/** Ids of the two tables in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE_ROOMS = 'waffenzuordnung_stellungsraeume';
+const EXPORT_TABLE_ASSIGNMENTS = 'waffenzuordnung';
 
 /**
  * 5.17 Datenverwaltung › Schiessplatz › Zuordnung Waffen (`slm 17`, B1
@@ -26,12 +31,13 @@ const I18N = 'admin.dm_area_weapons';
  * and for the chosen room the «Zugeordnete Waffen» — Waffenname für die
  * Erfassung, Waffe, Kaliber, Kategorie. A display: FAQ 52 dropped the
  * maintenance in the UI, the assignments come from the import (9.2) and the
- * DB administration. The room can be preselected with `?room=<id>`.
+ * DB administration. The room can be preselected with `?room=<id>`. Both
+ * tables can be exported as shown (Excel/CSV, 5.5.5).
  */
 @Component({
   selector: 'app-dm-area-weapons',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [TranslatePipe, TableExportComponent],
   templateUrl: './dm-area-weapons.component.html',
   styleUrl: './dm-area-weapons.component.scss',
 })
@@ -39,6 +45,7 @@ export class DmAreaWeaponsComponent extends ComponentBase {
   protected readonly facade = inject(WeaponAssignmentFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   protected readonly prefix = I18N;
   readonly areaId = areaIdSignal(this.route);
@@ -80,6 +87,47 @@ export class DmAreaWeaponsComponent extends ComponentBase {
   protected readonly assignments = computed(() =>
     assignmentsOfRoom(this.facade.assignments(), this.selectedRoomId(), this.assignmentSort().key, this.assignmentSort().asc),
   );
+
+  /** The Stellungsräume as shown (search and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly roomsExportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<WeaponAssignmentRoomDto>({
+      table: EXPORT_TABLE_ROOMS,
+      title: t(`${I18N}.rooms_title`),
+      subtitle: this.exportSubtitle(),
+      filters: [{ label: t('admin.export.search'), value: this.query().trim() }],
+      columns: [
+        { header: t(`${I18N}.col_room_no`), value: (r) => r.coordinationSectionNo ?? null },
+        { header: t(`${I18N}.col_room_name`), value: (r) => r.name },
+        { header: t(`${I18N}.col_active`), value: (r) => t(r.enabled ? 'common.yes' : 'common.no') },
+      ],
+      rows: this.visibleRooms(),
+    });
+  };
+
+  /** The «Zugeordnete Waffen» of the chosen Stellungsraum as shown (sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<RoomWeaponAssignmentDto>({
+      table: EXPORT_TABLE_ASSIGNMENTS,
+      title: t(`${I18N}.assignments_title`),
+      subtitle: this.exportSubtitle(),
+      filters: [{ label: t('admin.export.room'), value: this.selectedLabel() }],
+      columns: [
+        { header: t(`${I18N}.col_entry_name`), value: (a) => (a.enabled ? a.entryName : `${a.entryName} (${t(`${I18N}.inactive`)})`) },
+        { header: t(`${I18N}.col_weapon`), value: (a) => a.weapon },
+        { header: t(`${I18N}.col_caliber`), value: (a) => a.caliber },
+        { header: t(`${I18N}.col_category`), value: (a) => a.categoryName },
+      ],
+      rows: this.assignments(),
+    });
+  };
+
+  /** «1104.020 Geissalp» for the head of the export; empty while the Schiessplatz is loading. */
+  private exportSubtitle(): string | null {
+    const a = this.area();
+    return a ? `${a.coordinationSectionNo} ${a.name}` : null;
+  }
 
   constructor() {
     super();

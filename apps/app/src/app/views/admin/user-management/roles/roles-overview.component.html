@@ -16,6 +16,7 @@
       <h1 class="slim-page__title">{{ 'menu.roles' | translate }}</h1>
     </div>
     <div class="slim-page__actions">
+      <app-table-export testId="roles-export" [source]="exportSource" [disabled]="!filtered().length" />
       <a class="slim-btn slim-btn--primary" data-action="roles.create" routerLink="create">
         <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />

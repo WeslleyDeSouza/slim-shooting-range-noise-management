@@ -36,6 +36,13 @@
     padding-bottom: 0;
   }
 
+  &__head-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: slim.space(2);
+  }
+
   &__room--empty {
     color: slim.color('text-3');
   }

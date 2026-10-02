@@ -1,6 +1,6 @@
 # Checkliste für das Lösungskonzept SLIM
 
-Stand: 12.09.2026. Interne Arbeitsunterlage für die Fertigstellung von C2.
+Stand: 12.09.2026, Nachträge 21.09.2026 und 02.10.2026. Interne Arbeitsunterlage für die Fertigstellung von C2.
 
 **Prüfstand 12.09.2026 (abends):** abgearbeitet gegen `C2-Loesungskonzept-SLIM.md` v0.2, den FAQ-Export vom
 11.09.2026, Beilage B1/B1.1/B1.2/B1.4 und den Code. Häkchen nach der Definition unten; offene Punkte tragen einen
@@ -30,6 +30,27 @@ slm 55 Z). Weiterhin offen: Seitenlimit (Abschnitt 1, nach dem Render prüfen), 
 Provider, LP5-Aufwand, Übersetzungsbüro, 3rd-Level-Standort, Repository-Standort, Schulungsannahme, Demo-URL und
 Freeze-Datum sowie die Punkte «nicht prüfbar» in Abschnitt 13.
 
+**Nachtrag 02.10.2026 (C2 v1.0, Z3 v1.0):** Das Konzept ist als Angebotsfassung neu gefasst, die offenen Punkte unten
+tragen einen «Befund 02.10.». Die Häkchen und Befunde der Abschnitte 2–12 stammen vom 12.09. und 21.09. und beschreiben
+C2 v0.2 / v0.3 und den damaligen Prototyp; sie sind **nicht** gegen v1.0 neu durchgeprüft. Wo ein alter Befund dem
+heutigen Stand widerspricht, gilt der heutige Stand in [umsetzungsstand.md](umsetzungsstand.md) und
+[fachliche-abweichungen.md](fachliche-abweichungen.md). Was sich seit dem 21.09. geändert hat:
+
+- **Anbieterorganisation:** [PLATZHALTER FIRMA] ist Generalunternehmerin (Betrieb, Support, Schulung), die Subunternehmerin für
+  die Entwicklung heisst «Technologiepartnerin»; «Entwicklerin» ist nach dem Rahmenvertrag die Vertragspartnerin.
+- **Rechte:** Der Satz zur Veröffentlichung als Open Source ist gestrichen. `@app-galaxy/*` und der MVP sind
+  vorbestehende Rechte der Technologiepartnerin; die Rechte fliessen über die Generalunternehmerin an die
+  Auftraggeberin (Art. 6.2.4, belegt nur über FAQ 97, 138, 170).
+- **Aufwand und Termin:** LP1a mit höchstens 2'800 statt 4'000 Stunden (1'450 + 1'350); produktive Einführung im
+  März 2028. Ob eine geringere Stundenmenge angeboten werden darf, ist im Frageforum unbeantwortet (FAQ 61–63, 151, 169).
+- **Zusagen:** FGDB über GDAL als Zusage mit Validierung zu Projektbeginn (der Prototyp arbeitet mit JSON);
+  Barrierefreiheit als Orientierung an eCH-0059 / WCAG 2.1 AA, keine Konformitätszusage (FAQ 9, 128).
+- **Prototyp seit dem 21.09.:** GIS-Kartenviewer (slm 2), erweiterte Konfiguration (slm 27), Auswahllisten (slm 1),
+  Hilfe (slm 53), Tabellen-Export als Excel/CSV (slm 3, noch nicht in allen Tabellen), eigene Adresse je Nutzung
+  (slm 5), Summen je Einheit, Security-Header. Matrix: slm 2, 17, 33 neu P; slm 9, 28, 29 auf Z zurückgestuft.
+- **Frageforum:** Stand 01.10.2026 (182 Fragen, 167 beantwortet), mit `FAQ-Export.md` Frage für Frage verglichen.
+- **Offene Angaben:** stehen gesammelt in [C2-offene-angaben.md](C2-offene-angaben.md), nicht mehr verstreut im Text.
+
 ## Verwendung
 
 Ein Häkchen bedeutet: Im aktuellen Konzept nachvollziehbar beschrieben, mit der Quelle abgeglichen und ohne Widerspruch zu Matrix, Diagrammen oder anderen Angebotsunterlagen. Es bedeutet nicht automatisch «bereits programmiert». Alle Felder sind absichtlich zunächst offen; dies ist keine neue Bewertung des aktuellen Word-Stands.
@@ -50,8 +71,8 @@ Quellenstand FAQ: Export vom 11.09.2026. Vor Einreichung neuere Antworten/Berich
 - [x] **Vorgabe:** Gesamtlösung einschliesslich der funktionalen und nichtfunktionalen Anforderungen nachvollziehbar beschrieben (Teil A Z2). — Kapitel 2–6 plus Matrix.
 - [x] **Vorgabe:** Auch angebotene KANN-Funktionen schlüssig als künftige Umsetzung beschreiben; nicht einfach weglassen (FAQ 10). — slm 46–49 in 5.4, Matrix Status O.
 - [x] ✔ 21.09. **Qualität:** Konzept vollständig ohne Aufruf einer Demo oder externer Repository-Links verständlich. — **Befund:** Management Summary verweist auf «Testbericht im Repository», Deckblatt-Kommentar auf `docs/architecture`; 6.5 erklärt die Demo als nicht nötig. Verweise auf das Repository aus dem Fliesstext nehmen.
-- [ ] **Qualität:** Word-Endstand rendern; Seitenzahl, Lesbarkeit der Diagramme, Tabellenumbrüche und Bilder prüfen. — **Befund 21.09.:** `C2-Loesungskonzept-SLIM.docx` v0.3 gerendert (17 Vorschauseiten, ≈ 10.1 Flussseiten, 5 Diagramme, 5 Bilder); Sichtprüfung in Word (Seitenumbrüche, ERD-Lesbarkeit bei 82 %) steht aus.
-- [ ] **Qualität:** Alle OFFEN-/PLACEHOLDER-Vermerke vor der Abgabe auflösen oder durch eine klar abgegrenzte, zulässige Aussage ersetzen. — **Befund 21.09.:** 11 Vermerke offen (Firma/ELO-Verhältnis, Rechtekette/OSS, Provider, Formulierung Firma, LP5-Aufwand, IT-Übersetzungsbüro, 3rd-Level-Standort, Repository-Standort, Schulungsannahme LP3, Demo-URL, Freeze-Datum) – alles Entscheide der Firma, keine fachlichen Lücken.
+- [ ] **Qualität:** Word-Endstand rendern; Seitenzahl, Lesbarkeit der Diagramme, Tabellenumbrüche und Bilder prüfen. — **Befund 21.09.:** `C2-Loesungskonzept-SLIM.docx` v0.3 gerendert (17 Vorschauseiten, ≈ 10.1 Flussseiten, 5 Diagramme, 5 Bilder); Sichtprüfung in Word (Seitenumbrüche, ERD-Lesbarkeit bei 82 %) steht aus. — **Befund 02.10.:** `C2-Loesungskonzept-SLIM.docx` v1.0 gerendert: 17 Vorschauseiten = 15 Seiten Konzept + 2 Seiten Matrix (v0.3 lag mit 16 + 3 über beiden Limiten). Die Zahl ist die Vorschau des Build-Skripts; die Sichtprüfung in Word steht weiterhin aus (auf dem Entwicklungsrechner ist kein Word installiert).
+- [ ] **Qualität:** Alle OFFEN-/PLACEHOLDER-Vermerke vor der Abgabe auflösen oder durch eine klar abgegrenzte, zulässige Aussage ersetzen. — **Befund 21.09.:** 11 Vermerke offen (Firma/ELO-Verhältnis, Rechtekette/OSS, Provider, Formulierung Firma, LP5-Aufwand, IT-Übersetzungsbüro, 3rd-Level-Standort, Repository-Standort, Schulungsannahme LP3, Demo-URL, Freeze-Datum) – alles Entscheide der Firma, keine fachlichen Lücken. — **Befund 02.10.:** In C2 v1.0 stehen noch sechs `[OFFEN: …]` (Firmenname Technologiepartnerin, Hosting-Anbieter, Aufwand LP5 Kartenlayer, Standort Support, Demo-URL, Freeze-Datum) und `[PLATZHALTER FIRMA]`; in Z3 die Personen je Rolle mit Stellvertretungen und die Pensen je PI. Liste: `C2-offene-angaben.md`.
 - [x] ✔ 21.09. **Qualität:** Kapitelverweise, FAQ-Nummern, Begriffe und Zahlen im gesamten Angebot vereinheitlichen. — **Befund:** PostgreSQL «17» (2.1, 2.2) gegen «16» (Diagramm 2.5). FAQ-Verweise geprüft: «Forum 120» (5.2, swisstopo-Nutzungsbedingungen) und «Forum 128» (5.4, Barrierefreiheit) existieren im Export (132 Fragen) und sind beide unbeantwortet – Verweise stimmen. Testzahlen: «275 Tests» (11.09.) und «95 der 180 API-Tests» (4.3) sind überholt; zutreffend am 12.09.: 197 Vitest erfolgreich, Jest erfolgreich (63 Fälle laut Doku), 32 Playwright-Fälle nicht ausgeführt, 46 Kriterien-Skelette (`test.fixme`). Diese Kategorien getrennt nennen, keine Summe bilden.
 
 ## 2. Management Summary
@@ -176,7 +197,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Vorgabe:** Geforderte persistente Benutzereinstellungen und Mehrfach-Tab-Betrieb berücksichtigen. — 5.3.
 - [x] **Vorgabe:** GIS-Viewer mit LV95, Massstab, Zoom, Hintergrundkarten, konfigurierbaren Layern und PDF-Export (slm 2). — 5.2; Prototyp hat keine Kartenkomponente (Abschnitt 12).
 - [x] **Vorgabe:** Anlagenteile und Immissionspunkte im Grundumfang; Gebäude, Isophonen und Untersuchungsperimeter über LP5 (FAQ 13). — 5.2.
-- [ ] **Qualität:** Gewünschte Kosten-/Aufwandsschätzung für die optionalen GIS-Layer ergänzen (FAQ 13: erwünscht). — **Befund:** [OFFEN] in 5.2.
+- [ ] **Qualität:** Gewünschte Kosten-/Aufwandsschätzung für die optionalen GIS-Layer ergänzen (FAQ 13: erwünscht). — **Befund:** [OFFEN] in 5.2. — **Befund 02.10.:** weiterhin `[OFFEN: Aufwandsschätzung LP5 zusätzliche Kartenlayer]`. Der Viewer mit Anlagenteilen und Empfangspunkten ist umgesetzt, die optionalen Ebenen nicht.
 - [x] **Vorgabe:** Mobile Bedienung und Anforderungen an Desktopdarstellung/Ergonomie beschreiben. — 5.3 (1'600 × 1'200), 5.4.
 - [x] **Vorgabe:** DE/FR/IT ab Start, Browsersprache, persistente Wahl und lokalisierte Berichte (slm 51). — 5.4.
 - [x] **Vorgabe:** FR-Übersetzungen durch AG gemäss B1 korrekt zuordnen; EN als eigene Zusatzleistung kennzeichnen. — 5.4, Summary «Englisch zusätzlich».
@@ -201,7 +222,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Qualität:** Enrollment, Schlüsselablage, Wiederherstellung und Notfallzugang ohne schwachen Ersatzweg beschreiben. — 2.4.
 - [x] **Vorgabe:** Vier Fachrollen und Objekt-/Platzrechte serverseitig prüfen; Frontend-Sichtbarkeit ergänzend umsetzen. — 2.4; Prototyp: serverseitig ✅, Frontend statisch (so ausgewiesen).
 - [x] **Vorgabe:** Authentifizierungsprotokollierung und Break-Glass-Zugang (slm 56); Ist-/Zielstatus konsistent. — 2.4, Matrix «P (Break-Glass-Prozess Z)».
-- [ ] **Vorgabe:** Hosting in der Schweiz und Sicherheitsanforderungen gemäss Teil B; Anbieter-/Providerangaben konkretisieren. — **Befund:** [OFFEN] Provider in 2.5.
+- [ ] **Vorgabe:** Hosting in der Schweiz und Sicherheitsanforderungen gemäss Teil B; Anbieter-/Providerangaben konkretisieren. — **Befund:** [OFFEN] Provider in 2.5. — **Befund 02.10.:** weiterhin `[OFFEN: Hosting-Anbieter]`. FAQ 132 und 140 verlangen die namentliche Nennung; C2 2.5 sagt zu, dass alle Daten samt Sicherungen, Quellcode und Entwicklungsdaten in der Schweiz liegen.
 - [x] **Vorgabe:** Bezug zum E1-Datenhaltungskonzept: auch Projektdaten, CI/CD, Logs, Telemetrie, Support und KI beachten (FAQ 49). — 6.3.
 - [x] **Vorgabe:** Deployment, Container, Infrastruktur und Umgebungen beschreiben (A2). — 2.5.
 - [x] **Qualität:** Geheimnisse, Adminzugriff, Sicherheitsupdates und Abhängigkeitsprüfung erklären. — 2.4 Härtung, 2.5 Coolify-Zugang.
@@ -210,7 +231,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Vorgabe:** Unterstützung von Provider-Infrastruktur und Cloud-/Objektspeicher für Backups, beide Schweiz (FAQ 14). — 2.5.
 - [x] **Vorgabe:** Lesbarer Datendump auf Verlangen. — 2.5.
 - [x] **Entscheid:** Rollback/PITR mit tatsächlich vorgesehenen Backups, WAL-Archivierung und geprüftem Wiederherstellungsweg beschreiben. — 2.5.
-- [ ] **Vorgabe:** Supportzeiten, Standorte, Ticket-/Hotlineweg, Zuständigkeiten sowie Incident-/Problem-/Change-Prozesse darstellen oder auf konkrete Angebotsbeilage verweisen. — **Befund:** 6.3 vorhanden, [OFFEN] Standort 3rd Level.
+- [ ] **Vorgabe:** Supportzeiten, Standorte, Ticket-/Hotlineweg, Zuständigkeiten sowie Incident-/Problem-/Change-Prozesse darstellen oder auf konkrete Angebotsbeilage verweisen. — **Befund:** 6.3 vorhanden, [OFFEN] Standort 3rd Level. — **Befund 02.10.:** weiterhin `[OFFEN: Standort 2nd-/3rd-Level-Support]`; die Aufteilung ist beschrieben ([PLATZHALTER FIRMA] Betrieb und 2nd/3rd Level, Technologiepartnerin Codeänderungen über die Pipeline).
 - [x] **Vorgabe:** Reaktion 4 h, Behebungsbeginn 24 h, Behebung in der Regel 48 h für entsprechende Störungen; Prioritäten-/Eskalationsmodell (FAQ 4). — 6.3.
 - [x] **Vorgabe:** Vor-Ort-Fähigkeit in Bern innerhalb eines Arbeitstags berücksichtigen (Teil B 2.8). — 6.3.
 
@@ -221,8 +242,8 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] **Vorgabe:** Schulung/Train-the-Trainer gemäss Teil B und FAQ 36–38 beschreiben. — 6.4 per Verweis; Umfang (10 initial, 2 wiederkehrend, Annahme für Erweiterungen) ausschreiben.
 - [x] **Qualität:** Technische Dokumentation, reproduzierbarer Build, Tests, Migrationen und Übergabe an einen anderen Betreiber erläutern. — 2.2, 6.4.
 - [x] **Entscheid:** Vorbestehende galaxy-Bibliotheken, OSS-Abhängigkeiten und SLIM-Code getrennt inventarisieren. — 2.2 (drei Schichten, SBOM).
-- [ ] **Entscheid:** Private Entwicklung durch Weslley als Herkunftsangabe festhalten; Rechtekette, fremde Beiträge und Rechte an die einreichende GmbH klären. — **Befund:** Herkunft in 2.2 genannt, Rechtekette [OFFEN].
-- [ ] **Entscheid:** Lizenz an die Auftraggeberin, Änderungen, Betrieb durch Dritte sowie Quellcode-Lieferung verbindlich mit Vertrag abgleichen. — **Befund:** [OFFEN] Lizenztext/OSS; nicht prüfbar (Vertrag).
+- [ ] **Entscheid:** Private Entwicklung durch Weslley als Herkunftsangabe festhalten; Rechtekette, fremde Beiträge und Rechte an die einreichende GmbH klären. — **Befund:** Herkunft in 2.2 genannt, Rechtekette [OFFEN]. — **Befund 02.10.:** In C2 2.2 sind `@app-galaxy/*` und der MVP als vorbestehende Rechte der Technologiepartnerin deklariert. Offen: Rechtekette Technologiepartnerin → [PLATZHALTER FIRMA] → Auftraggeberin vertraglich regeln; Firmenname.
+- [ ] **Entscheid:** Lizenz an die Auftraggeberin, Änderungen, Betrieb durch Dritte sowie Quellcode-Lieferung verbindlich mit Vertrag abgleichen. — **Befund:** [OFFEN] Lizenztext/OSS; nicht prüfbar (Vertrag). — **Befund 02.10.:** Open-Source-Satz gestrichen; unentgeltliches Nutzungsrecht nach Art. 6.2.4, Quellcode-Lieferung nach Art. 2.9.1, Arbeitsergebnisse nach Art. 6.1.4. Die Artikel sind nur über die FAQ belegt; am Vertragstext prüfen (liegt nicht im Repository).
 - [x] **Qualität:** Quellcode-Lieferung und Escrow nicht als gleichwertig darstellen; keine nicht beschlossene OSS-Freigabe behaupten. — 2.2 «wird geprüft».
 - [x] ✔ 21.09. **Qualität:** Lizenzliste mit Versionen/Notices; GPL-Komponenten nicht pauschal als permissiv bezeichnen. — **Befund:** 2.2 nennt Lizenzen ohne Versionen und ohne Notices; PostGIS korrekt als GPL nur serverseitig.
 
@@ -238,7 +259,7 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [x] ✔ 21.09. **Qualität:** Seed-Ampeln, schematische Karten und deaktivierte Exportknöpfe nicht als vollständige Fachfunktionen ausweisen. — **Befund:** Matrix slm 8 «P» und 5.1 «Übersicht Schiessplätze mit Kontingent- und Lärm-Ampel» verschweigen, dass beide Ampeln aus dem Seed kommen (8 von 9 Plätzen ohne Berechnungsgrundlage tragen trotzdem eine Lärm-Ampel). Karte und Exporte sind korrekt als Zielzustand markiert. Zusätzlich zu prüfende Prototyp-Aussagen: 3.1 Validierungsregeln (Viertelstunden, 256 Zeichen, Personen fehlen), 4.2 (3) «Export» (fehlt), 4.3 «beide Varianten als Parameter» (fehlt), 4.3 «halbe Feiertage umgesetzt» (Kern ja, Anwendung nein), 4.2 (5) «PW-Teilbetrachtung» (Anhang 7 unvollständig), 6.5 «Anmeldung mit 2FA» (deaktiviert), Matrix slm 55 «P».
 - [x] **Qualität:** Alle Screenshots und Demo-Aussagen eindeutig SLIM zuordnen; Wiederverwendung aus ELO separat gekennzeichnet. — Bilder aus `docs/architecture/images`; galaxy/ELO-Herkunft in 2.2.
 - [x] **Qualität:** Synthetische Daten, echte Stammdaten und Empa-Referenzdaten korrekt unterscheiden. — 6.5.
-- [ ] **Qualität:** Demo-URL und eingeschränkte Konten testen, wenn eine Demo angeboten wird; keine Demo als formelle Pflicht darstellen. — **Befund:** URL [PLACEHOLDER]; Demo-Konto «nur Lesen und Simulation» widerspricht der Matrix 8.1.2 (Interessent hat für die Simulation X) – Rolle benennen.
+- [ ] **Qualität:** Demo-URL und eingeschränkte Konten testen, wenn eine Demo angeboten wird; keine Demo als formelle Pflicht darstellen. — **Befund:** URL [PLACEHOLDER]; Demo-Konto «nur Lesen und Simulation» widerspricht der Matrix 8.1.2 (Interessent hat für die Simulation X) – Rolle benennen. — **Befund 02.10.:** weiterhin `[OFFEN: Demo-URL]` und `[OFFEN: Freeze-Datum und Version der Demo]`.
 
 ## 13. Letzte Freigabe
 
@@ -246,9 +267,18 @@ Die folgenden Punkte sind unsere fachliche Ausgestaltung eines Sonderfalls, kein
 - [ ] Leistungspaket-Zuordnung und zugesagte Leistungen mit Preisblatt abgestimmt; insbesondere LP1b/LP5. — nicht prüfbar; Matrix slm 12 «Zuordnung LP1a/LP1b K».
 - [ ] Zeitplan, Migration, Mitwirkungen und Risiken mit C3 abgestimmt; keine widersprüchlichen Termine/Zusagen. — nicht prüfbar.
 - [ ] Fachprüfung der Berechnungsregeln und technische Prüfung des angebotenen Zielbilds erfolgt. — **Befund:** interne Prüfung am 12.09. erfolgt (`validierung-fachlich.md`, `validierung-technisch.md`); Bestätigung durch die Fachstelle steht aus.
-- [ ] Aussagen «bereits umgesetzt/getestet» durch passende Nachweise gedeckt. — **Befund:** Liste in Abschnitt 12 abarbeiten.
-- [ ] Aktueller FAQ-Stand und Berichtigungen vor Abgabe geprüft. — Export 11.09.; Fragefrist 18.09.
-- [ ] Endgültiges Word/PDF visuell geprüft; Seitenlimit eingehalten. — siehe Abschnitt 1.
+- [ ] Aussagen «bereits umgesetzt/getestet» durch passende Nachweise gedeckt. — **Befund:** Liste in Abschnitt 12 abarbeiten. — **Befund 02.10.:** Matrix v1.0 am 02.10. gegen `umsetzungsstand.md` und `fachliche-abweichungen.md` abgeglichen; Testzahlen in C2 6.x: 426 API-Tests, 233 Oberflächen-Tests, 27 Tests der Kartenbibliothek, e2e 77 (alle bestanden am 02.10.). Nicht nachgeprüft sind die aus v0.3 übernommenen Aussagen «Demo auf Schweizer Infrastruktur», «CI je Commit» und «galaxy produktiv erprobt».
+- [ ] Aktueller FAQ-Stand und Berichtigungen vor Abgabe geprüft. — Export 11.09.; Fragefrist 18.09. — **Befund 02.10.:** FAQ vom 01.10.2026 eingearbeitet (182 Fragen, 167 beantwortet; `FAQ-Export.md` entspricht dem PDF). Vor der Abgabe erneut prüfen, falls weitere Antworten erscheinen – offen sind insbesondere FAQ 61–63, 151, 169 (geringere Stundenmenge).
+- [ ] Endgültiges Word/PDF visuell geprüft; Seitenlimit eingehalten. — siehe Abschnitt 1. — **Befund 02.10.:** Vorschau 15 + 2 Seiten; Sichtprüfung in Word steht aus.
+
+## 14. Eckdaten, Termine und Preisblatt C3 (Nachtrag 02.10.2026)
+
+- [ ] **Entscheid:** In allen Dokumenten (C2/Z2, Z3, C3) durchgängig 2'800 Stunden für LP1a nennen. — **Befund 02.10.:** C2 und Z3 nennen durchgängig 2'800 Stunden als angebotenen Maximalaufwand; 4'000 Stunden stehen nur noch als Kostendach der Ausschreibung. C3 liegt nicht im Repository – nicht prüfbar. **Risiko:** Die Fragen, ob eine geringere Stundenmenge angeboten werden darf (FAQ 61, 62, 63, 145, 146, 151, 169), sind im Frageforum mit Stand 01.10.2026 **unbeantwortet**; sie sichern die Reduktion nicht ab. Beantwortet ist nur FAQ 59: 4'000 Stunden sind die «einheitliche Bewertungs- und Kostendachgrundlage». Vor der Abgabe klären, ob das Preisblatt eine andere Menge als 4'000 zulässt; sonst droht ein Formfehler.
+- [x] **Qualität:** Termine in Z3 synchron: vorgezogene produktive Einführung im März 2028, drei Monate vor dem vertraglichen Termin. — **Befund 02.10.:** geprüft. «März 2028» steht in den Abschnitten 1, 4 (Planungsgrundlage, M6) und 9 (Schulungen); «April 2028» nur beim Projektabschluss (M7) und bei der Projektdauer; «30.06.2028» nur als vertraglicher Termin (A1 Art. 2.11.1, FAQ 50). «Juni 2028» kommt als Einführungstermin nicht mehr vor.
+- [ ] **Vorgabe:** Am Tag der Einreichung auf simap.ch prüfen, ob neue Berichtigungen oder Antworten erschienen sind. — offen bis zur Abgabe; letzter eingearbeiteter Stand: 01.10.2026.
+- [ ] **Vorgabe:** C3, LP1a: 2'800.00 Stunden eingetragen. — nicht prüfbar (C3 liegt nicht im Repository); Risiko wie im ersten Punkt.
+- [ ] **Vorgabe:** C3, LP2: Menge 1 Stück, Preis pro Einheit CHF 0.00, Bemerkung «Arbeiten mit Open-Source-Komponenten und vorbestehenden Modulen gemäss Art. 6.2.4». — **Befund 02.10.:** Menge 1 Stück entspricht FAQ 11. FAQ 11 verlangt in der Spalte «Bemerkungen» zusätzlich die Aufschlüsselung nach Projektphase, Betriebsphase, einmaligen und wiederkehrenden Kosten und Drittlizenzen; die Bemerkung sollte deshalb ausdrücklich sagen, dass in beiden Phasen keine Lizenzkosten und keine Drittlizenzen anfallen. Nicht prüfbar (C3).
+- [ ] **Vorgabe:** C3, LP4: Bemerkung «Nach Aufwand mit Kostendach. Im Totalbetrag und Mischsatz sind fixe Infrastruktur- und Hostingkosten in der Höhe von CHF 18'000.– pro Jahr eingerechnet. Diese werden im späteren Einzelvertrag unabhängig vom Stundenbezug periodisch abgerechnet (gem. FAQ 131).» — **Befund 02.10.:** FAQ 131 deckt zwei Teile: Die Infrastrukturkosten sind in den Totalbetrag LP4 über zehn Jahre einzurechnen, und sie hängen nicht von der Ausschöpfung des Stundenkontingents ab. Die periodische Abrechnung im Einzelvertrag steht nicht in FAQ 131; sie ist ein eigener Vorschlag und sollte nicht mit «gem. FAQ 131» belegt werden. Der Betrag von CHF 18'000 ist eine Angabe der Firma – nicht prüfbar.
 
 ## Quellen und ergänzende Arbeitsunterlagen
 

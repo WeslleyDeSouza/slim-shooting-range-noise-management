@@ -87,6 +87,13 @@
     padding-bottom: 0;
   }
 
+  &__rooms-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: slim.space(2);
+  }
+
   &__clear {
     position: absolute;
     right: slim.space(2);

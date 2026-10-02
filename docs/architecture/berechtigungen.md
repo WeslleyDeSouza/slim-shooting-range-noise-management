@@ -61,6 +61,13 @@ Matrix an; `main.mock-data.ts` erweitert den App-Katalog um drei **reine Rechte-
 ³ FAQ 52: Die Pflegefunktion im UI entfällt, slm 17 ist eine Anzeige; die Zuordnungen werden über
 den Import bzw. durch die DB-Administration gepflegt, B1 8.1.2 wird von R/W auf R angepasst.
 
+**Ohne eigenes App-Recht** (jeder angemeldete Benutzer des Mandanten): `GET admin/access`, `GET admin/settings`
+(Sperrdatum, Ampel-Schwellen, Auswahllisten, Benutzerhandbuch) und `POST admin/export/table` (Tabellen-Export). Der
+Export braucht kein eigenes Recht, weil die Maske ihm nur die Zeilen übergibt, die der Benutzer bereits sieht; die
+Daten selbst kommen aus Endpunkten mit App-Recht und Objektregel. Eine einzelne Nutzung (`GET
+admin/area/:areaId/usage/:id`, Adresse `…/shots?usage=<id>`) fällt unter das Recht «Schiessplätze» und die Regel
+`area-scope` wie die Liste.
+
 **Demo-Konten** (Passwort `1234`, `tenant.mock.json`): `slim@demo.ch` (galaxy-Admin, alles),
 `fachspezialist@demo.ch`, `schiessplatz@demo.ch` (Schiessplatz-Verantwortlicher, zugeordnet:
 Geissalp, Thun), `interessent@demo.ch`, `appadmin@demo.ch`. Damit lässt sich jede Spalte der

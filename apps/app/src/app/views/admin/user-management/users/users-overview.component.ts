@@ -3,18 +3,23 @@ import {
   Component,
   computed,
   inject,
+  LOCALE_ID,
   signal,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { AUTH_STORE } from '@app-galaxy/auth-ui';
 import { APP_ROUTES } from '@slim/shared';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 import { UsersFacade } from './_data/users.facade';
 import { AdminUser, filterAdminUsers, initialsOf } from './_data/user.model';
 
 const I18N = 'admin.users';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'benutzer';
 
 /**
  * Ein Abschnitt der Gruppierung «nach letztem Login».
@@ -61,7 +66,7 @@ function startOfWeek(value: Date): Date {
 @Component({
   selector: 'app-elo-users-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink, DatePipe],
+  imports: [TranslatePipe, RouterLink, DatePipe, TableExportComponent],
   templateUrl: './users-overview.component.html',
   styleUrl: './users-overview.component.scss',
 })
@@ -73,6 +78,7 @@ export class EloUsersOverviewComponent extends ComponentBase {
   readonly pendingDelete = signal<AdminUser | null>(null);
   private readonly translate = inject(TranslateService);
   private readonly sessionStore = inject(AUTH_STORE.SessionStore);
+  private readonly locale = inject(LOCALE_ID);
 
   readonly query = signal('');
   // Newest login first by default; users without a login sort to the end.
@@ -183,6 +189,60 @@ export class EloUsersOverviewComponent extends ComponentBase {
       date: month,
     };
   }
+
+  /** The user rows the table shows: the groups in order, without the collapsed ones. */
+  readonly shown = computed<AdminUser[]>(() =>
+    this.groups().flatMap((group) =>
+      this.isCollapsed(group.key) ? [] : group.users,
+    ),
+  );
+
+  /** The table as shown (search, sorting and grouping applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const date = (value: string, format: string) => {
+      const parsed = value ? new Date(value) : null;
+      return parsed && !isNaN(parsed.getTime())
+        ? formatDate(parsed, format, this.locale)
+        : null;
+    };
+    return tableExport<AdminUser>({
+      table: EXPORT_TABLE,
+      title: t('menu.users'),
+      filters: [
+        { label: t(`${I18N}.search`), value: this.query().trim() },
+        {
+          label: t(`${I18N}.group_by_login`),
+          value: this.groupByLoginMonth() ? t('common.yes') : null,
+        },
+      ],
+      columns: [
+        {
+          header: t(`${I18N}.col_name`),
+          value: (user) => `${user.firstName} ${user.lastName}`.trim() || null,
+        },
+        // The badge in the name cell.
+        {
+          header: t(`${I18N}.locked_badge`),
+          value: (user) => t(user.locked ? 'common.yes' : 'common.no'),
+        },
+        { header: t(`${I18N}.col_email`), value: (user) => user.email || null },
+        {
+          header: t(`${I18N}.col_roles`),
+          value: (user) => user.roles.join(', ') || null,
+        },
+        {
+          header: t(`${I18N}.col_login_last`),
+          value: (user) => date(user.loginLast, 'dd.MM.yyyy HH:mm'),
+        },
+        {
+          header: t(`${I18N}.col_created`),
+          value: (user) => date(user.createdAt, 'dd.MM.yyyy'),
+        },
+      ],
+      rows: this.shown(),
+    });
+  };
 
   toggleGrouping(): void {
     this.groupByLoginMonth.update((current) => !current);

@@ -15,17 +15,21 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES, SLIM_APP_ID } from '@slim/shared';
 import type { AreaQuotaDto, AreaResultDto, AreaUpdateDto, QuotaCombinationOptionDto, SelectionListValueDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../../../common/table-export.component';
 import { AccessFacade } from '../../../../../../core/access/access.facade';
 import { SelectionListKey, SelectionListsFacade } from '../../../../../../core/settings/selection-lists.facade';
 import { DataAreaFacade } from '../../../../../../core/data-area/data-area.facade';
+import { tableExport, TableExportData } from '../../../../../../core/table/table-export';
 import { HasUnsavedChanges } from '../../../../_common/unsaved-changes.guard';
 import { areaIdSignal } from '../../_context/area-id';
 
 const I18N = 'admin.dm_area_general';
 const TOAST_MS = 5000;
+/** Id of the Kontingente table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'kontingente';
 
 /** `Validators.required` accepts blanks; a Bezeichnung or a key of spaces is no value. */
 export function notBlank(control: AbstractControl<string>): ValidationErrors | null {
@@ -77,15 +81,16 @@ interface QuotaOptionGroup {
  * or own key, Sachplan-Nr., Aktiv, Berechnungsart Anhang 7, Klassierung, the
  * Stände) as a reactive form with dirty tracking, unsaved-changes guard and
  * a sticky action bar, plus the Kontingente gemäss Plangenehmigung: table
- * with row actions, a dialog for create / edit (combinations that are allowed
- * on the Schiessplatz first), delete with confirmation and a hint for allowed
+ * with row actions, export (Excel/CSV, 5.5.5), a dialog for create / edit
+ * (combinations that are allowed on the Schiessplatz first), delete with
+ * confirmation and a hint for allowed
  * combinations without a Kontingent (Soll 0 → red light, B1 5.10). Roles
  * without the write right see everything disabled. Data: `DataAreaFacade`.
  */
 @Component({
   selector: 'app-dm-area-master-data',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe],
+  imports: [ReactiveFormsModule, TranslatePipe, DecimalPipe, TableExportComponent],
   templateUrl: './dm-area-master-data.component.html',
   styleUrl: './dm-area-master-data.component.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -97,6 +102,7 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changes = inject(ChangeDetectorRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly prefix = I18N;
   protected readonly lists = inject(SelectionListsFacade);
@@ -172,6 +178,24 @@ export class DmAreaMasterDataComponent extends ComponentBase implements HasUnsav
     const id = this.quotaCombinationId();
     return this.combinations().find((c) => c.id === id)?.quantityUnit ?? 'shots';
   });
+
+  /** The Kontingente as shown for the Excel-/CSV-Export (B1 5.5.5, slm 3); the unit of the amount is a column of its own. */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const area = this.area();
+    return tableExport<AreaQuotaDto>({
+      table: EXPORT_TABLE,
+      title: t(`${I18N}.section_quotas`),
+      subtitle: area ? `${area.coordinationSectionNo} ${area.name}` : null,
+      columns: [
+        { header: t(`${I18N}.col_weapon`), value: (q) => (q.assigned ? q.name : `${q.name} (${t(`${I18N}.quota_unassigned`)})`) },
+        { header: t(`${I18N}.col_max`), value: (q) => q.shotsPerYear },
+        { header: t('admin.dm_weapons.field_unit'), value: (q) => t(`${I18N}.${q.quantityUnit === 'kg' ? 'unit_kg' : 'unit_shots'}`) },
+        { header: t(`${I18N}.col_basis`), value: (q) => q.basis ?? null },
+      ],
+      rows: this.quotas(),
+    });
+  };
 
   constructor() {
     super();

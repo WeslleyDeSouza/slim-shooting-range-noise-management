@@ -6,13 +6,17 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { APP_ROUTES, parseRoleSettings } from '@slim/shared';
 import type { RoleEntity } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 import { RolesFacade } from './_data/roles.facade';
 
 const I18N = 'admin.roles';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'rollen';
 
 /**
  * Rollenverwaltung unter `/admin/roles` — ersetzt den Rollen-Screen des
@@ -22,7 +26,7 @@ const I18N = 'admin.roles';
 @Component({
   selector: 'app-elo-roles-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe, RouterLink],
+  imports: [TranslatePipe, RouterLink, TableExportComponent],
   templateUrl: './roles-overview.component.html',
   styleUrl: './roles-overview.component.scss',
 })
@@ -32,6 +36,7 @@ export class EloRolesOverviewComponent extends ComponentBase {
   /** Row waiting for the confirm sheet. */
   readonly pendingDelete = signal<RoleEntity | null>(null);
   protected readonly facade = inject(RolesFacade);
+  private readonly translate = inject(TranslateService);
 
   readonly query = signal('');
 
@@ -43,6 +48,40 @@ export class EloRolesOverviewComponent extends ComponentBase {
     }
     return rows.filter((role) => (role.title ?? '').toLowerCase().includes(q));
   });
+
+  /** The table as shown (search applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    // The badges of the column «Eigenschaften», in the order of the cell.
+    const flags = (role: RoleEntity) =>
+      [
+        role.hasAdminRights ? 'flag_admin' : null,
+        role.isDefault ? 'flag_default' : null,
+        this.isSystemRole(role) ? 'flag_system' : null,
+        role.sensitiveDataDisplay ? 'flag_sensitive' : null,
+      ]
+        .filter((flag): flag is string => !!flag)
+        .map((flag) => t(`${I18N}.${flag}`))
+        .join(', ');
+    return tableExport<RoleEntity>({
+      table: EXPORT_TABLE,
+      title: t('menu.roles'),
+      filters: [{ label: t(`${I18N}.search`), value: this.query().trim() }],
+      columns: [
+        { header: t(`${I18N}.col_title`), value: (role) => role.title || null },
+        // The technical key under the title.
+        { header: t(`${I18N}.key`), value: (role) => this.roleKey(role) || null },
+        { header: t(`${I18N}.col_flags`), value: (role) => flags(role) || null },
+        { header: t(`${I18N}.col_apps`), value: (role) => role.apps?.length || 0 },
+        { header: t(`${I18N}.col_users`), value: (role) => this.userCount(role) },
+        {
+          header: t(`${I18N}.col_state`),
+          value: (role) => t(role.state ? 'common.yes' : 'common.no'),
+        },
+      ],
+      rows: this.filtered(),
+    });
+  };
 
   /** ComponentBase ruft dies beim Init und bei jedem DATA_RELOAD-Emit auf. */
   getData(): void {

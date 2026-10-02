@@ -181,7 +181,8 @@ nur interne `/admin`-Pfade werden akzeptiert. Nachweis: `c08-sitemap.spec` (Proj
    der Abbildung abgeleitet).
 2. _Kaliber/Waffe_ als Zwischenebene über Kaliber, Waffe, Waffenkategorie – oder eigener Eintrag?
 3. Sachplan-Nr.: im Mock leer («—»); Herkunft und Pflichtfeld klären.
-4. Ampel-Status: aktuell Spalten am Schiessplatz (`quotaStatus`, `noiseStatus`); sobald das
-   Berechnungsmodul steht, werden sie daraus abgeleitet.
-5. Benutzer / Systemeinstellungen: galaxy-Module (`@app-galaxy/auth-api`, `core-api`) sind
-   im Backend bereits eingebunden; UI folgt.
+4. ~~Ampel-Status aus der Berechnung ableiten~~ – erledigt: `quotaStatus` / `noiseStatus` sind ein Cache des
+   `AreaStatusService` aus Nutzungen, Kontingenten und der Beurteilung des aktuellen Zustands.
+5. ~~Benutzer / Systemeinstellungen~~ – erledigt: Benutzerverwaltung (Benutzer, Rollen, Apps) und erweiterte
+   Konfiguration (5.28) sind umgesetzt. Offen bleibt die Zuweisung der Benutzer zu Schiessplätzen in der Maske
+   (5.26, `slm 26`).

@@ -96,12 +96,15 @@
     <section class="slim-card dmm__card dmm__quotas" data-testid="dmm-quotas">
       <div class="slim-card__header">
         <h2 class="slim-card__title">{{ prefix + '.section_quotas' | translate }}</h2>
-        @if (!readonly()) {
-          <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dmm-quota-new" (click)="openQuota(null)">
-            <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
-            <span class="slim-btn__label">{{ prefix + '.quota_new' | translate }}</span>
-          </button>
-        }
+        <div class="slim-card__actions">
+          <app-table-export testId="dmm-export" [small]="true" [source]="exportSource" [disabled]="!quotas().length" />
+          @if (!readonly()) {
+            <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dmm-quota-new" (click)="openQuota(null)">
+              <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
+              <span class="slim-btn__label">{{ prefix + '.quota_new' | translate }}</span>
+            </button>
+          }
+        </div>
       </div>
       <div class="slim-card__body">
         <div class="slim-field" [formGroup]="form">

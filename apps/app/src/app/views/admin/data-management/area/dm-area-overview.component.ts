@@ -7,22 +7,27 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
 import type { AreaResultDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 
 type SortKey = 'coordinationSectionNo' | 'sectoralPlanNo' | 'name';
 type ActiveFilter = 'active' | 'inactive' | 'all';
 
 const I18N = 'admin.dm_area';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'schiessplaetze_verwaltung';
 
 /**
  * 5.14 Datenverwaltung › Schiessplatz › «Schiessplätze verwalten» (mock
  * _mocks/data-management/area.index.html, B1 slm 13): master data, not the
  * assessment overview with the lights (5.9). Search over name,
  * Koordinationsabschnitt-Nr. and Sachplan-Nr., active/inactive filter (historic
- * ranges stay findable), sortable table, actions Allgemein (5.15/5.16),
+ * ranges stay findable), sortable table, export (Excel/CSV of the rows shown,
+ * 5.5.5), actions Allgemein (5.15/5.16),
  * Waffen-Zuordnung (5.17) and Berechnungen (5.18). No «Neuer Schiessplatz» —
  * ranges are created by the database administration (the calculation import
  * never creates Stellungsräume or ranges, slm 45). Data: AreaFacade (already
@@ -31,7 +36,7 @@ const I18N = 'admin.dm_area';
 @Component({
   selector: 'app-dm-area-overview',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe],
+  imports: [RouterLink, TranslatePipe, TableExportComponent],
   styleUrl: './dm-area-overview.component.scss',
   template: `
     <div class="slim-page dma">
@@ -59,6 +64,9 @@ const I18N = 'admin.dm_area';
           <p class="slim-text--muted slim-text--xs dma__help" data-testid="dma-no-create">
             {{ prefix + '.no_create' | translate }}
           </p>
+        </div>
+        <div class="slim-page__actions">
+          <app-table-export testId="dma-export" [source]="exportSource" [disabled]="!filtered().length" />
         </div>
       </div>
 
@@ -222,6 +230,7 @@ const I18N = 'admin.dm_area';
 })
 export class DmAreaOverviewComponent extends ComponentBase {
   private readonly area = inject(AreaFacade);
+  private readonly translate = inject(TranslateService);
 
   protected readonly prefix = I18N;
   protected readonly routes = APP_ROUTES;
@@ -273,6 +282,27 @@ export class DmAreaOverviewComponent extends ComponentBase {
         return x.localeCompare(y, 'de-CH', { numeric: true }) * dir;
       });
   });
+
+  /** The table as shown (search, status filter and sorting applied) for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const active = this.active();
+    return tableExport<AreaResultDto>({
+      table: EXPORT_TABLE,
+      title: t(`${I18N}.title`),
+      filters: [
+        { label: t('admin.export.search'), value: this.query().trim() },
+        { label: t(`${I18N}.filter_active`), value: active === 'all' ? null : t(`${I18N}.filter_${active}_only`) },
+      ],
+      columns: [
+        { header: t(`${I18N}.col_name`), value: (r) => r.name },
+        { header: t(`${I18N}.col_ka`), value: (r) => r.coordinationSectionNo },
+        { header: t(`${I18N}.col_sp`), value: (r) => r.sectoralPlanNo ?? null },
+        { header: t(`${I18N}.col_active`), value: (r) => t(`${I18N}.${r.enabled ? 'active' : 'inactive'}`) },
+      ],
+      rows: this.filtered(),
+    });
+  };
 
   sortBy(key: SortKey): void {
     if (this.sortKey() === key) {

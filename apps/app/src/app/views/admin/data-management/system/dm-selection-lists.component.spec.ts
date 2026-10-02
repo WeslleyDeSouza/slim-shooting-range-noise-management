@@ -147,6 +147,36 @@ describe('DmSelectionListsComponent — Pflege der Auswahllisten (B1 5.3, slm 1)
     expect(codes()).toEqual(['open', 'completed', 'in_progress']);
   });
 
+  it('sorts the values by a column, keeps the order of the list fixed meanwhile and exports the marked values (B1 5.5.2, 5.5.3)', async () => {
+    await setup();
+    expect(codes()).toEqual(['open', 'in_progress', 'completed']);
+    const title = el('dlist-sort-de').querySelector('button') as HTMLButtonElement;
+    title.click();
+    fixture.detectChanges();
+    expect(codes()).toEqual(['completed', 'in_progress', 'open']);
+    // The order shown is not the order of the list: it cannot be changed now.
+    expect(rows()[1].querySelector<HTMLButtonElement>('[data-testid="dlist-up"]')?.disabled).toBe(true);
+    expect(rows()[1].querySelector<HTMLButtonElement>('[data-testid="dlist-down"]')?.disabled).toBe(true);
+
+    rows()[0].querySelector<HTMLInputElement>('[data-testid="dlist-select"]')?.click();
+    rows()[2].querySelector<HTMLInputElement>('[data-testid="dlist-select"]')?.click();
+    fixture.detectChanges();
+    el<HTMLButtonElement>('dlist-export').click();
+    fixture.detectChanges();
+    el<HTMLButtonElement>('dlist-export-csv').click();
+    await settle();
+    const data = exportFacade.download.mock.calls[0][0] as TableExportData;
+    expect(data.selection).toBe(true);
+    expect(data.rows.map((row) => row[0])).toEqual(['completed (DE)', 'open (DE)']);
+
+    // Descending, then back to the order of the list: it can be changed again.
+    title.click();
+    title.click();
+    fixture.detectChanges();
+    expect(codes()).toEqual(['open', 'in_progress', 'completed']);
+    expect(rows()[1].querySelector<HTMLButtonElement>('[data-testid="dlist-up"]')?.disabled).toBe(false);
+  });
+
   it('exports the values of the chosen list in their order (B1 5.5.5)', async () => {
     await setup();
     await choose('civil_usage_kind');

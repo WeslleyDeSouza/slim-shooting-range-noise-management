@@ -141,6 +141,21 @@ describe('EloUsersOverviewComponent', () => {
       expect(JSON.stringify(data)).not.toMatch(/u1|u2|u3|loginAttempt/);
     });
 
+    it('sorts by the roles and takes only the marked rows (B1 5.5.2, 5.5.3)', async () => {
+      // Carla has no role: «Fachspezialist, Administrator» < «Interessierter».
+      el().querySelectorAll<HTMLElement>('.um-users__sort')[2].click();
+      fixture.detectChanges();
+      expect(names()).toEqual(['Carla Arnold', 'Anna Muster', 'Beat Zeller']);
+
+      const boxes = Array.from(el().querySelectorAll<HTMLInputElement>('[data-testid="users-select"]'));
+      boxes[1].click();
+      boxes[2].click();
+      fixture.detectChanges();
+      const data = await exportAs('csv');
+      expect(data.selection).toBe(true);
+      expect(column(data, 'admin.users.col_name')).toEqual(['Anna Muster', 'Beat Zeller']);
+    });
+
     it('follows the search and names it', async () => {
       search('  administrator ');
       expect(names()).toEqual(['Anna Muster']);

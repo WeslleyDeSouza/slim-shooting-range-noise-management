@@ -139,6 +139,24 @@ describe('EloAppsOverviewComponent', () => {
       expect(JSON.stringify(data)).not.toContain('tenant-1');
     });
 
+    it('follows the sorting by a column and takes only the marked rows (B1 5.5.2, 5.5.3)', async () => {
+      const raw = (data: TableExportData) => data.rows.map((row) => row[1]);
+      expect(raw(await exportAs('csv'))).toEqual(['menu.areas', 'menu.users', 'menu.logs']);
+      (el().querySelector('[data-testid="apps-sort-title"] button') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      // By the translated title: Benutzer, Logbuch, Schiessplätze.
+      expect(raw(await exportAs('csv'))).toEqual(['menu.users', 'menu.logs', 'menu.areas']);
+
+      // Ctrl + click on a row marks it.
+      const row = el().querySelectorAll<HTMLElement>('[data-testid="apps-row"]')[1];
+      row.querySelectorAll('td')[2].dispatchEvent(new MouseEvent('click', { bubbles: true, ctrlKey: true }));
+      fixture.detectChanges();
+      expect(row.classList).toContain('slim-table__row--selected');
+      const data = await exportAs('csv');
+      expect(data.selection).toBe(true);
+      expect(raw(data)).toEqual(['menu.logs']);
+    });
+
     it('follows the search and names it', async () => {
       // The search also finds the translated title.
       search(' logbuch');

@@ -139,6 +139,23 @@ describe('EloRolesOverviewComponent', () => {
       expect(JSON.stringify(data)).not.toMatch(/tenant-1|u1|u2/);
     });
 
+    it('follows the sorting by a column and takes only the marked rows (B1 5.5.2, 5.5.3)', async () => {
+      // Benutzer ascending: Fachspezialist 0, Gast 0, Superadmin 1, Standard 2.
+      (el().querySelector('[data-testid="roles-sort-users"] button') as HTMLButtonElement).click();
+      fixture.detectChanges();
+      expect(titles()).toEqual(['Fachspezialist', 'Gast', 'Superadmin', 'Standard']);
+      expect(column(await exportAs('csv'), 'admin.roles.col_title')).toEqual(titles());
+
+      // The second row, then with Shift down to the last one.
+      const boxes = Array.from(el().querySelectorAll<HTMLInputElement>('[data-testid="roles-select"]'));
+      boxes[1].click();
+      boxes[3].dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+      fixture.detectChanges();
+      const data = await exportAs('csv');
+      expect(data.selection).toBe(true);
+      expect(column(data, 'admin.roles.col_title')).toEqual(['Gast', 'Superadmin', 'Standard']);
+    });
+
     it('follows the search and names it', async () => {
       search(' sta');
       expect(titles()).toEqual(['Standard']);

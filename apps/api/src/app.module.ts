@@ -32,6 +32,7 @@ import { DataSource } from 'typeorm';
 
 import { HealthModule } from './core/health-check';
 import { CoreLoggerModule, RequestOriginMiddleware } from './core/logger';
+import { CoreExportModule } from './core/export';
 import { AuthAuditModule } from './modules/auth-audit/auth-audit.module';
 import { AuthThrottlerGuard } from './core/guards';
 import { API_EMAIL_PARSER_PROVIDER, API_MOCK_DATA, DemoSeedMarkerEntity } from './mocks';
@@ -130,6 +131,7 @@ const isPrimaryInstance = (process.env['NODE_APP_INSTANCE'] ?? '0') === '0';
     CoreConfigModule,
     HealthModule,
     CoreLoggerModule,
+    CoreExportModule,
     CoreStaticFileModule,
 
     // Auth & admin section (galaxy)

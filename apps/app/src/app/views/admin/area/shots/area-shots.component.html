@@ -291,7 +291,7 @@
                       [checked]="selected().has(row.usage.id)"
                       [disabled]="readonly() || isLockedDate(row.usage.date)"
                       [attr.aria-label]="'shots.select' | translate"
-                      (change)="toggleSelect(row.usage.id, $any($event.target).checked)"
+                      (click)="toggleSelect(row.usage.id, $any($event.target).checked, $event.shiftKey)"
                     />
                   </td>
                   <td [attr.data-label]="'shots.columns.room' | translate">{{ row.usage.roomName }}</td>

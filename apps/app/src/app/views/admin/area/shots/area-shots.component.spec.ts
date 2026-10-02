@@ -346,6 +346,16 @@ describe('AreaShotsComponent', () => {
     );
   });
 
+  it('marks a range of usages with Shift + click (B1 5.5.3)', () => {
+    const boxes = () => Array.from(el().querySelectorAll<HTMLInputElement>('[data-testid="shots-row"] input[type="checkbox"]'));
+    expect(boxes().length).toBeGreaterThanOrEqual(3);
+    boxes()[0].click();
+    boxes()[2].dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+    fixture.detectChanges();
+    expect(boxes().slice(0, 3).map((box) => box.checked)).toEqual([true, true, true]);
+    expect(el().querySelectorAll('[data-testid="shots-row"].slim-table__row--selected')).toHaveLength(3);
+  });
+
   it('names the violated rule of the Zeitraum: missing, off the quarter hour, «Bis» not after «Von»', () => {
     el().querySelector<HTMLButtonElement>('[data-testid="shots-new"]')?.click();
     fixture.detectChanges();
@@ -449,10 +459,7 @@ describe('AreaShotsComponent', () => {
     it('holds only the marked usages when some are marked (B1 5.5.3)', async () => {
       const boxes = Array.from(rows()).map((r) => r.querySelector<HTMLInputElement>('input[type="checkbox"]') as HTMLInputElement);
       // Mark the newest and the oldest usage.
-      for (const box of [boxes[0], boxes[2]]) {
-        box.checked = true;
-        box.dispatchEvent(new Event('change'));
-      }
+      for (const box of [boxes[0], boxes[2]]) box.click();
       fixture.detectChanges();
 
       const data = await exportAs('xlsx');

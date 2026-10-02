@@ -7,6 +7,8 @@ import { TranslateService } from '@app-galaxy/translate-ui';
 import type { CaliberDto, WeaponCategoryDto, WeaponCombinationDto, WeaponDto, WeaponMasterDataDto } from '@ui-slim/apiClient';
 import { AccessFacade } from '../../../../core/access/access.facade';
 import { DataWeaponsFacade, InUseError, WeaponKind, WeaponRecord } from '../../../../core/data-weapons/data-weapons.facade';
+import { TableExportData } from '../../../../core/table/table-export';
+import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { DmWeaponsComponent } from './dm-weapons.component';
 
 const TS = '2026-09-19T08:00:00.000Z';
@@ -89,6 +91,7 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
         provideRouter([]),
         { provide: DataWeaponsFacade, useValue: facade },
         { provide: AccessFacade, useValue: access },
+        { provide: TableExportFacade, useValue: exportFacade },
         DataEmitter,
         {
           provide: TranslateService,
@@ -113,6 +116,8 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
   const el = <T extends Element = HTMLElement>(selector: string): T => fixture.nativeElement.querySelector(selector) as T;
   const all = (selector: string): HTMLElement[] => Array.from(fixture.nativeElement.querySelectorAll(selector));
   const rowNames = () => all('[data-testid="dmw-row"]').map((r) => r.getAttribute('data-name'));
+  /** What the export of the table hands to the API. */
+  const exportFacade = { download: jest.fn().mockResolvedValue(true) };
   const type = (selector: string, value: string) => {
     const input = el<HTMLInputElement>(selector);
     input.value = value;
@@ -139,6 +144,37 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
     expect(all('[data-testid^="dmw-filter-"]')).toHaveLength(3);
     expect(el('[data-testid="dmw-detail-title"]').textContent).toContain('kind_combination_one');
     expect(el('.dmw__placeholder')).not.toBeNull();
+  });
+
+  it('exports the open list as shown, or its marked rows; the box does not open the row (B1 5.5.3, 5.5.5)', async () => {
+    const exported = async (): Promise<TableExportData> => {
+      exportFacade.download.mockClear();
+      el<HTMLButtonElement>('[data-testid="dmw-table-export"]').click();
+      fixture.detectChanges();
+      el<HTMLButtonElement>('[data-testid="dmw-table-export-csv"]').click();
+      for (let i = 0; i < 3; i++) await Promise.resolve();
+      fixture.detectChanges();
+      return exportFacade.download.mock.calls[0][0] as TableExportData;
+    };
+    const shown = await exported();
+    expect(shown.table).toBe('waffe_kaliber_kombinationen');
+    expect(shown.selection).toBe(false);
+    expect(shown.rows.map((row) => row[0])).toEqual(rowNames());
+    expect(shown.header).toHaveLength(all('[data-testid="dmw-table"] thead th button').length);
+
+    const boxes = all('[data-testid="dmw-select"]');
+    boxes[0].click();
+    boxes[boxes.length - 1].dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+    fixture.detectChanges();
+    // Marking is not opening: no row is shown as the open one.
+    expect(all('[data-testid="dmw-row"][aria-selected="true"]')).toHaveLength(0);
+    const marked = await exported();
+    expect(marked.selection).toBe(true);
+    expect(marked.rows.map((row) => row[0])).toEqual(rowNames());
+
+    boxes[0].click();
+    fixture.detectChanges();
+    expect((await exported()).rows.map((row) => row[0])).toEqual(rowNames().slice(1));
   });
 
   it('searches over the shown columns and the sonARMS mapping, and filters by Waffe', () => {

@@ -504,13 +504,31 @@ export class AreaShotsComponent extends ComponentBase {
   }
 
   // Selection ------------------------------------------------------------
-  protected toggleSelect(id: string, on: boolean): void {
+  /** The usage marked or unmarked last: start of a range with Shift (B1 5.5.3). */
+  private selectAnchor: string | null = null;
+
+  /**
+   * Marks or unmarks one usage. With `range` (Shift + click) every usage shown
+   * between the one chosen last and this one gets the same state; locked
+   * usages cannot be deleted and stay out.
+   */
+  protected toggleSelect(id: string, on: boolean, range = false): void {
+    const shown = this.rows().flatMap((row) => (row.kind === 'usage' ? [row.usage] : []));
+    const from = range && this.selectAnchor ? shown.findIndex((u) => u.id === this.selectAnchor) : -1;
+    const to = shown.findIndex((u) => u.id === id);
+    const ids =
+      from >= 0 && to >= 0
+        ? shown.slice(Math.min(from, to), Math.max(from, to) + 1).filter((u) => u.id === id || !this.isLockedDate(u.date)).map((u) => u.id)
+        : [id];
     this.selected.update((set) => {
       const next = new Set(set);
-      if (on) next.add(id);
-      else next.delete(id);
+      for (const each of ids) {
+        if (on) next.add(each);
+        else next.delete(each);
+      }
       return next;
     });
+    this.selectAnchor = id;
   }
 
   /** A date in the locked period (≤ Sperrdatum). */

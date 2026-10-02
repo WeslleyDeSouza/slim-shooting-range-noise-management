@@ -39,7 +39,8 @@ Fragen sind keine Entscheidung (Abschnitt 15).
 
 **Vorhandener Prototyp (MVP) und ELO-Erfahrung als Ausgangspunkt:** Die Entwicklerin bringt einen lauffähigen Prototyp
 von SLIM ein und hat ELO entwickelt, das System auf der anderen Seite der Schnittstelle. Beides reduziert das
-Umsetzungsrisiko für den Bund; darauf beruht der angebotene Maximalaufwand von 2'800 statt 4'000 Stunden für LP1a.
+Umsetzungsrisiko für den Bund; darauf beruhen der angebotene Maximalaufwand von 2'800 statt 4'000 Stunden für LP1a
+und die geplante produktive Einführung im März 2028, drei Monate vor dem vertraglichen Termin (Abschnitt 4).
 Stand 02.10.2026 sind im Prototyp umgesetzt: Anmeldung, Rollen und Objektregeln, Übersicht mit berechneten Ampeln, die
 Masken Schusszahlen, Details und Simulation, der GIS-Kartenviewer, die Datenverwaltung, Auswahllisten, erweiterte
 Konfiguration, Hilfe, das Datenmodell nach B1 Kapitel 10 und der gegen Beilage B1.4 geprüfte Berechnungskern. Noch
@@ -103,15 +104,18 @@ erbracht (E5).
 
 ## 4. Termin- und Meilensteinplan
 
-**Planungsgrundlage:** Projektstart im Januar 2027, Schlussabnahme im Januar/Februar 2028, produktive Einführung im
-März 2028, Projektabschluss im April 2028. Der Rahmenvertrag nennt als verbindlichen Termin «Einführung SLIM:
-30.06.2028» (Art. 2.11.1). Dieser Termin bezeichnet gemäss FAQ 50 die produktive Einführung und liegt nach
-Schlussabnahme und Schlussgenehmigung; für die Schlussabnahmetests sind rund 30 Tage vorgesehen. Der Plan hält damit
-eine Terminreserve von rund drei Monaten bis zum vertraglichen Termin.
+**Planungsgrundlage – frühere Produktivsetzung dank MVP:** Projektstart im Januar 2027, Schlussabnahme im
+Januar/Februar 2028, produktive Einführung im März 2028, Projektabschluss im April 2028. Der Rahmenvertrag nennt als
+verbindlichen Termin «Einführung SLIM: 30.06.2028» (Art. 2.11.1). Dieser Termin bezeichnet gemäss FAQ 50 die
+produktive Einführung und liegt nach Schlussabnahme und Schlussgenehmigung; für die Schlussabnahmetests sind rund
+30 Tage vorgesehen. Der Plan sieht die produktive Einführung damit **rund drei Monate vor dem vertraglichen Termin**
+vor; diese drei Monate bleiben als Terminreserve bestehen.
 
-Die Meilensteine knüpfen an den vorhandenen Prototyp an: M1 enthält die gemeinsame Überprüfung und fachliche
-Validierung der vorhandenen Funktionen, M2 und M3 bauen darauf auf. Die Termine bleiben von der Mitwirkung der
-Auftraggeberin (Daten, Fachentscheide, ELO-Testumgebung), Integration und Abnahme bestimmt.
+Möglich macht das der vorhandene Prototyp (MVP): Die Zeit bis M1 dient der gemeinsamen Überprüfung und fachlichen
+Validierung vorhandener Funktionen, nicht ihrem Aufbau; M2 und M3 bauen darauf auf, und der fachliche Durchstich (M3)
+überführt eine Kette, die im Prototyp bereits läuft. Die Schulungen von ongoing (Abschnitt 9) sind auf die Einführung
+im März 2028 ausgerichtet. Die Termine bleiben von der Mitwirkung der Auftraggeberin (Daten, Fachentscheide,
+ELO-Testumgebung), Integration und Abnahme bestimmt.
 
 | Meilenstein | Zieltermin | Ergebnisse und Entscheidungskriterien |
 |---|---|---|
@@ -281,7 +285,8 @@ zur Einführung und zwei wiederkehrende über die Laufzeit, z. B. bei Wechsel de
 Geschult werden die Applikationsverantwortlichen der Auftraggeberin, die danach die Benutzer schulen und den 1st-Level-
 Support leisten: vor Ort (Bern und weitere Standorte), rund ein halber Tag, zwei bis drei Personen je Schulung,
 Unterlagen auf Deutsch, Durchführung bei Bedarf auch auf Französisch oder Italienisch (FAQ 37, 70). Die initialen
-Schulungen finden vor M6 statt.
+Schulungen finden nach dem Einführungskandidaten (M4) und vor der produktiven Einführung (M6, März 2028) statt, damit
+die Applikationsverantwortlichen zur vorgezogenen Produktivsetzung befähigt sind.
 
 ## 10. Risiken und Massnahmen
 

@@ -38,7 +38,7 @@ describe('HelpDrawerComponent — kontextsensitive Hilfe (slm 53)', () => {
     expect(topic.getAttribute('data-topic')).toBe('shots');
     expect(topic.textContent).toContain('help.topics.shots.title');
     expect(topic.textContent).toContain('help.topics.shots.intro');
-    expect(topic.querySelectorAll('li')).toHaveLength(5);
+    expect(topic.querySelectorAll('li')).toHaveLength(7);
     // The general operation follows the page-specific help.
     expect(el('help-general').textContent).toContain('help.topics.general.title');
   });

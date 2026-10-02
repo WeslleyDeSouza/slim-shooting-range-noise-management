@@ -37,7 +37,7 @@ test.describe('help (slm 53)', () => {
     expect(await openHelp(page)).toBeLessThan(2000);
     await expect(page.locator(HELP.topic)).toHaveAttribute('data-topic', 'areas');
     await expect(page.locator(HELP.topic)).toContainText('Übersicht Schiessplätze');
-    await expect(page.locator(`${HELP.topic} li`)).toHaveCount(5);
+    await expect(page.locator(`${HELP.topic} li`)).toHaveCount(6);
     // The general operation follows the help of the page.
     await expect(page.locator(HELP.general)).toContainText('Allgemeine Bedienung');
     await page.locator(HELP.close).click();

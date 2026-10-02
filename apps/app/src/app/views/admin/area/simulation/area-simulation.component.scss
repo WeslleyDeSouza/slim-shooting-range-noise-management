@@ -300,6 +300,12 @@
   }
 
   // Result -----------------------------------------------------------------
+  &__result-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: slim.space(2) slim.space(4) 0;
+  }
+
   &__progress {
     padding: slim.space(5) slim.space(4);
     font-size: slim.font-size('sm');

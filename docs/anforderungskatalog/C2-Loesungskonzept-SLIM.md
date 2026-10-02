@@ -233,7 +233,7 @@ Die Basislösung ist gemäss FAQ 142 für Desktop und Tablet optimiert (mindeste
 
 ### 6.1 Wartbarkeit und Erweiterbarkeit (slm 55)
 
-Monorepo mit getrennten Modulen (Stammdaten, Nutzungen, Berechnung, Datenverwaltung, Import/Export, Benutzer/Rollen, Logbuch), generiertem API-Vertrag und automatisch dokumentiertem Datenmodell; Fachparameter (Rollen, Rechte, Auswahllisten, Grenzwerte, Ampelschwellen, Rundung, Sperrdatum, Feiertage, Kartenlayer) sind Konfiguration ohne Rekompilierung; neue Masken entstehen aus Design System, Facade und generiertem Client. Qualitätssicherung in jedem Build (Stand 02.10.2026, alle bestanden): Lint; 426 API-Tests (Berechnungskern gegen B1.4, Rechenfälle, Service- und HTTP-Tests je Controller mit Rechtematrix); 233 Oberflächen-Tests; 27 Tests der Kartenbibliothek; dazu End-to-End-Fälle (Playwright) für Anmeldung, Startseite, Schiessplatz-Masken und Datenverwaltung sowie Kriterien-Fälle je B1-Anforderung als Skelett mit Prüfschritten, die mit der jeweiligen Maske automatisiert werden. *Prototyp:* Rollen, Rechte, Übersetzungen, Auswahllisten, Sperrdatum, Ampelschwellen und -farben sowie Kartenlayer sind konfigurierbar; Grenzwerte, Rundung und Feiertage folgen in LP1. Erweiterungen (weitere Anhänge der LSV, zusätzliche Layer, AGOV) betreffen je ein Modul.
+Monorepo mit getrennten Modulen (Stammdaten, Nutzungen, Berechnung, Datenverwaltung, Import/Export, Benutzer/Rollen, Logbuch), generiertem API-Vertrag und automatisch dokumentiertem Datenmodell; Fachparameter (Rollen, Rechte, Auswahllisten, Grenzwerte, Ampelschwellen, Rundung, Sperrdatum, Feiertage, Kartenlayer) sind Konfiguration ohne Rekompilierung; neue Masken entstehen aus Design System, Facade und generiertem Client. Qualitätssicherung in jedem Build (Stand 02.10.2026, alle bestanden): Lint; 432 API-Tests (Berechnungskern gegen B1.4, Rechenfälle, Service- und HTTP-Tests je Controller mit Rechtematrix); 255 Oberflächen-Tests; 27 Tests der Kartenbibliothek; dazu End-to-End-Fälle (Playwright) für Anmeldung, Startseite, Schiessplatz-Masken und Datenverwaltung sowie Kriterien-Fälle je B1-Anforderung als Skelett mit Prüfschritten, die mit der jeweiligen Maske automatisiert werden. *Prototyp:* Rollen, Rechte, Übersetzungen, Auswahllisten, Sperrdatum, Ampelschwellen und -farben sowie Kartenlayer sind konfigurierbar; Grenzwerte, Rundung und Feiertage folgen in LP1. Erweiterungen (weitere Anhänge der LSV, zusätzliche Layer, AGOV) betreffen je ein Modul.
 
 ### 6.2 Skalierbarkeit und Effizienz
 
@@ -280,7 +280,7 @@ Zuordnung jeder B1-Anforderung zum Umsetzungskapitel (FAQ 8). Status des Prototy
 | slm 6 | Berechtigungsprüfung bei Deep Links | 2.4 | P |
 | slm 7 | Startseite 5.8 | 5.1 | P |
 | slm 8 | Übersicht Schiessplätze 5.9 mit Ampeln | 4.2, 5.1 | P (Ampeln aus der Berechnung, mit Grund) |
-| slm 9 | Schiessplatz-Übersicht 5.10 (Ampeln, Stände, Kontingente, Karte) | 4.2, 5.1 | Z (Ampeln in der Kontextleiste vorhanden) |
+| slm 9 | Schiessplatz-Übersicht 5.10 (Ampeln, Stände, Kontingente, Karte) | 4.2, 5.1 | P (Seite 5.10 mit Ampeln, Stand, Kontingentvergleich und Karte umgesetzt) |
 | slm 10 | Nutzungen und Schusszahlen 5.11 inkl. Dezimalmengen | 5.1 | T (Erfassung, Summen je Einheit, Export; Spaltenfilter ausstehend) |
 | slm 11 | Empfangspunkte / Details 5.12 | 4, 5.2 | T (Details mit Karte; Jahresauswahl in der Maske ausstehend) |
 | slm 12 | Simulation 5.13 | 4, 5.1 | P – Option LP1b gemäss FAQ 117 |

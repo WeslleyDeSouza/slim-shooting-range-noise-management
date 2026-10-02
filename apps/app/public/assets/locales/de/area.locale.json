@@ -255,6 +255,12 @@
       "title": "Beurteilung unvollständig.",
       "hint": "Der Zustand «{{state}}» enthält für folgende Kombinationen keine Quelle bzw. keine Betriebsdaten – die Schüsse konnten nicht zugeordnet werden, der angezeigte Pegel ist nur eine Teilberechnung:",
       "action": "Zustand ergänzen oder Ersatzregel durch das KOMZ Lärm freigeben lassen."
+    },
+    "export": {
+      "period": "Betrachtungszeitraum",
+      "address": "Adresse",
+      "state": "Beurteilung Empfangspunkt",
+      "row_state": "Beurteilung"
     }
   },
   "simulation": {
@@ -333,7 +339,16 @@
     "state_hint": "Keine Änderungen. Überschreiben Sie Werte, um eine Simulation zu starten.",
     "state_changed": "<b>{{n}}</b> Werte geändert · Total <b>{{total}}</b> Schuss ({{pct}} % gegenüber Ist)",
     "reset": "Zurücksetzen",
-    "run": "Simulation ausführen"
+    "run": "Simulation ausführen",
+    "export": {
+      "basis": "Berechnungsgrundlage",
+      "inside_current": "Innerhalb Werktag (Ist)",
+      "inside_simulated": "Innerhalb Werktag (Simulation)",
+      "outside_current": "Ausserhalb Werktag (Ist)",
+      "outside_simulated": "Ausserhalb Werktag (Simulation)",
+      "address": "Adresse",
+      "limit_kind": "Art des Grenzwerts"
+    }
   },
   "map_page": {
     "title": "Karte {{area}}",

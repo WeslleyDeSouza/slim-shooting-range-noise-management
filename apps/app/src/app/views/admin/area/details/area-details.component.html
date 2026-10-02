@@ -5,6 +5,7 @@
       <p class="slim-page__subtitle">{{ 'details.subtitle' | translate }}</p>
     </div>
     <div class="slim-page__actions">
+      <app-table-export testId="details-export" [source]="exportSource" [disabled]="!receivers().length" />
       <button
         type="button"
         class="slim-btn"

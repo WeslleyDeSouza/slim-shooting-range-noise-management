@@ -20,6 +20,7 @@ import type {
 } from '@ui-slim/apiClient';
 import { MapPoint, MapViewerComponent } from '@ui-slim/map';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
+import { TableExportComponent } from '../../../../common/table-export.component';
 import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import {
@@ -27,6 +28,7 @@ import {
   AssessmentQuery,
 } from '../../../../core/calculation/assessment.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 
 type ReceiverState = ReceiverAssessmentDto['state'];
 type View = 'map' | 'list';
@@ -53,10 +55,25 @@ const METER_HEADROOM_DB = 8;
  * library is not available or the state has no coordinates.
  * Rendered inside AreaContextComponent; data: AssessmentFacade, MapFacade.
  */
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'empfangspunkte';
+
+/** One line of the export: an Empfangspunkt with one comparison; `row` is null for a point without assessment. */
+interface ExportLine {
+  receiver: ReceiverAssessmentDto;
+  row: ReceiverAssessmentDto['rows'][number] | null;
+}
+
+/** `YYYY-MM-DD` as `DD.MM.YYYY`. */
+function swissDate(date: string): string {
+  const [year, month, day] = date.split('-');
+  return `${day}.${month}.${year}`;
+}
+
 @Component({
   selector: 'app-area-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, DecimalPipe, RouterLink, TranslatePipe, StatusPillComponent, MapViewerComponent],
+  imports: [DatePipe, DecimalPipe, RouterLink, TranslatePipe, StatusPillComponent, MapViewerComponent, TableExportComponent],
   templateUrl: './area-details.component.html',
   styleUrl: './area-details.component.scss',
 })
@@ -152,6 +169,41 @@ export class AreaDetailsComponent extends ComponentBase {
     const state = this.calculation()?.id;
     return id ? APP_ROUTES.admin.area.map(id) + (state ? `?state=${state}` : '') : null;
   });
+
+  /**
+   * The assessment for the Excel-/CSV-Export (B1 5.5.5, slm 3): one line per
+   * Empfangspunkt and applicable comparison (Anhang 9 / 7, IGW / PW), the
+   * points in the order of the list.
+   */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const period = this.period();
+    const lines = this.sorted().flatMap((receiver): ExportLine[] => {
+      const rows = receiver.rows.filter((row) => row.applicable);
+      return rows.length ? rows.map((row) => ({ receiver, row })) : [{ receiver, row: null }];
+    });
+    return tableExport<ExportLine>({
+      table: EXPORT_TABLE,
+      title: t('details.title'),
+      subtitle: this.mapTitle(),
+      filters: [
+        { label: t('details.calc.basis'), value: this.calculation()?.name },
+        { label: t('details.export.period'), value: period ? `${swissDate(period.from)} – ${swissDate(period.to)}` : null },
+      ],
+      columns: [
+        { header: t('details.receiver.no'), value: (l) => l.receiver.code },
+        { header: t('details.export.address'), value: (l) => l.receiver.address },
+        { header: t('details.receiver.es'), value: (l) => l.receiver.sensitivityLevel },
+        { header: t('details.export.state'), value: (l) => t(`details.state.${l.receiver.state}`) },
+        { header: t('details.columns.basis'), value: (l) => (l.row ? `${t(l.row.annex === 9 ? 'details.annex_9' : 'details.annex_7')}, ${t(`details.${l.row.limitKind}`)}` : null) },
+        { header: t('details.columns.limit'), value: (l) => l.row?.limit },
+        { header: t('details.columns.level'), value: (l) => l.row?.level },
+        { header: t('details.columns.reserve'), value: (l) => l.row?.reserve },
+        { header: t('details.export.row_state'), value: (l) => (l.row ? t(`details.state.${l.row.state}`) : null) },
+      ],
+      rows: lines,
+    });
+  };
 
   private readonly query = computed<AssessmentQuery>(() => {
     const query: AssessmentQuery = {};

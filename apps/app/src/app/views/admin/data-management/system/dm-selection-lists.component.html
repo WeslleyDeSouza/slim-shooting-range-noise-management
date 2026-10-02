@@ -1,14 +1,15 @@
 <section class="slim-card dlist" data-testid="dlist">
   <div class="slim-card__header">
     <h2 class="slim-card__title">{{ prefix + '.title' | translate }}</h2>
-    @if (!readonly()) {
-      <div class="slim-card__actions">
+    <div class="slim-card__actions">
+      <app-table-export testId="dlist-export" [small]="true" [source]="exportSource" [disabled]="!values().length" />
+      @if (!readonly()) {
         <button type="button" class="slim-btn slim-btn--secondary slim-btn--sm" data-testid="dlist-add" [disabled]="editing() !== null" (click)="add()">
           <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>
           <span class="slim-btn__label">{{ prefix + '.add' | translate }}</span>
         </button>
-      </div>
-    }
+      }
+    </div>
   </div>
   <div class="slim-card__body dlist__body">
     <p class="slim-field__hint">{{ prefix + '.hint' | translate }}</p>

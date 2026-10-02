@@ -255,6 +255,12 @@
       "title": "Assessment incomplete.",
       "hint": "State \"{{state}}\" has no source or operating data for the following combinations – the shots could not be attributed, the level shown is a partial result only:",
       "action": "Complete the state or have the substitute rule released by KOMZ Lärm."
+    },
+    "export": {
+      "period": "Period under review",
+      "address": "Address",
+      "state": "Assessment of the receiver point",
+      "row_state": "Assessment"
     }
   },
   "simulation": {
@@ -333,7 +339,16 @@
     "state_hint": "No changes. Override values to start a simulation.",
     "state_changed": "<b>{{n}}</b> values changed · total <b>{{total}}</b> shots ({{pct}} % versus current)",
     "reset": "Reset",
-    "run": "Run simulation"
+    "run": "Run simulation",
+    "export": {
+      "basis": "Calculation basis",
+      "inside_current": "Within working day (actual)",
+      "inside_simulated": "Within working day (simulation)",
+      "outside_current": "Outside working day (actual)",
+      "outside_simulated": "Outside working day (simulation)",
+      "address": "Address",
+      "limit_kind": "Kind of limit"
+    }
   },
   "map_page": {
     "title": "Map {{area}}",

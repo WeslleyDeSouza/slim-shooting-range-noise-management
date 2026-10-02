@@ -5,6 +5,7 @@
       <p class="slim-page__subtitle">{{ 'simulation.subtitle' | translate }}</p>
     </div>
     <div class="slim-page__actions">
+      <app-table-export testId="sim-export" [source]="inputExportSource" [disabled]="!rows().length" />
       <label class="slim-filter">
         {{ 'year' | translate }}
         <select
@@ -405,6 +406,9 @@
             </div>
           </div>
         } @else {
+          <div class="sim__result-actions">
+            <app-table-export testId="sim-result-export" [small]="true" [source]="resultExportSource" [disabled]="stale()" />
+          </div>
           <div class="slim-table-wrap sim__table-wrap">
             <table class="slim-table slim-table--stack slim-table--compact sim__result">
               <thead>

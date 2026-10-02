@@ -1,10 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type { SelectionListValueDto } from '@ui-slim/apiClient';
+import { TableExportComponent } from '../../../../common/table-export.component';
 import { SelectionListKey, SelectionListsFacade } from '../../../../core/settings/selection-lists.facade';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 
 const I18N = 'admin.dm_lists';
+/** Id of the table in the export: file name (date and extension are added) and logbook. */
+const EXPORT_TABLE = 'auswahlliste';
 
 /** The lists in the order of the masks that use them. */
 export const SELECTION_LISTS: readonly SelectionListKey[] = [
@@ -28,13 +32,14 @@ export const SELECTION_LISTS: readonly SelectionListKey[] = [
 @Component({
   selector: 'app-dm-selection-lists',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TranslatePipe],
+  imports: [ReactiveFormsModule, TranslatePipe, TableExportComponent],
   templateUrl: './dm-selection-lists.component.html',
   styleUrl: './dm-selection-lists.component.scss',
 })
 export class DmSelectionListsComponent {
   private readonly facade = inject(SelectionListsFacade);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
 
   /** Without the right to write the lists are shown, not changed. */
   readonly readonly = input(false);
@@ -46,6 +51,24 @@ export class DmSelectionListsComponent {
     this.facade.lists(); // re-evaluate when the lists change
     return this.facade.values(this.selected());
   });
+  /** The values of the chosen list in their order, for the Excel-/CSV-Export (B1 5.5.5, slm 3). */
+  protected readonly exportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<SelectionListValueDto>({
+      table: EXPORT_TABLE,
+      title: t(`${I18N}.title`),
+      subtitle: t(`${I18N}.lists.${this.selected()}`),
+      filters: [{ label: t(`${I18N}.list`), value: t(`${I18N}.lists.${this.selected()}`) }],
+      columns: [
+        { header: t(`${I18N}.label_de`), value: (v) => v.labelDe },
+        { header: t(`${I18N}.label_fr`), value: (v) => v.labelFr },
+        { header: t(`${I18N}.label_it`), value: (v) => v.labelIt },
+        { header: t(`${I18N}.label_en`), value: (v) => v.labelEn },
+        { header: t(`${I18N}.status`), value: (v) => t(v.enabled ? `${I18N}.active` : `${I18N}.inactive`) },
+      ],
+      rows: this.values(),
+    });
+  };
   protected readonly saving = this.facade.saving;
   protected readonly error = this.facade.error;
 

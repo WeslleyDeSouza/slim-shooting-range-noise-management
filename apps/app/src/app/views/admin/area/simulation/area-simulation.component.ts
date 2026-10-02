@@ -19,6 +19,8 @@ import type {
   SimulationRowDto,
 } from '@ui-slim/apiClient';
 import { MapPoint, MapViewerComponent } from '@ui-slim/map';
+import { TableExportComponent } from '../../../../common/table-export.component';
+import { tableExport, TableExportData } from '../../../../core/table/table-export';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
 import { rowKey, SimulationFacade } from '../../../../core/calculation/simulation.facade';
@@ -46,10 +48,14 @@ const BADGE: Record<LightState, string> = {
  * as fallback. A sandbox — nothing is written. Data: SimulationFacade,
  * MapFacade (Anlagenteile of the state).
  */
+/** Ids of the tables in the export: file name (date and extension are added) and logbook. */
+const EXPORT_INPUT = 'simulation_schusszahlen';
+const EXPORT_RESULT = 'simulation_resultat';
+
 @Component({
   selector: 'app-area-simulation',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent],
+  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent, TableExportComponent],
   styleUrl: './area-simulation.component.scss',
   templateUrl: './area-simulation.component.html',
 })
@@ -146,6 +152,70 @@ export class AreaSimulationComponent extends ComponentBase {
     const areaId = this.areaId();
     if (areaId) void this.facade.load(areaId, this.year());
   }
+
+  // ----- export (B1 5.5.5, slm 3) --------------------------------------------
+
+  /** The Schusszahlen of the simulation as shown: the Ist of the year and the values the simulation runs with. */
+  protected readonly inputExportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    return tableExport<SimulationRowDto>({
+      table: EXPORT_INPUT,
+      title: t('simulation.inputs_title'),
+      subtitle: this.mapTitle(),
+      filters: [
+        { label: t('year'), value: this.year() },
+        { label: t('simulation.export.basis'), value: this.calculation()?.name },
+      ],
+      columns: [
+        { header: t('simulation.columns.room'), value: (row) => row.roomName },
+        { header: t('simulation.columns.room_no'), value: (row) => row.roomNo },
+        { header: t('simulation.columns.weapon'), value: (row) => `${row.weapon} · ${row.caliber}` },
+        { header: t('simulation.export.inside_current'), value: (row) => row.inside },
+        { header: t('simulation.export.inside_simulated'), value: (row) => this.value(row, 'inside') },
+        { header: t('simulation.export.outside_current'), value: (row) => row.outside },
+        { header: t('simulation.export.outside_simulated'), value: (row) => this.value(row, 'outside') },
+      ],
+      rows: this.rows(),
+    });
+  };
+
+  /** The result of the last simulation: one line per Empfangspunkt and limit. */
+  protected readonly resultExportSource = (): TableExportData => {
+    const t = (key: string) => this.translate.translate(key) ?? key;
+    const lines = (this.result()?.receivers ?? []).flatMap((receiver) => {
+      const simulated = receiver.simulatedRows ?? [];
+      return simulated.length
+        ? simulated.map((row) => ({
+            receiver,
+            kind: row.limitKind,
+            limit: row.limit,
+            current: receiver.assessmentRows?.find((r) => r.limitKind === row.limitKind)?.level ?? null,
+            simulated: row.level,
+            state: row.state,
+          }))
+        : [{ receiver, kind: receiver.limitKind, limit: receiver.limit, current: receiver.current, simulated: receiver.simulated, state: receiver.simulatedState }];
+    });
+    return tableExport<(typeof lines)[number]>({
+      table: EXPORT_RESULT,
+      title: t('simulation.result_title'),
+      subtitle: this.mapTitle(),
+      filters: [
+        { label: t('year'), value: this.year() },
+        { label: t('simulation.export.basis'), value: this.calculation()?.name },
+      ],
+      columns: [
+        { header: t('simulation.result.point'), value: (l) => l.receiver.code },
+        { header: t('simulation.export.address'), value: (l) => l.receiver.address },
+        { header: t('simulation.export.limit_kind'), value: (l) => l.kind.toUpperCase() },
+        { header: t('simulation.result.limit'), value: (l) => l.limit },
+        { header: t('simulation.result.current'), value: (l) => l.current },
+        { header: t('simulation.result.simulated'), value: (l) => l.simulated },
+        { header: t('simulation.result.delta'), value: (l) => (l.current === null || l.simulated === null ? null : Math.round((l.simulated - l.current) * 10) / 10) },
+        { header: t('simulation.result.assessment'), value: (l) => t(`status_area.${l.state}`) },
+      ],
+      rows: lines,
+    });
+  };
 
   // ----- table -------------------------------------------------------------
 

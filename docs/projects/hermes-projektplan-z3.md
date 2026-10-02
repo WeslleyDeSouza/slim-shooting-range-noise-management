@@ -204,8 +204,10 @@ abrechenbar noch ein Anspruch auf Ausschöpfung des Maximalaufwands.
 
 ### 6.1 Kapazitätsplanung je Rolle
 
-Projektdauer Januar 2027 bis April 2028 (16 Monate). Das durchschnittliche Pensum bezieht sich auf 160 Arbeitsstunden
-je Monat.
+Projektdauer Januar 2027 bis April 2028 (16 Monate): fünf Programm-Inkremente von je drei Monaten (Januar 2027 bis
+März 2028) und der Abschlussmonat April 2028. Das durchschnittliche Pensum bezieht sich auf 160 Arbeitsstunden je
+Monat über diese 16 Monate (2'560 Stunden je Vollzeitstelle). Die Rollenstunden ergeben zusammen 2'555 Stunden, mit
+der Reserve von 245 Stunden 2'800 Stunden.
 
 | Rolle | Firma | Person | Stellvertretung | Stunden | Ø Pensum |
 |---|---|---|---|---:|---:|

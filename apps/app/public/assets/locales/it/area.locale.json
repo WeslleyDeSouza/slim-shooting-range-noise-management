@@ -255,6 +255,12 @@
       "title": "Valutazione incompleta.",
       "hint": "Lo stato «{{state}}» non contiene sorgenti o dati di esercizio per le seguenti combinazioni – i colpi non hanno potuto essere attribuiti, il livello mostrato è solo un calcolo parziale:",
       "action": "Completare lo stato o far approvare la regola sostitutiva dal KOMZ Lärm."
+    },
+    "export": {
+      "period": "Periodo considerato",
+      "address": "Indirizzo",
+      "state": "Valutazione del punto di ricezione",
+      "row_state": "Valutazione"
     }
   },
   "simulation": {
@@ -333,7 +339,16 @@
     "state_hint": "Nessuna modifica. Sovrascrivete i valori per avviare una simulazione.",
     "state_changed": "<b>{{n}}</b> valori modificati · totale <b>{{total}}</b> colpi ({{pct}} % rispetto all’attuale)",
     "reset": "Ripristinare",
-    "run": "Eseguire la simulazione"
+    "run": "Eseguire la simulazione",
+    "export": {
+      "basis": "Base di calcolo",
+      "inside_current": "Durante il giorno feriale (effettivo)",
+      "inside_simulated": "Durante il giorno feriale (simulazione)",
+      "outside_current": "Fuori dal giorno feriale (effettivo)",
+      "outside_simulated": "Fuori dal giorno feriale (simulazione)",
+      "address": "Indirizzo",
+      "limit_kind": "Tipo di valore limite"
+    }
   },
   "map_page": {
     "title": "Carta {{area}}",

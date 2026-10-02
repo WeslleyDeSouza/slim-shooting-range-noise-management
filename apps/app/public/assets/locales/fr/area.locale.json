@@ -255,6 +255,12 @@
       "title": "Évaluation incomplète.",
       "hint": "L’état «{{state}}» ne contient aucune source ou donnée d’exploitation pour les combinaisons suivantes – les coups n’ont pas pu être attribués, le niveau affiché n’est qu’un calcul partiel :",
       "action": "Compléter l’état ou faire valider la règle de substitution par le KOMZ Lärm."
+    },
+    "export": {
+      "period": "Période considérée",
+      "address": "Adresse",
+      "state": "Évaluation du point de réception",
+      "row_state": "Évaluation"
     }
   },
   "simulation": {
@@ -333,7 +339,16 @@
     "state_hint": "Aucune modification. Remplacez des valeurs pour lancer une simulation.",
     "state_changed": "<b>{{n}}</b> valeurs modifiées · total <b>{{total}}</b> coups ({{pct}} % par rapport à l’actuel)",
     "reset": "Réinitialiser",
-    "run": "Lancer la simulation"
+    "run": "Lancer la simulation",
+    "export": {
+      "basis": "Base de calcul",
+      "inside_current": "Pendant le jour ouvrable (réel)",
+      "inside_simulated": "Pendant le jour ouvrable (simulation)",
+      "outside_current": "Hors jour ouvrable (réel)",
+      "outside_simulated": "Hors jour ouvrable (simulation)",
+      "address": "Adresse",
+      "limit_kind": "Type de valeur limite"
+    }
   },
   "map_page": {
     "title": "Carte {{area}}",

@@ -36,9 +36,9 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 
 | Thema | Was in den Dokumenten steht | Zu bestätigen |
 | --- | --- | --- |
-| Stundentabelle LP1a (Z3 Abschnitt 6) | **Vorschlag, vor Freigabe zu bestätigen.** Die Tabelle der Version 0.2 (4'000 h) ist mit dem Faktor 0.7 auf 2'800 h skaliert: Projektleitung 280, Business Analyse 315, Architektur 245, Entwicklung 1'015, Tests/QS 385, Migration/Dokumentation/Einführung/Betriebsübergabe 315, Reserve 245. Aufteilung auf die Firmen: Architektur und Entwicklung ganz bei der Technologiepartnerin (1'260); Projektleitung, Tests/QS und Migration/Dokumentation/Einführung ganz bei [PLATZHALTER FIRMA] (980); Reserve im Verhältnis der Gesamtanteile (125 / 120); Business Analyse als Ausgleich (65 / 250), damit 1'450 + 1'350 entsteht. | Aufteilung je Arbeitspaket; ob [PLATZHALTER FIRMA] Projektleitung und Business Analyse führt; ob die Tests der Technologiepartnerin im Paket Entwicklung richtig abgebildet sind. |
+| Stundentabelle LP1a (Z3 Abschnitt 6) | **Vorschlag, vor Freigabe zu bestätigen.** Die Tabelle der Version 0.2 (4'000 h) ist mit dem Faktor 0.7 auf 2'800 h skaliert: Projektleitung 280, Business Analyse 315, Architektur 245, Entwicklung 1'015, Tests/QS 385, Migration/Dokumentation/Einführung/Betriebsübergabe 315, Reserve 245. Aufteilung auf die Firmen: Architektur und Entwicklung ganz bei der Technologiepartnerin (1'260); Projektleitung, Tests/QS und Migration/Dokumentation/Einführung ganz bei [PLATZHALTER FIRMA] (980); Reserve im Verhältnis der Gesamtanteile (125 / 120); Business Analyse als Ausgleich (65 / 250), damit 1'450 + 1'350 entsteht. | Aufteilung je Arbeitspaket; ob [PLATZHALTER FIRMA] Projektleitung und Business Analyse führt; ob die Tests der Technologiepartnerin im Paket Entwicklung richtig abgebildet sind. **Rückmeldung 02.10.2026:** Die Skalierung mit 0.7 ist keine Herleitung. Vor der Freigabe braucht es eine Schätzung von unten nach oben je verbleibendem Arbeitspaket; Grundlage ist der Stand je Anforderung in der Matrix (offen: FGDB über GDAL slm 19–21, ELO-Endpunkte slm 28–30, Excel-Import slm 37, PostgreSQL/PostGIS und Views slm 38, Export B1.6 slm 40, Gesamtstatistik slm 41, Zuweisung Benutzer slm 26, Rest slm 3, Migration, Betriebsaufbau, Abnahmen, Dokumentation, Schulungsunterlagen). Eine Aussage «MVP zu x % fertig» steht in C2 und Z3 nicht und soll ohne Nachweis auch nicht hinein. |
 | Rollen je Firma (Z3 Abschnitt 3) | Projektleitung und Lead-Business-Analyse bei [PLATZHALTER FIRMA] (folgt aus der Stundenaufteilung), Lead-Applikationsentwickler bei der Technologiepartnerin. Nach FAQ 133 müssen die drei Lead-Personen ihre Rolle mit dem höchsten Pensum ausüben und an der Präsentation (Z6) auftreten; eine Person darf zwei der drei Rollen bündeln. | Firma und Person je Lead-Rolle. |
-| Stunden je Rolle (Z3 Abschnitt 6.1) | Skaliert mit dem Faktor 0.7 aus Version 0.2; Durchschnittspensum = Stunden / (16 Monate × 160 h). Die Pensen liegen zwischen 10 % und 30 %. | **Entschieden 02.10.2026:** Pensen in dieser Höhe sind für die Schlüsselrollen vertretbar, weil das Projektvolumen reduziert wurde; die Begründung steht in Z3 6.1. Offen bleibt die Verteilung je Person und PI. |
+| Stunden je Rolle (Z3 Abschnitt 6.1) | Skaliert mit dem Faktor 0.7 aus Version 0.2; Durchschnittspensum = Stunden / (16 Monate × 160 h). Die Pensen liegen zwischen 10 % und 30 %. | **Entschieden 02.10.2026:** Pensen in dieser Höhe sind für die Schlüsselrollen vertretbar, weil das Projektvolumen reduziert wurde; die Begründung steht in Z3 6.1. Offen bleibt die Verteilung je Person und PI. **Rechnung geprüft 02.10.2026:** Basis sind 16 Monate (fünf PI zu drei Monaten plus Abschlussmonat) × 160 h = 2'560 h je Vollzeitstelle; Rollenstunden 280 + 250 + 765 + 560 + 385 + 315 = 2'555 h, plus Reserve 245 h = 2'800 h. Wer nur mit den 15 Monaten der fünf PI rechnet, kommt auf weniger Stunden; die Basis steht jetzt ausdrücklich in Z3 6.1. Die tatsächliche Verfügbarkeit der Personen ist separat zu bestätigen. |
 | Maximalaufwand 2'800 h statt 4'000 h (C2 Kapitel 1 und 6.5, Z3 Abschnitte 1, 6, 15) | Als verbindlicher Maximalaufwand der Anbieterin formuliert. | Die Fragen, ob eine geringere Stundenmenge angeboten werden kann und wie sie im Preisblatt und bei Z1 abgebildet wird, sind unbeantwortet (FAQ 61–63, 151, 169; verwandt 145–148). FAQ 59 nennt die 4'000 h die «einheitliche Bewertungs- und Kostendachgrundlage», FAQ 137 verlangt alle Muss-Anforderungen innerhalb von LP1a. Vor Abgabe klären: Darstellung im Preisblatt C3, und ob eine Stundenangabe im Lösungskonzept (Z2) zulässig ist oder als Preisangabe gilt (Teil A liegt nicht im Repository). |
 | Stundensatz | In Version 0.2 des Plans stand «CHF 115/h = CHF 460'000». Der Satz ist aus dem Plan entfernt; Preise gehören ins Preisblatt. | Stundensatz im Preisblatt C3. |
 | ELO (C2 Kapitel 1, 3.1, 6.5; Z3 Abschnitt 1) | «Die Technologiepartnerin hat ELO entwickelt»; beide Seiten der Schnittstelle sind ihr bekannt. Die Schnittstelle selbst (slm 28–30) ist **nicht umgesetzt** und so ausgewiesen (Matrix Status Z). | Aussage zur ELO-Urheberschaft mit Referenz belegen. FAQ 17 und 177: Die ELO-seitige Spezifikation verantwortet die Auftraggeberin «unter Zuzug der ELO-Entwicklerfirma» – die Doppelrolle im Angebot offenlegen. **Entschieden 02.10.2026:** Der Status Z für slm 28–30 bleibt in der Matrix; Datenmodell und Validierungsregeln sind vorhanden, die Endpunkte werden in LP1 gebaut. |
@@ -47,7 +47,7 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 | Weitere Artikelnummern im Plan | Art. 2.3.4 (PI-Angebote), 2.11.1 (Termin 30.06.2028), 2.15 (Change Requests), 3.1 (Vergütung) | Nur über FAQ 50, 51, 59 und 69 belegt; im Rahmenvertrag gegenprüfen. |
 | Hosting (C2 Kapitel 2.5) | «100 % der Daten in der Schweiz, einschliesslich Sicherungen, Quellcode und Entwicklungsdaten»; Anforderungen ISO 27001 und Si001; zweiter Schweizer Standort für die Sicherung. | Mit dem gewählten Anbieter belegen (Standortbestätigung, Zertifikat, Vertrag). Der Prototyp-Quellcode liegt heute auf GitHub.com; der Umzug auf das selbst betriebene GitLab steht aus (E1 Kapitel 6.1, 10). |
 | KI- und Entwicklungswerkzeuge (C2 Kapitel 6.3) | Regel nach FAQ 157, 160, 172: Werkzeuge ausserhalb der Schweiz nur ohne produktive oder reale Fachdaten und ohne schützenswerte Projektinformationen. | Entscheid in E1 Kapitel 6.2 ist offen; E1 und C2 müssen dieselbe Regel nennen. FAQ 53 ist unbeantwortet. |
-| Datenhaltungskonzept E1 | C2 sagt: [PLATZHALTER FIRMA] und die Technologiepartnerin legen je ein eigenes Konzept vor (FAQ 132). | `E1-Datenhaltungskonzept-SLIM.md` ist noch Entwurf 0.1 für eine einzelne Anbieterin: Subunternehmen eintragen, zweites Konzept erstellen, Kapitel 6.2 an C2 angleichen. |
+| Datenhaltungskonzept E1 | C2 sagt: [PLATZHALTER FIRMA] und die Technologiepartnerin legen je ein eigenes Konzept vor (FAQ 132). | **Erledigt 02.10.2026:** zwei Konzepte (`E1-Datenhaltungskonzept-Generalunternehmerin.md`, `E1-Datenhaltungskonzept-Technologiepartnerin.md`); offene Angaben im Abschnitt «E1 – Datenhaltungskonzepte» unten. C2 6.3 an die KI-Regel der Konzepte angleichen. |
 | Barrierefreiheit (C2 Kapitel 5.4) | SLIM **orientiert sich** an eCH-0059 / WCAG 2.1 AA (Tastaturbedienung, Kontraste), in Anlehnung an die Richtlinien der armasuisse. | **Entschieden 02.10.2026:** keine verbindliche Konformitätszusage und kein Audit, weil die Auftraggeberin nach FAQ 9 und 128 keine speziellen Anforderungen stellt. Die Zusagen zu Tagged PDF, Screenreader-Prüfung und automatisierter Prüfung im Build sind gestrichen. |
 | FGDB über GDAL (C2 Kapitel 2.2, 3.2, 6.5; Z3 M2) | Verbindliche Zusage: Lesen und Schreiben über GDAL, Validierung zu Projektbeginn mit den Testdaten von KOMZ Lärm. | Im Prototyp nicht erprobt (JSON statt FGDB, GDAL nicht installiert, keine Beispiel-FGDB). Schema wird erst im Projekt festgelegt (FAQ 99, 176). Konvertierungsweg bei Lücken (Werkzeug, Lizenzen, Aufwand) ist nicht konkretisiert. |
 | PostgreSQL/PostGIS | Als erste Aufgabe in LP1 zugesagt (C2 2.2, 6.5; Z3 M2). In Version 0.3 stand «wird vor Abgabe nachgezogen». | Der Start gegen PostgreSQL ist weiterhin durch die Typzuordnung in `@app-galaxy/*` blockiert. |
@@ -66,7 +66,7 @@ Abnahmeprotokolls abgeglichen. P bezeichnet den beschriebenen Umsetzungsstand, k
 
 - Neu P: slm 2 (Kartenviewer; massstabstreuer Server-Druck steht aus), slm 17 (Anzeige gemäss FAQ 52), slm 33 (A7X als
   Standard, Kernversion 1.4.0). Bereits P und bestätigt: slm 1, 5, 27, 53.
-- Von T auf Z zurückgestuft, weil die Funktion selbst fehlt: slm 9 (Seite 5.10), slm 28 und 29 (ELO-Endpunkte).
+- Von T auf Z zurückgestuft, weil die Funktion selbst fehlt: slm 28 und 29 (ELO-Endpunkte); slm 9 (Seite 5.10) ist seit dem 02.10.2026 umgesetzt und wieder P.
 - Von P auf T zurückgestuft: slm 21 (Grundlage JSON statt FGDB).
 - Unverändert offen: slm 3 (Export erst in zwei Tabellen), 19, 20, 26, 36–41, 57.
 - Die bewussten Abweichungen (ein Farbsatz für beide Ampeln, feste Vergleichsoperatoren, fest bleibende Auswahllisten,
@@ -110,3 +110,42 @@ Matrix 2 Seiten, Summary 22 Textzeilen. Die Vorschau ersetzt Bilder durch Fläch
 der Word-Paginierung und der Lesbarkeit der Diagramme; auf diesem Rechner ist kein Word installiert. Die Word-Datei vor
 der Abgabe in Word öffnen, Inhaltsverzeichnis aktualisieren und die Seitenzahl nachzählen. Eine Seitenvorgabe für den
 Projektplan (Z3) ist im Repository nicht belegt; die Vorschau zählt 11 Seiten.
+
+## E1 – Datenhaltungskonzepte (Stand 02.10.2026)
+
+Zwei Dokumente statt eines: `E1-Datenhaltungskonzept-Generalunternehmerin.md` und
+`E1-Datenhaltungskonzept-Technologiepartnerin.md`. Dieser Abschnitt sammelt, was intern zu prüfen und vor der Abgabe
+einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
+
+**Dringend, weil E1 ab der Eingabefrist gilt**
+
+| Punkt | Stand | Zu tun |
+| --- | --- | --- |
+| Quellcode auf GitHub.com | nicht in der Schweiz | vor der Eingabefrist auf das eigene GitLab in der Schweiz umziehen, GitHub-Repository löschen, Datum und Beleg ins Konzept der Technologiepartnerin (Kapitel 10, Nr. 1) |
+| Pipeline auf GitHub Actions | nicht in der Schweiz | vor der Eingabefrist verlegen (Nr. 2) |
+| Datum der Eingabefrist | `[OFFEN: Datum der Eingabefrist]` in beiden Konzepten | eintragen |
+| KI-Werkzeuge | deklariert sind Claude Code (Anthropic) und die Vorübersetzung über die OpenAI-API | Liste vervollständigen, Vertragsgrundlagen beilegen; entscheiden, ob die Vorübersetzung weiter verwendet wird |
+
+**Quellen, die im Repository fehlen**
+
+| Punkt | Bemerkung |
+| --- | --- |
+| Wortlaut von E1 (Teil A) | Der Geltungsbeginn «ab Eingabefrist» ist aus der Rückmeldung zum Entwurf übernommen; Teil A liegt nicht im Repository. Am Originaltext prüfen. |
+| Antwort auf FAQ 53 vom 02.10.2026 | `FAQ-Export.md` hat den Stand 01.10.2026 und führt FAQ 53 als offen. Die Konzepte geben die Antwort so wieder, wie sie in der Rückmeldung beschrieben ist (Deklaration von Art, Umfang und Verwendung; Vorgaben GS-VBS; vertragliche Regelung). Den Export vom 02.10. einspielen und den Wortlaut prüfen. |
+| Formvorgaben für das Konzept (Teil C) | nicht geprüft |
+
+**Einzutragen (Platzhalter in den Konzepten)**
+
+- Beide: verantwortliche Person und Funktion; Datum der Eingabefrist.
+- Generalunternehmerin: Hosting-Anbieter und Rechenzentren; zweiter Backup-Standort; SMTP-Anbieter;
+  Monitoring-Produkt; Werkzeuge für Backlog, Tickets, Dokumentation und Dateiaustausch; Ablage der Importdateien;
+  Standort der Demo-Instanz; Standort des Supports und Fernzugriff aus dem Ausland ja/nein; Schlüsselverwaltung beim
+  Hosting-Anbieter und dessen Verfahren für administrative Zugriffe; KI-Werkzeuge der Generalunternehmerin oder
+  «keine»; Frist für Offline-Entwürfe (Vorschlag 7 Tage); Aufbewahrungsfristen für Logs und Support-Daten.
+- Technologiepartnerin: Firmenname; Standort der GitLab- und Nexus-Instanz mit Beleg; gehostete Entwicklungsumgebung
+  ja/nein; Verträge zu den KI-Werkzeugen; Sicherung der Entwicklungssysteme (Ort, Aufbewahrung); Frist für
+  Build-Artefakte und Pipeline-Logs.
+
+**Abgleich mit C2**
+
+C2 Kapitel 6.3 muss dieselbe KI-Regel und dieselbe Aufteilung der Parteien nennen wie die beiden Konzepte.

@@ -73,6 +73,12 @@
     box-shadow: none;
   }
 
+  // The room names are long («Zielrm / Stellungsrm Fendershuus, A 2 rechts»): let them wrap so the
+  // three columns of B1 Abbildung 28 fit the card without horizontal scrolling.
+  &__name {
+    white-space: normal;
+  }
+
   &__num {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;

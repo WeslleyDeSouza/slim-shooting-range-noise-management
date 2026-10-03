@@ -72,14 +72,19 @@ export class SimulationFacade extends SignalStore<SimulationState> {
   });
   readonly totals = computed(() => {
     const { base, values } = this.state();
-    const sum = (key: 'inside' | 'outside', source: SimulationValues) =>
-      Object.values(source).reduce((total, v) => total + v[key], 0);
+    const sum = (key: 'inside' | 'outside', source: SimulationValues, unit = 'shots') =>
+      (base?.rows ?? []).reduce((total, row) => total +
+        ((row.quantityUnit ?? 'shots') === unit ? (source[rowKey(row)]?.[key] ?? 0) : 0), 0);
     const baseValues = toValues(base);
     return {
       inside: sum('inside', values),
       outside: sum('outside', values),
       baseInside: sum('inside', baseValues),
       baseOutside: sum('outside', baseValues),
+      insideKg: sum('inside', values, 'kg'),
+      outsideKg: sum('outside', values, 'kg'),
+      baseInsideKg: sum('inside', baseValues, 'kg'),
+      baseOutsideKg: sum('outside', baseValues, 'kg'),
     };
   });
 

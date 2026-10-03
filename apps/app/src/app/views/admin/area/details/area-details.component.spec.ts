@@ -250,6 +250,26 @@ describe('AreaDetailsComponent', () => {
     expect(facade.load).toHaveBeenCalledWith('area-1', { calculationId: CALC_SANITISED.id });
   }));
 
+  it('uses three representative years, rejects duplicates and switches back to a date period', () => {
+    const input = el<HTMLInputElement>('[data-testid="details-years"]');
+    input.value = '2025, 2020, 2023';
+    input.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(facade.load).toHaveBeenLastCalledWith('area-1', { years: '2020,2023,2025' });
+    facade.load.mockClear();
+    input.value = '2020, 2020, 2025';
+    input.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(facade.load).not.toHaveBeenCalled();
+    const date = el<HTMLInputElement>('input[type="date"]');
+    date.value = '2022-01-01';
+    date.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+    expect(facade.load).toHaveBeenLastCalledWith('area-1', { from: '2022-01-01' });
+    expect(input.value).toBe('');
+  });
+
   it('shows the delta and the note when another state is viewed', () => {
     const other = assessment({
       calculation: CALC_SANITISED,

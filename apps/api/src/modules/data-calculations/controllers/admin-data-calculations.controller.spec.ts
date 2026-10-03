@@ -262,6 +262,39 @@ describe('AdminDataCalculationsController (HTTP)', () => {
     await api.http().post(`${base()}/state/${stateId}/operating-data`).send({ annex: 8, text: 'x' }).expect(400);
   });
 
+  it('preserves every imported state object and receiver attribute through an HTTP round trip', async () => {
+    const input = stateFile({
+      calculation: { name: 'Roundtrip Metadaten', supplier: 'Büro', deliveredAt: '2026-10-03', fgdbStateMpv: 'MPV', fgdbStateIst: 'IST', mpvMeasures: true, istObstacles: false, istHighScreens: true, immissionPointCount: 1, civilUse: true, shootingHousePresent: true },
+      state: { externalId: 'roundtrip-1', name: 'Vollständiger Export', referenceYear: 2026 },
+      propagation: { model: 'sonX', modelVersion: '4.0', meteoIncluded: true, meteoCount: 4, reflectionIncluded: true, primarySurfaces: 'Boden' },
+      perimeter: { name: 'Perimeter', geometry: 'POLYGON((0 0,1 0,1 1,0 0))' },
+      buildings: [{ egid: '12345', address: 'Testweg 1', persons: 8, geometry: 'POLYGON Z ((0 0 1,1 0 1,1 1 1,0 0 1))' }],
+      immissionPoints: [{ sonarmsId: 'H1', egid: '12345', address: 'Testweg 1', sensitivityLevel: 'II', pointNo: 3, deliveredLr: 57.2, operation: 'Tag', deliveredAssessment: '>PW', remark: 'Original', geometry: 'POINT Z (1 2 3)' }],
+      obstacles: [{ coordinationSectionNo: 'HTTP.01', measureType: 'Wand', surfaceType: 'absorbierend', remark: 'Wand', geometry: 'LINESTRING (0 0,1 1)' }],
+      highScreens: [{ coordinationSectionNo: 'HTTP.01', bottomHeight: 503.2, surfaceType: 'Beton', remark: 'Blende' }],
+      shootingHouses: [{ coordinationSectionNo: 'HTTP.01', remark: 'Haus', attributes: { houseHeight: 505, houseDepth: 4, ridgeDistance: 2, ridgeHeight: 506, leftScreenLength: 3, leftScreenHeight: 504, rightScreenLength: 5, rightScreenHeight: 505, houseMaterial: 'Holz', leftScreenMaterial: 'Beton', rightScreenMaterial: 'Holz' } }],
+      measuresPoint: [{ coordinationSectionNo: 'HTTP.01', measureType: 'Tunnel', remark: 'Punkt', geometry: 'POINT (1 2)' }],
+      measuresArea: [{ coordinationSectionNo: 'HTTP.01', measureType: 'Rasterdecke', remark: 'Fläche', attributes: { width: 10, length: 20, height: 4, spacingAcross: 2, spacingAlong: 3, depth: 0.5 } }],
+      measuresOperational: [{ coordinationSectionNo: 'HTTP.01', measureType: 'Reduktion' }],
+      measuresSsf: [{ egid: '12345', coordinationSectionNo: 'HTTP.01', measureType: 'Fenster' }],
+      isophones: [{ lr: 60, height: 4, resolution: 5, remark: 'Kurve', geometry: 'LINESTRING (0 0,1 1)' }],
+      affectedAnalysis: { personsPwIgw: 1, personsIgwAw: 2, personsAw: 3, persons55: 4, persons60: 5, year: 2026, spmNo: '02218', remark: 'Analyse' },
+    });
+    const imported = await api.http().post(`${base()}/import`).send({ state: input }).expect(201);
+    const exportedResponse = await api.http().post(`${base()}/export/states`).send({ stateIds: [imported.body.stateId] }).expect(200);
+    const exported: StateImportDto = JSON.parse(exportedResponse.text).states[0];
+    for (const key of ['calculation', 'propagation', 'perimeter', 'buildings', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf', 'isophones', 'affectedAnalysis', 'immissionPoints'] as const) {
+      expect(input[key]).toBeDefined();
+      expect(exported[key]).toMatchObject(input[key] as object);
+    }
+    const copy = { ...exported, state: { ...exported.state, name: 'Wiederimport', externalId: 'roundtrip-2' } };
+    const reimported = await api.http().post(`${base()}/import`).send({ state: copy }).expect(201);
+    expect(reimported.body.counts).toEqual(imported.body.counts);
+    const secondResponse = await api.http().post(`${base()}/export/states`).send({ stateIds: [reimported.body.stateId] }).expect(200);
+    const second: StateImportDto = JSON.parse(secondResponse.text).states[0];
+    expect({ ...second, state: exported.state }).toEqual(exported);
+  });
+
   it('exports the chosen states as an importable JSON bundle and the Schusszahlen as CSV (5.20)', async () => {
     const stateId = (globalThis as { httpStateId?: string }).httpStateId as string;
     const bundle = await api.http().post(`${base()}/export/states`).send({ stateIds: [initial().id, stateId] }).expect(200);

@@ -160,6 +160,16 @@
     }
   }
 
+  &__sort {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    padding: 0;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
   &__th {
     cursor: pointer;
     user-select: none;

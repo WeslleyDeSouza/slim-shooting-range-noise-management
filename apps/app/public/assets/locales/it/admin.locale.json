@@ -589,7 +589,8 @@
       "toast_updated": "{{kind}} salvato/a.",
       "toast_deleted": "{{kind}} «{{name}}» eliminato/a.",
       "toast_deactivated": "«{{name}}» è ora inattivo.",
-      "toast_exported": "Esportazione avviata."
+      "toast_exported": "Esportazione avviata.",
+      "link_missing": "Il record collegato non è stato trovato o non è accessibile."
     },
     "dm_calc": {
       "tabs": "Calcoli",
@@ -716,7 +717,7 @@
       "select_none": "Annullare la selezione",
       "selected_count": "{{n}} selezionati",
       "new_state": "Creare un nuovo stato di calcolo",
-      "export_geodb": "Esportare GeoDB",
+      "export_geodb": "Esportare JSON",
       "export_geodb_hint": "Gli stati selezionati vengono esportati come file JSON nella struttura del file di calcolo (reimportabile). L'output come geodatabase seguirà con GDAL.",
       "shots_export_title": "Esportare il numero di colpi",
       "col_year": "Anno civile",

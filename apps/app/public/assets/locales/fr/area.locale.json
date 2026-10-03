@@ -180,7 +180,11 @@
       "period_to": "au",
       "period_to_label": "Période considérée jusqu’au",
       "note_current": "Vous voyez les niveaux de la base actuellement valable ({{name}}).",
-      "note_other": "Vous voyez les niveaux sur la base de {{name}}. La base actuellement valable est {{current}} ; les écarts sont signalés ci-dessous par point de réception."
+      "note_other": "Vous voyez les niveaux sur la base de {{name}}. La base actuellement valable est {{current}} ; les écarts sont signalés ci-dessous par point de réception.",
+      "years": "Trois années représentatives",
+      "years_help": "Saisissez trois années différentes. Cette sélection remplace la période ci-dessus ; effacez-la pour réutiliser la période.",
+      "years_error": "Veuillez saisir trois années différentes entre 1900 et 2200.",
+      "years_active": "Calcul pour les années"
     },
     "build_year": {
       "before1985": "Avant 1985",
@@ -203,7 +207,7 @@
     "map_label": "Carte schématique de la place de tir avec les points de réception",
     "legend": {
       "ok": "Respecté",
-      "warn": "À vérifier (réserve ≤ 5 dB)",
+      "warn": "À vérifier (réserve < 5 dB)",
       "over": "Dépassé",
       "none": "Pas de calcul",
       "incomplete": "Non évaluable (utilisations sans source dans l’état)"
@@ -305,7 +309,7 @@
     "map_title": "Valeurs limites par point de réception",
     "map_alt": "Carte schématique de la place de tir avec les points de réception",
     "pin_label": "Point de réception {{code}}",
-    "legend_warn": "À vérifier (réserve ≤ 5 dB)",
+    "legend_warn": "À vérifier (réserve < 5 dB)",
     "mode_current": "État actuel {{year}}",
     "mode_sim": "Simulation (état actuel en ombre)",
     "ghost_title": "Actuel : {{value}}",
@@ -338,7 +342,9 @@
       "stale": "Résultat obsolète"
     },
     "state_hint": "Aucune modification. Remplacez des valeurs pour lancer une simulation.",
-    "state_changed": "<b>{{n}}</b> valeurs modifiées · total <b>{{total}}</b> coups ({{pct}} % par rapport à l’actuel)",
+    "state_changed": "<b>{{n}}</b> valeurs modifiées · total",
+    "quantity_unit": "Unité",
+    "schematic": "Représentation schématique – pas une carte géographique",
     "reset": "Réinitialiser",
     "run": "Lancer la simulation",
     "export": {

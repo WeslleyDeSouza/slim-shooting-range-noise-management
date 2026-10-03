@@ -137,7 +137,7 @@
   },
   "placeholder": {
     "title": "In Vorbereitung",
-    "text": "Dieser Bereich wird gemäss Sitemap (docs/architecture/sitemap.md) umgesetzt."
+    "text": "Diese Funktion steht noch nicht zur Verfügung."
   },
   "status_area": {
     "ok": "Eingehalten",

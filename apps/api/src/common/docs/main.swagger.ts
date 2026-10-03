@@ -37,7 +37,7 @@ export function setupSwagger(app: INestApplication, path = 'docs'): void {
   });
 
   if (process.env['APP_ENV'] === 'production') return;
-  if (process.env['API_SWAGGER_GENERATE_CLIENT'] === '0') return;
+  if (process.env['API_SWAGGER_GENERATE_CLIENT'] === '0' && process.env['API_SWAGGER_SPEC_ONLY'] !== '1') return;
 
   const logger = new Logger('Swagger');
   try {
@@ -46,9 +46,8 @@ export function setupSwagger(app: INestApplication, path = 'docs'): void {
     // Strip the "Controller" suffix so generated service names read
     // `RangesService`, not `RangesControllerService`.
     writeFileSync(file, JSON.stringify(document).replace(/Controller/g, ''));
-    logger.log(
-      `Spec written to ${SWAGGER_SPEC_FILE}, generating @ui-slim/apiClient …`,
-    );
+    logger.log(`Spec written to ${SWAGGER_SPEC_FILE}`);
+    if (process.env['API_SWAGGER_GENERATE_CLIENT'] === '0') return;
 
     exec(
       'npm run ng-swagger',

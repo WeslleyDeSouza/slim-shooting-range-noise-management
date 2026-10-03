@@ -5,6 +5,7 @@ import { apiErrorMessage } from '../store/api-error';
 import { SignalStore } from '../store/signal-store';
 
 export interface AssessmentQuery {
+  years?: string;
   calculationId?: string;
   from?: string;
   to?: string;

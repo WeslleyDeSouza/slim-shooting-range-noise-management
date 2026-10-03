@@ -119,8 +119,20 @@ describe('SimulationFacade', () => {
     expect(facade.values()).toEqual({ 'r1|c1': { inside: 1000, outside: 100 }, 'r1|c2': { inside: 50, outside: 0 } });
     expect(facade.dirty()).toBe(false);
     expect(facade.changedCount()).toBe(0);
-    expect(facade.totals()).toEqual({ inside: 1050, outside: 100, baseInside: 1050, baseOutside: 100 });
+    expect(facade.totals()).toEqual({ inside: 1050, outside: 100, baseInside: 1050, baseOutside: 100,
+      insideKg: 0, outsideKg: 0, baseInsideKg: 0, baseOutsideKg: 0 });
     expect(facade.loading()).toBe(false);
+  });
+
+  it('scales and resets mixed units without adding kilograms to shots', async () => {
+    api.adminCalculationSimulationBase.mockReturnValue(of({ ...BASE, rows: [BASE.rows[0],
+      { ...BASE.rows[1], quantityUnit: 'kg', inside: 12.5, outside: 0 }] }));
+    await facade.load('a1', 2026);
+    facade.scaleAll(1.5);
+    expect(facade.totals()).toEqual({ inside: 1500, outside: 150, baseInside: 1000, baseOutside: 100,
+      insideKg: 18.75, outsideKg: 0, baseInsideKg: 12.5, baseOutsideKg: 0 });
+    facade.reset();
+    expect(facade.totals()).toMatchObject({ inside: 1000, outside: 100, insideKg: 12.5 });
   });
 
   it('setValue clamps negatives, keeps three decimals, and counts the changed cells', async () => {

@@ -130,6 +130,7 @@
                 <td [attr.data-label]="'simulation.columns.weapon' | translate">
                   <span>{{ row.weapon }}</span>
                   <small class="sim__small">{{ row.caliber }}</small>
+                  <small class="sim__small">{{ (row.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') | translate }}</small>
                 </td>
                 @for (key of ['inside', 'outside']; track key) {
                   <td
@@ -178,18 +179,18 @@
               <tr class="sim__foot">
                 <td colspan="3">{{ 'simulation.total_rows' | translate: { n: rows().length } }}</td>
                 <td class="slim-table__cell--num">
-                  {{ fmt(totals().inside) }}
+                  <app-quantity [shots]="totals().inside" [kg]="totals().insideKg" />
                   @if (totals().inside !== totals().baseInside) {
                     <span class="sim__delta" [class.sim__delta--down]="totals().inside < totals().baseInside">
-                      {{ signedInt(totals().inside - totals().baseInside) }}
+                      {{ signedInt(totals().inside - totals().baseInside) }} {{ 'shots.unit_shots' | translate }}
                     </span>
                   }
                 </td>
                 <td class="slim-table__cell--num">
-                  {{ fmt(totals().outside) }}
+                  <app-quantity [shots]="totals().outside" [kg]="totals().outsideKg" />
                   @if (totals().outside !== totals().baseOutside) {
                     <span class="sim__delta" [class.sim__delta--down]="totals().outside < totals().baseOutside">
-                      {{ signedInt(totals().outside - totals().baseOutside) }}
+                      {{ signedInt(totals().outside - totals().baseOutside) }} {{ 'shots.unit_shots' | translate }}
                     </span>
                   }
                 </td>
@@ -307,9 +308,10 @@
                 }
               </div>
             </slim-map-viewer>
-          } @else {
+          } @else if (calculation() && receivers().length) {
             <!-- Fallback: schematic map (map library not available, or a state without coordinates). -->
             <div class="slim-map sim__map" data-kind="schematic">
+              <p>{{ 'simulation.schematic' | translate }} · {{ mapTitle() }}</p>
               <svg
                 class="slim-map__canvas sim__canvas"
                 viewBox="0 0 600 480"
@@ -331,7 +333,6 @@
                 <path class="sim__wood" d="M20 40 L140 30 L170 120 L60 150 Z" fill="url(#sim-hatch)" />
                 <path class="sim__wood" d="M420 360 L560 330 L590 450 L450 480 Z" fill="url(#sim-hatch)" />
                 <path class="sim__areal" d="M150 190 L330 160 L370 290 L300 330 L170 310 Z" />
-                <text class="sim__label sim__label--areal" x="260" y="250" text-anchor="middle">SPM</text>
                 <g class="sim__buildings">
                   <rect x="225" y="215" width="30" height="16" />
                   <rect x="265" y="235" width="18" height="12" />
@@ -341,8 +342,6 @@
                   <rect x="120" y="415" width="18" height="12" />
                   <rect x="60" y="220" width="16" height="11" />
                 </g>
-                <text class="sim__label" x="528" y="120">Lattigen</text>
-                <text class="sim__label" x="140" y="455">Laberhus</text>
                 <path class="sim__road" d="M0 320 C120 290 250 350 380 310 S520 270 600 290" />
               </svg>
 
@@ -505,7 +504,8 @@
         {{ stateKey() | translate }}
       </span>
       @if (dirty()) {
-        <span [innerHTML]="'simulation.state_changed' | translate: { n: changedCount(), total: fmt(totals().inside + totals().outside), pct: (totalPercent() > 0 ? '+' : '') + totalPercent() }"></span>
+        <span [innerHTML]="'simulation.state_changed' | translate: { n: changedCount() }"></span>
+        <app-quantity [shots]="totals().inside + totals().outside" [kg]="totals().insideKg + totals().outsideKg" />
       } @else {
         <span>{{ 'simulation.state_hint' | translate }}</span>
       }

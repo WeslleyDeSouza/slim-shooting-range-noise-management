@@ -17,6 +17,8 @@ import { ReceiverAssessmentDto, StateImportDto } from './dto';
 import { BuildingEntity, CalculationRunEntity, AreaCalculationEntity, AreaWlrEntity, ImmissionPointEntity, PlantPartEntity, SourceLineEntity } from './entities';
 import { ImportAbortedException, ImportService } from './import.service';
 import { SettingsModule } from '../settings/settings.module';
+import { SettingsService } from '../settings/settings.service';
+import { SimulationService } from './simulation.service';
 
 const NOW = new Date(2026, 11, 31);
 const PERIOD = { from: '2026-01-01', to: '2026-12-31', now: NOW };
@@ -136,6 +138,50 @@ describe('State isolation (B1 Kap. 10, slm 42–45)', () => {
     } finally {
       spy.mockRestore();
       await repo.update({ id: victim.id }, { quantity: victim.quantity });
+    }
+  });
+
+  it('never promotes a draft implicitly, but still permits its explicit assessment', async () => {
+    const repo = dataSource.getRepository(AreaCalculationEntity);
+    const current = await repo.findOneByOrFail({ tenantId: mockTenantId, areaId: geissalpId, isCurrent: true });
+    await repo.update({ id: current.id }, { isCurrent: false, currentKey: null });
+    try {
+      const result = await assessment.assess(mockTenantId, geissalpId, PERIOD);
+      expect(result.current).toBeNull();
+      expect(result.calculation).toBeNull();
+      expect(result.receivers).toEqual([]);
+      expect(result.operatingData.length).toBeGreaterThan(0);
+      const explicit = await assessment.assess(mockTenantId, geissalpId, { ...PERIOD, calculationId: current.id });
+      expect(explicit.current).toBeNull();
+      expect(explicit.calculation?.id).toBe(current.id);
+      expect(explicit.receivers.length).toBeGreaterThan(0);
+      const simulation = await module.get(SimulationService).base(mockTenantId, geissalpId, 2026);
+      expect(simulation.calculation).toBeNull();
+      expect(simulation.receivers).toEqual([]);
+      expect((await calculations.mapOf(mockTenantId, geissalpId)).calculationId).toBeNull();
+    } finally {
+      await repo.update({ id: current.id }, { isCurrent: true, currentKey: current.currentKey });
+    }
+  });
+
+  it('stores the thresholds actually used even if settings change before persistence', async () => {
+    const settings = module.get(SettingsService);
+    const before = await settings.get(mockTenantId);
+    const thresholds = await settings.thresholds(mockTenantId);
+    const original = assessment.assess.bind(assessment);
+    const spy = vi.spyOn(assessment, 'assess').mockImplementationOnce(async (...args) => {
+      const result = await original(...args);
+      await settings.update(mockTenantId, { noiseGreenMaxDb: -20, noiseOrangeMaxDb: 10 });
+      return result;
+    });
+    try {
+      const run = await runs.run(mockTenantId, geissalpId, PERIOD, 'settings-concurrency-test');
+      const stored = await dataSource.getRepository(CalculationRunEntity).findOneByOrFail({ id: run.id });
+      expect(JSON.parse(stored.parameters).thresholds).toEqual(thresholds);
+      expect(await settings.thresholds(mockTenantId)).not.toEqual(thresholds);
+    } finally {
+      spy.mockRestore();
+      await settings.update(mockTenantId, { noiseGreenMaxDb: before.noiseGreenMaxDb, noiseOrangeMaxDb: before.noiseOrangeMaxDb });
     }
   });
 

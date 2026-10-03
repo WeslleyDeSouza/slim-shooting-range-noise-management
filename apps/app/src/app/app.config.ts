@@ -26,6 +26,7 @@ import { ApiConfiguration } from '@ui-slim/apiClient';
 import { APP_LANGUAGES } from '@slim/shared';
 
 import { routes } from './app.routes';
+import { browserLanguage } from './core/settings/browser-language';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -48,9 +49,9 @@ export const appConfig: ApplicationConfig = {
     // i18n (ELO pattern): sections live in apps/app/public/assets/locales/
     // <lang>/<section>.locale.json. `common` and `forms` are loaded on start,
     // feature sections via `resolve: LocaleResolver.default` + `data.path`.
-    // Language choice persists in localStorage `app.lang`, default `de`.
+    // Explicit choice in `app.lang` wins; first visit follows the browser.
     provideTranslate({
-      language: 'de',
+      language: browserLanguage(),
       // `help`: the kontextsensitive Hilfe must answer at once on every page (slm 53).
       initialLocalesFiles: ['common', 'forms', 'help'],
       languages: LANGUAGES_CONSTANTS.LANGUAGE_DEFAULT_IDS_APP.filter((lang) =>

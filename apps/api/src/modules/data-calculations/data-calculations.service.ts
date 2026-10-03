@@ -29,6 +29,7 @@ import { ImportService } from '../calculation/import.service';
 import { AreaUsageEntity } from '../usage/entities';
 import { quantitiesOf, sumQuantities, UsageService } from '../usage/usage.service';
 import { CalculationFilesService, ShotCsvRow, StateBundle, StateExportModel } from './calculation-files.service';
+import { exportStateObjects } from './export-state-objects';
 import {
   CalculationsOverviewDto,
   DeliveryCreateDto,
@@ -577,12 +578,21 @@ export class DataCalculationsService {
     ]);
     const roomName = new Map(rooms.map((r) => [r.id, r.name]));
     return {
+      objects: await exportStateObjects(this.dataSource, tenantId, state.id),
       calculation: {
         name: state.calculation?.name ?? '',
         supplier: state.calculation?.supplier ?? '',
         deliveredAt: state.calculation?.deliveredAt ?? '',
         description: state.calculation?.description ?? null,
         fileName: state.calculation?.fileName ?? null,
+        fgdbStateMpv: state.calculation?.fgdbStateMpv ?? null,
+        fgdbStateIst: state.calculation?.fgdbStateIst ?? null,
+        mpvMeasures: state.calculation?.mpvMeasures == null ? null : Boolean(state.calculation.mpvMeasures),
+        istObstacles: state.calculation?.istObstacles == null ? null : Boolean(state.calculation.istObstacles),
+        istHighScreens: state.calculation?.istHighScreens == null ? null : Boolean(state.calculation.istHighScreens),
+        immissionPointCount: state.calculation?.immissionPointCount ?? null,
+        civilUse: state.calculation?.civilUse == null ? null : Boolean(state.calculation.civilUse),
+        shootingHousePresent: state.calculation?.shootingHousePresent == null ? null : Boolean(state.calculation.shootingHousePresent),
       },
       state: { externalId: state.externalId, name: state.name, referenceYear: state.referenceYear, isCurrent: Boolean(state.isCurrent), isMgdm: Boolean(state.isMgdm) },
       plantParts: parts.map((p) => ({
@@ -610,6 +620,11 @@ export class DataCalculationsService {
           : null,
       })),
       points: points.map((p) => ({
+        pointNo: p.pointNo,
+        deliveredLr: p.deliveredLr,
+        operation: p.operation,
+        deliveredAssessment: p.deliveredAssessment,
+        remark: p.remark,
         id: p.id,
         sonarmsId: p.sonarmsId,
         code: p.code,

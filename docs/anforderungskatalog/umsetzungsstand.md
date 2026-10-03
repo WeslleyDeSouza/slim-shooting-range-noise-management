@@ -1,8 +1,18 @@
 # Umsetzungsstand Prototyp SLIM
 
-**Stand:** 02.10.2026 (erstellt am 12.09.2026; Einträge ohne Datum beschreiben den Stand vom 12.09.2026, spätere
+**Stand:** 03.10.2026 (erstellt am 12.09.2026; Einträge ohne Datum beschreiben den Stand vom 12.09.2026, spätere
 Änderungen tragen ihr Datum) · **Zweck:** was läuft, was fehlt, was zu entscheiden ist. Lesehilfe zu den Beilagen: [index.md](index.md); Roadmap:
 [../projects/prototyp-roadmap.md](../projects/prototyp-roadmap.md).
+
+## Fachlicher Retest und Korrekturen vom 03.10.2026
+
+Lokal umgesetzt und geprüft: keine implizite Entwurfsauswahl ohne Aktuell-Zeiger; vollständiger JSON-Zustandsexport mit Import/Export/Reimport-Test; Snapshot der tatsächlich verwendeten Ampelschwellen; drei repräsentative Jahre in der Detailmaske und im Export; Waffen-Stammdatensätze per Deep Link; Browsersprache beim ersten Start; Lesemodus der Schusszahlenseite. Deployment wird durch den E2E-Job abgesichert.
+
+Aus dem gelieferten Browser-Retest zusätzlich korrigiert: Schuss und kg werden in der Simulation getrennt summiert und ausgegeben, Export mit Einheitsspalte; Warnlegende mit Reserve < 5 dB; keine festen Geissalp-Ortsnamen in Kartenfallbacks, keine schematische Simulationskarte ohne Grundlage; Exportbutton nennt das tatsächliche JSON-Format. Schusszahlensortierung erfolgt über fokussierbare Buttons; Exportselektion bleibt auch bei Leserechten möglich. Interner Dokumentpfad aus Platzhaltern entfernt.
+
+Prüfung: **438 API-Tests, 303 Oberflächen-Tests, 27 Kartentests und 2 separate Review-Regressionen bestanden; Lint und API-/App-Build erfolgreich.** Die Schusszahlensuite wurde nach der letzten Sortier-/Selektionskorrektur nochmals geprüft. API-Client aus dem aktualisierten OpenAPI-Vertrag generiert; der dafür vorgesehene Spec-only-Modus funktioniert jetzt ohne Serverstart. Kein neues Deployment und kein frischer Playwright-/Produktionsnachweis.
+
+Offen bleiben insbesondere GDB-Import/-Export, MGDM-Gesamtstatistik und Zieldatenbank-Views, vollständige Operatorfilter/Spaltenfunktionen, O8-Freigabeworkflow, optionale Erfassung, bereitgestelltes PDF-Handbuch/Kontakte sowie Betriebsnachweise. FAQ 52 verlangt keine UI-Pflege der Waffen-Zuordnung; B1 §5.15 erlaubt fehlende Raumnummern. Der Browserbericht belegt für diese beiden Punkte daher allein keinen Fehler. Vollständige Einordnung und Quellen: [Validierung](validierung-codebase-2026-10-03.md), [Testergebnisse](nachweise/validierung-2026-10-03-tests.json).
 
 ## 1. Kurzfassung
 
@@ -112,12 +122,12 @@ Die fachlichen Abweichungen zu B1 mit Begründung und Einstufung stehen gesammel
 |---|---|---|
 | Karte | GIS-Kartenviewer `@ui-slim/map` (`slm 2`, 02.10.2026): swisstopo «Light Base Map» (Vector Tiles) und «Imagery Base Map», Landeskarte; Anlagenteile und Empfangspunkte aus LV95; Massstab 1:x mit Balken, 12 Zoomstufen, Koordinaten der Maus in LV95, Ebenen, Export PDF/Bild, Vollansicht; Konfiguration `assets/config/map.config.json`. Schematische SVG-Karte bleibt als Rückfall | Weitere Layer (Gebäude, Isophonen, Untersuchungsperimeter; FAQ 13), massstabstreuer Druck über einen Server-Druckdienst, Karte in den Masken der Datenverwaltung |
 | Verteilung auf Quellen (7.5) | Schusslinien je Zustand mit Quelldaten Anhang 9/7 als Gewichte; Zuordnung Kombination ↔ Schusslinie über die sonARMS-ID | identisch; zusätzlich Fachentscheid-Freigabe der Ersatzregel in einer Maske |
-| Betrachtungszeitraum | Zeitraum oder repräsentative Jahre (`years=`), Ø ohne vorzeitige Rundung | Auswahl der 3 Jahre in der Maske (heute nur API) |
+| Betrachtungszeitraum | Zeitraum oder drei repräsentative Jahre (`years=`), Ø ohne vorzeitige Rundung; Auswahl auch in der Detailmaske und ausgewählte Jahre im Export (03.10.2026) | – |
 | Feiertage | Kalender je Schiessplatz (`feiertag`) im Seed, keine Pflegemaske | Pflege in der Datenverwaltung |
 | Berechnungsgrundlage | Masken 5.18–5.21 umgesetzt; Berechnungsdatei = validierte FGDB als JSON (FME-Workbench), WLR- und Betriebsdaten-Dateien werden geparst; Export der Zustände als JSON-Bündel | FGDB direkt lesen / schreiben (GDAL, Beilage B1.2) |
 | Geometrien | Text (WKT/JSON) in SQLite bzw. MariaDB; der GIS-Kartenviewer liest die LV95-Koordinaten daraus (02.10.2026) | PostGIS `geometry` |
 | Fachentscheide | Freigabe der Ersatzregel als Parameter (`release`) im Berechnungslauf gespeichert | eigene Entität mit Person, Datum, Begründung |
-| Rollen | Vier Rollen mit Matrix und Demo-Konten; «W/R-O» erzwungen (API); Menü nach App-Rechten der Sitzung, Schaltflächen in den Masken noch statisch | CASL im Frontend (wie ELO) für Schaltflächen und Lese-Modus, Zuordnung Schiessplätze im Benutzerformular |
+| Rollen | Vier Rollen mit Matrix und Demo-Konten; «W/R-O» erzwungen (API); Menü und Datenverwaltung nach App-Rechten; seit 03.10.2026 auch Schusszahlenseite mit Lesemodus und ausgeblendeten Schreibaktionen | CASL im Frontend (wie ELO) für Schaltflächen und Lese-Modus, Zuordnung Schiessplätze im Benutzerformular |
 | Schiessplatz – Übersicht (5.10, `slm 9`) | Umgesetzt 02.10.2026 (`views/admin/area/summary`): Beurteilung Lärmbelastung mit Klassierung und beiden Ampeln, Stand SPM / MPV / Projekt aus den Stammdaten, «Übersicht Kontingente gemäss Plangenehmigung» (Soll, Ist des Jahres, Ø über 3 Jahre je Waffe/Kaliber mit Farbe, Kombinationen ohne Kontingent mit Soll 0, Jahr wählbar, Export), Karte der Empfangspunkte in der Farbe nach Anhang 9 mit Pop-up (Grenzwert, Pegel Anhang 9 und 7) und Vollansicht. Tabelle und Kontingent-Ampel kommen aus derselben Rechnung (`GET admin/area/:areaId/calculation/quota`) | Weitere Kartenebenen (Gebäude, Isophonen, Perimeter; FAQ 13) |
 | Grenzwerte | LSV-Tabellen als Konstante (`ANNEX9_LIMITS`, `ANNEX7_LIMITS`) | Konfigurierbar (5.28) |
 | Erweiterte Konfiguration (5.28, `slm 27`) | Umgesetzt 02.10.2026: Maske «Erweiterte Konfiguration» (nur Applikationsadministrator/in), Sperrdatum der Schusszahlenerfassung (API verweigert Erfassen, Ändern, Löschen und Wiederherstellen bis und mit Sperrdatum; Formular und Liste zeigen die Sperre), Benutzerhandbuch als PDF (Upload, Ersetzen, Entfernen; Download im Hauptmenü), Schwellenwerte der Kontingent-Ampel in Prozent und der Empfangspunkt-Ampel in dB (FAQ 166) mit sofortiger Neuberechnung der Ampeln, Ampelfarben, Kontaktangaben des Hauptmenüs | Abweichung von Abbildung 40: ein gemeinsamer Farbsatz für beide Ampeln statt je Gruppe eigener Farben; Vergleichsoperatoren fest (≤ grün, ≤ orange, > rot). Auswahllisten (`slm 1`) und kontextsensitive Hilfe (`slm 53`) sind umgesetzt (nächste zwei Zeilen) |
@@ -130,16 +140,14 @@ Die fachlichen Abweichungen zu B1 mit Begründung und Einstufung stehen gesammel
 
 1. ~~**Schiessplatz – Übersicht (5.10)**~~ umgesetzt 02.10.2026 (Kontingent-Tabelle, beide Ampeln, Stand, Karte).
 2. **Datenverwaltung** (5.14–5.16, 5.18–5.25 sind umgesetzt, 5.17 Zuordnung Waffen als Anzeige gemäss FAQ 52): offen
-   sind das Bearbeiten der Stellungsräume (`slm 15`), die Pflege der zulässigen Kombinationen über den Stammdatenimport
+   sind die Pflege der zulässigen Kombinationen über den Stammdatenimport
    (`slm 36`) und der Seed aus B1.6/B1.7 (echte 126 Schiessplätze).
 3. **ELO-Schnittstelle** (Kap. 6): `GET Anlageninformationen`, `POST Schiessplatznutzung` – Datenmodell
    ist bereit (`source = 'elo'`).
 4. **Berechnungen verwalten** (5.18–5.21 sind umgesetzt): FGDB direkt über GDAL statt JSON, Maske für
    Berechnungsläufe und Fachentscheide – die API-Endpunkte bestehen.
 5. ~~**GIS-Karte** (swisstopo, LV95) an Stelle der schematischen Karte; Vollansicht.~~ umgesetzt 02.10.2026 (Details, Simulation, Vollansicht `/admin/area/:id/map`).
-6. **Produktion**: Auslieferung des Frontends fehlt heute (das Docker-Image kopiert `dist/app`,
-   aber niemand serviert es) – nginx oder Static-Serving in der API festlegen; Hosting, Backup,
-   Monitoring gemäss [deployment-sicherheit.md](../architecture/deployment-sicherheit.md).
+6. **Produktion**: Frontend-Auslieferung über `CoreStaticFileModule`/`ServeStaticModule` und Index-Middleware ist vorhanden (Korrektur des alten Befunds, 03.10.2026). Produktionsbetrieb, Hosting, Backup und Monitoring bleiben separat nachzuweisen.
 7. **Rechte im Frontend** (CASL wie in ELO): Schaltflächen und Lese-Modus aus den App-Rechten
    der Session (das Menü filtert bereits, `core/access`); Zuordnung Schiessplätze im Benutzerformular;
    Rollen-e2e je Demo-Konto ([berechtigungen.md](../architecture/berechtigungen.md), Abschnitt 5).
@@ -157,7 +165,7 @@ Die fachlichen Abweichungen zu B1 mit Begründung und Einstufung stehen gesammel
 
 `apps/app-e2e/src/criterias/` (Playwright-Projekt `criterias`) sammelt je kritischem Kriterium
 (`slm`, Abnahmekriterien K1–K7) einen Testfall – heute als Skelett mit den Schritten, die
-noch zu automatisieren sind (57 `test.fixme`, siehe README dort). Die Rechenfälle durch die Kette
+noch zu automatisieren sind (03.10.2026: 44 tatsächliche `test.fixme`-Aufrufe, daneben aktive Deep-Link-Fälle). Die Rechenfälle durch die Kette
 sind in [nachweis-rechenfaelle.md](nachweis-rechenfaelle.md) belegt (Testplatz S, Handrechnung).
 
 ## 5. Demo-Pfad für die Sitzung

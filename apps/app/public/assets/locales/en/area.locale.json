@@ -180,7 +180,11 @@
       "period_to": "to",
       "period_to_label": "Assessment period to",
       "note_current": "You are viewing the levels of the currently valid basis ({{name}}).",
-      "note_other": "You are viewing the levels based on {{name}}. The currently valid basis is {{current}}; deviations are marked per receiver point below."
+      "note_other": "You are viewing the levels based on {{name}}. The currently valid basis is {{current}}; deviations are marked per receiver point below.",
+      "years": "Three representative years",
+      "years_help": "Enter three different years. This selection replaces the period above; clear it to use the period again.",
+      "years_error": "Enter three different years between 1900 and 2200.",
+      "years_active": "Calculated for years"
     },
     "build_year": {
       "before1985": "Before 1985",
@@ -203,7 +207,7 @@
     "map_label": "Schematic map of the shooting range with receiver points",
     "legend": {
       "ok": "Complied",
-      "warn": "To check (reserve ≤ 5 dB)",
+      "warn": "To check (reserve < 5 dB)",
       "over": "Exceeded",
       "none": "No calculation",
       "incomplete": "Not assessable (usages without a source in the state)"
@@ -305,7 +309,7 @@
     "map_title": "Limit values per receiver point",
     "map_alt": "Schematic map of the shooting range with receiver points",
     "pin_label": "Receiver point {{code}}",
-    "legend_warn": "To be checked (reserve ≤ 5 dB)",
+    "legend_warn": "To be checked (reserve < 5 dB)",
     "mode_current": "Current state {{year}}",
     "mode_sim": "Simulation (current state as shadow)",
     "ghost_title": "Current: {{value}}",
@@ -338,7 +342,9 @@
       "stale": "Result outdated"
     },
     "state_hint": "No changes. Override values to start a simulation.",
-    "state_changed": "<b>{{n}}</b> values changed · total <b>{{total}}</b> shots ({{pct}} % versus current)",
+    "state_changed": "<b>{{n}}</b> values changed · total",
+    "quantity_unit": "Unit",
+    "schematic": "Schematic view – not a geographic map",
     "reset": "Reset",
     "run": "Run simulation",
     "export": {

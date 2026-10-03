@@ -112,6 +112,7 @@ function mockFacade() {
         outside: v.reduce((s, x) => s + x.outside, 0),
         baseInside: 259097,
         baseOutside: 26777,
+        insideKg: 12.5, outsideKg: 0, baseInsideKg: 12.5, baseOutsideKg: 0,
       };
     }),
     loading: signal(false),
@@ -181,6 +182,14 @@ describe('AreaSimulationComponent', () => {
 
   afterEach(() => {
     jest.useRealTimers();
+  });
+
+  it('shows kilograms separately and no schematic map without a calculation basis', () => {
+    expect(fixture.nativeElement.querySelector('[data-unit="kg"]').textContent).toContain('12.5');
+    facade.base.set({ ...BASE, calculation: null, receivers: [] });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-kind="schematic"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('Lattigen');
   });
 
   const el = (testId: string): HTMLElement[] =>
@@ -292,15 +301,15 @@ describe('AreaSimulationComponent', () => {
     expect(exportFacade.download).toHaveBeenCalledWith(data, 'csv');
     expect(data.table).toBe('simulation_schusszahlen');
     expect(data.header).toEqual([
-      'simulation.columns.room', 'simulation.columns.room_no', 'simulation.columns.weapon',
+      'simulation.columns.room', 'simulation.columns.room_no', 'simulation.columns.weapon', 'simulation.quantity_unit',
       'simulation.export.inside_current', 'simulation.export.inside_simulated', 'simulation.export.outside_current', 'simulation.export.outside_simulated',
     ]);
     expect(data.rows).toHaveLength(host.querySelectorAll('[data-testid="sim-row"]').length);
     // Nothing overridden yet: the simulated values are the Ist.
     for (const row of data.rows) {
-      expect(row[4]).toBe(row[3]);
-      expect(row[6]).toBe(row[5]);
-      expect(typeof row[3]).toBe('number');
+      expect(row[5]).toBe(row[4]);
+      expect(row[7]).toBe(row[6]);
+      expect(typeof row[4]).toBe('number');
     }
     // The result is exported from its own button, which only exists once a simulation ran.
     expect(host.querySelector('[data-testid="sim-result-export"]')).toBeNull();

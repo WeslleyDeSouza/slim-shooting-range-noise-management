@@ -70,7 +70,7 @@ export class CalculationService {
     calculationId?: string,
   ): Promise<{ all: AreaCalculationEntity[]; selected: AreaCalculationEntity | null; current: AreaCalculationEntity | null }> {
     const all = await this.list(tenantId, areaId);
-    const current = all.find((c) => c.isCurrent) ?? all[all.length - 1] ?? null;
+    const current = all.find((c) => c.isCurrent) ?? null;
     if (!calculationId) return { all, selected: current, current };
     const selected = all.find((c) => c.id === calculationId);
     if (!selected) throw new NotFoundException(`Calculation ${calculationId} not found`);

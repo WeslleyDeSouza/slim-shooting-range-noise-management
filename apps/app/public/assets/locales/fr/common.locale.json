@@ -137,7 +137,7 @@
   },
   "placeholder": {
     "title": "En préparation",
-    "text": "Cette zone est en cours de réalisation selon le plan du site (docs/architecture/sitemap.md)."
+    "text": "Cette fonction n’est pas encore disponible."
   },
   "status_area": {
     "ok": "Respecté",

@@ -57,6 +57,10 @@ async function bootstrap() {
 
   if (env.isSwaggerEnabled) {
     setupSwagger(app);
+    if (process.env['API_SWAGGER_SPEC_ONLY'] === '1') {
+      await app.close();
+      return;
+    }
     // ERD of the live schema → /erd and docs/architecture/uml.mmd (dev only)
     void setupMermaidUml(app).catch((error) =>
       Logger.warn(`ERD generation failed: ${error?.message ?? error}`, 'Uml'),

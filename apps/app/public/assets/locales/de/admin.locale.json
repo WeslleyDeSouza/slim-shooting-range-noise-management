@@ -589,7 +589,8 @@
       "toast_updated": "{{kind}} gespeichert.",
       "toast_deleted": "{{kind}} «{{name}}» gelöscht.",
       "toast_deactivated": "«{{name}}» ist jetzt inaktiv.",
-      "toast_exported": "Export gestartet."
+      "toast_exported": "Export gestartet.",
+      "link_missing": "Der verlinkte Datensatz wurde nicht gefunden oder ist nicht zugänglich."
     },
     "dm_calc": {
       "tabs": "Berechnungen",
@@ -716,7 +717,7 @@
       "select_none": "Auswahl aufheben",
       "selected_count": "{{n}} gewählt",
       "new_state": "Neuen Berechnungszustand anlegen",
-      "export_geodb": "Export GeoDB",
+      "export_geodb": "Export JSON",
       "export_geodb_hint": "Die gewählten Zustände werden als JSON-Datei in der Struktur der Berechnungsdatei exportiert (wieder importierbar). Die Ausgabe als Geo-Datenbank folgt mit GDAL.",
       "shots_export_title": "Export Schusszahlen",
       "col_year": "Kalenderjahr",

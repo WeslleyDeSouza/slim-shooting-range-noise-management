@@ -29,6 +29,7 @@ import { SortValue, TableSort } from '../../../../core/table/table-sort';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
 import { rowKey, SimulationFacade } from '../../../../core/calculation/simulation.facade';
+import { QuantityComponent } from '../shots/quantity.component';
 
 type ShotKey = 'inside' | 'outside';
 type LightState = SimulationReceiverDto['currentState'];
@@ -85,7 +86,7 @@ const RESULT_SORT: Record<ResultSortKey, (r: SimulationResultReceiverDto) => Sor
 @Component({
   selector: 'app-area-simulation',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent],
+  imports: [NgTemplateOutlet, TranslatePipe, MapViewerComponent, TableExportComponent, TableSelectComponent, TableSelectRowDirective, TableSortHeaderComponent, QuantityComponent],
   styleUrl: './area-simulation.component.scss',
   templateUrl: './area-simulation.component.html',
 })
@@ -151,12 +152,6 @@ export class AreaSimulationComponent extends ComponentBase {
   protected readonly overCount = computed(() =>
     this.showSim() ? (this.result()?.counts.over ?? 0) : 0,
   );
-  /** Total change in percent versus the Ist, for the action bar. */
-  protected readonly totalPercent = computed(() => {
-    const t = this.totals();
-    const base = t.baseInside + t.baseOutside;
-    return base ? Math.round(((t.inside + t.outside - base) / base) * 100) : 0;
-  });
   protected readonly stateKey = computed(() => {
     if (!this.dirty()) return 'simulation.state.current';
     if (!this.result()) return 'simulation.state.not_run';
@@ -212,6 +207,7 @@ export class AreaSimulationComponent extends ComponentBase {
         { header: t('simulation.columns.room'), value: (row) => row.roomName },
         { header: t('simulation.columns.room_no'), value: (row) => row.roomNo },
         { header: t('simulation.columns.weapon'), value: (row) => `${row.weapon} · ${row.caliber}` },
+        { header: t('simulation.quantity_unit'), value: (row) => t(row.quantityUnit === 'kg' ? 'shots.unit_kg' : 'shots.unit_shots') },
         { header: t('simulation.export.inside_current'), value: (row) => row.inside },
         { header: t('simulation.export.inside_simulated'), value: (row) => this.value(row, 'inside') },
         { header: t('simulation.export.outside_current'), value: (row) => row.outside },

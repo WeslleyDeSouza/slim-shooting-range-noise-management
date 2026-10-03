@@ -180,7 +180,11 @@
       "period_to": "al",
       "period_to_label": "Periodo considerato fino al",
       "note_current": "Sono visualizzati i livelli della base attualmente valida ({{name}}).",
-      "note_other": "Sono visualizzati i livelli sulla base di {{name}}. La base attualmente valida è {{current}}; le differenze sono indicate sotto per punto di ricezione."
+      "note_other": "Sono visualizzati i livelli sulla base di {{name}}. La base attualmente valida è {{current}}; le differenze sono indicate sotto per punto di ricezione.",
+      "years": "Tre anni rappresentativi",
+      "years_help": "Inserire tre anni diversi. La selezione sostituisce il periodo sopra; cancellarla per riutilizzare il periodo.",
+      "years_error": "Inserire tre anni diversi tra il 1900 e il 2200.",
+      "years_active": "Calcolo per gli anni"
     },
     "build_year": {
       "before1985": "Prima del 1985",
@@ -203,7 +207,7 @@
     "map_label": "Mappa schematica della piazza di tiro con i punti di ricezione",
     "legend": {
       "ok": "Rispettato",
-      "warn": "Da verificare (riserva ≤ 5 dB)",
+      "warn": "Da verificare (riserva < 5 dB)",
       "over": "Superato",
       "none": "Nessun calcolo",
       "incomplete": "Non valutabile (utilizzi senza sorgente nello stato)"
@@ -305,7 +309,7 @@
     "map_title": "Valori limite per punto di ricezione",
     "map_alt": "Mappa schematica della piazza di tiro con i punti di ricezione",
     "pin_label": "Punto di ricezione {{code}}",
-    "legend_warn": "Da verificare (riserva ≤ 5 dB)",
+    "legend_warn": "Da verificare (riserva < 5 dB)",
     "mode_current": "Stato attuale {{year}}",
     "mode_sim": "Simulazione (stato attuale in ombra)",
     "ghost_title": "Attuale: {{value}}",
@@ -338,7 +342,9 @@
       "stale": "Risultato obsoleto"
     },
     "state_hint": "Nessuna modifica. Sovrascrivete i valori per avviare una simulazione.",
-    "state_changed": "<b>{{n}}</b> valori modificati · totale <b>{{total}}</b> colpi ({{pct}} % rispetto all’attuale)",
+    "state_changed": "<b>{{n}}</b> valori modificati · totale",
+    "quantity_unit": "Unità",
+    "schematic": "Rappresentazione schematica – non una carta geografica",
     "reset": "Ripristinare",
     "run": "Eseguire la simulazione",
     "export": {

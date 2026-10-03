@@ -180,7 +180,11 @@
       "period_to": "bis",
       "period_to_label": "Betrachtungszeitraum bis",
       "note_current": "Sie sehen die Pegel der aktuell gültigen Grundlage ({{name}}).",
-      "note_other": "Sie sehen die Pegel auf Basis von {{name}}. Die aktuell gültige Grundlage ist {{current}}; Abweichungen sind unten pro Empfangspunkt markiert."
+      "note_other": "Sie sehen die Pegel auf Basis von {{name}}. Die aktuell gültige Grundlage ist {{current}}; Abweichungen sind unten pro Empfangspunkt markiert.",
+      "years": "Drei repräsentative Jahre",
+      "years_help": "Drei unterschiedliche Jahre eingeben. Diese Auswahl ersetzt den Zeitraum oben; leeren, um wieder den Zeitraum zu verwenden.",
+      "years_error": "Bitte drei unterschiedliche Jahre zwischen 1900 und 2200 eingeben.",
+      "years_active": "Berechnet für die Jahre"
     },
     "build_year": {
       "before1985": "Vor 1985",
@@ -203,7 +207,7 @@
     "map_label": "Schematische Karte des Schiessplatzes mit Empfangspunkten",
     "legend": {
       "ok": "Eingehalten",
-      "warn": "Zu prüfen (Reserve ≤ 5 dB)",
+      "warn": "Zu prüfen (Reserve < 5 dB)",
       "over": "Überschritten",
       "none": "Keine Berechnung",
       "incomplete": "Nicht beurteilbar (Nutzungen ohne Quelle im Zustand)"
@@ -305,7 +309,7 @@
     "map_title": "Grenzwerte pro Empfangspunkt",
     "map_alt": "Schematische Karte des Schiessplatzes mit Empfangspunkten",
     "pin_label": "Empfangspunkt {{code}}",
-    "legend_warn": "Zu prüfen (Reserve ≤ 5 dB)",
+    "legend_warn": "Zu prüfen (Reserve < 5 dB)",
     "mode_current": "Ist-Zustand {{year}}",
     "mode_sim": "Simulation (Ist-Zustand als Schatten)",
     "ghost_title": "Ist: {{value}}",
@@ -338,7 +342,9 @@
       "stale": "Resultat veraltet"
     },
     "state_hint": "Keine Änderungen. Überschreiben Sie Werte, um eine Simulation zu starten.",
-    "state_changed": "<b>{{n}}</b> Werte geändert · Total <b>{{total}}</b> Schuss ({{pct}} % gegenüber Ist)",
+    "state_changed": "<b>{{n}}</b> Werte geändert · Total",
+    "quantity_unit": "Einheit",
+    "schematic": "Schematische Darstellung – keine geografische Karte",
     "reset": "Zurücksetzen",
     "run": "Simulation ausführen",
     "export": {

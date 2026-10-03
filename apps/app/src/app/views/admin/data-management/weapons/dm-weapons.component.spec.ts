@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, Router, ParamMap } from '@angular/router';
 import { BehaviorSubject, of } from 'rxjs';
 import { DataEmitter } from '@app-galaxy/sdk-ui';
 import { TranslateService } from '@app-galaxy/translate-ui';
@@ -80,11 +80,13 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
   let facade: FacadeStub;
   let access: AccessStub;
   let routeData: BehaviorSubject<{ kind: WeaponKind }>;
+  let query: BehaviorSubject<ParamMap>;
 
   beforeEach(async () => {
     facade = new FacadeStub();
     access = new AccessStub();
     routeData = new BehaviorSubject<{ kind: WeaponKind }>({ kind: 'combination' });
+    query = new BehaviorSubject(convertToParamMap({}));
     await TestBed.configureTestingModule({
       imports: [DmWeaponsComponent],
       providers: [
@@ -102,12 +104,14 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
           useValue: {
             data: routeData.asObservable(),
             paramMap: of(convertToParamMap({})),
-            snapshot: { data: { kind: 'combination' }, paramMap: convertToParamMap({}) },
+            queryParamMap: query,
+            snapshot: { data: { kind: 'combination' }, paramMap: convertToParamMap({}), queryParamMap: query.value },
             parent: null,
           },
         },
       ],
     }).compileComponents();
+    jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(DmWeaponsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -130,6 +134,18 @@ describe('DmWeaponsComponent (5.22–5.25)', () => {
     select.dispatchEvent(new Event('change'));
     fixture.detectChanges();
   };
+
+  it('opens a master record from its URL and reports an unknown link', fakeAsync(() => {
+    query.next(convertToParamMap({ record: 'x-stgw' }));
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+    expect(TestBed.inject(Router).navigate).toHaveBeenCalledWith([], expect.objectContaining({ queryParams: { record: 'x-stgw' } }));
+    expect(el('.dmw__placeholder')).toBeNull();
+    query.next(convertToParamMap({ record: 'unknown' }));
+    fixture.detectChanges();
+    expect(el('[data-testid="dmw-link-missing"]')).not.toBeNull();
+  }));
 
   it('shows the four tabs with counts and the combination table of B1 5.22', () => {
     expect(all('[data-testid^="dmw-tab-"]').map((t) => t.textContent?.replace(/\s+/g, ' ').trim())).toEqual([

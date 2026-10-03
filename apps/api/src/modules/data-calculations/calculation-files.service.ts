@@ -230,7 +230,9 @@ export class CalculationFilesService {
     const pointCode = new Map(m.points.map((p) => [p.id, p.sonarmsId]));
     const sourceKey = new Map(m.sources.map((s) => [s.id, s.sourceId]));
     return {
+      ...m.objects,
       calculation: {
+        ...m.calculation,
         name: m.calculation.name,
         supplier: m.calculation.supplier,
         deliveredAt: m.calculation.deliveredAt,
@@ -282,6 +284,11 @@ export class CalculationFilesService {
         mapY: p.mapY,
         sortOrder: p.sortOrder,
         geometry: p.geometry ?? null,
+        pointNo: p.pointNo ?? null,
+        deliveredLr: p.deliveredLr ?? null,
+        operation: p.operation ?? '',
+        deliveredAssessment: p.deliveredAssessment ?? '',
+        remark: p.remark ?? null,
       })),
       wlr: m.wlr
         .filter((w) => pointCode.has(w.immissionPointId) && sourceKey.has(w.sourceLineId))
@@ -346,7 +353,8 @@ export interface ShotCsvRow {
 
 /** What `toImportDto` needs of a state — plain fields, no entities, so tests build it by hand. */
 export interface StateExportModel {
-  calculation: { name: string; supplier: string; deliveredAt: string; description?: string | null; fileName?: string | null };
+  objects?: Pick<StateImportDto, 'propagation' | 'perimeter' | 'buildings' | 'isophones' | 'affectedAnalysis' | 'obstacles' | 'highScreens' | 'shootingHouses' | 'measuresPoint' | 'measuresArea' | 'measuresOperational' | 'measuresSsf'>;
+  calculation: StateImportDto['calculation'];
   state: { externalId: string | null; name: string; referenceYear: number; isCurrent: boolean; isMgdm: boolean };
   plantParts: { id: string; coordinationSectionNo: string; name: string; type: string; remark?: string | null; builtAfter1985: boolean; geometry?: string | null; roomName?: string | null }[];
   sources: {
@@ -360,6 +368,11 @@ export interface StateExportModel {
     a7: { category: Annex7CategoryCode; halfDaysWork: number; halfDaysSunday: number; shotsWork: number; shotsSunday: number | null; estimated: boolean; year: number | null; remark: string | null; planCategory: string } | null;
   }[];
   points: {
+    pointNo?: number | null;
+    deliveredLr?: number | null;
+    operation?: string;
+    deliveredAssessment?: string;
+    remark?: string | null;
     id: string;
     sonarmsId: string;
     code: string;

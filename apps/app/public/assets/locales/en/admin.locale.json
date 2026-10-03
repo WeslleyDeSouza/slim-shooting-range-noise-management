@@ -589,7 +589,8 @@
       "toast_updated": "{{kind}} saved.",
       "toast_deleted": "{{kind}} “{{name}}” deleted.",
       "toast_deactivated": "“{{name}}” is now inactive.",
-      "toast_exported": "Export started."
+      "toast_exported": "Export started.",
+      "link_missing": "The linked record was not found or is not accessible."
     },
     "dm_calc": {
       "tabs": "Calculations",
@@ -716,7 +717,7 @@
       "select_none": "Clear selection",
       "selected_count": "{{n}} selected",
       "new_state": "Create new calculation state",
-      "export_geodb": "Export GeoDB",
+      "export_geodb": "Export JSON",
       "export_geodb_hint": "The selected states are exported as a JSON file in the structure of the calculation file (importable again). The geodatabase output follows with GDAL.",
       "shots_export_title": "Export shot counts",
       "col_year": "Calendar year",

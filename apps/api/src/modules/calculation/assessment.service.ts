@@ -54,6 +54,7 @@ export interface AssessmentOptions {
 }
 
 export interface AssessmentInputs {
+  thresholds: AmpelThresholds;
   reference: ReferenceData;
   usages: AreaUsageEntity[];
   assignments: RoomCombinationEntity[];
@@ -137,7 +138,7 @@ export class AssessmentService {
     const selectedModel = selected ? await this.calculations.loadModel(tenantId, selected) : null;
     const referenceModel = current && selected && current.id !== selected.id ? await this.calculations.loadModel(tenantId, current) : null;
 
-    capture?.({ reference, usages, assignments, model: selectedModel, referenceModel });
+    capture?.({ reference, usages, assignments, model: selectedModel, referenceModel, thresholds });
     const own = selectedModel ? assessModel(operating, reference, selectedModel, labelOf) : new Map<string, PointLevels>();
     const other = referenceModel ? assessModel(operating, reference, referenceModel, labelOf) : null;
     // Points of different states are compared by their sonARMS_ID only (5.12 «Abweichung zum gültigen Zustand»).

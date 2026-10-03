@@ -103,6 +103,9 @@ export class AreaDetailsComponent extends ComponentBase {
   protected readonly calculationId = signal<string | null>(null);
   protected readonly from = signal<string | null>(null);
   protected readonly to = signal<string | null>(null);
+  protected readonly yearsText = signal('');
+  protected readonly yearsInvalid = signal(false);
+  private readonly years = signal<string | null>(null);
 
   // Data ---------------------------------------------------------------------
   protected readonly assessment = this.facade.assessment;
@@ -188,7 +191,7 @@ export class AreaDetailsComponent extends ComponentBase {
       subtitle: this.mapTitle(),
       filters: [
         { label: t('details.calc.basis'), value: this.calculation()?.name },
-        { label: t('details.export.period'), value: period ? `${swissDate(period.from)} – ${swissDate(period.to)}` : null },
+        { label: t('details.export.period'), value: period ? (period.selectedYears.length ? period.selectedYears.join(', ') : `${swissDate(period.from)} – ${swissDate(period.to)}`) : null },
       ],
       columns: [
         { header: t('details.receiver.no'), value: (l) => l.receiver.code },
@@ -210,7 +213,9 @@ export class AreaDetailsComponent extends ComponentBase {
     const calculationId = this.calculationId();
     const from = this.from();
     const to = this.to();
+    const years = this.years();
     if (calculationId) query.calculationId = calculationId;
+    if (years) return { ...query, years };
     if (from) query.from = from;
     if (to) query.to = to;
     return query;
@@ -278,11 +283,29 @@ export class AreaDetailsComponent extends ComponentBase {
   }
 
   protected onFromChange(value: string): void {
+    this.clearYears();
     this.from.set(value || null);
   }
 
   protected onToChange(value: string): void {
+    this.clearYears();
     this.to.set(value || null);
+  }
+
+  protected onYearsChange(value: string): void {
+    this.yearsText.set(value);
+    if (!value.trim()) { this.clearYears(); return; }
+    const tokens = value.trim().split(/[,;\s]+/);
+    const valid = tokens.length === 3 && new Set(tokens).size === 3 &&
+      tokens.every(y => /^\d{4}$/.test(y) && +y >= 1900 && +y <= 2200);
+    this.yearsInvalid.set(!valid);
+    if (valid) this.years.set(tokens.map(Number).sort((a, b) => a - b).join(','));
+  }
+
+  private clearYears(): void {
+    this.yearsText.set('');
+    this.yearsInvalid.set(false);
+    this.years.set(null);
   }
 
   // Helpers for the template -------------------------------------------------

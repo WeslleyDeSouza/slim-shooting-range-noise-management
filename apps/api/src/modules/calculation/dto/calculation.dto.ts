@@ -132,6 +132,7 @@ export class AssessmentDto {
 
 /** One editable line of the simulation table (Stellungsraum × zulässige Kombination). */
 export class SimulationRowDto {
+  @ApiPropertyOptional({ enum: ['shots', 'kg'], description: 'Unit of all quantities in this row (default shots)' }) quantityUnit?: 'shots' | 'kg';
   @ApiProperty() roomId: string;
   @ApiProperty() combinationId: string;
   @ApiProperty() roomName: string;
@@ -216,6 +217,10 @@ export class SimulationTotalsDto {
   @ApiProperty() outside: number;
   @ApiProperty() baseInside: number;
   @ApiProperty() baseOutside: number;
+  @ApiPropertyOptional({ description: 'Simulated explosive mass inside workdays [kg]; other totals without Kg are shots' }) insideKg?: number;
+  @ApiPropertyOptional() outsideKg?: number;
+  @ApiPropertyOptional() baseInsideKg?: number;
+  @ApiPropertyOptional() baseOutsideKg?: number;
 }
 
 export class SimulationResultDto {

@@ -25,6 +25,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
+import { SLIM_APP_ID } from '@slim/shared';
+import { AccessFacade } from '../../../../core/access/access.facade';
 import type {
   SelectionListValueDto,
   UsageCombinationDto,
@@ -129,6 +131,8 @@ function usageFormValidator(group: {
   styleUrl: './area-shots.component.scss',
 })
 export class AreaShotsComponent extends ComponentBase {
+  private readonly access = inject(AccessFacade);
+  private readonly canWrite = this.access.canWrite(SLIM_APP_ID.ADMIN_AREA);
   private readonly facade = inject(UsageFacade);
   private readonly areaFacade = inject(AreaFacade);
   /** Sperrdatum der Schusszahlenerfassung (B1 5.28): usages up to and including it are frozen. */
@@ -163,12 +167,8 @@ export class AreaShotsComponent extends ComponentBase {
     { initialValue: (this.route.parent ?? this.route).snapshot.paramMap.get('id') ?? '' },
   );
 
-  /**
-   * Write access. Always true for now; the role of the signed-in user for
-   * this Schiessplatz (Schiessplatz-Verantwortlicher W/R, Interessent R)
-   * will come from the session once the roles module exists (B1 8.1).
-   */
-  protected readonly readonly = signal(false);
+  /** Match the API app right; unknown rights keep the mask read-only. */
+  protected readonly readonly = computed(() => !this.canWrite());
 
   protected readonly year = signal(new Date().getFullYear());
   protected readonly area = computed(() => this.areaFacade.byId(this.areaId()) ?? null);
@@ -396,6 +396,10 @@ export class AreaShotsComponent extends ComponentBase {
 
   constructor() {
     super();
+    effect(() => {
+      const readonly = this.readonly();
+      untracked(() => readonly ? this.form.disable({ emitEvent: false }) : this.form.enable({ emitEvent: false }));
+    });
     // Reload when the area or the year changes (the facade returns one year).
     effect(() => {
       this.areaId();
@@ -468,6 +472,7 @@ export class AreaShotsComponent extends ComponentBase {
 
   /** ComponentBase calls this on init and on every DATA_RELOAD emit. */
   override getData(): void {
+    void this.access.load();
     const id = this.areaId();
     if (id) void this.facade.load(id, this.year());
   }
@@ -710,6 +715,7 @@ export class AreaShotsComponent extends ComponentBase {
   }
 
   protected async confirmDelete(): Promise<void> {
+    if (this.readonly()) return;
     const ids = this.pendingDelete().map((u) => u.id);
     this.pendingDelete.set([]);
     const removed = await this.facade.remove(ids);
@@ -724,6 +730,7 @@ export class AreaShotsComponent extends ComponentBase {
   }
 
   protected async undo(): Promise<void> {
+    if (this.readonly()) return;
     const ids = this.toast()?.undo ?? [];
     this.dismissToast();
     if (ids.length) await this.facade.restore(ids);

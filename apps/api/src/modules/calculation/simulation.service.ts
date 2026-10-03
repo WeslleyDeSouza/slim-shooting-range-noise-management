@@ -81,7 +81,10 @@ export class SimulationService {
       };
     });
 
-    const sum = (data: OperatingData, key: 'inside' | 'outside') => [...data.annex9.values()].reduce((t, s) => t + s[key], 0);
+    const units = new Map(reference.combinations.map((c) => [c.id, c.caliber?.quantityUnit ?? 'shots']));
+    const sum = (data: OperatingData, key: 'inside' | 'outside', unit = 'shots') =>
+      [...data.annex9.entries()].reduce((t, [id, s]) =>
+        t + ((units.get(id.split('|')[1]) ?? 'shots') === unit ? s[key] : 0), 0);
     return {
       areaId,
       year: dto.year,
@@ -93,6 +96,10 @@ export class SimulationService {
         outside: sum(simulated, 'outside'),
         baseInside: sum(operating, 'inside'),
         baseOutside: sum(operating, 'outside'),
+        insideKg: sum(simulated, 'inside', 'kg'),
+        outsideKg: sum(simulated, 'outside', 'kg'),
+        baseInsideKg: sum(operating, 'inside', 'kg'),
+        baseOutsideKg: sum(operating, 'outside', 'kg'),
       },
       calculatedAt: new Date().toISOString(),
     };
@@ -134,6 +141,7 @@ export class SimulationService {
           roomNo: room?.coordinationSectionNo ?? null,
           weapon: combination?.weapon?.nameDe ?? '',
           caliber: combination?.caliber?.nameDe ?? '',
+          quantityUnit: combination?.caliber?.quantityUnit ?? 'shots',
           weaponName: a.entryName,
           inside: operating.annex9.get(key)?.inside ?? 0,
           outside: operating.annex9.get(key)?.outside ?? 0,

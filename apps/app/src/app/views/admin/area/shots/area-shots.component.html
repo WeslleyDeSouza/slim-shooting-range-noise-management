@@ -247,7 +247,7 @@
                   type="checkbox"
                   class="slim-check__input"
                   [checked]="allSelected()"
-                  [disabled]="readonly() || !filtered().length"
+                  [disabled]="!filtered().length"
                   [attr.aria-label]="'shots.select_all' | translate"
                   (change)="toggleAll($any($event.target).checked)"
                 />
@@ -259,9 +259,9 @@
                   [class.shots__th--asc]="sort().key === col[0] && sort().asc"
                   [class.slim-table__cell--num]="col[0] === 'shots'"
                   [class.shots__col--xl]="col[0] === 'category'"
-                  (click)="sortBy(col[0])"
+                  [attr.aria-sort]="sort().key === col[0] ? (sort().asc ? 'ascending' : 'descending') : 'none'"
                 >
-                  {{ col[1] | translate }}
+                  <button type="button" class="shots__sort" (click)="sortBy(col[0])">{{ col[1] | translate }}</button>
                 </th>
               }
               <th class="slim-table__cell--actions"></th>
@@ -289,7 +289,7 @@
                       type="checkbox"
                       class="slim-check__input"
                       [checked]="selected().has(row.usage.id)"
-                      [disabled]="readonly() || isLockedDate(row.usage.date)"
+                      [disabled]="isLockedDate(row.usage.date)"
                       [attr.aria-label]="'shots.select' | translate"
                       (click)="toggleSelect(row.usage.id, $any($event.target).checked, $event.shiftKey)"
                     />

@@ -48,6 +48,28 @@ describe('SimulationService (5.13 Simulation)', () => {
     await module.close();
   });
 
+  it('keeps explosive mass separate from shots in base rows and simulated totals', async () => {
+    const assessment = module.get(AssessmentService);
+    const reference = await assessment.reference(mockTenantId, geissalpId);
+    const massId = base.rows[0].combinationId;
+    const shotRow = base.rows.find((r) => r.combinationId !== massId);
+    expect(shotRow).toBeDefined();
+    const stub = vi.spyOn(assessment, 'reference').mockResolvedValue({ ...reference,
+      combinations: reference.combinations.map((c) => c.id === massId
+        ? { ...c, caliber: { ...c.caliber, quantityUnit: 'kg' } } : c),
+    });
+    try {
+      const mixed = await service.base(mockTenantId, geissalpId, YEAR);
+      expect(mixed.rows[0].quantityUnit).toBe('kg');
+      const result = await service.run(mockTenantId, geissalpId, { year: YEAR,
+        rows: base.rows.map((r, i) => ({ roomId: r.roomId, combinationId: r.combinationId,
+          inside: i === 0 ? 12.5 : r === shotRow ? 100 : 0,
+          outside: r === shotRow ? 3 : 0 })),
+      });
+      expect(result.totals).toMatchObject({ inside: 100, outside: 3, insideKg: 12.5, outsideKg: 0 });
+    } finally { stub.mockRestore(); }
+  });
+
   it('starts from the year\'s military shot counts per room × weapon (7.4.5)', async () => {
     expect(base.calculation?.isCurrent).toBe(true);
     expect(base.rows).toHaveLength(17);

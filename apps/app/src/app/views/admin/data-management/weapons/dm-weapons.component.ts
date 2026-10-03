@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase, EDataEmitterAction } from '@app-galaxy/sdk-ui';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
@@ -128,6 +128,11 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
   private readonly facade = inject(DataWeaponsFacade);
   private readonly access = inject(AccessFacade);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly recordParam = toSignal(this.route.queryParamMap.pipe(map(p => p.get('record'))), {
+    initialValue: this.route.snapshot.queryParamMap.get('record'),
+  });
+  protected readonly linkMissing = signal(false);
   private readonly translate = inject(TranslateService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -337,6 +342,25 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
       const kind = this.kind();
       untracked(() => this.applyValidators(kind));
     });
+    // A record has a stable URL in every weapon master-data tab (B1 5.6).
+    effect(() => {
+      const id = this.recordParam();
+      const kind = this.kind();
+      const loaded = this.loaded();
+      this.data();
+      if (!loaded) return;
+      untracked(() => {
+        this.linkMissing.set(false);
+        if (!id) return;
+        const record = this.facade.rows(kind).find(r => r.id === id);
+        if (!record) {
+          this.linkMissing.set(true);
+          this.selection.set(null);
+          return;
+        }
+        void this.select(record);
+      });
+    });
     // Fill the form from the selection; never over unsaved edits of the same record.
     effect(() => {
       const selection = this.selection();
@@ -367,11 +391,12 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
 
   protected async select(record: WeaponRecord): Promise<void> {
     if (this.selected()?.id === record.id) return;
-    if (this.dirty() && !(await this.askDiscard())) return;
+    if (this.dirty() && !(await this.askDiscard())) { this.recordAddress(this.selected()?.id ?? null); return; }
     this.facade.clearError();
     this.submitted.set(false);
     this.selection.set(record);
     this.fill(record);
+    this.recordAddress(record.id);
   }
 
   protected async newRecord(): Promise<void> {
@@ -380,6 +405,7 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
     this.facade.clearError();
     this.submitted.set(false);
     this.selection.set('new');
+    this.recordAddress(null);
     this.fill(null);
   }
 
@@ -387,6 +413,12 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
     if (this.dirty() && !(await this.askDiscard())) return;
     this.selection.set(null);
     this.fill(null);
+    this.recordAddress(null);
+  }
+
+  private recordAddress(id: string | null): void {
+    this.linkMissing.set(false);
+    void this.router.navigate([], { relativeTo: this.route, queryParams: { record: id }, queryParamsHandling: 'merge', replaceUrl: true });
   }
 
   protected invalid(control: keyof typeof this.form.controls): boolean {
@@ -419,6 +451,7 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
     const saved = current ? await this.facade.updateRecord(kind, current.id, body) : await this.facade.createRecord(kind, body);
     if (!saved) return;
     this.selection.set(saved);
+    this.recordAddress(saved.id);
     this.fill(saved);
     this.submitted.set(false);
     this.showToast({ key: `${I18N}.${current ? 'toast_updated' : 'toast_created'}`, params: { kind: this.kindLabel(kind, true) } });
@@ -450,6 +483,7 @@ export class DmWeaponsComponent extends ComponentBase implements HasUnsavedChang
     this.pendingDelete.set(null);
     if (this.selected()?.id === record.id) {
       this.selection.set(null);
+      this.recordAddress(null);
       this.fill(null);
     }
     this.showToast({ key: `${I18N}.toast_deleted`, params: { kind: this.kindLabel(this.kind(), true), name: record.nameDe } });

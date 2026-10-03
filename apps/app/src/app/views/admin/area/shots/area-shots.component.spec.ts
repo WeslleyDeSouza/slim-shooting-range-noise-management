@@ -11,6 +11,7 @@ import type {
 } from '@ui-slim/apiClient';
 import { TableExportComponent } from '../../../../common/table-export.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
+import { AccessFacade } from '../../../../core/access/access.facade';
 import { SettingsFacade } from '../../../../core/settings/settings.facade';
 import { TableExportData } from '../../../../core/table/table-export';
 import { TableExportFacade } from '../../../../core/table/table-export.facade';
@@ -88,6 +89,7 @@ describe('AreaShotsComponent', () => {
   /** The query of the address (`?usage=<id>`) and what the page writes back to it. */
   let query$: BehaviorSubject<{ get: (key: string) => string | null }>;
   let router: { navigate: jest.Mock };
+  const writeAccess = signal(true);
   const address = (usage: string | null) => ({ get: (key: string) => (key === 'usage' ? usage : null) });
 
   const el = () => fixture.nativeElement as HTMLElement;
@@ -99,6 +101,7 @@ describe('AreaShotsComponent', () => {
   const rows = () => el().querySelectorAll('[data-testid="shots-row"]');
 
   beforeEach(async () => {
+    writeAccess.set(true);
     facade = {
       kpi: signal<UsageKpiDto | null>(KPI),
       rooms: signal<UsageRoomDto[]>(ROOMS),
@@ -125,6 +128,7 @@ describe('AreaShotsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AreaShotsComponent],
       providers: [
+        { provide: AccessFacade, useValue: { canWrite: () => writeAccess, load: jest.fn().mockResolvedValue(undefined) } },
         { provide: UsageFacade, useValue: facade },
         { provide: SettingsFacade, useValue: { usageLockDate: lockDate } },
         { provide: SelectionListsFacade, useValue: fakeSelectionLists() },
@@ -163,6 +167,19 @@ describe('AreaShotsComponent', () => {
     expect(el().querySelector('[data-testid="shots-kpi-count"]')?.textContent?.trim()).toBe('3');
     expect(el().textContent).toContain('62 %');
     expect(el().textContent).toContain('21.06.2026');
+  });
+
+  it('hides mutation actions and opens usages read-only without write access', async () => {
+    writeAccess.set(false);
+    fixture.detectChanges();
+    expect(el().querySelector('[data-testid="shots-new"]')).toBeNull();
+    expect(el().querySelector('[data-testid="shots-delete"]')).toBeNull();
+    expect(el().querySelector<HTMLInputElement>('[data-testid="shots-row"] input[type="checkbox"]')?.disabled).toBe(false);
+    query$.next(address('u1'));
+    await settle();
+    expect(el().querySelector('[data-testid="shots-save"]')).toBeNull();
+    expect(facade.create).not.toHaveBeenCalled();
+    expect(facade.updateUsage).not.toHaveBeenCalled();
   });
 
   it('renders one row per usage, newest first, with the ELO badge', () => {
@@ -209,7 +226,7 @@ describe('AreaShotsComponent', () => {
   });
 
   it('groups by room when sorted by room', () => {
-    const th = el().querySelectorAll<HTMLElement>('.shots__th')[0];
+    const th = el().querySelectorAll<HTMLElement>('.shots__sort')[0];
     th.click();
     fixture.detectChanges();
     const groups = el().querySelectorAll('.shots__group');
@@ -508,7 +525,7 @@ describe('AreaShotsComponent', () => {
     });
 
     it('sums the groups of the room view per unit', () => {
-      const headers = el().querySelectorAll<HTMLElement>('.shots__th');
+      const headers = el().querySelectorAll<HTMLElement>('.shots__sort');
       headers[0].click(); // sort by room
       fixture.detectChanges();
       const groups = Array.from(el().querySelectorAll('.shots__group')).map((g) => parts(g));

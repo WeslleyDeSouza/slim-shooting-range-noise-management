@@ -53,6 +53,11 @@
     </div>
   }
 
+  @if (linkMissing()) {
+    <div class="slim-alert slim-alert--danger slim-u-mb-4" role="alert" data-testid="dmw-link-missing">
+      {{ prefix + '.link_missing' | translate }}
+    </div>
+  }
   @if (error() && !pendingDelete()) {
     <div class="slim-alert slim-alert--danger slim-u-mb-4" data-testid="dmw-error">
       <div class="slim-alert__body">{{ error()! | translate }}</div>

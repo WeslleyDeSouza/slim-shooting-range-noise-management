@@ -16,7 +16,9 @@ async function exportCsv(page: Page, testId: string): Promise<{ scope: string; f
   const button = page.locator(`[data-testid="${testId}"]`);
   await button.scrollIntoViewIfNeeded();
   await button.click();
-  const scope = (await page.locator(`[data-testid="${testId}-scope"]`).textContent())?.trim() ?? '';
+  // The menu is rendered after the click; its scope line comes with the same render.
+  await expect(button).toHaveAttribute('aria-expanded', 'true');
+  const scope =(await page.locator(`[data-testid="${testId}-scope"]`).textContent())?.trim() ?? '';
   const download = page.waitForEvent('download');
   await page.locator(`[data-testid="${testId}-csv"]`).click();
   const file = await download;

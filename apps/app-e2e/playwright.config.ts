@@ -38,6 +38,10 @@ export default defineConfig({
   reporter: isCI ? [['list'], ['html']] : 'list',
   use: {
     baseURL,
+    // Most acceptance assertions use the German wording. The app now honours
+    // navigator.language; Playwright's implicit en-US would change those labels.
+    // Language-specific cases can override this per test/context.
+    locale: 'de-CH',
     trace: 'on-first-retry',
     actionTimeout: 15000,
   },
@@ -101,7 +105,7 @@ export default defineConfig({
     // Use cases per actor (B1 4.x, `src/actors/readme.md`):
     // `npx playwright test --project=actors`. No shared session on purpose —
     // every case signs in as its actor (`signInAs`), T01 stays signed out.
-    // Skeleton only for now (every case is `test.fixme`).
+    // Active actor regressions plus explicitly skipped acceptance skeletons.
     {
       name: 'actors',
       testMatch: ['**/src/actors/**/*.spec.ts'],

@@ -6,6 +6,8 @@
 
 ## Fachlicher Retest und Korrekturen vom 03.10.2026
 
+**Nachtrag Tabwechsel:** Die Detailauswahl (repräsentative Jahre einschliesslich Eingabetext/Validierung, Datumsbereich und Berechnungszustand) liegt im `AreaViewStore`, bereitgestellt auf `/admin/area/:id`. Die Werte sind nach Schiessplatz-ID getrennt und bleiben beim Wechsel zwischen Details und Simulation erhalten. Vollständiges Browser-Neuladen setzt die Auswahl zurück. Acht neue lokale Playwright-Akteursfälle sowie 18 gezielte Komponenten-/Store-Tests und der App-Build sind bestanden; dies ist keine Browserbestätigung auf der Demo. Prüfschritte: [Browser-Retest](../../apps/app-e2e/src/actors/fachablaeufe/retest-2026-10-03.md).
+
 Lokal umgesetzt und geprüft: keine implizite Entwurfsauswahl ohne Aktuell-Zeiger; vollständiger JSON-Zustandsexport mit Import/Export/Reimport-Test; Snapshot der tatsächlich verwendeten Ampelschwellen; drei repräsentative Jahre in der Detailmaske und im Export; Waffen-Stammdatensätze per Deep Link; Browsersprache beim ersten Start; Lesemodus der Schusszahlenseite. Deployment wird durch den E2E-Job abgesichert.
 
 Aus dem gelieferten Browser-Retest zusätzlich korrigiert: Schuss und kg werden in der Simulation getrennt summiert und ausgegeben, Export mit Einheitsspalte; Warnlegende mit Reserve < 5 dB; keine festen Geissalp-Ortsnamen in Kartenfallbacks, keine schematische Simulationskarte ohne Grundlage; Exportbutton nennt das tatsächliche JSON-Format. Schusszahlensortierung erfolgt über fokussierbare Buttons; Exportselektion bleibt auch bei Leserechten möglich. Interner Dokumentpfad aus Platzhaltern entfernt.

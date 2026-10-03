@@ -192,6 +192,20 @@ describe('AreaSimulationComponent', () => {
     expect(fixture.nativeElement.textContent).not.toContain('Lattigen');
   });
 
+  it('B03: changed quantities without a basis cannot produce success, a zero-exceedance result or a PDF', () => {
+    facade.base.set({ ...BASE, calculation: null, receivers: [] });
+    facade.scaleAll(1.5);
+    fixture.detectChanges();
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector<HTMLButtonElement>('[data-testid="sim-run"]')?.disabled).toBe(true);
+    expect(host.querySelector<HTMLButtonElement>('[data-testid="sim-pdf"]')?.disabled).toBe(true);
+    expect(host.querySelector('[data-testid="sim-no-basis"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="sim-state"]')?.textContent).toContain('simulation.no_calculation');
+    expect(host.querySelector('[data-testid="sim-state"] .slim-badge--success')).toBeNull();
+    expect(host.textContent).not.toContain('simulation.result_sub_over');
+    expect(host.textContent).not.toContain('simulation.result_empty_dirty');
+  });
+
   const el = (testId: string): HTMLElement[] =>
     Array.from(fixture.nativeElement.querySelectorAll(`[data-testid="${testId}"]`));
 

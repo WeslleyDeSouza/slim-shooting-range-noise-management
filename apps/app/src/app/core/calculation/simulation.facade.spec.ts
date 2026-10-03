@@ -232,6 +232,16 @@ describe('SimulationFacade', () => {
     expect(api.adminCalculationSimulate).not.toHaveBeenCalled();
   });
 
+  it('does not submit changed quantities without a calculation basis', async () => {
+    api.adminCalculationSimulationBase.mockReturnValue(of({ ...BASE, calculation: null, receivers: [] }));
+    await facade.load('a1', 2026);
+    facade.scaleAll(1.5);
+    expect(facade.dirty()).toBe(true);
+    expect(await facade.run()).toBeNull();
+    expect(api.adminCalculationSimulate).not.toHaveBeenCalled();
+    expect(facade.result()).toBeNull();
+  });
+
   it('reports a rejected run as error and keeps the values', async () => {
     await facade.load('a1', 2026);
     facade.scaleAll(2);

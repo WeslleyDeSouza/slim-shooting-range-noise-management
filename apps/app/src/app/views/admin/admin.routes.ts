@@ -13,6 +13,7 @@ import { LogsFacade } from './logs/_data/logs.facade';
 import { UsersFacade } from './user-management/users/_data/users.facade';
 import { EloUsersOverviewComponent } from './user-management/users/users-overview.component';
 import { EloUserFormComponent } from './user-management/users/form/user-form.component';
+import { AreaViewStore } from './area/store.service';
 
 const placeholder = (path: string, data: PlaceholderData): Route => ({
   path,
@@ -71,6 +72,7 @@ export const ADMIN_ROUTES: Routes = [
           // around the pages of the mocks _mocks/area/*.
           {
             path: ':id',
+            providers: [AreaViewStore],
             loadComponent: () =>
               import('./area/_context/area-context.component').then(
                 (c) => c.AreaContextComponent,

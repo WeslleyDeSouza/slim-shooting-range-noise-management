@@ -240,5 +240,9 @@ describe('SimulationService (5.13 Simulation)', () => {
     expect(none.rows).toHaveLength(3);
     expect(none.rows.every((r) => !r.hasLevels)).toBe(true);
     expect(none.receivers).toEqual([]);
+    await expect(service.run(mockTenantId, thun.id, {
+      year: YEAR,
+      rows: none.rows.map(r => ({ roomId: r.roomId, combinationId: r.combinationId, inside: 10, outside: 0 })),
+    })).rejects.toThrow('No calculation basis with receivers available');
   });
 });

@@ -1,6 +1,8 @@
 # SLIM – Akteure und Testidentitäten für E2E
 
-Stand: 12.09.2026. Vorbereitung für den Coding-Agenten; noch keine implementierten Tests.
+Stand: 03.10.2026. Ausführbare Akteurs- und Fachablauftests neben ausdrücklich offenen `test.fixme`-Fällen. Ein Skelett zählt nicht als bestandener Test.
+
+Gezielter Retest der Korrekturen vom 03.10.: [Browser-Prüfliste](fachablaeufe/retest-2026-10-03.md), automatisiert in [retest-2026-10-03.spec.ts](fachablaeufe/retest-2026-10-03.spec.ts).
 
 Grundlage: bereitgestellte Systemkontextgrafik und Abbildung 7 sowie die im Projekt ausgewerteten Rollen aus B1 Kapitel 8.1.2. Die Grafiken zeigen Anwendungsfälle, keine vollständige Berechtigungsmatrix. Für jede erlaubte und verbotene Aktion die Originalmatrix prüfen und als Quelle am Test vermerken.
 

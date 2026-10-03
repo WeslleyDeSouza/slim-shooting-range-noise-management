@@ -142,8 +142,9 @@ export class AreaSimulationComponent extends ComponentBase {
   protected readonly error = this.facade.error;
 
   protected readonly calculation = computed(() => this.base()?.calculation ?? null);
+  protected readonly canSimulate = computed(() => !this.loading() && !!this.calculation() && this.receivers().length > 0);
   /** A fresh result: computed with the values as they are now. */
-  protected readonly showSim = computed(() => !!this.result() && !this.stale());
+  protected readonly showSim = computed(() => this.canSimulate() && !!this.result()?.calculation && !!this.result()?.receivers.length && !this.stale());
   protected readonly resultById = computed(() => {
     const byId: Record<string, SimulationResultReceiverDto> = {};
     for (const r of this.result()?.receivers ?? []) byId[r.id] = r;
@@ -153,6 +154,7 @@ export class AreaSimulationComponent extends ComponentBase {
     this.showSim() ? (this.result()?.counts.over ?? 0) : 0,
   );
   protected readonly stateKey = computed(() => {
+    if (!this.canSimulate()) return 'simulation.no_calculation';
     if (!this.dirty()) return 'simulation.state.current';
     if (!this.result()) return 'simulation.state.not_run';
     return this.stale() ? 'simulation.state.stale' : 'simulation.state.fresh';
@@ -301,6 +303,7 @@ export class AreaSimulationComponent extends ComponentBase {
   }
 
   protected async run(): Promise<void> {
+    if (!this.canSimulate()) return;
     await this.facade.run();
   }
 

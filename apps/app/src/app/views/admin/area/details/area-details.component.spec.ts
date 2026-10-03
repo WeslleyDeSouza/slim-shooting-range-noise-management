@@ -10,6 +10,7 @@ import { AccessFacade } from '../../../../core/access/access.facade';
 import { AreaFacade } from '../../../../core/area/area.facade';
 import { AssessmentFacade } from '../../../../core/calculation/assessment.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
+import { AreaViewStore } from '../store.service';
 import { TableExportData } from '../../../../core/table/table-export';
 import { TableExportFacade } from '../../../../core/table/table-export.facade';
 import { AreaDetailsComponent } from './area-details.component';
@@ -125,6 +126,7 @@ describe('AreaDetailsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AreaDetailsComponent],
       providers: [
+        AreaViewStore,
         { provide: AssessmentFacade, useValue: facade },
         { provide: MapFacade, useValue: new MapFacadeStub() },
         { provide: AreaFacade, useValue: AREA_STUB },
@@ -344,6 +346,7 @@ describe('AreaDetailsComponent — GIS-Kartenviewer (slm 2)', () => {
     await TestBed.configureTestingModule({
       imports: [AreaDetailsComponent],
       providers: [
+        AreaViewStore,
         { provide: AssessmentFacade, useValue: facade },
         { provide: MapFacade, useValue: maps },
         { provide: AreaFacade, useValue: AREA_STUB },

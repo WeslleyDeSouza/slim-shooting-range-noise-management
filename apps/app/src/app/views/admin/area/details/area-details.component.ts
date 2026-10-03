@@ -29,6 +29,7 @@ import {
 } from '../../../../core/calculation/assessment.facade';
 import { MapFacade } from '../../../../core/calculation/map.facade';
 import { tableExport, TableExportData } from '../../../../core/table/table-export';
+import { AreaViewStore } from '../store.service';
 
 type ReceiverState = ReceiverAssessmentDto['state'];
 type View = 'map' | 'list';
@@ -83,6 +84,7 @@ export class AreaDetailsComponent extends ComponentBase {
   private readonly areas = inject(AreaFacade);
   private readonly translate = inject(TranslateService);
   private readonly route = inject(ActivatedRoute);
+  private readonly viewStore = inject(AreaViewStore);
 
   /** The area id lives on the parent route (`/admin/area/:id/details`). */
   private readonly areaId = toSignal(
@@ -100,12 +102,13 @@ export class AreaDetailsComponent extends ComponentBase {
   // View state ---------------------------------------------------------------
   protected readonly view = signal<View>('map');
   protected readonly selectedId = signal<string | null>(null);
-  protected readonly calculationId = signal<string | null>(null);
-  protected readonly from = signal<string | null>(null);
-  protected readonly to = signal<string | null>(null);
-  protected readonly yearsText = signal('');
-  protected readonly yearsInvalid = signal(false);
-  private readonly years = signal<string | null>(null);
+  private readonly selection = computed(() => this.viewStore.selection(this.areaId()));
+  protected readonly calculationId = computed(() => this.selection().calculationId);
+  protected readonly from = computed(() => this.selection().from);
+  protected readonly to = computed(() => this.selection().to);
+  protected readonly yearsText = computed(() => this.selection().yearsText);
+  protected readonly yearsInvalid = computed(() => this.selection().yearsInvalid);
+  private readonly years = computed(() => this.selection().years);
 
   // Data ---------------------------------------------------------------------
   protected readonly assessment = this.facade.assessment;
@@ -279,33 +282,19 @@ export class AreaDetailsComponent extends ComponentBase {
   }
 
   protected onCalculationChange(value: string): void {
-    this.calculationId.set(value || null);
+    this.viewStore.setCalculation(this.areaId(), value);
   }
 
   protected onFromChange(value: string): void {
-    this.clearYears();
-    this.from.set(value || null);
+    this.viewStore.setDate(this.areaId(), 'from', value);
   }
 
   protected onToChange(value: string): void {
-    this.clearYears();
-    this.to.set(value || null);
+    this.viewStore.setDate(this.areaId(), 'to', value);
   }
 
   protected onYearsChange(value: string): void {
-    this.yearsText.set(value);
-    if (!value.trim()) { this.clearYears(); return; }
-    const tokens = value.trim().split(/[,;\s]+/);
-    const valid = tokens.length === 3 && new Set(tokens).size === 3 &&
-      tokens.every(y => /^\d{4}$/.test(y) && +y >= 1900 && +y <= 2200);
-    this.yearsInvalid.set(!valid);
-    if (valid) this.years.set(tokens.map(Number).sort((a, b) => a - b).join(','));
-  }
-
-  private clearYears(): void {
-    this.yearsText.set('');
-    this.yearsInvalid.set(false);
-    this.years.set(null);
+    this.viewStore.setYears(this.areaId(), value);
   }
 
   // Helpers for the template -------------------------------------------------

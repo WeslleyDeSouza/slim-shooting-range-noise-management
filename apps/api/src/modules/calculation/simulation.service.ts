@@ -50,6 +50,9 @@ export class SimulationService {
 
   async run(tenantId: string, areaId: string, dto: SimulationRunDto): Promise<SimulationResultDto> {
     const { calculation, rows, receivers, model, reference, operating, labelOf, sourceCount, thresholds } = await this.load(tenantId, areaId, dto.year, dto.calculationId);
+    if (!calculation || !model || !receivers.length) {
+      throw new BadRequestException('No calculation basis with receivers available');
+    }
     const known = new Set(rows.map((r) => refKey(r.roomId, r.combinationId)));
     const unknown = dto.rows.filter((r) => !known.has(refKey(r.roomId, r.combinationId)));
     if (unknown.length) {

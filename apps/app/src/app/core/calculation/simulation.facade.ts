@@ -104,7 +104,8 @@ export class SimulationFacade extends SignalStore<SimulationState> {
   }
 
   async load(areaId: string, year = this.snapshot().year, calculationId?: string): Promise<void> {
-    this.patch({ areaId, year, calculationId: calculationId ?? null, loading: true, error: null });
+    this.patch({ areaId, year, calculationId: calculationId ?? null, loading: true, error: null,
+      base: null, values: {}, result: null, resultValues: null });
     try {
       const base = await firstValueFrom(
         this.api.adminCalculationSimulationBase({ areaId, year: String(year), calculationId }),
@@ -145,8 +146,8 @@ export class SimulationFacade extends SignalStore<SimulationState> {
   }
 
   async run(): Promise<SimulationResultDto | null> {
-    const { areaId, year, calculationId, values } = this.snapshot();
-    if (!areaId) return null;
+    const { areaId, year, calculationId, values, base, loading } = this.snapshot();
+    if (!areaId || loading || !base?.calculation || !base.receivers.length) return null;
     this.patch({ running: true, error: null });
     try {
       const result = await firstValueFrom(

@@ -23,6 +23,7 @@
         type="button"
         class="slim-btn"
         [disabled]="!showSim()"
+        data-testid="sim-pdf"
         [attr.title]="'simulation.pdf_soon' | translate"
       >
         {{ 'simulation.pdf' | translate }}
@@ -408,6 +409,10 @@
             <p>{{ 'simulation.running' | translate }}</p>
             <span class="slim-skeleton slim-skeleton--text sim__progress-bar"></span>
           </div>
+        } @else if (!canSimulate()) {
+          <div class="slim-empty" data-testid="sim-no-basis" role="status">
+            <div class="slim-empty__title">{{ 'simulation.no_calculation' | translate }}</div>
+          </div>
         } @else if (!result()) {
           <div class="slim-empty">
             <div class="slim-empty__title">{{ 'simulation.result_empty_title' | translate }}</div>
@@ -498,7 +503,7 @@
     <span class="slim-actionbar__state" data-testid="sim-state">
       <span
         class="slim-badge"
-        [class.slim-badge--success]="!dirty() || showSim()"
+        [class.slim-badge--success]="canSimulate() && (!dirty() || showSim())"
         [class.slim-badge--warning]="dirty() && !showSim()"
       >
         {{ stateKey() | translate }}
@@ -518,7 +523,7 @@
       type="button"
       class="slim-btn slim-btn--primary"
       data-testid="sim-run"
-      [disabled]="!dirty() || running()"
+      [disabled]="!canSimulate() || !dirty() || running()"
       (click)="run()"
     >
       <svg class="slim-btn__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">

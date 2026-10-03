@@ -12,7 +12,6 @@ Einsetzen beide Word-Dateien neu erzeugen (Abschnitt 6).
 | Platzhalter | Dokument / Stelle | Einzusetzen |
 | --- | --- | --- |
 | `[OFFEN: Firmenname Technologiepartnerin]` | C2 Kapitel 1; Z3 Kopf | Vollständige Firmenbezeichnung der Subunternehmerin für die Entwicklung (Rechtsform, Sitz). Danach steht überall nur «Technologiepartnerin». |
-| `[OFFEN: Hosting-Anbieter]` | C2 Kapitel 2.5 | Name des Schweizer Hosting-Anbieters und Rechenzentrumsstandorte. Der Anbieter ist im Angebot zu benennen (FAQ 132, 140, 180); E1 ist bei ihm nachzuweisen. |
 | `[OFFEN: Aufwandsschätzung LP5 zusätzliche Kartenlayer]` | C2 Kapitel 5.2 | Nachvollziehbare Aufwandsschätzung für Gebäude, Isophonen und Untersuchungsperimeter (FAQ 13: «erwünscht»). |
 | `[OFFEN: Standort 2nd-/3rd-Level-Support]` | C2 Kapitel 6.3 | Standort der Supportorganisation von [PLATZHALTER FIRMA] (Teil B 2.6.2, E8) und des 3rd Level bei der Technologiepartnerin. |
 | `[OFFEN: Demo-URL]` | C2 Kapitel 6.5 | Adresse der Demo-Instanz. |
@@ -49,7 +48,7 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 | Begriff «Entwicklerin» | **Entschieden 02.10.2026:** In C2 und Z3 heisst die Subunternehmerin durchgehend «Technologiepartnerin». «Entwicklerin» ist nach dem Rahmenvertrag (Art. 1.1) die Vertragspartnerin der Bestellerin, also [PLATZHALTER FIRMA]; das Wort steht in C2 nur noch in diesem Sinn (Kapitel 1). | Art. 1.1 am Vertragstext prüfen – der Rahmenvertrag liegt nicht im Repository. |
 | Vorbestehende Rechte (C2 Kapitel 2.2) | Bibliotheken `@app-galaxy/*` und der Prototyp (MVP) im Stand vor Inkrafttreten des Rahmenvertrags sind vorbestehende Rechte der Technologiepartnerin; die Auftraggeberin erhält das unentgeltliche Nutzungsrecht nach Art. 6.2.4. Der Satz zur Open-Source-Freigabe ist gestrichen. | Rechtekette vertraglich regeln: Technologiepartnerin → [PLATZHALTER FIRMA] (Generalunternehmerin) → armasuisse; so steht es jetzt in C2 2.2. Art. 6.2.4 am Vertragstext prüfen. |
 | Weitere Artikelnummern im Plan | Art. 2.3.4 (PI-Angebote), 2.11.1 (Termin 30.06.2028), 2.15 (Change Requests), 3.1 (Vergütung) | Nur über FAQ 50, 51, 59 und 69 belegt; im Rahmenvertrag gegenprüfen. |
-| Hosting (C2 Kapitel 2.5) | «100 % der Daten in der Schweiz, einschliesslich Sicherungen, Quellcode und Entwicklungsdaten»; Anforderungen ISO 27001 und Si001; zweiter Schweizer Standort für die Sicherung. | Mit dem gewählten Anbieter belegen (Standortbestätigung, Zertifikat, Vertrag). Der Prototyp-Quellcode liegt heute auf GitHub.com; der Umzug auf das selbst betriebene GitLab steht aus (E1 Kapitel 6.1, 10). |
+| Hosting (C2 Kapitel 2.5) | «100 % der Daten in der Schweiz, einschliesslich Sicherungen, Quellcode und Entwicklungsdaten»; Anforderungen ISO 27001 und Si001; zweiter Schweizer Standort für die Sicherung. **Eingesetzt 02.10.2026:** Infomaniak Network SA, eigene Rechenzentren in Genf (C2 2.5, E1-Konzept der Generalunternehmerin 6.1). | Mit Infomaniak belegen (Standortbestätigung, Zertifikat ISO 27001, Vertrag); der zweite Backup-Standort ist noch nicht benannt. Der Prototyp-Quellcode liegt heute auf GitHub.com; der Umzug auf das selbst betriebene GitLab steht aus (E1 Kapitel 6.1, 10). |
 | KI- und Entwicklungswerkzeuge (C2 Kapitel 6.3) | **Entschieden 02.10.2026:** ab der Eingabefrist ausschliesslich KI-Dienste mit Verarbeitung in der Schweiz; C2 6.3 und das E1-Konzept der Technologiepartnerin (Kapitel 7) nennen dieselbe Regel. | Umstellung vor der Eingabefrist vollziehen (siehe Abschnitt E1). |
 | Datenhaltungskonzept E1 | C2 sagt: [PLATZHALTER FIRMA] und die Technologiepartnerin legen je ein eigenes Konzept vor (FAQ 132). | **Erledigt 02.10.2026:** zwei Konzepte (`E1-Datenhaltungskonzept-Generalunternehmerin.md`, `E1-Datenhaltungskonzept-Technologiepartnerin.md`); offene Angaben im Abschnitt «E1 – Datenhaltungskonzepte» unten. C2 6.3 an die KI-Regel der Konzepte angleichen. |
 | Barrierefreiheit (C2 Kapitel 5.4) | SLIM **orientiert sich** an eCH-0059 / WCAG 2.1 AA (Tastaturbedienung, Kontraste), in Anlehnung an die Richtlinien der armasuisse. | **Entschieden 02.10.2026:** keine verbindliche Konformitätszusage und kein Audit, weil die Auftraggeberin nach FAQ 9 und 128 keine speziellen Anforderungen stellt. Die Zusagen zu Tagged PDF, Screenreader-Prüfung und automatisierter Prüfung im Build sind gestrichen. |
@@ -118,11 +117,15 @@ npm run docs:docx -- docs/projects/hermes-projektplan-z3.md --pages
 ```
 
 Seitenbudget: Lösungskonzept höchstens 15 A4-Seiten, Anforderungsmatrix höchstens zwei A4-Seiten (FAQ 8), Management
-Summary höchstens eine halbe Seite (A2). Vorschau vom 02.10.2026: Konzept 15 Seiten (die letzte zu rund 40 % gefüllt),
-Matrix 2 Seiten, Summary 22 Textzeilen. Die Vorschau ersetzt Bilder durch Flächen gleicher Grösse und ist kein Nachweis
+Summary höchstens eine halbe Seite (A2). Vorschau vom 02.10.2026, 21:10 (nach den Ergänzungen
+in 3.2 und 4.2): Konzept 15 Seiten, die letzte bis auf rund fünf Zeilen gefüllt; die Überschrift 6.5 steht in der
+Vorschau als letzte Zeile auf Seite 14 – rückt Word sie auf Seite 15, bleiben noch weniger Zeilen Reserve. Matrix 2
+Seiten. Die Summary ist in diesem Lauf nicht neu gemessen (vorher 22 Textzeilen). **Die 15-Seiten-Grenze ist damit
+nicht bestätigt, sondern knapp;** vor weiteren Ergänzungen kürzen. Die Vorschau ersetzt Bilder durch Flächen gleicher Grösse und ist kein Nachweis
 der Word-Paginierung und der Lesbarkeit der Diagramme; auf diesem Rechner ist kein Word installiert. Die Word-Datei vor
 der Abgabe in Word öffnen, Inhaltsverzeichnis aktualisieren und die Seitenzahl nachzählen. Eine Seitenvorgabe für den
-Projektplan (Z3) ist im Repository nicht belegt; die Vorschau zählt 11 Seiten.
+Projektplan (Z3) ist im Repository nicht belegt; die Vorschau zählt 13 Seiten. Die Word-Fassungen vor der Neuerzeugung
+vom 02.10.2026 liegen als `*.vorher-2026-10-02-2110.docx` neben den Dateien.
 
 ## E1 – Datenhaltungskonzepte (Stand 02.10.2026)
 
@@ -150,7 +153,7 @@ einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
 **Einzutragen (Platzhalter in den Konzepten)**
 
 - Beide: verantwortliche Person und Funktion.
-- Generalunternehmerin: Hosting-Anbieter und Rechenzentren; zweiter Backup-Standort; SMTP-Anbieter;
+- Generalunternehmerin: Belege zu Infomaniak Network SA, Genf (Anbieter und Rechenzentren sind eingesetzt); zweiter Backup-Standort; SMTP-Anbieter;
   Monitoring-Produkt; Werkzeuge für Backlog, Tickets, Dokumentation und Dateiaustausch; Ablage der Importdateien;
   Standort der Demo-Instanz; Standort des Supports und Fernzugriff aus dem Ausland ja/nein; Schlüsselverwaltung beim
   Hosting-Anbieter und dessen Verfahren für administrative Zugriffe; KI-Werkzeuge der Generalunternehmerin oder

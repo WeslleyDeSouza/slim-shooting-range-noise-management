@@ -184,6 +184,7 @@ export class AreaDetailsComponent extends ComponentBase {
   protected readonly exportSource = (): TableExportData => {
     const t = (key: string) => this.translate.translate(key) ?? key;
     const period = this.period();
+    const periodLabel = period ? (period.selectedYears.length ? period.selectedYears.join(', ') : `${swissDate(period.from)} – ${swissDate(period.to)}`) : null;
     const lines = this.sorted().flatMap((receiver): ExportLine[] => {
       const rows = receiver.rows.filter((row) => row.applicable);
       return rows.length ? rows.map((row) => ({ receiver, row })) : [{ receiver, row: null }];
@@ -194,7 +195,7 @@ export class AreaDetailsComponent extends ComponentBase {
       subtitle: this.mapTitle(),
       filters: [
         { label: t('details.calc.basis'), value: this.calculation()?.name },
-        { label: t('details.export.period'), value: period ? (period.selectedYears.length ? period.selectedYears.join(', ') : `${swissDate(period.from)} – ${swissDate(period.to)}`) : null },
+        { label: t('details.export.period'), value: periodLabel },
       ],
       columns: [
         { header: t('details.receiver.no'), value: (l) => l.receiver.code },
@@ -206,6 +207,9 @@ export class AreaDetailsComponent extends ComponentBase {
         { header: t('details.columns.level'), value: (l) => l.row?.level },
         { header: t('details.columns.reserve'), value: (l) => l.row?.reserve },
         { header: t('details.export.row_state'), value: (l) => (l.row ? t(`details.state.${l.row.state}`) : null) },
+        // CSV has no workbook metadata block: preserve context in each data row too.
+        { header: t('details.calc.basis'), value: () => this.calculation()?.name },
+        { header: t('details.export.period'), value: () => periodLabel },
       ],
       rows: lines,
     });

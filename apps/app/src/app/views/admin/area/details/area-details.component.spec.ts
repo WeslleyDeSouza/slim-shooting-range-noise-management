@@ -172,7 +172,7 @@ describe('AreaDetailsComponent', () => {
     const data = exportFacade.download.mock.calls[0][0] as TableExportData;
     expect(data.table).toBe('empfangspunkte');
     expect(data.subtitle).toBe('1104.020 Geissalp');
-    expect(data.header).toHaveLength(9);
+    expect(data.header).toHaveLength(11);
     // Every applicable comparison of every point is a line.
     expect(data.rows).toHaveLength(RECEIVERS.reduce((n, r) => n + Math.max(1, r.rows.filter((row) => row.applicable).length), 0));
     // The worst point comes first, as in the list; limit and level are numbers.

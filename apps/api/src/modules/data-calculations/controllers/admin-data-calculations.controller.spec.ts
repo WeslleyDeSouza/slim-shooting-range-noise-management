@@ -283,7 +283,7 @@ describe('AdminDataCalculationsController (HTTP)', () => {
     const imported = await api.http().post(`${base()}/import`).send({ state: input }).expect(201);
     const exportedResponse = await api.http().post(`${base()}/export/states`).send({ stateIds: [imported.body.stateId] }).expect(200);
     const exported: StateImportDto = JSON.parse(exportedResponse.text).states[0];
-    for (const key of ['calculation', 'propagation', 'perimeter', 'buildings', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf', 'isophones', 'affectedAnalysis', 'immissionPoints'] as const) {
+    for (const key of ['calculation', 'state', 'plantParts', 'sources', 'wlr', 'propagation', 'perimeter', 'buildings', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf', 'isophones', 'affectedAnalysis', 'immissionPoints'] as const) {
       expect(input[key]).toBeDefined();
       expect(exported[key]).toMatchObject(input[key] as object);
     }

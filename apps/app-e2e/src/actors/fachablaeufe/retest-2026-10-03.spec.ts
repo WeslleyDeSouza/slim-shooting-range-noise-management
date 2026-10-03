@@ -81,6 +81,25 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await expect(page.getByTestId('sim-pin')).toHaveCount(0);
       await expect(page.locator('body')).not.toContainText('Lattigen');
       await expect(page.locator('body')).not.toContainText('Laberhus');
+      await page.getByTestId('sim-edit').click();
+      const input = page.getByTestId('sim-inside').first();
+      await input.fill('10');
+      await input.press('Tab');
+      await page.locator('[data-testid="sim-scale"][data-factor="1.5"]').click();
+      await expect(page.getByTestId('sim-run')).toBeDisabled();
+      await expect(page.getByTestId('sim-pdf')).toBeDisabled();
+      await expect(page.getByTestId('sim-no-basis')).toBeVisible();
+      await expect(page.getByTestId('sim-state')).not.toContainText('Simulation aktuell');
+      await expect(page.locator('.sim__head-meta')).not.toContainText('0 überschritten');
+      // UI guard alone is insufficient: a direct request must also be rejected.
+      const base = await response.json();
+      const rejected = await apiAs.post(`/api/admin/area/${id}/calculation/simulation`, { data: {
+        year: base.year, rows: base.rows.map((r: { roomId: string; combinationId: string }) => ({
+          roomId: r.roomId, combinationId: r.combinationId, inside: 15, outside: 0,
+        })),
+      } });
+      expect(rejected.status()).toBe(400);
+      expect(await rejected.text()).toContain('No calculation basis with receivers available');
     });
 
   test('R03 drei repräsentative Jahre, Duplikate und ungültige Eingaben',
@@ -108,6 +127,15 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await years.fill('2020, 2023, 2025');
       await years.press('Tab');
       await expect(years).toHaveAttribute('aria-invalid', 'false');
+      await page.getByTestId('details-export').click();
+      const downloading = page.waitForEvent('download');
+      await page.getByTestId('details-export-csv').click();
+      const download = await downloading;
+      const path = await download.path();
+      if (!path) throw new Error('Details CSV download did not produce a file');
+      const csv = await readFile(path, 'utf8');
+      expect(csv).toContain('2020, 2023, 2025');
+      await info.attach(download.suggestedFilename(), { body: csv, contentType: 'text/csv' });
     });
 
   test('R04 JSON-Download hat das angekündigte Format und Zustandsobjekte',
@@ -117,7 +145,8 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await page.goto(`/admin/data-management/area/${id}/calculations/export`);
       const button = page.getByTestId('dce-export-states');
       await expect(button).toHaveText(/JSON/);
-      await page.getByTestId('dce-state-check').first().check();
+      await page.getByTestId('dce-state-check').nth(0).check();
+      await page.getByTestId('dce-state-check').nth(1).check();
       const downloading = page.waitForEvent('download');
       await button.click();
       const download = await downloading;
@@ -128,7 +157,7 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       const contents = await readFile(path, 'utf8');
       const bundle = JSON.parse(contents);
       expect(bundle.format).toBe('slim-state-export');
-      expect(bundle.states).toHaveLength(1);
+      expect(bundle.states).toHaveLength(2);
       for (const key of ['plantParts', 'sources', 'immissionPoints', 'wlr', 'buildings', 'isophones', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf']) {
         expect(Array.isArray(bundle.states[0][key]), key).toBe(true);
       }
@@ -209,5 +238,40 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await page.locator('.area-ctx__area a').filter({ hasText: 'Geissalp' }).click();
       await expect(years).toHaveValue('2020, 2023, 2025');
       await expect(calculation).toHaveValue(selected);
+    });
+
+  test('R09 nur Entwurf ohne Aktuell-Zeiger wird nicht automatisch beurteilt',
+    { annotation: tags({ actor: 'A01', slm: [4, 12, 18], prio: 1 }) },
+    async ({ page, apiAs }, info) => {
+      // This fixture writes and cleans up data: fail before mutation on remote hosts.
+      expect(new URL(String(info.project.use.baseURL)).hostname).toMatch(/^(localhost|127\.0\.0\.1)$/);
+      const id = await areaId(apiAs, 'Hinterrhein');
+      const dm = `/api/admin/data/area/${id}/calculations`;
+      const created = await apiAs.post(`${dm}/delivery`, { data: {
+        name: `E2E draft ${Date.now()}`, deliveredAt: '2026-10-03', supplier: 'E2E',
+      } });
+      expect(created.status()).toBe(201);
+      const delivery = await created.json();
+      try {
+        const state = await apiAs.post(`${dm}/state`, { data: {
+          calculationId: delivery.id, name: `Draft ${delivery.id}`, referenceYear: 2026,
+        } });
+        expect(state.status()).toBe(201);
+        expect((await state.json()).isCurrent).toBe(false);
+        const basis = await apiAs.get(`/api/admin/area/${id}/calculation/simulation`);
+        expect(basis.status()).toBe(200);
+        expect((await basis.json()).calculation).toBeNull();
+        await page.goto(`/admin/area/${id}/details`);
+        await expect(page.getByTestId('details-calc-select').locator('option')).toHaveCount(2);
+        await expect(page.getByTestId('details-calc-select')).toHaveValue('');
+        await page.getByTestId('area-tab-simulation').click();
+        await expect(page.getByTestId('sim-no-basis')).toBeVisible();
+        await expect(page.getByTestId('sim-run')).toBeDisabled();
+        await expect(page.getByTestId('sim-pdf')).toBeDisabled();
+        await expect(page.locator('[data-kind="schematic"]')).toHaveCount(0);
+      } finally {
+        const removed = await apiAs.delete(`${dm}/delivery/${delivery.id}`);
+        expect(removed.status()).toBe(204);
+      }
     });
 });

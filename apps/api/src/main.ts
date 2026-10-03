@@ -44,6 +44,7 @@ async function bootstrap() {
 
   // Coolify WorkAround
   app.use(applyMiddlewareAppStripeDouble());
+
   // Security headers (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Permissions-Policy) on every
   // response, also the CORS preflight: SLIM's own list goes in as custom headers of the CORS middleware and
   // is therefore set last — it does not depend on the galaxy opt-in (API_CONFIG_HEADERS_SECURITY) and wins
@@ -51,6 +52,7 @@ async function bootstrap() {
   app.use(MiddlewareSecurityHeaders());
   app.use(MiddlewareCors({ customHeaders: securityHeaders() }));
   app.use(staticFileMiddleware(dataSource));
+
   // The table export receives the rows of a mask (B1 5.5.5): only this route takes a larger body than the
   // default of 100 kB (see `tableExportBodyParser` for why it is wired this way).
   app.use(`/${globalPrefix}/${TABLE_EXPORT_ROUTE}`, tableExportBodyParser());

@@ -1,8 +1,15 @@
 # C2 und Z3 – offene Angaben vor Abgabe
 
-Arbeitsliste zum Lösungskonzept (`C2-Loesungskonzept-SLIM.md`, Version 1.0) und zum Projektplan
-(`../projects/hermes-projektplan-z3.md`, Version 1.0), Stand 02.10.2026. Kein Bestandteil des Angebots und kein
+Arbeitsliste zum Lösungskonzept (`C2-Loesungskonzept-SLIM.md`, Version 1.1) und zum Projektplan
+(`../projects/hermes-projektplan-z3.md`, Version 1.1), Stand 03.10.2026. Kein Bestandteil des Angebots und kein
 Erfüllungsnachweis. Dies ist die einzige Liste der Angaben, die noch fehlen oder vor der Freigabe zu bestätigen sind.
+
+**Redaktionelle Prüfung vom 03.10.2026:** C2 und Z3 enthalten keine konkrete Retest-Historie mehr. Die neu erzeugte
+C2-PDF-Vorschau umfasst 17 Inhaltsseiten einschliesslich der zweitseitigen Anforderungsmatrix; Beilage A2 nennt
+maximal 15 A4-Seiten. Der endgültige Satz muss deshalb noch gekürzt und in der Abgabefassung kontrolliert werden.
+Alle fünf Diagramme und fünf referenzierten Bilder wurden beim Vorschau-Build eingebunden. Die neuen Bandbreiten
+für die Mitwirkung der Auftraggeberin in Z3 Abschnitt 12 sind Planungsannahmen und vor einer verbindlichen
+Übernahme abzustimmen. Offene Personen- und Firmenangaben bleiben vor Abgabe zu bestätigen.
 
 ## 1. Platzhalter in den Angebotsdokumenten
 
@@ -48,7 +55,7 @@ Ohne Platzhalter, aber ebenfalls einzusetzen:
 | Begriff «Entwicklerin» | **Entschieden 02.10.2026:** In C2 und Z3 heisst die Subunternehmerin durchgehend «Technologiepartnerin». «Entwicklerin» ist nach dem Rahmenvertrag (Art. 1.1) die Vertragspartnerin der Bestellerin, also [PLATZHALTER FIRMA]; das Wort steht in C2 nur noch in diesem Sinn (Kapitel 1). | Art. 1.1 am Vertragstext prüfen – der Rahmenvertrag liegt nicht im Repository. |
 | Vorbestehende Rechte (C2 Kapitel 2.2) | Bibliotheken `@app-galaxy/*` und der Prototyp (MVP) im Stand vor Inkrafttreten des Rahmenvertrags sind vorbestehende Rechte der Technologiepartnerin; die Auftraggeberin erhält das unentgeltliche Nutzungsrecht nach Art. 6.2.4. Der Satz zur Open-Source-Freigabe ist gestrichen. | Rechtekette vertraglich regeln: Technologiepartnerin → [PLATZHALTER FIRMA] (Generalunternehmerin) → armasuisse; so steht es jetzt in C2 2.2. Art. 6.2.4 am Vertragstext prüfen. |
 | Weitere Artikelnummern im Plan | Art. 2.3.4 (PI-Angebote), 2.11.1 (Termin 30.06.2028), 2.15 (Change Requests), 3.1 (Vergütung) | Nur über FAQ 50, 51, 59 und 69 belegt; im Rahmenvertrag gegenprüfen. |
-| Hosting (C2 Kapitel 2.5) | «100 % der Daten in der Schweiz, einschliesslich Sicherungen, Quellcode und Entwicklungsdaten»; Anforderungen ISO 27001 und Si001; zweiter Schweizer Standort für die Sicherung. **Eingesetzt 02.10.2026:** Infomaniak Network SA, eigene Rechenzentren in Genf (C2 2.5, E1-Konzept der Generalunternehmerin 6.1). | Mit Infomaniak belegen (Standortbestätigung, Zertifikat ISO 27001, Vertrag); der zweite Backup-Standort ist noch nicht benannt. Der Prototyp-Quellcode liegt heute auf GitHub.com; der Umzug auf das selbst betriebene GitLab steht aus (E1 Kapitel 6.1, 10). |
+| Hosting (C2 Kapitel 2.5) | «100 % der Daten in der Schweiz, einschliesslich Sicherungen, Quellcode und Entwicklungsdaten»; Anforderungen ISO 27001 und Si001; zweiter Schweizer Standort für die Sicherung. **Eingesetzt 02.10.2026:** Infomaniak Network SA, eigene Rechenzentren in Genf (C2 2.5, E1-Konzept der Generalunternehmerin 6.1). | Mit Infomaniak belegen (Standortbestätigung, Zertifikat ISO 27001, Vertrag); der zweite Backup-Standort ist noch nicht benannt. Der Prototyp-Quellcode liegt heute auf GitHub.com; der Umzug auf das selbst betriebene GitLab (Infomaniak-VPS, Genf; eingesetzt 03.10.2026) steht aus (E1 Kapitel 6.1, 10). |
 | KI- und Entwicklungswerkzeuge (C2 Kapitel 6.3) | **Entschieden 02.10.2026:** ab der Eingabefrist ausschliesslich KI-Dienste mit Verarbeitung in der Schweiz; C2 6.3 und das E1-Konzept der Technologiepartnerin (Kapitel 7) nennen dieselbe Regel. | Umstellung vor der Eingabefrist vollziehen (siehe Abschnitt E1). |
 | Datenhaltungskonzept E1 | C2 sagt: [PLATZHALTER FIRMA] und die Technologiepartnerin legen je ein eigenes Konzept vor (FAQ 132). | **Erledigt 02.10.2026:** zwei Konzepte (`E1-Datenhaltungskonzept-Generalunternehmerin.md`, `E1-Datenhaltungskonzept-Technologiepartnerin.md`); offene Angaben im Abschnitt «E1 – Datenhaltungskonzepte» unten. C2 6.3 an die KI-Regel der Konzepte angleichen. |
 | Barrierefreiheit (C2 Kapitel 5.4) | SLIM **orientiert sich** an eCH-0059 / WCAG 2.1 AA (Tastaturbedienung, Kontraste), in Anlehnung an die Richtlinien der armasuisse. | **Entschieden 02.10.2026:** keine verbindliche Konformitätszusage und kein Audit, weil die Auftraggeberin nach FAQ 9 und 128 keine speziellen Anforderungen stellt. Die Zusagen zu Tagged PDF, Screenreader-Prüfung und automatisierter Prüfung im Build sind gestrichen. |
@@ -91,7 +98,7 @@ der Export führt sie als beantwortet mit Änderungsdatum. FAQ 59 nennt die 4'00
 ein Maximum. Das Forum führt zudem «Beilage A1 Software-Entwicklungsvertrag (agil) V2» und «Beilage C3 Preisblatt V2»
 als ergänzende Unterlagen; beide liegen nicht im Repository.
 
-In Version 1.0 eingearbeitet: FAQ 13, 17, 19, 28, 32, 36–38, 49, 50, 51, 52, 59, 66, 69, 70, 93, 97, 98, 99, 115, 116,
+In Version 1.1 eingearbeitet: FAQ 13, 17, 19, 28, 32, 36–38, 49, 50, 51, 52, 59, 66, 69, 70, 93, 97, 98, 99, 115, 116,
 117, 120, 121, 128, 132, 133, 136–138, 140, 142, 157, 158, 160, 164–166, 170–174, 176, 177, 180.
 
 Am 02.10.2026 beantwortet: FAQ 53 (KI-Einsatz; in den E1-Konzepten, Kapitel 7, eingearbeitet, Geltung ab der
@@ -158,7 +165,8 @@ einzutragen ist; in den Konzepten selbst stehen keine internen Prüfvermerke.
   Standort der Demo-Instanz; Standort des Supports und Fernzugriff aus dem Ausland ja/nein; Schlüsselverwaltung beim
   Hosting-Anbieter und dessen Verfahren für administrative Zugriffe; KI-Werkzeuge der Generalunternehmerin oder
   «keine»; Frist für Offline-Entwürfe (Vorschlag 7 Tage); Aufbewahrungsfristen für Logs und Support-Daten.
-- Technologiepartnerin: Firmenname; Standort der GitLab- und Nexus-Instanz mit Beleg; gehostete Entwicklungsumgebung
+- Technologiepartnerin: Firmenname; Beleg zum Standort der GitLab- und Nexus-Instanz (eingesetzt 03.10.2026: virtuelle
+  Server der Infomaniak Network SA, Genf); gehostete Entwicklungsumgebung
   ja/nein; Verträge zu den KI-Werkzeugen; Sicherung der Entwicklungssysteme (Ort, Aufbewahrung); Frist für
   Build-Artefakte und Pipeline-Logs.
 

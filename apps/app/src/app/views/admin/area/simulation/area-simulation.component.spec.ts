@@ -461,6 +461,8 @@ describe('AreaSimulationComponent — GIS-Kartenviewer (slm 2)', () => {
     await setup({ fail: true });
     expect(all('slim-map-viewer')).toHaveLength(0);
     expect(all('[data-kind="schematic"]')).toHaveLength(1);
+    expect(all('[data-kind="schematic"]')[0].textContent).toContain('simulation.schematic');
+    expect(all('[data-kind="schematic"] svg')[0].textContent).not.toMatch(/Lattigen|Laberhus|SPM/);
     expect(pins().map((p) => p.textContent?.trim())).toEqual(['E1']);
   });
 });

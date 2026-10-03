@@ -109,22 +109,22 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await page.goto(`/admin/area/${id}/details`);
       const years = page.getByTestId('details-years');
       await expect(years).toBeVisible();
-      const assessment = page.waitForResponse(r => r.url().includes('/calculation/assessment') && new URL(r.url()).searchParams.get('years') === '2020,2023,2025');
-      await years.fill('2025, 2020, 2023');
+      const assessment = page.waitForResponse(r => r.url().includes('/calculation/assessment') && new URL(r.url()).searchParams.get('years') === '2020,2023,2026');
+      await years.fill('2026, 2020, 2023');
       await years.press('Tab');
       const response = await assessment;
       expect(response.status()).toBe(200);
       const body = await response.json();
-      expect(body.period.selectedYears).toEqual([2020, 2023, 2025]);
-      await expect(page.locator('body')).toContainText('2020, 2023, 2025');
+      expect(body.period.selectedYears).toEqual([2020, 2023, 2026]);
+      await expect(page.locator('body')).toContainText('2020, 2023, 2026');
       await info.attach('representative-years.json', { body: JSON.stringify(body, null, 2), contentType: 'application/json' });
-      for (const invalid of ['2020, 2020, 2025', '2020, xyz, 2025', '1899, 2023, 2025', '2201, 2023, 2025']) {
+      for (const invalid of ['2025, 2025, 2026', '2020, xyz, 2025', '1899, 2023, 2025', '2201, 2023, 2025']) {
         await years.fill(invalid);
         await years.press('Tab');
         await expect(years).toHaveAttribute('aria-invalid', 'true');
         await expect(page.locator('#details-years-help')).toHaveClass(/slim-text--danger/);
       }
-      await years.fill('2020, 2023, 2025');
+      await years.fill('2020, 2023, 2026');
       await years.press('Tab');
       await expect(years).toHaveAttribute('aria-invalid', 'false');
       await page.getByTestId('details-export').click();
@@ -134,7 +134,7 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       const path = await download.path();
       if (!path) throw new Error('Details CSV download did not produce a file');
       const csv = await readFile(path, 'utf8');
-      expect(csv).toContain('2020, 2023, 2025');
+      expect(csv).toContain('2020, 2023, 2026');
       await info.attach(download.suggestedFilename(), { body: csv, contentType: 'text/csv' });
     });
 
@@ -158,8 +158,17 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       const bundle = JSON.parse(contents);
       expect(bundle.format).toBe('slim-state-export');
       expect(bundle.states).toHaveLength(2);
-      for (const key of ['plantParts', 'sources', 'immissionPoints', 'wlr', 'buildings', 'isophones', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf']) {
-        expect(Array.isArray(bundle.states[0][key]), key).toBe(true);
+      expect(bundle.states.map((s: { state: { externalId: string } }) => s.state.externalId).sort()).toEqual(['02218_1', '02218_2']);
+      for (const state of bundle.states) {
+        for (const key of ['plantParts', 'sources', 'immissionPoints', 'wlr', 'buildings', 'isophones', 'obstacles', 'highScreens', 'shootingHouses', 'measuresPoint', 'measuresArea', 'measuresOperational', 'measuresSsf']) {
+          expect(Array.isArray(state[key]), key).toBe(true);
+        }
+        const sources = new Set(state.sources.map((s: { sourceId: string }) => s.sourceId));
+        const points = new Set(state.immissionPoints.map((p: { sonarmsId: string }) => p.sonarmsId));
+        for (const level of state.wlr) {
+          expect(sources.has(level.source)).toBe(true);
+          expect(points.has(level.point)).toBe(true);
+        }
       }
       await info.attach(download.suggestedFilename(), { body: contents, contentType: 'application/json' });
     });
@@ -176,6 +185,16 @@ test.describe('Fachlicher Retest 03.10.2026', () => {
       await page.keyboard.press('Enter');
       await expect(header).toHaveAttribute('aria-sort', 'descending');
       await expect(page.locator('.shots__group').first()).toBeVisible();
+      const quantityHeader = page.locator('.shots__th.slim-table__cell--num');
+      await quantityHeader.getByRole('button').click();
+      await expect(quantityHeader).toHaveAttribute('aria-sort', 'ascending');
+      const quantities = page.locator('[data-testid="shots-row"] [data-testid="shots-quantity"] b');
+      const ascending = (await quantities.allTextContents()).map(number);
+      expect(ascending.length).toBeGreaterThan(1);
+      expect(ascending).toEqual([...ascending].sort((a, b) => a - b));
+      await quantityHeader.getByRole('button').press('Enter');
+      await expect(quantityHeader).toHaveAttribute('aria-sort', 'descending');
+      expect((await quantities.allTextContents()).map(number)).toEqual([...ascending].reverse());
     });
 
   test('R06 Waffen-Stammdatensatz ist nach Neuladen direkt adressierbar',

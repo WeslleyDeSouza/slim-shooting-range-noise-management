@@ -16,6 +16,8 @@ SLIM ist eine Webapplikation aus Standardkomponenten (Angular, NestJS, PostgreSQ
 
 ## 2 Architektur und Technologie
 
+**Nachtrag zur fachlichen Absicherung, 03.10.2026:** Eine Simulation ohne ausgewählten Berechnungszustand und Empfangspunkte wird abgelehnt; sie erhält weder Erfolgsanzeige noch aktivierten PDF-Button. Detailauswahl (Zustand, Zeitraum, repräsentative Jahre) bleibt im Routenkontext je Schiessplatz beim Tabwechsel erhalten. CSV-Ausgaben enthalten Zustand und expliziten Zeitraum/Jahresliste als Datenfelder. Der zusätzliche lokale Nachtest umfasst 438 API-, 307 Oberflächen- und 9 gezielte Browsertests; die Bestätigung dieser Nachkorrekturen auf der Demo steht aus. [Nachführung des Retests eb3befc](retest-eb3befc-2026-10-03.md).
+
 ### 2.1 Komponenten, Schichten und Schnittstellen
 
 ```mermaid width=85%
@@ -238,7 +240,7 @@ Die Basislösung ist gemäss FAQ 142 für Desktop und Tablet optimiert (mindeste
 
 ### 6.1 Wartbarkeit und Erweiterbarkeit (slm 55)
 
-Monorepo mit getrennten Modulen (Stammdaten, Nutzungen, Berechnung, Datenverwaltung, Import/Export, Benutzer/Rollen, Logbuch), generiertem API-Vertrag und automatisch dokumentiertem Datenmodell; Fachparameter (Rollen, Rechte, Auswahllisten, Grenzwerte, Ampelschwellen, Rundung, Sperrdatum, Feiertage, Kartenlayer) sind Konfiguration ohne Rekompilierung; neue Masken entstehen aus Design System, Facade und generiertem Client. Qualitätssicherung (lokal erneut geprüft am 03.10.2026, bestanden): Lint, API-/App-Build; 438 API-Tests (Berechnungskern gegen B1.4, Rechenfälle, Service- und HTTP-Tests je Controller mit Rechtematrix); 303 Oberflächen-Tests; 27 Tests der Kartenbibliothek; dazu vorhandene, in diesem lokalen Retest nicht ausgeführte End-to-End-Fälle (Playwright) für Anmeldung, Startseite, Schiessplatz-Masken, Datenverwaltung und Tabellenfunktionen sowie Kriterien-Fälle je B1-Anforderung als Skelett mit Prüfschritten, die mit der jeweiligen Maske automatisiert werden. *Prototyp:* Rollen, Rechte, Übersetzungen, Auswahllisten, Sperrdatum, Ampelschwellen und -farben sowie Kartenlayer sind konfigurierbar; Grenzwerte, Rundung und Feiertage folgen in LP1. Erweiterungen (weitere Anhänge der LSV, zusätzliche Layer, AGOV) betreffen je ein Modul.
+Monorepo mit getrennten Modulen (Stammdaten, Nutzungen, Berechnung, Datenverwaltung, Import/Export, Benutzer/Rollen, Logbuch), generiertem API-Vertrag und automatisch dokumentiertem Datenmodell; Fachparameter (Rollen, Rechte, Auswahllisten, Grenzwerte, Ampelschwellen, Rundung, Sperrdatum, Feiertage, Kartenlayer) sind Konfiguration ohne Rekompilierung; neue Masken entstehen aus Design System, Facade und generiertem Client. Qualitätssicherung (lokal erneut geprüft am 03.10.2026, bestanden): Lint, API-/App-Build; 438 API-Tests (Berechnungskern gegen B1.4, Rechenfälle, Service- und HTTP-Tests je Controller mit Rechtematrix); 307 Oberflächen-Tests; 27 Tests der Kartenbibliothek; neun lokal ausgeführte Akteursregressionen (Playwright) sowie weitere vorhandene End-to-End-Fälle für Anmeldung, Startseite, Schiessplatz-Masken, Datenverwaltung und Tabellenfunktionen sowie Kriterien-Fälle je B1-Anforderung als Skelett mit Prüfschritten, die mit der jeweiligen Maske automatisiert werden. *Prototyp:* Rollen, Rechte, Übersetzungen, Auswahllisten, Sperrdatum, Ampelschwellen und -farben sowie Kartenlayer sind konfigurierbar; Grenzwerte, Rundung und Feiertage folgen in LP1. Erweiterungen (weitere Anhänge der LSV, zusätzliche Layer, AGOV) betreffen je ein Modul.
 
 ### 6.2 Skalierbarkeit und Effizienz
 

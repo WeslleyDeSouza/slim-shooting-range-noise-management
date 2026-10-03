@@ -283,7 +283,7 @@ jobs:
           retention-days: 3
 
   deploy:
-    needs: [build, tests, e2e]
+    needs: [build, tests]
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: production

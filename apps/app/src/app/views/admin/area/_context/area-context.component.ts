@@ -15,8 +15,9 @@ import {
 } from '@angular/router';
 import { map } from 'rxjs';
 import { ComponentBase } from '@app-galaxy/sdk-ui';
-import { TranslatePipe } from '@app-galaxy/translate-ui';
+import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
+import type { AreaResultDto } from '@ui-slim/apiClient';
 import { StatusPillComponent } from '../../../../common/status-pill.component';
 import { AreaNotFoundComponent } from '../../_components/area-not-found.component';
 import { AreaFacade } from '../../../../core/area/area.facade';
@@ -76,9 +77,11 @@ import { AreaFacade } from '../../../../core/area/area.facade';
         </div>
 
         @if (area(); as a) {
+          <!-- Two lights (B1 5.10): Kontingent and Lärm. kind, reason and basis feed the tooltip,
+               otherwise two equal pills («Überschritten» twice) cannot be told apart. -->
           <div class="area-ctx__status">
-            <app-status-pill [status]="a.quotaStatus" />
-            <app-status-pill [status]="a.noiseStatus" />
+            <app-status-pill kind="quota" [status]="a.quotaStatus" [reason]="a.quotaStatusReason" [basis]="quotaBasis(a)" />
+            <app-status-pill kind="noise" [status]="a.noiseStatus" [reason]="a.noiseStatusReason" [basis]="noiseBasis(a)" />
           </div>
         }
       </div>
@@ -123,6 +126,7 @@ export class AreaContextComponent extends ComponentBase {
   private readonly facade = inject(AreaFacade);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
 
   protected readonly routes = APP_ROUTES;
   protected readonly switcherOpen = signal(false);
@@ -146,6 +150,18 @@ export class AreaContextComponent extends ComponentBase {
       { id: 'simulation', key: 'menu.area_simulation', link: APP_ROUTES.admin.area.simulation(id), icon: ICON.chart },
     ];
   });
+
+  /** Data behind the quota light: the year and the two years before it (same text as the area list). */
+  protected quotaBasis(a: AreaResultDto): string | null {
+    if (!a.statusYear) return null;
+    return this.translate.translate('basis.quota', { year: a.statusYear, from: a.statusYear - 2 }) ?? null;
+  }
+
+  /** Data behind the noise light: the current Zustand and the year. */
+  protected noiseBasis(a: AreaResultDto): string | null {
+    if (!a.noiseStatusBasis) return null;
+    return this.translate.translate('basis.noise', { state: a.noiseStatusBasis, year: a.statusYear ?? '' }) ?? null;
+  }
 
   /** Same page for another area (`/admin/area/<other>/<current tab>`). */
   protected sibling(otherId: string): string {

@@ -1,12 +1,8 @@
 import { NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@app-galaxy/translate-ui';
 import { APP_ROUTES } from '@slim/shared';
-import { AreaFacade } from '../../../core/area/area.facade';
-
-/** Koordinationsabschnitt-Nr. of the prepared demo Schiessplatz («SLIM Demo» dataset). */
-export const DEMO_AREA_NO = '1104.020';
 
 /**
  * sessionStorage key: dismissed for this browser tab — survives a page reload,
@@ -41,8 +37,8 @@ export function resetWelcome(): void {
 
 /**
  * Welcome banner after signing in to the demo: what SLIM does, that this is
- * a prototype with prepared example data, and one button that opens the
- * prepared example Schiessplatz. Demo behaviour on purpose: the dismissal
+ * a prototype with prepared example data, and one button that closes it and
+ * goes to the entry page (/admin). Demo behaviour on purpose: the dismissal
  * lives in sessionStorage (kept across reloads, dropped on sign-out) and is
  * **not** stored in the galaxy user settings yet, so every login shows it
  * again (product: persist the dismissal per user in `app_user_setting`).
@@ -89,18 +85,11 @@ export function resetWelcome(): void {
 })
 export class WelcomeDialogComponent {
   private readonly router = inject(Router);
-  private readonly areas = inject(AreaFacade);
 
   /** Emitted when the dialog was dismissed or the demo was started. */
   readonly closed = output<void>();
 
   protected readonly starting = signal(false);
-
-  /** The prepared example Schiessplatz; falls back to the overview list. */
-  protected readonly demoTarget = computed(() => {
-    const demo = this.areas.areas().find((a) => a.coordinationSectionNo === DEMO_AREA_NO);
-    return demo ? APP_ROUTES.admin.area.shots(demo.id) : APP_ROUTES.admin.area.root;
-  });
 
   protected close(): void {
     markWelcomeSeen();
@@ -111,6 +100,6 @@ export class WelcomeDialogComponent {
     markWelcomeSeen();
     this.starting.set(true);
     this.closed.emit();
-    await this.router.navigateByUrl(this.demoTarget());
+    await this.router.navigateByUrl(APP_ROUTES.admin.root);
   }
 }

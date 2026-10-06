@@ -30,7 +30,8 @@ describe('AreaContextComponent', () => {
         provideRouter([]),
         { provide: AreaFacade, useValue: facade },
         DataEmitter,
-        { provide: TranslateService, useValue: { translate: (key: string) => key, sectionChanged$: of(null), languageChanged$: of(null) } },
+        // The status pill drops tooltip parts that still look like a key (`status_area.…`): give the hints a text.
+        { provide: TranslateService, useValue: { translate: (key: string) => key.replace('status_area.hint.', 'hint '), sectionChanged$: of(null), languageChanged$: of(null) } },
         { provide: ActivatedRoute, useValue: { paramMap: of(paramMap), snapshot: { paramMap } } },
       ],
     }).compileComponents();
@@ -49,6 +50,11 @@ describe('AreaContextComponent', () => {
     expect(el('[data-testid="area-tab-details"]')?.getAttribute('href')).toBe('/admin/area/area-1/details');
     expect(el('router-outlet')).not.toBeNull();
     expect(el('[data-testid="area-not-found"]')).toBeNull();
+    // Two lights, Kontingent and Lärm: the tooltip names which one is which (both can read «Überschritten»).
+    const pills = fixture.nativeElement.querySelectorAll('.area-ctx__status .slim-badge') as NodeListOf<HTMLElement>;
+    expect(pills.length).toBe(2);
+    expect(pills[0].getAttribute('title')).toBe('hint quota_ok');
+    expect(pills[1].getAttribute('title')).toBe('hint noise_over');
     // Regression 02.10.2026: Angular creates the routed page in the namespace of the outlet's parent node.
     // Directly inside the block that was the block's own node, which inherited «SVG» from the icon before
     // it — every page of a Schiessplatz was an SVG element and showed nothing. The outlet needs an HTML parent.

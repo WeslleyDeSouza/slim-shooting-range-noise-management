@@ -21,8 +21,8 @@ test('shows the demo welcome banner once per session and opens the example area'
   await expect(page.locator('.slim-hello__name')).toBeVisible();
   await expect(dialog).toHaveCount(0);
 
-  // … but a fresh session shows it again, and «Beispielplatz öffnen» opens the
-  // prepared example Schiessplatz (Geissalp, 1104.020) on its shots page.
+  // … but a fresh session shows it again, and «Beispielplatz öffnen» closes it
+  // and stays on the entry page (/admin).
   await page.evaluate(
     (key) => window.sessionStorage.removeItem(key),
     WELCOME.seenKey,
@@ -30,8 +30,9 @@ test('shows the demo welcome banner once per session and opens the example area'
   await page.reload();
   await expect(dialog).toBeVisible();
   await page.locator(WELCOME.start).click();
-  await expect(page).toHaveURL(/\/admin\/area\/[^/]+\/shots$/);
-  await expect(page.locator('.area-ctx__name')).toContainText('Geissalp');
+  await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(/\/admin$/);
+  await expect(page.locator('.slim-hello__name')).toBeVisible();
 });
 
 test.describe('entry page', () => {

@@ -295,42 +295,6 @@ app-auth-layout {
     background: slim.color('primary');
   }
 }
-.auth-brand-foot {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  animation: auth-fadeUp 0.7s 0.7s ease both;
-}
-.auth-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: slim.radius('pill');
-  background: rgba(255, 255, 255, 0.04);
-  color: #c9cdd4;
-  font-size: slim.font-size('xs');
-  font-weight: slim.font-weight('semibold');
-  text-decoration: none;
-  transition:
-    border-color 0.15s,
-    color 0.15s,
-    background 0.15s;
-
-  svg {
-    color: $panel-accent;
-  }
-  @include slim.hover {
-    border-color: rgba(255, 255, 255, 0.4);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-    text-decoration: none;
-  }
-}
-
 /* ============ Card side ============ */
 .auth-side {
   position: relative;
@@ -795,6 +759,12 @@ app-auth-layout {
   text-align: center;
   font-size: slim.font-size('sm');
   color: slim.color('text-3');
+
+  &__note {
+    display: inline-block;
+    margin-top: slim.space(2);
+    font-size: slim.font-size('xs');
+  }
 }
 .auth-side-foot {
   display: flex;

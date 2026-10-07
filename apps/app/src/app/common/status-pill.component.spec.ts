@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@app-galaxy/translate-ui';
@@ -15,7 +16,20 @@ const TEXTS: Record<string, string> = {
   'status_area.hint.no_quota': 'Kombination ohne Kontingent: Soll 0.',
   'status_area.hint.no_usages': 'Keine Nutzungen erfasst.',
   'status_area.hint.no_calculation': 'Kein aktueller Zustand.',
+  'status_area.kind.quota': 'Kontingent',
+  'status_area.named': '{{kind}}: {{status}}',
 };
+
+@Component({
+  imports: [StatusPillComponent],
+  template: `
+    <app-status-pill kind="quota" named popover status="over" reason="no-quota" basis="Grundlage: Nutzungen 2024–2026">
+      <a href="#quota" data-testid="link">Zur Übersicht Kontingente</a>
+    </app-status-pill>
+    <button type="button" data-testid="outside">ausserhalb</button>
+  `,
+})
+class HostComponent {}
 
 describe('StatusPillComponent', () => {
   let fixture: ComponentFixture<StatusPillComponent>;
@@ -27,7 +41,8 @@ describe('StatusPillComponent', () => {
         {
           provide: TranslateService,
           useValue: {
-            translate: (key: string) => TEXTS[key] ?? key,
+            translate: (key: string, params: Record<string, string> = {}) =>
+              (TEXTS[key] ?? key).replace(/{{(\w+)}}/g, (_, name: string) => params[name] ?? ''),
             sectionChanged$: new Subject<void>(),
             languageChanged$: new Subject<void>(),
           },
@@ -70,5 +85,73 @@ describe('StatusPillComponent', () => {
     fixture.detectChanges();
     expect(badge().textContent?.trim()).toBe('Keine Daten');
     expect(badge().getAttribute('title')).toBeNull();
+  });
+
+  it('stays a plain badge without a panel unless `popover` is set', () => {
+    fixture.componentRef.setInput('status', 'over');
+    fixture.componentRef.setInput('kind', 'quota');
+    fixture.detectChanges();
+    expect(badge().tagName).toBe('SPAN');
+    badge().click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('[data-testid="status-pill-panel"]')).toBeNull();
+  });
+
+  describe('named, with popover (context bar of a Schiessplatz)', () => {
+    let host: ComponentFixture<HostComponent>;
+    const trigger = () => host.nativeElement.querySelector('.slim-badge') as HTMLButtonElement;
+    const panel = () => host.nativeElement.querySelector('[data-testid="status-pill-panel"]') as HTMLElement | null;
+
+    beforeEach(() => {
+      host = TestBed.createComponent(HostComponent);
+      host.detectChanges();
+    });
+
+    it('names the kind in the label and is a button without tooltip', () => {
+      expect(trigger().tagName).toBe('BUTTON');
+      expect(trigger().textContent?.trim()).toBe('Kontingent: Überschritten');
+      expect(trigger().classList.contains('slim-badge--danger')).toBe(true);
+      expect(trigger().getAttribute('data-reason')).toBe('no-quota');
+      expect(trigger().getAttribute('title')).toBeNull();
+      expect(trigger().getAttribute('aria-expanded')).toBe('false');
+      expect(panel()).toBeNull();
+    });
+
+    it('opens the explanation with reason, basis and the projected link on a click', () => {
+      trigger().click();
+      host.detectChanges();
+      expect(trigger().getAttribute('aria-expanded')).toBe('true');
+      const lines = Array.from(panel()?.querySelectorAll('p') ?? []).map((p) => p.textContent?.trim());
+      expect(lines).toEqual(['Kontingent: über 125 %.', 'Kombination ohne Kontingent: Soll 0.', 'Grundlage: Nutzungen 2024–2026']);
+      expect(panel()?.querySelector('[data-testid="link"]')?.textContent).toContain('Zur Übersicht Kontingente');
+
+      // A second click on the light closes it again.
+      trigger().click();
+      host.detectChanges();
+      expect(panel()).toBeNull();
+    });
+
+    it('closes on a click outside, on Escape (focus back on the light) and on its link', () => {
+      trigger().click();
+      host.detectChanges();
+      (host.nativeElement.querySelector('[data-testid="outside"]') as HTMLElement).click();
+      host.detectChanges();
+      expect(panel()).toBeNull();
+
+      trigger().click();
+      host.detectChanges();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      host.detectChanges();
+      expect(panel()).toBeNull();
+      expect(document.activeElement).toBe(trigger());
+
+      trigger().click();
+      host.detectChanges();
+      const link = panel()?.querySelector('[data-testid="link"]') as HTMLAnchorElement;
+      link.addEventListener('click', (event) => event.preventDefault());
+      link.click();
+      host.detectChanges();
+      expect(panel()).toBeNull();
+    });
   });
 });

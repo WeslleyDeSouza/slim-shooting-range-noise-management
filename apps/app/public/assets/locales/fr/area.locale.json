@@ -38,7 +38,9 @@
   "context": {
     "all_areas": "Toutes les places de tir",
     "switch": "Changer de place de tir",
-    "nav": "Navigation de la place de tir"
+    "nav": "Navigation de la place de tir",
+    "to_quota": "Vers l’aperçu des contingents",
+    "to_noise": "Détails par point de réception"
   },
   "shots": {
     "title": "Nombre de coups",

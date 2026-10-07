@@ -147,6 +147,11 @@
     "incomplete": "Non évaluable",
     "none_no_calculation": "Pas de base de calcul",
     "none_no_usages": "Aucune utilisation saisie",
+    "kind": {
+      "quota": "Contingent",
+      "noise": "Bruit"
+    },
+    "named": "{{kind}} : {{status}}",
     "hint": {
       "quota_ok": "Contingent : le réel de l’année et la moyenne sur trois ans par combinaison restent dans la valeur cible de l’approbation des plans.",
       "quota_warn": "Contingent : réel ou moyenne sur trois ans au-dessus de la cible, mais au plus 125 %.",

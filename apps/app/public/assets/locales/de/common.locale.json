@@ -147,6 +147,11 @@
     "incomplete": "Nicht beurteilbar",
     "none_no_calculation": "Keine Berechnungsgrundlage",
     "none_no_usages": "Keine Nutzungen erfasst",
+    "kind": {
+      "quota": "Kontingent",
+      "noise": "Lärmbelastung"
+    },
+    "named": "{{kind}}: {{status}}",
     "hint": {
       "quota_ok": "Kontingent: Ist des Jahres und Dreijahresmittel je Kombination liegen innerhalb des Solls gemäss Plangenehmigung.",
       "quota_warn": "Kontingent: Ist oder Dreijahresmittel über dem Soll, aber höchstens 125 %.",

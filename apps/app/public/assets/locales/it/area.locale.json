@@ -38,7 +38,9 @@
   "context": {
     "all_areas": "Tutte le piazze di tiro",
     "switch": "Cambiare piazza di tiro",
-    "nav": "Navigazione piazza di tiro"
+    "nav": "Navigazione piazza di tiro",
+    "to_quota": "Alla panoramica dei contingenti",
+    "to_noise": "Dettagli per punto di ricezione"
   },
   "shots": {
     "title": "Numero di colpi",

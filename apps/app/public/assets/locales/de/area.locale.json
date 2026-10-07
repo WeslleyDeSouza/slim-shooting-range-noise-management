@@ -38,7 +38,9 @@
   "context": {
     "all_areas": "Alle Schiessplätze",
     "switch": "Schiessplatz wechseln",
-    "nav": "Schiessplatz-Navigation"
+    "nav": "Schiessplatz-Navigation",
+    "to_quota": "Zur Übersicht Kontingente",
+    "to_noise": "Details je Empfangspunkt"
   },
   "shots": {
     "title": "Schusszahlen",

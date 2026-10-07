@@ -87,8 +87,12 @@
     overflow-y: auto;
   }
 
+  // Positioned: on a phone the panel of a light hangs under the whole group (see app-status-pill).
   &__status {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     gap: slim.space(1);
     margin-left: auto;
   }

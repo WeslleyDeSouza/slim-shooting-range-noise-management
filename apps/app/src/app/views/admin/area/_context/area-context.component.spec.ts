@@ -30,8 +30,16 @@ describe('AreaContextComponent', () => {
         provideRouter([]),
         { provide: AreaFacade, useValue: facade },
         DataEmitter,
-        // The status pill drops tooltip parts that still look like a key (`status_area.…`): give the hints a text.
-        { provide: TranslateService, useValue: { translate: (key: string) => key.replace('status_area.hint.', 'hint '), sectionChanged$: of(null), languageChanged$: of(null) } },
+        // The status pill drops explanation parts that still look like a key (`status_area.…`): give the hints a text.
+        {
+          provide: TranslateService,
+          useValue: {
+            translate: (key: string, params?: Record<string, string>) =>
+              key === 'status_area.named' ? `named(${params?.['kind']}, ${params?.['status']})` : key.replace('status_area.hint.', 'hint ').replace('status_area.kind.', 'kind.'),
+            sectionChanged$: of(null),
+            languageChanged$: of(null),
+          },
+        },
         { provide: ActivatedRoute, useValue: { paramMap: of(paramMap), snapshot: { paramMap } } },
       ],
     }).compileComponents();
@@ -50,11 +58,23 @@ describe('AreaContextComponent', () => {
     expect(el('[data-testid="area-tab-details"]')?.getAttribute('href')).toBe('/admin/area/area-1/details');
     expect(el('router-outlet')).not.toBeNull();
     expect(el('[data-testid="area-not-found"]')).toBeNull();
-    // Two lights, Kontingent and Lärm: the tooltip names which one is which (both can read «Überschritten»).
+    // Two lights, Kontingent and Lärm: each names its kind (both can read «Überschritten») and explains
+    // itself on a click, with a link to the page behind it.
     const pills = fixture.nativeElement.querySelectorAll('.area-ctx__status .slim-badge') as NodeListOf<HTMLElement>;
     expect(pills.length).toBe(2);
-    expect(pills[0].getAttribute('title')).toBe('hint quota_ok');
-    expect(pills[1].getAttribute('title')).toBe('hint noise_over');
+    expect(pills[0].textContent?.trim()).toBe('named(kind.quota, status_area.ok)');
+    expect(pills[1].textContent?.trim()).toBe('named(kind.noise, status_area.over)');
+    expect(el('[data-testid="status-pill-panel"]')).toBeNull();
+    pills[0].click();
+    fixture.detectChanges();
+    expect(el('[data-testid="status-pill-panel"]')?.textContent).toContain('hint quota_ok');
+    expect(el('[data-testid="area-status-link-quota"]')?.getAttribute('href')).toBe('/admin/area/area-1/overview#quota');
+    // The other light takes over: one panel at a time.
+    pills[1].click();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelectorAll('[data-testid="status-pill-panel"]').length).toBe(1);
+    expect(el('[data-testid="status-pill-panel"]')?.textContent).toContain('hint noise_over');
+    expect(el('[data-testid="area-status-link-noise"]')?.getAttribute('href')).toBe('/admin/area/area-1/details');
     // Regression 02.10.2026: Angular creates the routed page in the namespace of the outlet's parent node.
     // Directly inside the block that was the block's own node, which inherited «SVG» from the icon before
     // it — every page of a Schiessplatz was an SVG element and showed nothing. The outlet needs an HTML parent.

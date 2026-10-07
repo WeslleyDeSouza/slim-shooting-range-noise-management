@@ -77,11 +77,20 @@ import { AreaFacade } from '../../../../core/area/area.facade';
         </div>
 
         @if (area(); as a) {
-          <!-- Two lights (B1 5.10): Kontingent and Lärm. kind, reason and basis feed the tooltip,
-               otherwise two equal pills («Überschritten» twice) cannot be told apart. -->
+          <!-- Two lights (B1 5.10): Kontingent and Lärm. Each names its kind, otherwise two equal pills
+               («Überschritten» twice) cannot be told apart; a click explains the light (reason, basis)
+               and leads to the page behind it. -->
           <div class="area-ctx__status">
-            <app-status-pill kind="quota" [status]="a.quotaStatus" [reason]="a.quotaStatusReason" [basis]="quotaBasis(a)" />
-            <app-status-pill kind="noise" [status]="a.noiseStatus" [reason]="a.noiseStatusReason" [basis]="noiseBasis(a)" />
+            <app-status-pill kind="quota" named popover [status]="a.quotaStatus" [reason]="a.quotaStatusReason" [basis]="quotaBasis(a)">
+              <a class="slim-btn slim-btn--link slim-btn--sm" data-testid="area-status-link-quota" [routerLink]="routes.admin.area.overview(a.id)" fragment="quota">
+                {{ 'context.to_quota' | translate }}
+              </a>
+            </app-status-pill>
+            <app-status-pill kind="noise" named popover [status]="a.noiseStatus" [reason]="a.noiseStatusReason" [basis]="noiseBasis(a)">
+              <a class="slim-btn slim-btn--link slim-btn--sm" data-testid="area-status-link-noise" [routerLink]="routes.admin.area.details(a.id)">
+                {{ 'context.to_noise' | translate }}
+              </a>
+            </app-status-pill>
           </div>
         }
       </div>

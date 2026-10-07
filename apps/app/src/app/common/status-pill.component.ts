@@ -1,9 +1,16 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   inject,
   input,
+  Renderer2,
+  signal,
+  viewChild,
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@app-galaxy/translate-ui';
 import type { AreaResultDto } from '@ui-slim/apiClient';
@@ -41,13 +48,54 @@ export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | nu
  * precisely when the API names a reason (`no-calculation`, `no-usages`),
  * and the tooltip explains every state: what the light compares, the
  * reason, and the data behind it (`basis`, e.g. the Zustand and the year).
+ *
+ * `named` puts the kind in front of the label («Kontingent: Überschritten»),
+ * for places where both lights stand side by side. With `popover` the pill
+ * is a button: a click opens the explanation as a panel instead of the
+ * tooltip; projected content (a link to the page behind the light) follows
+ * the text. The panel closes on Escape, on a click outside and on its links.
  */
 @Component({
   selector: 'app-status-pill',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TranslatePipe],
+  imports: [NgTemplateOutlet, TranslatePipe],
+  styleUrl: './status-pill.component.scss',
   template: `
-    <span class="slim-badge" [class]="'slim-badge ' + modifier()" [attr.title]="tooltip()" [attr.data-reason]="reason()">
+    @if (popover()) {
+      <span class="status-pill">
+        <button
+          #trigger
+          type="button"
+          [class]="'slim-badge status-pill__trigger ' + modifier()"
+          [attr.data-reason]="reason()"
+          aria-haspopup="dialog"
+          [attr.aria-expanded]="open()"
+          (click)="toggle()"
+        >
+          <ng-container [ngTemplateOutlet]="content" />
+          <svg class="status-pill__caret" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+          </svg>
+        </button>
+        @if (open()) {
+          <div class="status-pill__panel" role="dialog" data-testid="status-pill-panel" (click)="onPanelClick($event)">
+            @for (line of details().hints; track line) {
+              <p class="status-pill__line">{{ line }}</p>
+            }
+            @if (details().basis; as basis) {
+              <p class="status-pill__basis">{{ basis }}</p>
+            }
+            <div class="status-pill__actions"><ng-content /></div>
+          </div>
+        }
+      </span>
+    } @else {
+      <span [class]="'slim-badge ' + modifier()" [attr.title]="tooltip()" [attr.data-reason]="reason()">
+        <ng-container [ngTemplateOutlet]="content" />
+      </span>
+    }
+
+    <ng-template #content>
       @switch (status()) {
         @case ('ok') {
           <svg class="slim-badge__icon" viewBox="0 0 16 16" aria-hidden="true">
@@ -103,12 +151,21 @@ export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | nu
           </svg>
         }
       }
-      {{ label() | translate }}
-    </span>
+      @if (named() && kind(); as k) {
+        {{ 'status_area.named' | translate: { kind: ('status_area.kind.' + k | translate), status: (label() | translate) } }}
+      } @else {
+        {{ label() | translate }}
+      }
+    </ng-template>
   `,
 })
 export class StatusPillComponent {
   private readonly translate = inject(TranslateService);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly renderer = inject(Renderer2);
+  private readonly trigger = viewChild<ElementRef<HTMLButtonElement>>('trigger');
+  /** Document listeners of the open panel; none while it is closed (a table holds many pills). */
+  private listeners: (() => void)[] = [];
 
   readonly status = input.required<AreaStatus>();
   /** Why the light is grey (`none`) or, for `no-quota`, why a computed light is red. */
@@ -117,19 +174,66 @@ export class StatusPillComponent {
   readonly kind = input<'quota' | 'noise' | null>(null);
   /** Data behind the light (Zustand, year …), appended to the tooltip. */
   readonly basis = input<string | null>(null);
+  /** Kind in front of the label («Kontingent: Überschritten»); needs `kind`. */
+  readonly named = input(false, { transform: booleanAttribute });
+  /** The explanation opens on a click as a panel (with the projected content) instead of the tooltip. */
+  readonly popover = input(false, { transform: booleanAttribute });
+
+  protected readonly open = signal(false);
 
   protected readonly modifier = computed(() => MODIFIER[this.status()]);
 
   protected readonly label = computed(() => statusLabelKey(this.status(), this.reason()));
 
-  protected readonly tooltip = computed(() => {
+  /** What the light compares and why it shows this state, and the data behind it. */
+  protected readonly details = computed(() => {
     const parts: (string | undefined)[] = [];
     const kind = this.kind();
     if (kind) parts.push(this.translate.translate(`status_area.hint.${kind}_${this.status()}`));
     const reason = this.reason();
     if (reason) parts.push(this.translate.translate(`status_area.hint.${reason.replace('-', '_')}`));
-    parts.push(this.basis() ?? undefined);
-    // Missing keys come back as the key itself: leave them out of the tooltip.
-    return parts.filter((t): t is string => !!t && !t.startsWith('status_area.')).join(' · ') || null;
+    // Missing keys come back as the key itself: leave them out.
+    return { hints: parts.filter((t): t is string => !!t && !t.startsWith('status_area.')), basis: this.basis() };
   });
+
+  protected readonly tooltip = computed(() => {
+    const { hints, basis } = this.details();
+    return [...hints, basis].filter((t) => !!t).join(' · ') || null;
+  });
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.stopListening());
+  }
+
+  protected toggle(): void {
+    if (this.open()) {
+      this.close();
+      return;
+    }
+    this.open.set(true);
+    const host = this.host.nativeElement;
+    this.listeners = [
+      // The click that opens the panel reaches the document too: clicks inside the pill never close it here.
+      this.renderer.listen('document', 'click', (event: Event) => {
+        if (!host.contains(event.target as Node)) this.close();
+      }),
+      this.renderer.listen('document', 'keydown.escape', () => this.close(true)),
+    ];
+  }
+
+  /** A link in the panel leads to another page (or further down this one): the panel has done its job. */
+  protected onPanelClick(event: Event): void {
+    if ((event.target as HTMLElement).closest('a')) this.close();
+  }
+
+  private close(focusTrigger = false): void {
+    this.open.set(false);
+    this.stopListening();
+    if (focusTrigger) this.trigger()?.nativeElement.focus();
+  }
+
+  private stopListening(): void {
+    this.listeners.forEach((off) => off());
+    this.listeners = [];
+  }
 }

@@ -57,7 +57,8 @@
   </div>
 
   <!-- 3 Übersicht Kontingente gemäss Plangenehmigung -->
-  <section class="slim-card slim-card--bleed" data-testid="summary-quota">
+  <!-- `id`: target of the quota light in the context bar (`…/overview#quota`). -->
+  <section class="slim-card slim-card--bleed asum__quota" id="quota" data-testid="summary-quota">
     <div class="slim-card__header asum__head">
       <div>
         <h2 class="slim-card__title">{{ 'summary.quota.title' | translate }}</h2>

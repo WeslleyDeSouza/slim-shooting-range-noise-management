@@ -147,6 +147,11 @@
     "incomplete": "Not assessable",
     "none_no_calculation": "No calculation basis",
     "none_no_usages": "No usages recorded",
+    "kind": {
+      "quota": "Quota",
+      "noise": "Noise"
+    },
+    "named": "{{kind}}: {{status}}",
     "hint": {
       "quota_ok": "Quota: the year’s actual and the three-year mean per combination are within the target of the planning approval.",
       "quota_warn": "Quota: actual or three-year mean above the target, but at most 125 %.",

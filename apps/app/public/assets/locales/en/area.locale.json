@@ -38,7 +38,9 @@
   "context": {
     "all_areas": "All shooting ranges",
     "switch": "Switch shooting range",
-    "nav": "Range navigation"
+    "nav": "Range navigation",
+    "to_quota": "Go to the quota overview",
+    "to_noise": "Details per receiver point"
   },
   "shots": {
     "title": "Shot counts",

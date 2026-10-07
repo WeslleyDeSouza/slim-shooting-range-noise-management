@@ -18,6 +18,11 @@
     }
   }
 
+  // Target of `…/overview#quota`: the card stays clear of the top bar.
+  &__quota {
+    scroll-margin-top: slim.space(16);
+  }
+
   // Card header with a title and controls: the controls move below the title when there is no room.
   &__head {
     flex-wrap: wrap;

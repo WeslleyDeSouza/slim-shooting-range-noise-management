@@ -26,6 +26,7 @@ import { ApiConfiguration } from '@ui-slim/apiClient';
 import { APP_LANGUAGES } from '@slim/shared';
 
 import { routes } from './app.routes';
+import { provideScrollReset } from './core/navigation/scroll-reset';
 import { browserLanguage } from './core/settings/browser-language';
 import { environment } from '../environments/environment';
 
@@ -40,6 +41,8 @@ export const appConfig: ApplicationConfig = {
       // `anchorScrolling`: a link with a fragment goes to that element (topics of the online help, slm 53).
       withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
     ),
+    // The router's scroll to the top is smooth (reset) and cut short by the view transition: jump instead.
+    provideScrollReset(),
     provideHttpClient(withFetch(), withInterceptorsFromDi()),
     provideServiceWorker('ngsw-worker.js', {
       enabled: environment.sw,

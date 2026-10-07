@@ -23,7 +23,7 @@ const TEXTS: Record<string, string> = {
 @Component({
   imports: [StatusPillComponent],
   template: `
-    <app-status-pill kind="quota" named popover status="over" reason="no-quota" basis="Grundlage: Nutzungen 2024–2026">
+    <app-status-pill kind="quota" named panel status="over" reason="no-quota" basis="Grundlage: Nutzungen 2024–2026">
       <a href="#quota" data-testid="link">Zur Übersicht Kontingente</a>
     </app-status-pill>
     <button type="button" data-testid="outside">ausserhalb</button>
@@ -87,7 +87,7 @@ describe('StatusPillComponent', () => {
     expect(badge().getAttribute('title')).toBeNull();
   });
 
-  it('stays a plain badge without a panel unless `popover` is set', () => {
+  it('stays a plain badge without a panel unless `panel` is set', () => {
     fixture.componentRef.setInput('status', 'over');
     fixture.componentRef.setInput('kind', 'quota');
     fixture.detectChanges();
@@ -97,7 +97,7 @@ describe('StatusPillComponent', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="status-pill-panel"]')).toBeNull();
   });
 
-  describe('named, with popover (context bar of a Schiessplatz)', () => {
+  describe('named, with panel (context bar of a Schiessplatz)', () => {
     let host: ComponentFixture<HostComponent>;
     const trigger = () => host.nativeElement.querySelector('.slim-badge') as HTMLButtonElement;
     const panel = () => host.nativeElement.querySelector('[data-testid="status-pill-panel"]') as HTMLElement | null;

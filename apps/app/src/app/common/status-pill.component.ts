@@ -50,7 +50,7 @@ export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | nu
  * reason, and the data behind it (`basis`, e.g. the Zustand and the year).
  *
  * `named` puts the kind in front of the label («Kontingent: Überschritten»),
- * for places where both lights stand side by side. With `popover` the pill
+ * for places where both lights stand side by side. With `panel` the pill
  * is a button: a click opens the explanation as a panel instead of the
  * tooltip; projected content (a link to the page behind the light) follows
  * the text. The panel closes on Escape, on a click outside and on its links.
@@ -61,7 +61,7 @@ export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | nu
   imports: [NgTemplateOutlet, TranslatePipe],
   styleUrl: './status-pill.component.scss',
   template: `
-    @if (popover()) {
+    @if (panel()) {
       <span class="status-pill">
         <button
           #trigger
@@ -178,8 +178,12 @@ export class StatusPillComponent {
   readonly basis = input<string | null>(null);
   /** Kind in front of the label («Kontingent: Überschritten»); needs `kind`. */
   readonly named = input(false, { transform: booleanAttribute });
-  /** The explanation opens on a click as a panel (with the projected content) instead of the tooltip. */
-  readonly popover = input(false, { transform: booleanAttribute });
+  /**
+   * The explanation opens on a click as a panel (with the projected content) instead of the tooltip.
+   * Not called `popover`: that is the HTML Popover API attribute, and a static `popover` on the host
+   * makes the browser hide the whole element (`display: none`, `position: fixed`) until `showPopover()`.
+   */
+  readonly panel = input(false, { transform: booleanAttribute });
 
   protected readonly open = signal(false);
 

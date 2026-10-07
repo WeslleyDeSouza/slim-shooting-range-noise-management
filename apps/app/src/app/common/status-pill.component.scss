@@ -1,6 +1,6 @@
 @use 'slim/abstracts' as slim;
 
-// Light with an explanation on click (`popover`): the badge is a button, the panel hangs under it.
+// Light with an explanation on click (`panel`): the badge is a button, the panel hangs under it.
 .status-pill {
   display: inline-flex;
 

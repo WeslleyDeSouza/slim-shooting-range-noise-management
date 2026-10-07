@@ -1,0 +1,73 @@
+@use 'slim/abstracts' as slim;
+
+// Light with an explanation on click (`popover`): the badge is a button, the panel hangs under it.
+.status-pill {
+  display: inline-flex;
+
+  // From the tablet on the panel hangs under its own light. On a phone it hangs under the
+  // next positioned parent (the group of lights), so it never leaves the screen.
+  @include slim.mq('md') {
+    position: relative;
+  }
+
+  &__trigger {
+    appearance: none;
+    margin: 0;
+    font-family: inherit;
+    cursor: pointer;
+    @include slim.focus-visible;
+
+    // «Nicht beurteilbar» keeps the border of the outline badge.
+    &:not(.slim-badge--outline) {
+      border: 0;
+    }
+
+    @include slim.hover {
+      box-shadow: 0 0 0 1px currentColor;
+    }
+  }
+
+  &__caret {
+    width: 10px;
+    height: 10px;
+    margin-right: -2px;
+  }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + #{slim.space(1)});
+    right: 0;
+    z-index: slim.z('sheet');
+    width: max-content;
+    max-width: min(22rem, calc(100vw - #{slim.space(8)}));
+    padding: slim.space(3) slim.space(4);
+    @include slim.surface('lg');
+    color: slim.color('text-2');
+    font-size: slim.font-size('sm');
+    font-weight: slim.font-weight('regular');
+    text-align: left;
+    white-space: normal;
+  }
+
+  &__line {
+    margin: 0;
+
+    & + & {
+      margin-top: slim.space(2);
+    }
+  }
+
+  &__basis {
+    margin: slim.space(2) 0 0;
+    color: slim.color('text-3');
+    font-size: slim.font-size('xs');
+  }
+
+  &__actions {
+    margin-top: slim.space(3);
+
+    &:empty {
+      display: none;
+    }
+  }
+}

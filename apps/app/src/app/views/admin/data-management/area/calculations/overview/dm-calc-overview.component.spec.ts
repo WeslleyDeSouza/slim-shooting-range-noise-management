@@ -47,12 +47,6 @@ describe('DmCalcOverviewComponent (5.18 Übersicht Berechnungen)', () => {
     input.dispatchEvent(new Event('input'));
     fixture.detectChanges();
   };
-  const pick = (selector: string, value: string) => {
-    const select = el<HTMLSelectElement>(selector);
-    select.value = value;
-    select.dispatchEvent(new Event('change'));
-    fixture.detectChanges();
-  };
 
   it('lists the deliveries newest first and opens the one that holds the current state (B1 Abbildung 29)', () => {
     expect(rowNames()).toEqual(['Lieferung 2026', 'Lieferung 2023']);

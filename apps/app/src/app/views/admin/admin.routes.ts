@@ -27,7 +27,6 @@ const placeholder = (path: string, data: PlaceholderData): Route => ({
 const DM = ['menu.data_management'];
 const DM_AREA = [...DM, 'menu.area', 'menu.area_general'];
 const DM_CALC = [...DM, 'menu.area', 'menu.calculations'];
-const DM_WEAPONS = [...DM, 'menu.weapons', 'menu.caliber_weapon'];
 
 /**
  * Pages behind the login (mounted at /admin by app.routes.ts, guarded there).

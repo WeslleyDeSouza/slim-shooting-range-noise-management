@@ -78,6 +78,8 @@ export function statusLabelKey(status: AreaStatus, reason: AreaStatusReason | nu
           </svg>
         </button>
         @if (open()) {
+          <!-- Delegated close on the links inside; a link activated with Enter dispatches a click itself. -->
+          <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
           <div class="status-pill__panel" role="dialog" data-testid="status-pill-panel" (click)="onPanelClick($event)">
             @for (line of details().hints; track line) {
               <p class="status-pill__line">{{ line }}</p>
